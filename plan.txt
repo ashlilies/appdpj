@@ -1,3 +1,7 @@
+BRANDING
+	- logo (c), (r): 'FF'
+	- name: FoodFinder
+================================================================================
 blueprint library
 
 prefer complexity over quantity 
