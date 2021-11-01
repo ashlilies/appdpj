@@ -1,0 +1,28 @@
+blueprint library
+
+prefer complexity over quantity 
+
+CRUD: Create, Read, Update, Delete
+Soft-Delete counts as Delete?
+
+===PLAN===
+E-commerce (shop) is the most common
+
+(About Us page will not give any CRUD marks;
+Newsletter registry sign-up can have CRUD marks
+Login Credentials handling in SQL -> CRUD
+Update password etc forget password -> CRUD
+Shops cannot select negative/quantity checking -> requirements
+Add products
+Remove products
+Can use Pandas to handle excel files
+
+e-commerce
+
+Pick-up, b
+Restaurant bookings, delivery, pick-up, dine-in
+Reviews 
+So it's for multiple restaurants with different outlets... collates all of them
+
+
+)
