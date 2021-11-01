@@ -1,0 +1,99 @@
+CLASSES
+
+Account
+----------------------
+No_of_accounts
+List_of_users
+__name
+__contactno
+__password
+__email
+----------------------
+Get, set…
+
+
+User (subclasses Account)
+----------------------
+__address (for deliveries)
+__previous_purcahses   (catalog page will be recommended from this)
+__favourites_list
+__coupon_list
+__shopping_cart
+----------------------
+Create_account()
+Delete_account()
+Get, set to update information()
+get_ordered_status
+
+
+Driver (subclasses Account)
+---------------------
+__is_accepting (availability)
+__capacity (to carry how many deliveries)
+__curr_location
+__status
+__commission_status
+---------------------
+Create and delete driver()
+
+
+Restaurant_owner (subclasses Account) (restaurant admins)
+--------------------
+__restaurants_list_owned (contains Restaurant objects)
+-------------------
+Create and delete restaurants
+
+
+Restaurant
+--------------------
+__capacity
+__opening_hours
+__isClosed
+__kitchen_status (what’s preparing right now)
+__status (if too busy, etc, empty, green orange red etc.)
+__review_dict
+-------------------
+Add and delete items()
+
+
+Website Admins (can approve Restaurant Owners, remove inappropriate reviews)
+-----------------
+...
+----------------
+approve_user(user)
+remove_user(user)
+remove_review(review_id)
+
+
+Coupons
+---------------
+__code
+__validity_period
+__quantity_left
+__valid_products
+--------------
+set_code(code)
+
+
+Food
+--------------
+__is_halal
+__is_vegetarian
+__allergy_triggers_list
+__spiciness
+__is_available
+__cuisine_type
+__description
+__photo_url
+--------------
+Get, set, …
+
+Drink (subclasses Food)
+---------------
+__temperature (hot/cold)
+__sugar_level
+__extra_toppings_list
+__size (tall/medium)
+
+
+

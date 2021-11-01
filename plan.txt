@@ -13,7 +13,7 @@ Newsletter registry sign-up can have CRUD marks
 Login Credentials handling in SQL -> CRUD
 Update password etc forget password -> CRUD
 Shops cannot select negative/quantity checking -> requirements
-Add products
+Add products (add dishes, pro
 Remove products
 Can use Pandas to handle excel files
 
@@ -24,5 +24,35 @@ Restaurant bookings, delivery, pick-up, dine-in
 Reviews 
 So it's for multiple restaurants with different outlets... collates all of them
 
+Chatbot (using Chatterbot module)
 
+Chart.JS (responsive; unlike MatPlotLib)
+	-> to implement an AI-powered dashboard
+
+!!!! NO EXTRA POINTS FOR USING SQL!! (USE Shelve)
+
+Integrate
+
+Web browser notifications upon delivery/successful order confirmaiton/
+	process/preparing your food.../pickup/delivered
+
+Google Maps integration for the timing to deliver?
+
+----------TRANSACTION HANDLING----------
+Paypal/Stripe API  -> we just need a GUI
+Form validation in HTML
 )
+
+=====CLASSES=====
+Restaurant
+Account base class
+	->User (subclasses under Account)
+	->Driver (delivery)
+	->Restaurant/Shop Owner (CRUD on your own shop)
+	->Website Admins
+Coupons (codes, validity, how many issued, can be used once per person only)
+Table (array of people, table size? 2? 4? round/big one?)
+
+
+
+
