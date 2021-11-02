@@ -7,6 +7,7 @@ blueprint library
 prefer complexity over quantity 
 
 CRUD: Create, Read, Update, Delete
+C, R, U or D counts as a Single Function
 Soft-Delete counts as Delete?
 
 ===PLAN===
