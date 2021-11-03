@@ -2,14 +2,14 @@ CLASSES
 
 Account
 ----------------------
-No_of_accounts
-List_of_users
+no_of_accounts
+list_of_users
 __name
 __contactno
 __password
 __email
 ----------------------
-Get, set…
+get, set…
 
 
 User (subclasses Account)
@@ -20,9 +20,9 @@ __favourites_list
 __coupon_list
 __shopping_cart
 ----------------------
-Create_account()
-Delete_account()
-Get, set to update information()
+create_account()
+delete_account()
+get, set to update information()
 get_ordered_status
 
 
@@ -34,14 +34,14 @@ __curr_location
 __status
 __commission_status
 ---------------------
-Create and delete driver()
+create and delete driver()
 
 
 Restaurant_owner (subclasses Account) (restaurant admins)
 --------------------
-__restaurants_list_owned (contains Restaurant objects)
+__restaurants_list_owned (contains restaurant objects)
 -------------------
-Create and delete restaurants
+create and delete restaurants
 
 
 Restaurant
@@ -86,7 +86,7 @@ __cuisine_type
 __description
 __photo_url
 --------------
-Get, set, …
+get, set, …
 
 Drink (subclasses Food)
 ---------------
