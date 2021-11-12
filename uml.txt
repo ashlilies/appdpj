@@ -1,19 +1,22 @@
 CLASSES
 
-Account
-----------------------
-no_of_accounts
-list_of_users
-__name
-__contactno
-__password
-__email
-----------------------
-get, set…
+|-----------------------------|
+|Account                      |
+|-----------------------------|
+|no_of_accounts               |
+|list_of_users                |
+|__name                       |
+|__contactno                  |
+|__password                   |
+|__email                      |
+|-----------------------------|
+|get(), set()...              |
+|_____________________________|
 
 
-User (subclasses Account)
-----------------------
+|-----------------------------|
+|User (subclasses Account)    |
+|-----------------------------|
 __address (for deliveries)
 __previous_purcahses   (catalog page will be recommended from this)
 __favourites_list
