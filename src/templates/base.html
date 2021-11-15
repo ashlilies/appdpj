@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+
+    <!-- Bootstrap: Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="{{ url_for("static", filename="lib/bootstrap-5.0.2-dist/css/bootstrap.css") }}">
+    <!-- Bootstrap: Latest compiled JavaScript -->
+    <script crossorigin="anonymous" src="{{ url_for("static", filename="lib/bootstrap-5.0.2-dist/js/bootstrap.bundle.js") }}"></script>
+    <!-- Popper 2.10.2 JavaScript -->
+    <script crossorigin="anonymous" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrP a03rtR1zdB" src="{{ url_for("static", filename="popper-2.10.2.min.js") }}"></script>
+
+    {% block scripts %}
+    {% endblock %}
+</head>
+<body>
+    {% block navbar %}
+        {% include "includes/_navbar.html" %}
+    {% endblock %}
+
+    <div class="container-fluid">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>
