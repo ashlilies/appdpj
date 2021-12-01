@@ -1,6 +1,6 @@
 BRANDING
-	- logo (c), (r): 'FF'
-	- name: FoodFinder
+	- logo (c), (r): 'FP'
+	- name: FoodyPulse
 ================================================================================
 blueprint library
 
