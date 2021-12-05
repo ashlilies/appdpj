@@ -1,0 +1,242 @@
+<link
+  href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+  rel="stylesheet"
+  id="bootstrap-css"
+/>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<!-- Putting Green Arrows
+    https://stackoverflow.com/questions/49323175/bootstrap-4-form-input-with-icon-for-validation-->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Raleway:300,400,600"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+
+    <title>Login</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg" style="background-color: #f9e4b7">
+      <a class="navbar-brand text-dark" href="#">FoodyPlus</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarText"
+        aria-controls="navbarText"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="#">Delivery</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="#">Dine-In</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="#">Contact</a>
+          </li>
+        </ul>
+        <span class="navbar-text">
+          <button
+            type="button"
+            class="btn"
+            onclick=" relocate_login()"
+            style="margin: 3px; background-color: #faa0a0"
+          >
+            Log In
+          </button>
+        </span>
+        <span class="navbar-text">
+          <button
+            type="button"
+            class="btn"
+            style="background-color: #faa0a0"
+            onclick=" relocate_signup()"
+          >
+            Sign Up
+          </button>
+        </span>
+      </div>
+    </nav>
+
+    <main class="my-form">
+      <div class="cotainer">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <div class="card">
+              <div class="card-body">
+                <div class="form-row flex-column-reverse flex-md-row">
+                  <div class="form-row flex-column-reverse flex-md-row">
+                    <!--Insert Image Columnn-->
+                    <div class="form-group col-md-6">
+                      <form name="my-form" class="needs-validation" novalidate>
+                        <div>
+                          <img src="/images/Shiba-Logo.jpeg" />
+                        </div>
+                      </form>
+                    </div>
+
+                    <!--Login Details Columnn-->
+                    <div class="form-group col-md-6">
+                      <div class="login-form bg-light mt-4 p-4">
+                        <form
+                          name="my-form"
+                          class="needs-validation"
+                          novalidate
+                        >
+                          <div class="form-row">
+                            <div class="navbar-nav mr-auto col-xs-3">
+                              <h4
+                                for="personal_details"
+                                class="font-weight-bold"
+                              >
+                                Sign Up
+                              </h4>
+                            </div>
+                          </div>
+
+                          <div class="form-row">
+                            <div class="form-group col-md-12">
+                              <div class="form-row">
+                                <div class="form-group col-md-12">
+                                  <label for="email_address">E-Mail</label>
+                                  <input
+                                    type="email"
+                                    id="email_address"
+                                    class="form-control"
+                                    name="email_address"
+                                    required
+                                  />
+                                  <div class="invalid-feedback">
+                                    Email is required.
+                                  </div>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                  <label for="first_name">First Name</label>
+                                  <input
+                                    type="text"
+                                    class="form-control"
+                                    id="first_name"
+                                    name="first-name"
+                                    required
+                                  />
+                                  <div class="invalid-feedback">
+                                    Valid first name is required.
+                                  </div>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                  <label for="last-name">Last Name</label>
+                                  <input
+                                    type="text"
+                                    class="form-control"
+                                    id="last-name"
+                                    name="last-name"
+                                    required
+                                  />
+                                  <div class="invalid-feedback">
+                                    Valid last name is required.
+                                  </div>
+                                </div>
+
+                                <!--Regex Minimum 8, Maximum 10 Characthers Must Have Letters & Numbers-->
+                                <div class="form-group col-md-12">
+                                  <label for="password">Password</label>
+                                  <input
+                                    type="password"
+                                    id="password"
+                                    class="form-control"
+                                    name="password"
+                                    pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,10}$"
+                                    required
+                                  />
+                                  <div class="invalid-feedback">
+                                    Password should be 8-12 characthers long,
+                                    consisting of both letters and numbers
+                                  </div>
+                                </div>
+
+                                <!--No validation done for Re-Enter Yet-->
+                                <div class="form-group col-md-12">
+                                  <label for="enter_password"
+                                    >Re-Enter Password</label
+                                  >
+                                  <input
+                                    type="password"
+                                    id="enter_password"
+                                    class="form-control"
+                                    name="enter_password"
+                                    required
+                                  />
+                                  <div class="invalid-feedback">
+                                    Please enter your password
+                                  </div>
+                                </div>
+
+                                <div class="form-group col-md-12">
+                                  <button
+                                    type="submit"
+                                    class="btn btn-primary btn-md"
+                                    id="submit-form"
+                                  >
+                                    Sign Up
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="formvalidation.js"></script>
+
+    <script>
+      function relocate_login() {
+        location.href = "login.html";
+      }
+
+      function relocate_signup() {
+        location.href = "sign-up.html";
+      }
+    </script>
+  </body>
+</html>
