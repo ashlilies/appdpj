@@ -1,22 +1,46 @@
 {% extends "base.html" %}
-{% block title %}Library Loan System - Home{% endblock %}
+{% block title %}FoodyPulse - Home{% endblock %}
 
 {% block head %}
 <style>
     h1 {
         font-weight: bold;
+
     }
     h1>#emphasis {
         color: #E16B6B;
+    }
+    #left-home-content {
+        width: 60%;
+        margin: auto;
+        margin-left: 0;
+        display: grid;
+        justify-content: center;
+    }
+    #right-home-content {
+        width: 40%;
+        margin: auto;
+        margin-right: 0;
+        display: grid;
+        justify-content: left;
+    }
+    #right-home-content>img {
+        width: 100%;
+        height: 100%;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div id="left-home-text">
-    <h1>Food <span id="emphasis">you</span> want.</h1>
-    <h1>Made available to you.</h1>
-    <h1>On Impulse.</h1>
-    <p>Dine-in and ordering, all at your comfort.</p>
+<div id="whole-homepage" class="d-flex flex-row">
+    <div id="left-home-content">
+        <h1>Food <span id="emphasis">you</span> want.</h1>
+        <h1>Made available to you.</h1>
+        <h1>On Impulse.</h1>
+        <p>Dine-in and ordering, all at your comfort.</p>
+    </div>
+    <div id="right-home-content">
+        <img src={{ url_for("static", filename="home/consumer.png") }} />
+    </div>
 </div>
 {% endblock %}
