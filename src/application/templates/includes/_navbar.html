@@ -1,6 +1,8 @@
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+<link rel="stylesheet" href={{ url_for("static", filename="navbar.css") }}>
+
+<nav class="navbar navbar-expand-sm bg-light navbar-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">LLS</a>
+        <a class="navbar-brand" id="website-logo" href="/">FoodyPulse</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -10,16 +12,16 @@
                     <a class="nav-link" href="/">Home</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Manage
-                        Users</a>
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Delivery</a>
                     <ul class="dropdown-menu">
                         <a class="dropdown-item" href="{{ url_for('create_user') }}">Create User</a>
                         <a class="dropdown-item" href="{{ url_for('retrieve_users') }}">Retrieve Users</a>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Manage
-                        Customers</a>
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        Dine-In</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="/createCustomer">Create Customer</a></li>
                         <li><a class="dropdown-item" href="{{ url_for('retrieve_customers') }}">Retrieve Customer</a></li>

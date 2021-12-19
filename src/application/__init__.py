@@ -7,6 +7,10 @@ from application.Models.Customer import Customer
 app = Flask(__name__)
 
 
+# CONSTANTS USED BY OUR PAGES
+# For stuff like colour schemes.
+# Todo
+
 @app.route('/')
 @app.route('/home')
 def home():
