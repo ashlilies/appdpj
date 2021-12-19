@@ -1,7 +1,22 @@
 {% extends "base.html" %}
 {% block title %}Library Loan System - Home{% endblock %}
 
+{% block head %}
+<style>
+    h1 {
+        font-weight: bold;
+    }
+    h1>#emphasis {
+        color: #E16B6B;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h1 class="display-4">Home</h1>
-<p>Hello world😀😀😀😀😀!!!!!!</p>
+<div id="left-home-text">
+    <h1>Food <span id="emphasis">you</span> want.</h1>
+    <h1>Made available to you.</h1>
+    <h1>On Impulse.</h1>
+    <p>Dine-in and ordering, all at your comfort.</p>
+</div>
 {% endblock %}

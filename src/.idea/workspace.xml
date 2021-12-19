@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b70c7b19-190d-44d5-916c-eebafa6307c5" name="Changes" comment="cleaned up static directory">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/templates/includes/_navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/application/templates/includes/_navbar.html" afterDir="false" />
+    <list default="true" id="b70c7b19-190d-44d5-916c-eebafa6307c5" name="Changes" comment="Polish navbar">
+      <change beforePath="$PROJECT_DIR$/application/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/application/templates/home.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,7 +89,7 @@
       <updated>1636687345454</updated>
       <workItem from="1636687347132" duration="3355000" />
       <workItem from="1637134122082" duration="6000" />
-      <workItem from="1639888410475" duration="5622000" />
+      <workItem from="1639888410475" duration="6025000" />
     </task>
     <task id="LOCAL-00001" summary="update navbar">
       <created>1639891411580</created>
@@ -141,7 +140,14 @@
       <option name="project" value="LOCAL" />
       <updated>1639893134157</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Polish navbar">
+      <created>1639894211031</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1639894211031</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -164,9 +170,10 @@
     <MESSAGE value="update navbar" />
     <MESSAGE value="add page background" />
     <MESSAGE value="cleaned up static directory" />
-    <option name="LAST_COMMIT_MESSAGE" value="cleaned up static directory" />
+    <MESSAGE value="Polish navbar" />
+    <option name="LAST_COMMIT_MESSAGE" value="Polish navbar" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/src$src.coverage" NAME="src Coverage Results" MODIFIED="1639894001773" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/src$src.coverage" NAME="src Coverage Results" MODIFIED="1639894181096" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

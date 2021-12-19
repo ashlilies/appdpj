@@ -10,6 +10,9 @@
 
     <!-- Our customized base CSS - ashlee -->
     <link rel="stylesheet" href={{ url_for("static", filename="base/base.css") }}>
+
+    <!-- Any custom stuff for the heads -->
+    {% block head %}{% endblock %}
 </head>
 <body>
 {% block navbar %}
