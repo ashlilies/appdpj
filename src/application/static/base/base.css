@@ -3,3 +3,14 @@ body {
     background-image: url("bg.png");
     background-size: 25%;
 }
+
+.btn, .btn-primary, .btn-primary:active:focus, .btn-primary:focus {
+    background-color: #e16b6b !important;
+    border-color: #e16b6b;
+    outline-color: #fc9191;
+    box-shadow: none;
+}
+.btn:hover {
+    background-color: #bd5c5c;
+    border-color: #bd5c5c;
+}
