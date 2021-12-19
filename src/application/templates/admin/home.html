@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
 {% block title %}FoodyPulse - Home{% endblock %}
 
 {% block head %}
@@ -19,12 +19,12 @@
     }
     #right-home-content {
         width: 40%;
+        padding-top: 16.5%;
+        padding-bottom: 16.5%;
         margin: auto;
         margin-right: 0;
         display: grid;
         justify-content: left;
-        padding-top: 10.5%;
-        padding-bottom: 16.5%;
     }
     #right-home-content>img {
         width: 100%;
@@ -36,14 +36,14 @@
 {% block content %}
 <div id="whole-homepage" class="d-flex flex-row">
     <div id="left-home-content">
-        <h1>Food <span id="emphasis">you</span> want.</h1>
-        <h1>Made available to you.</h1>
-        <h1>On Impulse.</h1>
+        <h1>Food <span id="emphasis">you</span> sell.</h1>
+        <h1>Made available to others.</h1>
+        <h1>&nbsp;</h1>
         <p>Dine-in and ordering, all at your comfort.</p>
         <p><a href="#"><button class="btn btn-primary">Order Now</button></a></p>
     </div>
     <div id="right-home-content">
-        <img src={{ url_for("static", filename="home/consumer.png") }} />
+        <img src={{ url_for("static", filename="home/shop_admin.png") }} />
     </div>
 </div>
 {% endblock %}

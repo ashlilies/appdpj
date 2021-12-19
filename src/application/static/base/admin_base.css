@@ -5,7 +5,12 @@ body {
 }
 
 .btn, .btn-primary, .btn-primary:active:focus, .btn-primary:focus {
+    background-color: #38b74e !important;
+    border-color: #38b74e;
+    outline-color: #38b74e;
     box-shadow: none;
 }
 .btn:hover {
+    background-color: #30a144;
+    border-color: #38b74e;
 }

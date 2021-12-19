@@ -11,6 +11,10 @@ app = Flask(__name__)
 # For stuff like colour schemes.
 # Todo
 
+# Includes
+from application.Controllers.admin import admin_home
+
+
 @app.route('/')
 @app.route('/home')
 def home():
