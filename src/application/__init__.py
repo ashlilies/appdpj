@@ -1,3 +1,5 @@
+# IF YOU'RE HERE: New routes go in Controllers > admin or consumer!
+
 from flask import Flask, render_template, request, redirect, url_for
 from application.Forms import CreateUserForm, CreateCustomerForm
 import shelve
