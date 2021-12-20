@@ -248,6 +248,8 @@ with app.app_context():  # run before doing anything else; a la main() -ash
             print("Initializing user count in db")
             db["count"] = User.count_id  # initialize it:
 
+    app.run()
+
 
 
 if __name__ == '__main__':
