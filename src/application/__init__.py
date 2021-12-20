@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for
-from Forms import CreateUserForm, CreateCustomerForm
+from application.Forms import CreateUserForm, CreateCustomerForm
 import shelve
-from Models.User import User
-from Models.Customer import Customer
+from application.Models.User import User
+from application.Models.Customer import Customer
 
 app = Flask(__name__)
 app.secret_key = "doofypulseEngineers"  # used for stuff e.g. Flask sessions
