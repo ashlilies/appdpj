@@ -7,3 +7,8 @@
 .idea/gradle.xml
 .idea/dictionaries
 .idea/libraries
+
+*.db
+*.db.bak
+*.db.dat
+*.db.dir
