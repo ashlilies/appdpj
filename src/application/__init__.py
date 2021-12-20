@@ -234,7 +234,8 @@ def delete_customer(id):
     return redirect(url_for('retrieve_customers'))
 
 
-with app.app_context():  # run before doing anything else; a la main() -ash
+# Run before doing anything else; a la main() -ash
+with app.app_context():
     # Get current customer and admin ID count to prevent overriding
     with shelve.open("customer.db", 'c') as db:
         if "count" in db:

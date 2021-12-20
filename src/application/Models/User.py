@@ -1,4 +1,4 @@
-
+# OLD User class, for Library Loan System not FoodyPulse
 class User:
     count_id = 0
 
