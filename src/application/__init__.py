@@ -92,8 +92,11 @@ def create_customer():
 @app.route('/retrieveUsers')
 def retrieve_users():
     users_dict = {}
-    with shelve.open('user.db', 'r') as db:
-        users_dict = db['Users']
+    with shelve.open('user.db', 'c') as db:
+        if "Users" in db:
+            users_dict = db['Users']
+        else:
+            db['Users'] = users_dict
 
     users_list = []
     for key in users_dict:
@@ -106,8 +109,11 @@ def retrieve_users():
 @app.route('/retrieveCustomers')
 def retrieve_customers():
     customers_dict = {}
-    with shelve.open('customer.db', 'r') as db:
-        customers_dict = db['Customers']
+    with shelve.open('customer.db', 'c') as db:
+        if "Customers" in db:
+            customers_dict = db['Customers']
+        else:
+            db['Customers'] = customers_dict
 
     customers_list = []
     for key in customers_dict:
