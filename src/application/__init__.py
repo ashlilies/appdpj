@@ -1,11 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
 from application.Forms import CreateUserForm, CreateCustomerForm
 import shelve
-from application.Models import User
+from application.Models.User import User
 from application.Models.Customer import Customer
 
 app = Flask(__name__)
-
 
 # CONSTANTS USED BY OUR PAGES
 # For stuff like colour schemes.
@@ -43,11 +42,12 @@ def create_user():
             except:
                 print("Error in retrieving Users from user.db.")
 
-            user = User.User(create_user_form.first_name.data, create_user_form.last_name.data,
+            user = User(create_user_form.first_name.data, create_user_form.last_name.data,
                              create_user_form.gender.data, create_user_form.membership.data,
                              create_user_form.remarks.data)
             users_dict[user.get_user_id()] = user
             db['Users'] = users_dict
+            db["count"] = User.count_id  # VERY IMPORTANT - Save count ID back
 
             # Test codes
             # users_dict = db['Users']
@@ -65,6 +65,7 @@ def create_customer():
     if request.method == 'POST' and create_customer_form.validate():
         customers_dict = {}
         with shelve.open('customer.db', 'c') as db:
+
             try:
                 customers_dict = db['Customers']
             except:
@@ -78,6 +79,8 @@ def create_customer():
                                 create_customer_form.address.data, )
             customers_dict[customer.get_customer_id()] = customer
             db['Customers'] = customers_dict
+            db["count"] = Customer.count_id
+
         return redirect(url_for('home'))
     return render_template('createCustomer.html', form=create_customer_form)
 
@@ -225,6 +228,26 @@ def delete_customer(id):
         print(f'An Error have occurred in delete_customer({id}) - {e}')
 
     return redirect(url_for('retrieve_customers'))
+
+
+with app.app_context():  # run before doing anything else; a la main() -ash
+    # Get current customer and admin ID count to prevent overriding
+    with shelve.open("customer.db", 'c') as db:
+        if "count" in db:
+            print("Found customer count in db: %d" % db["count"])
+            Customer.count_id = db["count"]
+        else:
+            print("Initializing customer count in db")
+            db["count"] = Customer.count_id  # initialize it:
+
+    with shelve.open("user.db", 'c') as db:
+        if "count" in db:
+            print("Found user count in db: %d" % db["count"])
+            User.count_id = db["count"]
+        else:
+            print("Initializing user count in db")
+            db["count"] = User.count_id  # initialize it:
+
 
 
 if __name__ == '__main__':
