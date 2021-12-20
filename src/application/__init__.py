@@ -12,7 +12,8 @@ app.secret_key = "doofypulseEngineers"  # used for stuff e.g. Flask sessions
 # Todo
 
 # Includes
-from application.Controllers.admin import admin_home
+from application.Controllers.admin import *
+from application.Controllers.consumer import *
 
 
 @app.route('/')
