@@ -1,4 +1,5 @@
 # Session manager
-# Ashlee
+# by Ashlee
 
-# TODO
+class Session:
+
