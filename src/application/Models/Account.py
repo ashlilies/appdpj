@@ -29,7 +29,7 @@ class Account:
         # First, check if email already exists.
         if self.__class__.email_exists(email):
             logging.warning("BaseAccount: Account with email %s already exists"
-                         % email)
+                            % email)
             raise Exception(Account.EMAIL_ALREADY_EXISTS)
 
         Account.count_id += 1  # Update Account class count id
@@ -60,7 +60,7 @@ class Account:
                 logging.warning("BaseAccount: Email exists, wrong pw")
 
         logging.warning("BaseAccount: No email-pw match found in db")
-        return None   # else if no user-pw match return None
+        return None  # else if no user-pw match return None
 
     @classmethod
     def email_exists(cls, email) -> bool:

@@ -10,7 +10,8 @@ class Admin(Account):
         self.list_of_transactions = []
         logging.info("Admin Class: Created new Admin account with "
                      "email=%s, restaurant_name=%s, account_id=%s"
-                     % (self.get_email(), self.restaurant_name, self.account_id))
+                     % (self.get_email(), self.restaurant_name,
+                        self.account_id))
 
     # Add a transaction to a shop's list
     def add_transaction(self, transaction):

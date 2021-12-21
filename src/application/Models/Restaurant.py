@@ -1,7 +1,9 @@
-#ruri flora newman
+# ruri flora newman
 
 class Restaurant:
-    def __init__(self, name, contact, open_hour, close_hour, address, tags, bank, desc, deli_fee12, deli_fee24, deli_fee46, deli_fee68, table_plan):
+    def __init__(self, name, contact, open_hour, close_hour, address, tags,
+                 bank, desc, deli_fee12, deli_fee24,
+                 deli_fee46, deli_fee68, table_plan):
         self.name = name
         self.contact = contact
         self.open_hour = open_hour

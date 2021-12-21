@@ -1,6 +1,8 @@
-class AdminAddFood:
-    def __init__(self, image, item_name, description, price, allergy, specification):
+# Clara?
 
+class Food:
+    def __init__(self, image, item_name, description, price, allergy,
+                 specification):
         self.__image = image
         self.__item_name = item_name
         self.__description = description
@@ -30,7 +32,7 @@ class AdminAddFood:
         return self.__price
 
     def set_price(self, price):
-        self.__price= price
+        self.__price = price
 
     def get_allergy(self):
         return self.__allergy
