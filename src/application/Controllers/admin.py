@@ -55,6 +55,6 @@ def admin_transaction():   # yonglin
     return render_template("admin/transaction.html")
 
 
-@app.route("/admin/myrestaurant")
+@app.route("/admin/myRestaurant")
 def admin_myrestaurant():  # ruri
     return render_template("admin/restaurant.html")
