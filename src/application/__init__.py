@@ -18,12 +18,6 @@ from application.Controllers.admin import *
 from application.Controllers.consumer import *
 
 
-@app.route('/')
-@app.route('/home')
-def home():
-    # render a template
-    return render_template('home.html')
-
 
 @app.route('/contactus')
 def contact_us():
