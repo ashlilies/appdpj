@@ -1,19 +1,52 @@
+{# TODO: Add some fancy validation #}
+
 {% extends "admin/admin_base.html" %}
 {% block title %}Admin Sign Up{% endblock %}
 
 {% block head %}
   <script>
-  function main() {
-      /* Handle non-matching password or no ToS agree */
+      function main() {
+          /* Handle non-matching password or no ToS agree */
 
-      /* Handle error message sent by server */
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      if (urlParams.get("error"))
-          document.getElementById("errorMessage").hidden = false;
-  }
+          /* Handle error message sent by server */
+          const queryString = window.location.search;
+          const urlParams = new URLSearchParams(queryString);
+          if (urlParams.get("error"))
+              document.getElementById("errorMessage").hidden = false;
+      }
 
-  document.addEventListener("DOMContentLoaded", main);
+      function validateRegistrationInput() {
+          var err = 0;
+
+          /* Are password and passwordAgain the same? */
+          var pw1 = document.getElementById("password");
+          var pw2 = document.getElementById("passwordAgain");
+
+          /* Reset error states to default first */
+          pw1.style.boxShadow = "0 2px #77777777"
+          pw2.style.boxShadow = "0 2px #77777777"
+          document.getElementById("tosAgree").style.boxShadow = "0 2px #77777777";
+
+          if (pw1.value !== pw2.value) {
+              err = 1;
+              pw1.style.boxShadow = "0 2px #ff000077";
+              pw2.style.boxShadow = "0 2px #ff000077";
+
+              document.getElementById("errorMessage").hidden = false;
+          }
+
+          /* Did user check the ToS box? */
+          if (!(document.getElementById("tosAgree").checked)) {
+              err = 1;
+              document.getElementById("tosAgree").style.boxShadow = "0 2px #ff000077";
+              document.getElementById("tosLabel").style.color = "red";
+          }
+
+          if (!err)
+              document.getElementById("registerForm").submit();
+      }
+
+      document.addEventListener("DOMContentLoaded", main);
 
 
   </script>
@@ -68,25 +101,31 @@
 {% block content %}
   <div id="login-pane">
     <h2>Sign Up</h2>
-    <form action="" method="post" class="login-form">
-      <div id="errorMessage" hidden><label>Please check your fields and try again.</label><br></div>
-      <label for="email"><img style="opacity: 60%" src={{ url_for("static", filename="account/person.png") }} /></label>
+    <form action="" method="post" class="login-form" id="registerForm">
+      <div id="errorMessage" hidden><label>Please check your fields and try
+        again.</label><br></div>
+      <label for="email"><img style="opacity: 60%"
+                              src={{ url_for("static", filename="account/person.png") }}/></label>
       <input type="email" name="email" id="email"
              placeholder="Business E-mail here" required><br>
-      <label for="name"><img style="opacity: 60%" src={{ url_for("static", filename="account/restaurant.png") }} /></label>
+      <label for="name"><img style="opacity: 60%"
+                             src={{ url_for("static", filename="account/restaurant.png") }}/></label>
       <input type="text" name="name" id="name"
              placeholder="Restaurant Name" required><br>
-      <label for="password"><img src={{ url_for("static", filename="account/padlock.png") }} /></label>
+      <label for="password"><img
+          src={{ url_for("static", filename="account/padlock.png") }}/></label>
       <input type="password" name="password" id="password"
              placeholder="Password" required><br>
-      <label for="passwordAgain"><img src={{ url_for("static", filename="account/padlock.png") }} /></label>
+      <label for="passwordAgain"><img
+          src={{ url_for("static", filename="account/padlock.png") }}/></label>
       <input type="password" name="passwordAgain" id="passwordAgain"
              placeholder="Re-enter Password" required><br>
-      <input type="checkbox" name="tosAgree" id="tosAgree" value="agreed" required>
+      <input type="checkbox" name="tosAgree" id="tosAgree" value="agreed"
+             required>
       <label for="tosAgree" id="tosLabel">By checking this, you agree with the
-                            Terms & Conditions of FoodyPulse.
+        Terms & Conditions of FoodyPulse.
       </label><br>
-      <input type="submit" value="Sign Up" id="submitButton"><br>
+      <input type="button" value="Sign Up" id="submitButton" onclick="validateRegistrationInput()"><br>
     </form>
   </div>
 {% endblock %}
