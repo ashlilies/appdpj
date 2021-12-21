@@ -32,6 +32,7 @@ logging.info("Logger configured!")
 # ALL BELOW are for the Practical LLS.
 # Please add new routes to Controllers. -ash
 
+
 @app.route('/contactus')
 def contact_us():
     # render a template

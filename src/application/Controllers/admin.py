@@ -4,12 +4,28 @@ from flask import render_template, session
 from flask import Flask, render_template, request, redirect, url_for
 from application.Models.Admin import *
 from application import app
+from application.adminAddFoodForm import CreateFoodForm
 
 
 @app.route("/admin")
 @app.route("/admin/home")
 def admin_home():  # ashlee
     return render_template("admin/home.html")
+
+# APP ROUTE TO FOOD MANAGEMENT clara
+@app.route("/admin/foodManagement")
+def food_management():
+    return render_template('admin/foodManagement.html')
+
+#ADMIN FOOD FORM clara
+@app.route('/admin/addFoodForm', methods=['GET', 'POST'])
+def create_food():
+    create_food_form = CreateFoodForm(request.form)
+    if request.method == 'POST' and create_food_form.validate():
+        return redirect(url_for('home'))
+    return render_template('admin/addFoodForm.html', form=create_food_form)
+
+
 
 
 @app.route("/admin/login")
