@@ -4,7 +4,7 @@ import shelve
 
 
 class Account:
-    count_id = 0
+    count_id = 0  # ADVANTAGE: Can handle soft-deleted accounts better
     list_of_accounts = []
 
     def __init__(self, email, password):
@@ -14,7 +14,9 @@ class Account:
         if self.__class__.email_exists(email):
             raise Exception("Account with email already exists")
 
-        self.count_id += 1
+        self.__class__.count_id += 1  # Update class count id
+        self.account_id = self.__class__.count_id  # actually set account's ID
+
         self.__email = email  # protected b/c of db updates automatic
         self.set_password_hash(password)
         self.__class__.list_of_accounts.append(self)
@@ -48,6 +50,14 @@ class Account:
         self.__password_hash = generate_password_hash(password=password,
                                                       method='sha256')
         save_db()
+
+    # Returns a pointer to an account, or None if not found
+    @classmethod
+    def get_account_by_id(cls, account_id):
+        for account in cls.list_of_accounts:
+            if account.account_id == account_id:
+                return account
+        return None
 
 
 def load_db():
