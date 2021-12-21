@@ -8,21 +8,17 @@ from application import app
 
 @app.route("/admin")
 @app.route("/admin/home")
-def admin_home():
+def admin_home():  # ashlee
     return render_template("admin/home.html")
 
 
 @app.route("/admin/login")
-def admin_login():
+def admin_login():  # ashlee
     return render_template("admin/login.html")
-
-@app.route("/admin/myrestaurant")
-def admin_myrestaurant():
-    return render_template("admin/restaurant.html")
 
 
 @app.route("/admin/register", methods=["GET", "POST"])
-def admin_register():
+def admin_register():  # ashlee
     def reg_error(e=None):
         if e is not None:
             if Account.EMAIL_ALREADY_EXISTS in e.args:
@@ -55,5 +51,10 @@ def admin_register():
 
 
 @app.route("/admin/transaction")
-def admin_transaction():
+def admin_transaction():   # yonglin
     return render_template("admin/transaction.html")
+
+
+@app.route("/admin/myrestaurant")
+def admin_myrestaurant():  # ruri
+    return render_template("admin/restaurant.html")
