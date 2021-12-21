@@ -1,5 +1,5 @@
 # Controller for the Admin side of things.
-from flask import render_template
+from flask import render_template, session
 
 from flask import Flask, render_template, request, redirect, url_for
 from application.Models.Admin import *
@@ -27,8 +27,8 @@ def admin_register():
         if (request.form["tosAgree"] == "agreed"
                 and request.form["password"] == request.form["passwordAgain"]):
             try:
-                Admin(request.form["name"], request.form["email"],
-                      request.form["password"])
+                account = Admin(request.form["name"], request.form["email"],
+                                request.form["password"])
             except Exception as e:
                 return reg_error()  # handle errors here
         else:
@@ -36,6 +36,8 @@ def admin_register():
 
         # Successfully registered
         # TODO: Link dashboard or something
+        # TODO: Set flask session
+        session["account"] = account.account_id
         return redirect(url_for("admin_home"))
 
     return render_template("admin/register.html")
