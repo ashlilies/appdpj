@@ -16,6 +16,10 @@ def admin_home():
 def admin_login():
     return render_template("admin/login.html")
 
+@app.route("/admin/myrestaurant")
+def admin_myrestaurant():
+    return render_template("admin/restaurant.html")
+
 
 @app.route("/admin/register", methods=["GET", "POST"])
 def admin_register():
