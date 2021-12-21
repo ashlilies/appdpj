@@ -34,6 +34,10 @@ def admin_register():
         else:
             return reg_error()
 
+        # Successfully registered
+        # TODO: Link dashboard or something
+        return redirect(url_for("admin_home"))
+
     return render_template("admin/register.html")
 
 
