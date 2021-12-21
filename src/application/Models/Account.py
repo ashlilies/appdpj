@@ -51,6 +51,14 @@ class Account:
                                                       method='sha256')
         save_db()
 
+    # Returns a pointer to an account, or None if not found
+    @classmethod
+    def get_account_by_id(cls, account_id):
+        for account in cls.list_of_accounts:
+            if account.account_id == account_id:
+                return account
+        return None
+
 
 def load_db():
     with shelve.open("accounts", 'c') as db:
