@@ -1,5 +1,8 @@
 .DS_Store
 
+# Our project
+fp-log.txt
+
 # Python
 __pycache__/
 *.pyc
