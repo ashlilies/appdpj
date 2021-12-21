@@ -35,3 +35,8 @@ def admin_register():
             return reg_error()
 
     return render_template("admin/register.html")
+
+
+@app.route("/admin/transaction")
+def admin_transaction():
+    return render_template("admin/transaction.html")

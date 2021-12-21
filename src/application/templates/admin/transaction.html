@@ -1,0 +1,33 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Admin Transaction History{% endblock %}
+
+{% block head %}
+<style>
+
+</style>
+{% endblock %}
+
+{% block content %}
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Username</th>
+      <th scope="col">Option</th>
+      <th scope="col">Price</th>
+      <th scope="col">Coupons</th>
+      <th scope="col">Rating</th>
+    </tr>
+  </thead>
+  <tbody>
+     {% for consumer in purchase_list %}
+    <tr>
+      <th scope="row">1</th>
+        <td>{{ consumer.get_username() }}</td>
+        <td>{{ consumer.get_option() }}</td>
+        <td>{{ consumer.get_price() }}</td>
+        <td>{{ consumer.get_rating() }}</td>
+    </tr>
+  </tbody>
+</table>
+{% endblock %}
