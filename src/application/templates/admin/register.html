@@ -1,0 +1,71 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Admin Sign Up{% endblock %}
+
+{% block head %}
+  <style>
+      #login-pane {
+          margin: 2rem;
+          margin-left: auto;
+          margin-right: 0;
+          padding: 2rem;
+          width: 50%;
+          background-color: rgba(200, 112, 231, 0.6);
+
+          height: 70%;
+      }
+
+      #login-pane > form {
+          text-align: center;
+      }
+
+      #login-pane > form > input {
+          margin-top: 10px;
+          margin-bottom: 10px;
+
+          background-color: inherit;
+          border: none;
+
+          box-shadow: 0 2px #77777777;
+      }
+
+      form > input#submitButton {
+          background-color: #37c24e;
+          padding: 10px;
+          width: 30%;
+      }
+
+      label > img {
+          width: 40px;
+          height: 40px;
+      }
+
+      #tosLabel {
+          font-size: 0.7rem;
+      }
+  </style>
+
+{% endblock %}
+{% block content %}
+  <div id="login-pane">
+    <h2>Sign Up</h2>
+    <form action="" method="post" class="login-form">
+      <label for="email"><img style="opacity: 60%" src={{ url_for("static", filename="account/person.png") }} /></label>
+      <input type="email" name="email" id="email"
+             placeholder="Business E-mail here" required><br>
+      <label for="name"><img style="opacity: 60%" src={{ url_for("static", filename="account/restaurant.png") }} /></label>
+      <input type="text" name="name" id="name"
+             placeholder="Restaurant Name" required><br>
+      <label for="password"><img src={{ url_for("static", filename="account/padlock.png") }} /></label>
+      <input type="password" name="password" id="password"
+             placeholder="Password" required><br>
+      <label for="passwordAgain"><img src={{ url_for("static", filename="account/padlock.png") }} /></label>
+      <input type="password" name="passwordAgain" id="passwordAgain"
+             placeholder="Re-enter Password" required><br>
+      <input type="checkbox" name="tosAgree" id="tosAgree" required>
+      <label for="tosAgree" id="tosLabel">By checking this, you agree with the
+                            Terms & Conditions of FoodyPulse.
+      </label><br>
+      <input type="submit" value="Sign Up" id="submitButton"><br>
+    </form>
+  </div>
+{% endblock %}

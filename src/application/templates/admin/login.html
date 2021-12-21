@@ -1,0 +1,59 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Admin Login{% endblock %}
+
+{% block head %}
+  <style>
+      #login-pane {
+          margin: 2rem;
+          margin-left: auto;
+          margin-right: 0;
+          padding: 2rem;
+          width: 50%;
+          background-color: rgba(200, 112, 231, 0.6);
+
+          height: 70%;
+      }
+
+      #login-pane > form {
+          text-align: center;
+      }
+
+      #login-pane > form > input {
+          margin-top: 10px;
+          margin-bottom: 10px;
+
+          background-color: inherit;
+          border: none;
+
+          box-shadow: 0 2px #77777777;
+      }
+
+      form > input#submitButton {
+          background-color: #37c24e;
+          padding: 10px;
+          width: 30%;
+      }
+
+      label > img {
+          width: 40px;
+          height: 40px;
+      }
+
+  </style>
+
+{% endblock %}
+{% block content %}
+  <div id="login-pane">
+    <h2>Log In</h2>
+    <form action="" method="post" class="login-form">
+      <label for="email"><img style="opacity: 60%" src={{ url_for("static", filename="account/person.png") }} /></label>
+      <input type="email" name="email" id="email"
+             placeholder="Business E-mail here" required><br>
+        <label for="password"><img src={{ url_for("static", filename="account/padlock.png") }} /></label>
+      <input type="password" name="password" id="password"
+             placeholder="Password" required><br>
+
+      <input type="submit" value="Sign Up" id="submitButton"><br>
+    </form>
+  </div>
+{% endblock %}

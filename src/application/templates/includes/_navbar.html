@@ -64,41 +64,75 @@
               <a class="nav-link" href="{{ url_for('contact_us') }}">Menu</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('contact_us') }}">Dashboard</a>
+              <a class="nav-link"
+                 href="{{ url_for('contact_us') }}">Dashboard</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('contact_us') }}">Feedback</a>
+              <a class="nav-link"
+                 href="{{ url_for('contact_us') }}">Feedback</a>
             </li>
           </ul>
         </div>
       </div>
       <!-- Aligned right -->
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button"
-             data-bs-toggle="dropdown">
-            Admin/Consumer</a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item"
-                   href={{ url_for("admin_home") }}>Admin</a></li>
-            <li><a class="dropdown-item" href={{ url_for("home") }}>Consumer</a>
-            </li>
-          </ul>
-        </li>
+      <div id="navbar-right-items" class="ms-auto">
+        <ul class="navbar-nav" id="consumerSideRight" hidden>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button"
+               data-bs-toggle="dropdown">
+              Admin/Consumer</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item"
+                     href={{ url_for("admin_home") }}>Admin</a></li>
+              <li><a class="dropdown-item"
+                     href={{ url_for("home") }}>Consumer</a>
+              </li>
+            </ul>
+          </li>
 
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button"
-             data-bs-toggle="dropdown">
-            My Account</a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Login</a></li>
-            <li><a class="dropdown-item" href="#">Sign Up</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Cart</a>
-        </li>
-      </ul>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button"
+               data-bs-toggle="dropdown">
+              My Account</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Login</a></li>
+              <li><a class="dropdown-item" href="#">Sign Up</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Cart</a>
+          </li>
+        </ul>
+
+
+        <ul class="navbar-nav" id="adminSideRight" hidden>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button"
+               data-bs-toggle="dropdown">
+              Admin/Consumer</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item"
+                     href={{ url_for("admin_home") }}>Admin</a></li>
+              <li><a class="dropdown-item"
+                     href={{ url_for("home") }}>Consumer</a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button"
+               data-bs-toggle="dropdown">
+              My Account</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href={{ url_for("admin_login") }}>Login</a></li>
+              <li><a class="dropdown-item" href={{ url_for("admin_register") }}>Sign Up</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Cart</a>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </nav>
