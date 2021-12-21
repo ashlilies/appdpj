@@ -20,6 +20,9 @@ from application.Controllers.consumer import *
 
 # todo: add a proper logging system
 
+# ALL BELOW are for the Practical LLS.
+# Please add new routes to Controllers. -ash
+
 @app.route('/contactus')
 def contact_us():
     # render a template
