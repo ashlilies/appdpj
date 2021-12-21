@@ -11,6 +11,8 @@ class Account:
     count_id = 0  # ADVANTAGE: Can handle soft-deleted accounts better
     list_of_accounts = []
 
+    EMAIL_ALREADY_EXISTS = "Account with email already exists"
+
     # Writes generic logs for BaseAccount stuff. Only INFO level for now.
     # Meant to be used outside Account class only for convenience's sake.
     # Possibly removed in a future edit.
@@ -28,7 +30,7 @@ class Account:
         if self.__class__.email_exists(email):
             logging.warning("BaseAccount: Account with email %s already exists"
                          % email)
-            raise Exception("Account with email already exists")
+            raise Exception(Account.EMAIL_ALREADY_EXISTS)
 
         Account.count_id += 1  # Update Account class count id
         self.account_id = Account.count_id  # actually set account's ID

@@ -19,18 +19,25 @@ def admin_login():
 
 @app.route("/admin/register", methods=["GET", "POST"])
 def admin_register():
-    def reg_error():
+    def reg_error(e=None):
+        if e is not None:
+            if Account.EMAIL_ALREADY_EXISTS in e.args:
+                return redirect("%s?emailExists=1" % url_for("admin_register"))
+        # Given js validation, shouldn't reach here by a normal user.
         return redirect("%s?error=1" % url_for("admin_register"))
 
     if request.method == "POST":
         # Check for errors in the form submitted
         if (request.form["tosAgree"] == "agreed"
+                and request.form["email"] != ""  # not blank email
+                and request.form["name"] != ""  # not blank restaurant name
+                and request.form["password"] != ""  # not blank pw
                 and request.form["password"] == request.form["passwordAgain"]):
             try:
                 account = Admin(request.form["name"], request.form["email"],
                                 request.form["password"])
             except Exception as e:
-                return reg_error()  # handle errors here
+                return reg_error(e)  # handle errors here
         else:
             return reg_error()
 
