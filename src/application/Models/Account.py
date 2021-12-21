@@ -1,4 +1,8 @@
 # FoodyPulse base account class - to be used for Admin and Consumer
+# By Ashlee
+# Fulfils: Create, Read, Update, Delete (?)
+
+
 from werkzeug.security import generate_password_hash, check_password_hash
 import shelve
 
