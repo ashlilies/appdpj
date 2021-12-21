@@ -237,22 +237,22 @@ def delete_customer(id):
 
 # Run before doing anything else; a la main() -ash
 with app.app_context():
-    # Get current customer and admin ID count to prevent overriding
-    with shelve.open("customer.db", 'c') as db:
-        if "count" in db:
-            print("Found customer count in db: %d" % db["count"])
-            Customer.count_id = db["count"]
-        else:
-            print("Initializing customer count in db")
-            db["count"] = Customer.count_id  # initialize it:
-
-    with shelve.open("user.db", 'c') as db:
-        if "count" in db:
-            print("Found user count in db: %d" % db["count"])
-            User.count_id = db["count"]
-        else:
-            print("Initializing user count in db")
-            db["count"] = User.count_id  # initialize it:
+    # # Get current customer and admin ID count to prevent overriding
+    # with shelve.open("customer.db", 'c') as db:
+    #     if "count" in db:
+    #         print("Found customer count in db: %d" % db["count"])
+    #         Customer.count_id = db["count"]
+    #     else:
+    #         print("Initializing customer count in db")
+    #         db["count"] = Customer.count_id  # initialize it:
+    #
+    # with shelve.open("user.db", 'c') as db:
+    #     if "count" in db:
+    #         print("Found user count in db: %d" % db["count"])
+    #         User.count_id = db["count"]
+    #     else:
+    #         print("Initializing user count in db")
+    #         db["count"] = User.count_id  # initialize it:
 
     app.run()
 
