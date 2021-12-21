@@ -18,6 +18,8 @@ class Account:
         self.account_id = self.__class__.count_id  # actually set account's ID
 
         self.__email = email  # protected b/c of db updates automatic
+
+        self.__password_hash = None
         self.set_password_hash(password)
         self.__class__.list_of_accounts.append(self)
         save_db()
