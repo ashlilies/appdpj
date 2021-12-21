@@ -2,6 +2,22 @@
 {% block title %}Admin Sign Up{% endblock %}
 
 {% block head %}
+  <script>
+  function main() {
+      /* Handle non-matching password or no ToS agree */
+
+      /* Handle error message sent by server */
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      if (urlParams.get("error"))
+          document.getElementById("errorMessage").hidden = false;
+  }
+
+  document.addEventListener("DOMContentLoaded", main);
+
+
+  </script>
+
   <style>
       #login-pane {
           margin: 2rem;
@@ -42,6 +58,10 @@
       #tosLabel {
           font-size: 0.7rem;
       }
+
+      #errorMessage {
+          color: red;
+      }
   </style>
 
 {% endblock %}
@@ -49,6 +69,7 @@
   <div id="login-pane">
     <h2>Sign Up</h2>
     <form action="" method="post" class="login-form">
+      <div id="errorMessage" hidden><label>Please check your fields and try again.</label><br></div>
       <label for="email"><img style="opacity: 60%" src={{ url_for("static", filename="account/person.png") }} /></label>
       <input type="email" name="email" id="email"
              placeholder="Business E-mail here" required><br>
@@ -61,7 +82,7 @@
       <label for="passwordAgain"><img src={{ url_for("static", filename="account/padlock.png") }} /></label>
       <input type="password" name="passwordAgain" id="passwordAgain"
              placeholder="Re-enter Password" required><br>
-      <input type="checkbox" name="tosAgree" id="tosAgree" required>
+      <input type="checkbox" name="tosAgree" id="tosAgree" value="agreed" required>
       <label for="tosAgree" id="tosLabel">By checking this, you agree with the
                             Terms & Conditions of FoodyPulse.
       </label><br>

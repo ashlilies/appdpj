@@ -9,6 +9,11 @@ class Account:
 
     def __init__(self, email, password):
         load_db()
+
+        # First, check if email already exists.
+        if self.__class__.email_exists(email):
+            raise Exception("Account with email already exists")
+
         self.count_id += 1
         self.__email = email  # protected b/c of db updates automatic
         self.set_password_hash(password)
@@ -25,6 +30,12 @@ class Account:
                     return account  # return account obj if correct pw
         return None   # else if no user-pw match return None
 
+    @classmethod
+    def email_exists(cls, email) -> bool:
+        for account in cls.list_of_accounts:
+            if account.__email == email:
+                return True
+        return False
 
     def get_email(self):
         return self.__email
