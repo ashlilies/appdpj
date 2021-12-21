@@ -4,7 +4,6 @@ from flask import render_template, session
 from flask import Flask, render_template, request, redirect, url_for
 from application.Models.Admin import *
 from application import app
-from application.Models.Logger import Logger
 
 
 @app.route("/admin")
@@ -23,10 +22,6 @@ def admin_register():
     def reg_error():
         return redirect("%s?error=1" % url_for("admin_register"))
 
-    # Set up a logger
-    from application.Models.Logger import Logger
-    logger = Logger("Registration")
-
     if request.method == "POST":
         # Check for errors in the form submitted
         if (request.form["tosAgree"] == "agreed"
@@ -35,17 +30,13 @@ def admin_register():
                 account = Admin(request.form["name"], request.form["email"],
                                 request.form["password"])
             except Exception as e:
-                logger.warn("Account creation error in initialization")
                 return reg_error()  # handle errors here
         else:
-            logger.warn("Account creation error - "
-                        "User didn't agree to ToS or password mismatch")
             return reg_error()
 
         # Successfully registered
         # TODO: Link dashboard or something
         # TODO: Set flask session
-        logger.info("Account created successfully")
         session["account"] = account.account_id
         return redirect(url_for("admin_home"))
 
