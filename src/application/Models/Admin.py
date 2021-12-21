@@ -10,5 +10,5 @@ class Admin(Account):
         super().__init__(email, password)
 
     # Add a transaction to a shop's list
-    def add_transaction(self, transaction: Transaction):
+    def add_transaction(self, transaction):
         self.list_of_transactions.append(transaction)
