@@ -18,6 +18,7 @@ from application.Controllers.admin import *
 from application.Controllers.consumer import *
 
 
+# todo: add a proper logging system
 
 @app.route('/contactus')
 def contact_us():
