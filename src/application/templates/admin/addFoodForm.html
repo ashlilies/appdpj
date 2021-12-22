@@ -8,20 +8,63 @@
         color:red;
       }
 
+      .model-header{
+        margin:10px;
+
+      }
       .modal-content{
         background-color:#ffd1d1;
+        padding:10px;
       }
       #image{
         position:relative;
+        bottom:10%;
         left:20px;
-        width:40px;
-        height:30px;
+        width:300px;
+        height:300px;
+        margin:5px;
+      }
+      #foodNameLabel{
+        position:relative;
+        right:25%;
+        top:30px;
       }
       #name{
         position:relative;
-        left:900px;
-        width:150px;
+        left:550px;
+        width:400px;
+        bottom: 300px;
       }
+
+      #priceLabel{
+        position:relative;
+        left:225px;
+        bottom: 160px;
+      }
+      #price{
+        width:400px;
+        height:40px;
+        position:relative;
+        left:277px;
+        bottom: 190px;
+      }
+
+      #allergyLabel{
+        position:relative;
+        left:200px;
+        bottom: 150px;
+      }
+
+      #allergy{
+        width:400px;
+        height:40px;
+        position:relative;
+        left:277px;
+        bottom:177px;
+
+
+      }
+
 
 
 
@@ -39,6 +82,7 @@
 <h1>HELO I AM CLARA NG KHAI EHAARN FREAK U</h1>
 <!--POP UP MODEL-->
 
+
 <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
      tabindex="-1">
         <div class="modal-dialog modal-xl">
@@ -54,19 +98,19 @@
                             {{ render_field(form.image, class="form-control") }}
                         </div>
                         <div class="form-group" id="name">
-                            <label>Food name</label>{{ render_field(form.item_name, class="form-control") }}
+                            <label id="foodNameLabel">Food name:</label>{{ render_field(form.item_name, class="form-control") }}
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" id="description">
                             {{ render_field(form.description, class="form-control") }}
                         </div>
-                        <div class="form-group">
-                            {{ render_field(form.price, class="form-check", style="list-style-type:none") }}
+                        <div class="form-group" id="price">
+                            <label id="priceLabel">Price:</label>{{ render_field(form.price, class="form-check", style="list-style-type:none") }}
                         </div>
                         <div id="prof">
-                            <div class="form-group">
-                                {{ render_field(form.allergy, class="form-control") }}
+                            <div class="form-group" id="allergy">
+                                <label id ="allergyLabel">Allergies:</label>{{ render_field(form.allergy, class="form-control") }}
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="specification">
                                 {{ render_field(form.specification, class="form-control") }}
                             </div>
                         </div>

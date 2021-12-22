@@ -4,6 +4,7 @@ from flask import render_template, request, redirect, url_for, session
 from application.Models.Admin import *
 from application import app
 from application.adminAddFoodForm import CreateFoodForm
+import shelve, application.Models.Food as Food
 
 
 # <------------------------- ASHLEE ------------------------------>
@@ -63,6 +64,27 @@ def food_management():
 def create_food():
     create_food_form = CreateFoodForm(request.form)
     if request.method == 'POST' and create_food_form.validate():
+        food_dict = {}
+        db = shelve.open('food.db', 'c')
+
+        try:
+            food_dict = db['Food']
+        except:
+            print("Error in retrieving food from food.db.")
+
+        user = Food.Food(create_food_form.image.data, create_food_form.item_name.data,
+                         create_food_form.description.data, create_food_form.price.data, create_food_form.allergy.data,
+                         create_food_form.specification.data)
+        food_dict[user.get_item_name()] = user
+        db['Food'] = food_dict
+
+        # Test codes
+        food_dict = db['Food']
+        user = food_dict[user.get_item_name()]
+        print(user.get_item_name(), "was stored in user.db successfully with user_id ==", user.get_item_name_())
+
+        db.close()
+
         return redirect(url_for('admin_home'))
     return render_template('admin/addFoodForm.html', form=create_food_form)
 
