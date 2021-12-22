@@ -4,32 +4,122 @@
 
 {% block head %}
 <style>
+  .bodydiv{
+    width: 80%;
+    margin: auto;
+  }
+  .settings{
+    display: inline-block;
+  }
+  #current{
+    text-decoration: underline;
+  }
+  ul{
+    list-style-type: none;
+  }
+  .table{
+    background-color: white;
+  }
+  .highlight{
+    color: red;
+    font-weight: bold;
+  }
+  .highlight:hover{
+    color: red;
+    font-weight: bold;
+    background-color: yellow;
+  }
 
 </style>
 {% endblock %}
 
 {% block content %}
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Username</th>
-      <th scope="col">Option</th>
-      <th scope="col">Price</th>
-      <th scope="col">Coupons</th>
-      <th scope="col">Rating</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for consumer in purchase_list %}
-    <tr>
-      <th scope="row">1</th>
-        <td>{{ consumer.get_username() }}</td>
-        <td>{{ consumer.get_option() }}</td>
-        <td>{{ consumer.get_price() }}</td>
-        <td>{{ consumer.get_rating() }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="bodydiv">
+  <div id="settings">
+    <div class="settingsrow">
+      <h1>Dashboard</h1>
+  <!--      choosing of month to display-->
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Month
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" href="#">Jan</a>
+          <a class="dropdown-item" href="#">Feb</a>
+          <a class="dropdown-item" href="#">March</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <!--table-->
+  <div>
+    <!--    table form to go back to dashboard? (might change to standardise with dashboard)-->
+    <div>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-item nav-link" href="#">Dashboard</a>
+            <a class="nav-item nav-link active" href="#">Transaction <span class="sr-only">(current)</span></a>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <div class="table">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Username</th>
+            <th scope="col">Option</th>
+            <th scope="col">Price</th>
+            <th scope="col">Coupons</th>
+            <th scope="col">Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+      <!--    {% for consumer in purchase_list %}-->
+      <!--      {% if ratings <= 2 %}-->
+      <!--      <tr>-->
+      <!--        <th scope="row">1</th>-->
+      <!--          <td>{{ consumer.get_accounts_ordered_from() }}</td>-->
+      <!--          <td>{{ consumer.get_option() }}</td>-->
+      <!--          <td>{{ consumer.get_price() }}</td>-->
+      <!--          <td>{{ consumer.get_used_coupons() }}</td>-->
+      <!--          <td>{{ consumer.get_rating() }}</td>-->
+      <!--      </tr>-->
+      <!--      {% else %}-->
+      <!--      <tr>-->
+      <!--        <th scope="row">1</th>          -->
+      <!--        <td>{{ consumer.get_accounts_ordered_from() }}</td>-->
+      <!--        <td>{{ consumer.get_option() }}</td>-->
+      <!--        <td>{{ consumer.get_price() }}</td>-->
+      <!--        <td>{{ consumer.get_used_coupons() }}</td>-->
+      <!--        <td>{{ consumer.get_rating() }}</td>-->
+      <!--      </tr>-->
+      <!--      {% endif %}-->
+      <!--    {% endfor %}-->
+
+          <tr class="highlight">
+            <th scope="row">1</th>
+            <td>Yuen Loong</td>
+            <td>Delivery</td>
+            <td>20.25</td>
+            <td>SPAGETIT</td>
+              <td>2</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>Yuen Loong</td>
+            <td>Delivery</td>
+            <td>20.25</td>
+            <td>SPAGETIT</td>
+              <td>2</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
 {% endblock %}
