@@ -39,16 +39,24 @@ class Account:
 
         self.__password_hash = None
         self.set_password_hash(password)
+
+        self.disabled = False  # Disabled or soft-deleted accounts
+
         Account.list_of_accounts.append(self)
 
         logging.info("BaseAccount: Successfully created account, email=%s"
                      % email)
         save_db()
 
+    # Str: returns email of any account easily.
+    def __str__(self):
+        return self.__email
+
     @classmethod
     def login_user(cls, email, password):
         logging.info("BaseAccount: Attempting to log in email=%s" % email)
         load_db()
+
         # O^n array search for account and return account object
         for account in cls.list_of_accounts:
             if account.__email == email:  # found account inside :D
@@ -68,6 +76,17 @@ class Account:
             if account.__email == email:
                 return True
         return False
+
+    # Check_active: check if account exists AND not disabled/deleted
+    @classmethod
+    def check_active(cls, account):
+        if account in cls.list_of_accounts:
+            if not account.disabled:
+                logging.info("BaseAccount: %s is active" % account.get_email())
+                return account
+            logging.info("BaseAccount: %s exists but disabled" % account.get_email())
+        logging.info("BaseAccount: %s does NOT exist in list of accounts" % account)
+        return None
 
     def get_email(self):
         return self.__email

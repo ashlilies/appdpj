@@ -12,7 +12,9 @@ class Admin(Account):
                      "email=%s, restaurant_name=%s, account_id=%s"
                      % (self.get_email(), self.restaurant_name,
                         self.account_id))
+        save_db()  # ALWAYS REMEMBER THIS!!!!!!!!
 
     # Add a transaction to a shop's list
     def add_transaction(self, transaction):
         self.list_of_transactions.append(transaction)
+        save_db()

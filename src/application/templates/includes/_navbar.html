@@ -102,6 +102,7 @@
           <li class="nav-item">
             <a class="nav-link" href="#">Cart</a>
           </li>
+
         </ul>
 
 
@@ -119,18 +120,29 @@
             </ul>
           </li>
 
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button"
-               data-bs-toggle="dropdown">
-              My Account</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href={{ url_for("admin_login") }}>Login</a></li>
-              <li><a class="dropdown-item" href={{ url_for("admin_register") }}>Sign Up</a></li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Cart</a>
-          </li>
+
+          {% if not is_account_id_in_session() %} {# Account is NOT logged in #}
+            <li class="nav-item dropdown notLoggedInMenu">
+              <a class="nav-link dropdown-toggle" href="#" role="button"
+                 data-bs-toggle="dropdown">
+                My Account</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href={{ url_for("admin_login") }}>Login</a></li>
+                <li><a class="dropdown-item" href={{ url_for("admin_register") }}>Sign Up</a></li>
+              </ul>
+            </li>
+
+          {% else %} {# Account is logged in #}
+            <li class="nav-item dropdown loggedInMenu">
+              <a class="nav-link dropdown-toggle" href="#" role="button"
+                 data-bs-toggle="dropdown">
+                Hi, {{ get_restaurant_name_by_id(session["account_id"]) }}</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href={{ url_for("admin_logout") }}>Log Out</a></li>
+              </ul>
+            </li>
+          {% endif %}
+
         </ul>
       </div>
     </div>

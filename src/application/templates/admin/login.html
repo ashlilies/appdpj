@@ -39,21 +39,46 @@
           height: 40px;
       }
 
+      #loginErrorMsg {
+          color: red;
+      }
+
   </style>
+
+  <script>
+      function main() {
+          /* Handle non-matching password or no ToS agree */
+
+          /* Handle error message sent by server */
+          const queryString = window.location.search;
+          const urlParams = new URLSearchParams(queryString);
+          if (urlParams.get("error"))
+              error();
+      }
+
+      function error() {
+          document.getElementById("email").style.boxShadow = "0 2px #ff000077";
+          document.getElementById("password").style.boxShadow = "0 2px #ff000077";
+          document.getElementById("loginErrorMsg").hidden = false;
+      }
+
+      document.addEventListener("DOMContentLoaded", main);
+  </script>
 
 {% endblock %}
 {% block content %}
   <div id="login-pane">
     <h2>Log In</h2>
     <form action="" method="post" class="login-form">
-      <label for="email"><img style="opacity: 60%" src={{ url_for("static", filename="account/person.png") }} /></label>
+      <label id="loginErrorMsg" hidden>Incorrect email or password.</label><br>
+      <label for="email"><img style="opacity: 60%" src={{ url_for("static", filename="account/person.png") }}/></label>
       <input type="email" name="email" id="email"
-             placeholder="Business E-mail here" required><br>
-        <label for="password"><img src={{ url_for("static", filename="account/padlock.png") }} /></label>
+             placeholder="Business E-mail" required><br>
+      <label for="password"><img src={{ url_for("static", filename="account/padlock.png") }}/></label>
       <input type="password" name="password" id="password"
              placeholder="Password" required><br>
 
-      <input type="submit" value="Sign Up" id="submitButton"><br>
+      <input type="submit" value="Log In" id="submitButton"><br>
     </form>
   </div>
 {% endblock %}

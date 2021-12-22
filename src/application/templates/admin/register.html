@@ -36,7 +36,6 @@
               pw1.style.boxShadow = "0 2px #ff000077";
               pw2.style.boxShadow = "0 2px #ff000077";
 
-              document.getElementById("errorMessage").hidden = false;
           }
 
           /* Did user check the ToS box? */
@@ -48,6 +47,8 @@
 
           if (!err)
               document.getElementById("registerForm").submit();
+          else
+              document.getElementById("errorMessage").hidden = false;
       }
 
       document.addEventListener("DOMContentLoaded", main);
