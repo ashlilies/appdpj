@@ -43,6 +43,21 @@ def admin_register():
     return render_template("admin/register.html")
 
 
+# APP ROUTE TO FOOD MANAGEMENT clara
+@app.route("/admin/foodManagement")
+def food_management():
+    return render_template('admin/foodManagement.html')
+
+
+# ADMIN FOOD FORM clara
+@app.route('/admin/addFoodForm', methods=['GET', 'POST'])
+def create_food():
+    create_food_form = CreateFoodForm(request.form)
+    if request.method == 'POST' and create_food_form.validate():
+        return redirect(url_for('admin_home'))
+    return render_template('admin/addFoodForm.html', form=create_food_form)
+
+
 @app.route("/admin/transaction")
 def admin_transaction():
     return render_template("admin/transaction.html")
