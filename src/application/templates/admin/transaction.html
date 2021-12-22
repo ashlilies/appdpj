@@ -30,9 +30,14 @@
     font-weight: bold;
   }
   .highlight:hover{
-    color: blue !important;
+    color: red !important;
     font-weight: bold;
     background-color: yellow;
+  }
+  .redhighlight:hover{
+    color: yellow !important;
+    font-weight: bold;
+    background-color: red !important;
   }
 
 </style>
@@ -73,21 +78,39 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="highlight">
+          <div class="redhighlight">
+            <tr class="highlight">
             <th scope="row">1</th>
             <td>Yuen Loong</td>
             <td>Delivery</td>
             <td>20.25</td>
             <td>SPAGETIT</td>
-              <td>2</td>
-          </tr>
+            <td>2</td>
+            </tr>
+          </div>
           <tr>
             <th scope="row">2</th>
             <td>Yin Loong</td>
             <td>Delivery</td>
             <td>50.25</td>
             <td>SPAGETIT</td>
-              <td>5</td>
+              <td>4</td>
+          </tr>
+          <tr>
+            <th scope="row">3</th>
+            <td>Ah Loong</td>
+            <td>Delivery</td>
+            <td>100.25</td>
+            <td>SPAGETIT</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>Yin Loong</td>
+            <td>Dine In</td>
+            <td>70.25</td>
+            <td>SPAGETIT</td>
+            <td>5</td>
           </tr>
       <!--    {% for consumer in purchase_list %}-->
       <!--      {% if ratings <= 2 %}-->

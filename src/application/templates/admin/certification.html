@@ -20,7 +20,18 @@
     }
     .modal-body{
         position: relative;
-        left: 30px;
+        padding: 30px;
+        display: inline;
+    }
+    .body-left{
+        position: relative;
+        width: 450px;
+        float: left;
+    }
+    .body-right{
+        position: relative;
+        width: 450px;
+        float: right;
     }
     .btn{
         position: relative;
@@ -43,33 +54,56 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <h5>Select an Option</h5>
-            <div class="checkbox">
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
-                  <label class="form-check-label" for="flexCheckCheckedDisabled">Tick the ones you serve</label>
+            <div class="body-left">
+                <h5>Select an Option</h5>
+                <div class="checkbox">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
+                      <label class="form-check-label" for="flexCheckCheckedDisabled">Tick the ones you serve</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="Halal" id="flexCheckDefault">
+                      <label class="form-check-label" for="flexCheckDefault">Halal</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="Vegetarian" id="flexCheckDefault">
+                      <label class="form-check-label" for="flexCheckDefault">Vegetarian</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="NoPorkNoLard" id="flexCheckDefault">
+                      <label class="form-check-label" for="flexCheckDefault">No Pork No Lard</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="Vegan" id="flexCheckDefault">
+                      <label class="form-check-label" for="flexCheckDefault">Vegan</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="NoBeef" id="flexCheckDefault">
+                      <label class="form-check-label" for="flexCheckDefault">No beef</label>
+                    </div>
                 </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="Halal" id="flexCheckDefault">
-                  <label class="form-check-label" for="flexCheckDefault">Halal</label>
+            </div>
+            <div class="body-right">
+                <div class="mb-3">
+                  <label for="formFile" class="form-label">Halal</label>
+                  <input class="form-control" type="file" id="formFile">
                 </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="Vegetarian" id="flexCheckDefault">
-                  <label class="form-check-label" for="flexCheckDefault">Vegetarian</label>
+                <div class="mb-3">
+                  <label for="formFile" class="form-label">Vegetarian</label>
+                  <input class="form-control" type="file" id="formFile">
                 </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="NoPorkNoLard" id="flexCheckDefault">
-                  <label class="form-check-label" for="flexCheckDefault">No Pork No Lard</label>
+                <div class="mb-3">
+                  <label for="formFile" class="form-label">No Pork, No Lard</label>
+                  <input class="form-control" type="file" id="formFile">
                 </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="Vegan" id="flexCheckDefault">
-                  <label class="form-check-label" for="flexCheckDefault">Vegan</label>
+                <div class="mb-3">
+                  <label for="formFile" class="form-label">Vegan</label>
+                  <input class="form-control" type="file" id="formFile">
                 </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="NoBeef" id="flexCheckDefault">
-                  <label class="form-check-label" for="flexCheckDefault">No beef</label>
+                <div class="mb-3">
+                  <label for="formFile" class="form-label">No beef</label>
+                  <input class="form-control" type="file" id="formFile">
                 </div>
-
             </div>
           </div>
           <div class="modal-footer">
@@ -78,6 +112,7 @@
         </div>
       </div>
     </div>
+<!--    uploading of files-->
     <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
       <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
