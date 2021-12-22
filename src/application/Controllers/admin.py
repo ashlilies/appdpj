@@ -45,4 +45,12 @@ def admin_register():
 
 @app.route("/admin/transaction")
 def admin_transaction():
-    return render_template("admin/transaction.html")
+    # users_dict = {}
+    # db = shelve.open('user.db', 'r')
+    # users_dict = db['Users']
+    # db.close()
+    # users_list = []
+    # for key in users_dict:
+    #     user = users_dict.get(key)
+    #     users_list.append(user)
+    return render_template('admin/transaction.html', count=len(users_list), users_list=users_list)

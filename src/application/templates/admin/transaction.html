@@ -21,7 +21,7 @@
     </tr>
   </thead>
   <tbody>
-     {% for consumer in purchase_list %}
+    {% for consumer in purchase_list %}
     <tr>
       <th scope="row">1</th>
         <td>{{ consumer.get_username() }}</td>
@@ -29,6 +29,7 @@
         <td>{{ consumer.get_price() }}</td>
         <td>{{ consumer.get_rating() }}</td>
     </tr>
+    {% endfor %}
   </tbody>
 </table>
 {% endblock %}
