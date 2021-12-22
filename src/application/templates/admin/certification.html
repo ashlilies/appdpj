@@ -1,0 +1,135 @@
+<!--xu yong lin-->
+{% extends "admin/admin_base.html" %}
+{% block title %}Restaurant Certification{% endblock %}
+
+{% block head %}
+<style>
+    h1 {
+      font-weight: bold;
+      position:relative;
+      left: 30px;
+      top:20px;
+      text-decoration-line: underline;
+      font-size:28px;
+      width:500px;
+    }
+    .modaldiv{
+        position:relative;
+        left: 30px;
+        top:100px;
+    }
+    .modal-body{
+        position: relative;
+        padding: 30px;
+        display: inline;
+    }
+    .body-left{
+        position: relative;
+        width: 450px;
+        float: left;
+    }
+    .body-right{
+        position: relative;
+        width: 450px;
+        float: right;
+    }
+    .btn{
+        position: relative;
+        left: 30px;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div>
+    <h1>Restaurant Details</h1>
+</div>
+<div class="modaldiv">
+    <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+      <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalToggleLabel">Restaurant Certifications</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="body-left">
+                <h5>Select an Option</h5>
+                <div class="checkbox">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
+                      <label class="form-check-label" for="flexCheckCheckedDisabled">Tick the ones you serve</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="Halal" id="flexCheckDefault">
+                      <label class="form-check-label" for="flexCheckDefault">Halal</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="Vegetarian" id="flexCheckDefault">
+                      <label class="form-check-label" for="flexCheckDefault">Vegetarian</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="NoPorkNoLard" id="flexCheckDefault">
+                      <label class="form-check-label" for="flexCheckDefault">No Pork No Lard</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="Vegan" id="flexCheckDefault">
+                      <label class="form-check-label" for="flexCheckDefault">Vegan</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="NoBeef" id="flexCheckDefault">
+                      <label class="form-check-label" for="flexCheckDefault">No beef</label>
+                    </div>
+                </div>
+            </div>
+            <div class="body-right">
+                <div class="mb-3">
+                  <label for="formFile" class="form-label">Halal</label>
+                  <input class="form-control" type="file" id="formFile">
+                </div>
+                <div class="mb-3">
+                  <label for="formFile" class="form-label">Vegetarian</label>
+                  <input class="form-control" type="file" id="formFile">
+                </div>
+                <div class="mb-3">
+                  <label for="formFile" class="form-label">No Pork, No Lard</label>
+                  <input class="form-control" type="file" id="formFile">
+                </div>
+                <div class="mb-3">
+                  <label for="formFile" class="form-label">Vegan</label>
+                  <input class="form-control" type="file" id="formFile">
+                </div>
+                <div class="mb-3">
+                  <label for="formFile" class="form-label">No beef</label>
+                  <input class="form-control" type="file" id="formFile">
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">Open second modal</button>
+          </div>
+        </div>
+      </div>
+    </div>
+<!--    uploading of files-->
+    <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+      <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalToggleLabel2">Upload your Certificates</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <h5>Attach the Necessary Certificates here.</h5>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-bs-dismiss="modal">Back to first</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Open first modal</a>
+</div>
+
+{% endblock %}

@@ -4,31 +4,139 @@
 
 {% block head %}
 <style>
+  .settings{
+    display: inline;
+  }
+  #current{
+    text-decoration: underline;
+  }
+  h1 {
+    font-weight: bold;
+    position:relative;
+    left: 30px;
+    top:20px;
+    text-decoration-line: underline;
+    font-size:28px;
+    width:150px;
+  }
+  .display{
+    padding: 30px;
+  }
+  .table{
+    background-color: white;
+  }
+  .highlight{
+    color: red;
+    font-weight: bold;
+  }
+  .highlight:hover{
+    color: red !important;
+    font-weight: bold;
+    background-color: yellow;
+  }
+  .redhighlight:hover{
+    color: yellow !important;
+    font-weight: bold;
+    background-color: red !important;
+  }
 
 </style>
 {% endblock %}
 
 {% block content %}
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Username</th>
-      <th scope="col">Option</th>
-      <th scope="col">Price</th>
-      <th scope="col">Coupons</th>
-      <th scope="col">Rating</th>
-    </tr>
-  </thead>
-  <tbody>
-     {% for consumer in purchase_list %}
-    <tr>
-      <th scope="row">1</th>
-        <td>{{ consumer.get_username() }}</td>
-        <td>{{ consumer.get_option() }}</td>
-        <td>{{ consumer.get_price() }}</td>
-        <td>{{ consumer.get_rating() }}</td>
-    </tr>
-  </tbody>
-</table>
+<div class="bodydiv">
+  <div id="settings">
+    <div class="settingsrow">
+      <h1>Dashboard</h1>
+  <!--      choosing of month to display(dropdown button)-->
+    </div>
+  </div>
+  <br>
+  <!--table-->
+  <div class="display">
+    <!--    table form to go back to dashboard? (might change to standardise with dashboard)-->
+    <div>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-item nav-link" href="#">Dashboard</a>
+            <a class="nav-item nav-link active" href="#">Transaction <span class="sr-only">(current)</span></a>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <div class="table">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Username</th>
+            <th scope="col">Option</th>
+            <th scope="col">Price</th>
+            <th scope="col">Coupons</th>
+            <th scope="col">Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+          <div class="redhighlight">
+            <tr class="highlight">
+            <th scope="row">1</th>
+            <td>Yuen Loong</td>
+            <td>Delivery</td>
+            <td>20.25</td>
+            <td>SPAGETIT</td>
+            <td>2</td>
+            </tr>
+          </div>
+          <tr>
+            <th scope="row">2</th>
+            <td>Yin Loong</td>
+            <td>Delivery</td>
+            <td>50.25</td>
+            <td>SPAGETIT</td>
+              <td>4</td>
+          </tr>
+          <tr>
+            <th scope="row">3</th>
+            <td>Ah Loong</td>
+            <td>Delivery</td>
+            <td>100.25</td>
+            <td>SPAGETIT</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>Yin Loong</td>
+            <td>Dine In</td>
+            <td>70.25</td>
+            <td>SPAGETIT</td>
+            <td>5</td>
+          </tr>
+      <!--    {% for consumer in purchase_list %}-->
+      <!--      {% if ratings <= 2 %}-->
+      <!--      <tr>-->
+      <!--        <th scope="row">1</th>-->
+      <!--          <td>{{ consumer.get_accounts_ordered_from() }}</td>-->
+      <!--          <td>{{ consumer.get_option() }}</td>-->
+      <!--          <td>{{ consumer.get_price() }}</td>-->
+      <!--          <td>{{ consumer.get_used_coupons() }}</td>-->
+      <!--          <td>{{ consumer.get_rating() }}</td>-->
+      <!--      </tr>-->
+      <!--      {% else %}-->
+      <!--      <tr>-->
+      <!--        <th scope="row">1</th>          -->
+      <!--        <td>{{ consumer.get_accounts_ordered_from() }}</td>-->
+      <!--        <td>{{ consumer.get_option() }}</td>-->
+      <!--        <td>{{ consumer.get_price() }}</td>-->
+      <!--        <td>{{ consumer.get_used_coupons() }}</td>-->
+      <!--        <td>{{ consumer.get_rating() }}</td>-->
+      <!--      </tr>-->
+      <!--      {% endif %}-->
+      <!--    {% endfor %}-->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
 {% endblock %}

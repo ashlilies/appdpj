@@ -132,8 +132,14 @@ def create_food():
 
 # <------------------------- YONGLIN ------------------------------>
 @app.route("/admin/transaction")
-def admin_transaction():   # yonglin
+def admin_transaction():
     return render_template("admin/transaction.html")
+
+
+# certification -- xu yong lin
+@app.route("/admin/certification")
+def admin_certification():
+    return render_template("admin/certification.html")
 
 
 # <------------------------- RURI ------------------------------>
