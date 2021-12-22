@@ -73,8 +73,7 @@ def create_food():
             print("Error in retrieving food from food.db.")
 
         user = Food.Food(create_food_form.image.data, create_food_form.item_name.data,
-                         create_food_form.description.data, create_food_form.price.data, create_food_form.allergy.data,
-                         create_food_form.specification.data)
+                         create_food_form.description.data, create_food_form.price.data, create_food_form.allergy.data)
         food_dict[user.get_item_name()] = user
         db['Food'] = food_dict
 

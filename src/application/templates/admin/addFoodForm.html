@@ -101,19 +101,22 @@
                             <label id="foodNameLabel">Food name:</label>{{ render_field(form.item_name, class="form-control") }}
                         </div>
                         <div class="form-group" id="description">
-                            {{ render_field(form.description, class="form-control") }}
+                             <label id="descriptionLabel">Description:</label>{{ render_field(form.description, class="form-control") }}
                         </div>
                         <div class="form-group" id="price">
                             <label id="priceLabel">Price:</label>{{ render_field(form.price, class="form-check", style="list-style-type:none") }}
                         </div>
                         <div id="prof">
                             <div class="form-group" id="allergy">
-                                <label id ="allergyLabel">Allergies:</label>{{ render_field(form.allergy, class="form-control") }}
+                                <label id="allergyLabel">Allergies:</label>{{ render_field(form.allergy,
+                                class="form-control") }}
                             </div>
-                            <div class="form-group" id="specification">
-                                {{ render_field(form.specification, class="form-control") }}
                             </div>
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label">Specification:</label>
+                                <textarea class="form-control"rows="3"></textarea>
+                            </div>
+
                         <input type="submit" value="Submit" class="btn btn-primary"/>
                     </form>
                 </div>
