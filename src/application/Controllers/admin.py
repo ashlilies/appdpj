@@ -46,3 +46,8 @@ def admin_register():
 @app.route("/admin/transaction")
 def admin_transaction():
     return render_template("admin/transaction.html")
+
+
+@app.route("/admin/certification")
+def admin_certification():
+    return render_template("admin/certification.html")

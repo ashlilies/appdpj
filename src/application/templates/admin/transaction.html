@@ -4,18 +4,23 @@
 
 {% block head %}
 <style>
-  .bodydiv{
-    width: 80%;
-    margin: auto;
-  }
   .settings{
-    display: inline-block;
+    display: inline;
   }
   #current{
     text-decoration: underline;
   }
-  ul{
-    list-style-type: none;
+  h1 {
+    font-weight: bold;
+    position:relative;
+    left: 30px;
+    top:20px;
+    text-decoration-line: underline;
+    font-size:28px;
+    width:150px;
+  }
+  .display{
+    padding: 30px;
   }
   .table{
     background-color: white;
@@ -25,7 +30,7 @@
     font-weight: bold;
   }
   .highlight:hover{
-    color: red;
+    color: blue !important;
     font-weight: bold;
     background-color: yellow;
   }
@@ -38,22 +43,12 @@
   <div id="settings">
     <div class="settingsrow">
       <h1>Dashboard</h1>
-  <!--      choosing of month to display-->
-      <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Month
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item" href="#">Jan</a>
-          <a class="dropdown-item" href="#">Feb</a>
-          <a class="dropdown-item" href="#">March</a>
-        </div>
-      </div>
+  <!--      choosing of month to display(dropdown button)-->
     </div>
   </div>
   <br>
   <!--table-->
-  <div>
+  <div class="display">
     <!--    table form to go back to dashboard? (might change to standardise with dashboard)-->
     <div>
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -78,6 +73,22 @@
           </tr>
         </thead>
         <tbody>
+          <tr class="highlight">
+            <th scope="row">1</th>
+            <td>Yuen Loong</td>
+            <td>Delivery</td>
+            <td>20.25</td>
+            <td>SPAGETIT</td>
+              <td>2</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>Yin Loong</td>
+            <td>Delivery</td>
+            <td>50.25</td>
+            <td>SPAGETIT</td>
+              <td>5</td>
+          </tr>
       <!--    {% for consumer in purchase_list %}-->
       <!--      {% if ratings <= 2 %}-->
       <!--      <tr>-->
@@ -99,23 +110,6 @@
       <!--      </tr>-->
       <!--      {% endif %}-->
       <!--    {% endfor %}-->
-
-          <tr class="highlight">
-            <th scope="row">1</th>
-            <td>Yuen Loong</td>
-            <td>Delivery</td>
-            <td>20.25</td>
-            <td>SPAGETIT</td>
-              <td>2</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Yuen Loong</td>
-            <td>Delivery</td>
-            <td>20.25</td>
-            <td>SPAGETIT</td>
-              <td>2</td>
-          </tr>
         </tbody>
       </table>
     </div>
