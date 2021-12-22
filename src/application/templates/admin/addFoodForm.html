@@ -1,65 +1,86 @@
 {% extends "admin/admin_base.html" %}
 {% block title %}Food Mnagement {% endblock %}
 
+
 {% block head %}
 <style>
-    #modal{
+      h1{
+        color:red;
+      }
+
+      .modal-content{
+        background-color:#ffd1d1;
+      }
+      #image{
         position:relative;
-        top:100px;
-        left:150px;
-        background-color:#F3C1EC;
-        height:650px;
-        width:800px;
-        border-radius:5px;
-        padding:20px;
-    }
+        left:20px;
+        width:40px;
+        height:30px;
+      }
+      #name{
+        position:relative;
+        left:900px;
+        width:150px;
+      }
 
-    .close{
-      position:relative;
-      bottom:50px;
-      right:-30px;
-    }
 
-    #image{
-      width:50px;
-      position:relative;
-      left:20px;
-    }
+
+
+
 
 </style>
+
 {% endblock %}
+
 
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
-<div id="modal">
 
-    <div class="modal-header">
-        <h1 class="display-4">Create User</h1>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+<h1>HELO I AM CLARA NG KHAI EHAARN FREAK U</h1>
+<!--POP UP MODEL-->
+
+<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
+     tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content" >
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalToggleLabel">Create User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <form method="POST" action="">
+                        <div class="form-group" id="image">
+                            {{ render_field(form.image, class="form-control") }}
+                        </div>
+                        <div class="form-group" id="name">
+                            <label>Food name</label>{{ render_field(form.item_name, class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ render_field(form.description, class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ render_field(form.price, class="form-check", style="list-style-type:none") }}
+                        </div>
+                        <div id="prof">
+                            <div class="form-group">
+                                {{ render_field(form.allergy, class="form-control") }}
+                            </div>
+                            <div class="form-group">
+                                {{ render_field(form.specification, class="form-control") }}
+                            </div>
+                        </div>
+                        <input type="submit" value="Submit" class="btn btn-primary"/>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal"
+                            data-bs-dismiss="modal">Open second modal
+                    </button>
+                </div>
+            </div>
+
     </div>
-
-    <form method="POST" action="">
-        <div class="form-group" id="image">
-            {{ render_field(form.image, class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ render_field(form.item_name, class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ render_field(form.description, class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ render_field(form.price, class="form-check", style="list-style-type:none") }}
-        </div>
-        <div id="prof">
-            <div class="form-group">
-                {{ render_field(form.allergy, class="form-control") }}
-            </div>
-            <div class="form-group">
-                {{ render_field(form.specification, class="form-control") }}
-            </div>
-        </div>
-        <input type="submit" value="Submit" class="btn btn-primary"/>
-    </form>
 </div>
+<a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Open first modal</a>
 {% endblock %}
