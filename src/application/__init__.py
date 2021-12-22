@@ -17,6 +17,20 @@ app.secret_key = "doofypulseEngineers"  # used for stuff e.g. Flask sessions
 from application.Controllers.admin import *
 from application.Controllers.consumer import *
 
+# todo: add a proper logging system
+import logging
+
+logging.basicConfig(level=logging.DEBUG,
+                    format="%(asctime)s [%(levelname)s] %(message)s",
+                    handlers=[
+                        logging.FileHandler("fp-log.txt"),
+                        logging.StreamHandler()
+                    ])
+logging.info("Logger configured!")
+
+
+# ALL BELOW are for the Practical LLS.
+# Please add new routes to Controllers. -ash
 
 
 @app.route('/contactus')
@@ -40,9 +54,11 @@ def create_user():
             except:
                 print("Error in retrieving Users from user.db.")
 
-            user = User(create_user_form.first_name.data, create_user_form.last_name.data,
-                             create_user_form.gender.data, create_user_form.membership.data,
-                             create_user_form.remarks.data)
+            user = User(create_user_form.first_name.data,
+                        create_user_form.last_name.data,
+                        create_user_form.gender.data,
+                        create_user_form.membership.data,
+                        create_user_form.remarks.data)
             users_dict[user.get_user_id()] = user
             db['Users'] = users_dict
             db["count"] = User.count_id  # VERY IMPORTANT - Save count ID back
@@ -50,7 +66,8 @@ def create_user():
             # Test codes
             # users_dict = db['Users']
             # user = users_dict[user.get_user_id()]
-            # print(user.get_first_name(), user.get_last_name(), "was stored in user.db successfully with user_id ==",
+            # print(user.get_first_name(), user.get_last_name(), "was stored
+            # in user.db successfully with user_id ==",
             #       user.get_user_id())
 
         return redirect(url_for('retrieve_users'))
@@ -71,8 +88,10 @@ def create_customer():
 
             customer = Customer(create_customer_form.first_name.data,
                                 create_customer_form.last_name.data,
-                                create_customer_form.gender.data, create_customer_form.membership.data,
-                                create_customer_form.remarks.data, create_customer_form.email.data,
+                                create_customer_form.gender.data,
+                                create_customer_form.membership.data,
+                                create_customer_form.remarks.data,
+                                create_customer_form.email.data,
                                 create_customer_form.date_joined.data,
                                 create_customer_form.address.data, )
             customers_dict[customer.get_customer_id()] = customer
@@ -97,7 +116,8 @@ def retrieve_users():
         user = users_dict.get(key)
         users_list.append(user)
 
-    return render_template('retrieveUsers.html', count=len(users_list), users_list=users_list)
+    return render_template('retrieveUsers.html', count=len(users_list),
+                           users_list=users_list)
 
 
 @app.route('/retrieveCustomers')
@@ -114,7 +134,8 @@ def retrieve_customers():
         customer = customers_dict.get(key)
         customers_list.append(customer)
 
-    return render_template('retrieveCustomers.html', count=len(customers_list), customers_list=customers_list)
+    return render_template('retrieveCustomers.html', count=len(customers_list),
+                           customers_list=customers_list)
 
 
 @app.route('/updateUser/<int:id>/', methods=['GET', 'POST'])
@@ -236,25 +257,24 @@ def delete_customer(id):
 
 # Run before doing anything else; a la main() -ash
 with app.app_context():
-    # Get current customer and admin ID count to prevent overriding
-    with shelve.open("customer.db", 'c') as db:
-        if "count" in db:
-            print("Found customer count in db: %d" % db["count"])
-            Customer.count_id = db["count"]
-        else:
-            print("Initializing customer count in db")
-            db["count"] = Customer.count_id  # initialize it:
-
-    with shelve.open("user.db", 'c') as db:
-        if "count" in db:
-            print("Found user count in db: %d" % db["count"])
-            User.count_id = db["count"]
-        else:
-            print("Initializing user count in db")
-            db["count"] = User.count_id  # initialize it:
+    # # Get current customer and admin ID count to prevent overriding
+    # with shelve.open("customer.db", 'c') as db:
+    #     if "count" in db:
+    #         print("Found customer count in db: %d" % db["count"])
+    #         Customer.count_id = db["count"]
+    #     else:
+    #         print("Initializing customer count in db")
+    #         db["count"] = Customer.count_id  # initialize it:
+    #
+    # with shelve.open("user.db", 'c') as db:
+    #     if "count" in db:
+    #         print("Found user count in db: %d" % db["count"])
+    #         User.count_id = db["count"]
+    #     else:
+    #         print("Initializing user count in db")
+    #         db["count"] = User.count_id  # initialize it:
 
     app.run()
-
 
 if __name__ == '__main__':
     app.run()

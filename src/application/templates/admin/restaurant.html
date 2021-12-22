@@ -1,0 +1,32 @@
+<!-- ruri flora newman -->
+
+{% extends "admin/admin_base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block head %}
+<style>
+    .nav-tabs {
+      margin-top: 50px;
+    }
+    .nav-link :active{
+            color: #66008B;
+    }
+
+    .nav-link{
+      color: #66008B;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <button class="nav-link active" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings" type="button" role="tab" aria-controls="nav-settings" aria-selected="true">Restaurant</button>
+    <button class="nav-link" id="nav-restrictions-tab" data-bs-toggle="tab" data-bs-target="#nav-restrictions" type="button" role="tab" aria-controls="nav-restrictions" aria-selected="false">Food Restrictions</button>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">...</div>
+  <div class="tab-pane fade" id="nav-restrictions" role="tabpanel" aria-labelledby="nav-restrictions-tab">...</div>
+</div>
+{% endblock %}
