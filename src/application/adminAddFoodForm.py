@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, SelectField, TextAreaField, validators
+from wtforms import Form, StringField, TextAreaField, validators
 
 
 class CreateFoodForm(Form):
@@ -13,7 +13,3 @@ class CreateFoodForm(Form):
     price = TextAreaField('price:', [validators.Optional()])
 
     allergy = TextAreaField('allergy:', [validators.Optional()])
-
-    specification = SelectField('specification:', [validators.DataRequired()],
-                                choices=[('', 'Select'), ('B', 'Beef'),
-                                         ('V', 'Vegetarian')], default='')

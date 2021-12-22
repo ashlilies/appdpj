@@ -1,4 +1,4 @@
-# Clara?
+# Clara
 
 class Food:
     def __init__(self, image, item_name, description, price, allergy,
