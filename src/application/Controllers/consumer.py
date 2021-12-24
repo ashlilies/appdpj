@@ -1,5 +1,7 @@
 # Controller for the Consumer side of things.
-# New ones go here, not in __init__.
+# Do NOT run directly. Run main.py in the appdpj/src/ directory instead.
+
+# New routes go here, not in __init__.
 
 # Fill your @app.routes below here...
 from flask import render_template, redirect, url_for

@@ -1,4 +1,7 @@
 # Controller for the Admin side of things.
+# Do NOT run directly. Run main.py in the appdpj/src/ directory instead.
+
+# New routes go here, not in __init__.
 
 from flask import render_template, request, redirect, url_for, session
 from application.Models.Admin import *
@@ -68,14 +71,12 @@ def admin_register():  # ashlee
 
 @app.route("/admin/logout")
 def admin_logout():
-    try:
-        logging.info("Admin %s logged out"
+    if "account_id" in session:
+        logging.info("admin_logout(): Admin %s logged out"
                      % gabi(session["account_id"]).get_email())
         del session["account_id"]
-    except (NameError, AttributeError) as e:
-        logging.info("admin_logout(): Failed logout - lag or click twice (%s)"
-                     % e)
-        pass  # user already logged out; lag or clicked twice
+    else:
+        logging.info("admin_logout(): Failed logout - lag or click twice")
 
     return redirect(url_for("admin_home"))
 
