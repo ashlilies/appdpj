@@ -110,6 +110,8 @@ class Account:
         return None
 
 
+# TODO: Please change to foodypulse .db?
+#       Since is a generic db that caches everything, including cascading.
 def load_db():
     Account.log("Attempting to load DB")
     with shelve.open("accounts", 'c') as db:
