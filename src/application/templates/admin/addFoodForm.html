@@ -1,133 +1,229 @@
 {% extends "admin/admin_base.html" %}
-{% block title %}Food Mnagement {% endblock %}
+{% block title %}Food Management{% endblock %}
 
 
 {% block head %}
-<style>
-      h1{
-        color:red;
+  <style>
+      h1 {
+          color: red;
       }
 
-      .model-header{
-        margin:10px;
-
-      }
-      .modal-content{
-        background-color:#ffd1d1;
-        padding:10px;
-      }
-      #image{
-        position:relative;
-        bottom:10%;
-        left:20px;
-        width:300px;
-        height:300px;
-        margin:5px;
-      }
-      #foodNameLabel{
-        position:relative;
-        right:25%;
-        top:30px;
-      }
-      #name{
-        position:relative;
-        left:550px;
-        width:400px;
-        bottom: 300px;
-      }
-
-      #priceLabel{
-        position:relative;
-        left:225px;
-        bottom: 160px;
-      }
-      #price{
-        width:400px;
-        height:40px;
-        position:relative;
-        left:277px;
-        bottom: 190px;
-      }
-
-      #allergyLabel{
-        position:relative;
-        left:200px;
-        bottom: 150px;
-      }
-
-      #allergy{
-        width:400px;
-        height:40px;
-        position:relative;
-        left:277px;
-        bottom:177px;
-
+      .model-header {
+          margin: 10px;
 
       }
 
+      .modal-content {
+          background-color: #ffd1d1;
+          padding: 10px;
+      }
+
+      #image {
+          position: relative;
+          bottom: 10%;
+          left: 20px;
+          width: 300px;
+          height: 300px;
+          margin: 5px;
+      }
+
+      #foodNameLabel {
+          position: relative;
+          right: 25%;
+          top: 30px;
+      }
+
+      #name {
+          position: relative;
+          left: 550px;
+          width: 400px;
+          bottom: 300px;
+      }
+
+      #priceLabel {
+          position: relative;
+          left: 225px;
+          bottom: 160px;
+      }
+
+      #price {
+          width: 400px;
+          height: 40px;
+          position: relative;
+          left: 277px;
+          bottom: 190px;
+      }
+
+      #allergyLabel {
+          position: relative;
+          left: 200px;
+          bottom: 150px;
+      }
+
+      #allergy {
+          width: 400px;
+          height: 40px;
+          position: relative;
+          left: 277px;
+          bottom: 177px;
 
 
+      }
 
 
+  </style>
+
+  <script>
+      /* Global variables */
+      var specDiv;
+      var specificationId;
+      var maxSpecificationId;
+
+      function main() {
+          /* Logic to generate new rows of text fields with unique IDs */
+          specDiv = document.getElementById("specificationDiv");
+          specificationId = 0;  /* defines the starting specification ID */
+          maxSpecificationId = 5;  /* max. no of specifications */
+
+          {#addNewSpecificationRow();  /* generate the first row */#}
+      }
+
+      function addNewSpecificationRow() {
+          /* are there too many specifications already? */
+          if (specificationId > maxSpecificationId) {
+              console.log("Too many specifications - can't add more");
+              alert("Too many specifications (" + parseInt(maxSpecificationId+1) + ")");
+              return;
+          }
+
+          /* get data from new specification text field */
+          spec = document.getElementById("newSpecification").value;
+
+          /* with the minus button */
+          var newWholeInputRow = document.createElement("div");
+
+          var newInputRow = document.createElement("input");
+          newInputRow.type = "text";
+          newInputRow.id = "specification" + specificationId++;
+          newInputRow.value = spec;
+          newWholeInputRow.appendChild(newInputRow);
+
+          var minusButton = document.createElement("img");
+          minusButton.src = "{{ url_for("static",
+                               filename="foodManagement/minus-button.png") }}";
+          {#minusButton.style = "width: 20px; height: 20px; margin-left: 5px;"#}
+          minusButton.width = 20;
+          minusButton.height = 20;
+          minusButton.style.marginLeft = "5px";
+          minusButton.onclick = function() {
+              removeSpecificationRow(this);
+          };
+          newWholeInputRow.appendChild(minusButton);
+
+          /* finally we append the whole row to our div */
+          document.getElementById("specificationDiv")
+              .appendChild(newWholeInputRow);
+      }
+
+      /*
+       * Removes a specification row.
+       * But we have to re-set all the specification IDs in order,
+       * or it wouldn't work again :(
+       */
+      function removeSpecificationRow(thisMinusButton) {
+          {#let textBox = thisMinusButton.previousElementSibling;#}
+          {#console.log(thisMinusButton.previousElementSibling);#}
+
+          /* remove this whole input field */
+          thisMinusButton.parentElement.remove();
+
+          /*
+           * Reorder the IDs and decrement global counter
+           */
+          --specificationId;
+          let specDiv = document.getElementById("specificationDiv");
+
+          /* dig through the DOM and set the IDs accordingly */
+          let i = 0;
+          /* count */
+          for (i = 0; i < specDiv.childElementCount; i++)
+              specDiv.childNodes[i].childNodes[0].id = "specification" + i;
+      }
 
 
-</style>
-
+      document.addEventListener("DOMContentLoaded", main);
+  </script>
 {% endblock %}
 
 
 {% block content %}
-{% from "includes/_formHelper.html" import render_field %}
+  {% from "includes/_formHelper.html" import render_field %}
 
-<h1>HELO I AM CLARA NG KHAI EHAARN FREAK U</h1>
-<!--POP UP MODEL-->
+  <h1>HELO I AM CLARA NG KHAI EHAARN FREAK U</h1>
+  <!--POP UP MODEL-->
 
 
-<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
-     tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content" >
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalToggleLabel">Create User</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
+  <div class="modal fade" id="exampleModalToggle" aria-hidden="true"
+       aria-labelledby="exampleModalToggleLabel"
+       tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalToggleLabel">Create User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"
+                  aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
 
-                    <form method="POST" action="">
-                        <div class="form-group" id="image">
-                            {{ render_field(form.image, class="form-control") }}
-                        </div>
-                        <div class="form-group" id="name">
-                            <label id="foodNameLabel">Food name:</label>{{ render_field(form.item_name, class="form-control") }}
-                        </div>
-                        <div class="form-group" id="description">
-                             <label id="descriptionLabel">Description:</label>{{ render_field(form.description, class="form-control") }}
-                        </div>
-                        <div class="form-group" id="price">
-                            <label id="priceLabel">Price:</label>{{ render_field(form.price, class="form-check", style="list-style-type:none") }}
-                        </div>
-                        <div id="prof">
-                            <div class="form-group" id="allergy">
-                                <label id="allergyLabel">Allergies:</label>{{ render_field(form.allergy,
+          <form id="addFoodForm" method="POST" action="">
+            <div class="form-group" id="image">
+              {{ render_field(form.image, class="form-control") }}
+            </div>
+            <div class="form-group" id="name">
+              <label id="foodNameLabel">Food
+                name:</label>{{ render_field(form.item_name, class="form-control") }}
+            </div>
+            <div class="form-group" id="description">
+              <label
+                  id="descriptionLabel">Description:</label>{{ render_field(form.description, class="form-control") }}
+            </div>
+            <div class="form-group" id="price">
+              <label
+                  id="priceLabel">Price:</label>{{ render_field(form.price, class="form-check", style="list-style-type:none") }}
+            </div>
+            <div id="prof">
+              <div class="form-group" id="allergy">
+                <label id="allergyLabel">Allergies:</label>{{ render_field(form.allergy,
                                 class="form-control") }}
-                            </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Specification:</label>
-                                <textarea class="form-control"rows="3"></textarea>
-                            </div>
-
-                        <input type="submit" value="Submit" class="btn btn-primary"/>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal"
-                            data-bs-dismiss="modal">Open second modal
-                    </button>
-                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Specification:</label>
+              <div id="specificationDiv"></div>
+              <!-- Only to be used for JS. Not to be sent to our server! -->
+              <input type="text" id="newSpecification"
+                     placeholder="Type specification here...">
+              <label for="newSpecification">
+                <img src={{ url_for("static",
+                          filename="foodManagement/plus-button.png") }}
+                         onclick="addNewSpecificationRow()"
+                     style="width: 20px; height: 20px;"/>
+              </label>
             </div>
 
+            <input type="submit" value="Submit" class="btn btn-primary"/>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" data-bs-target="#exampleModalToggle2"
+                  data-bs-toggle="modal"
+                  data-bs-dismiss="modal">Open second modal
+          </button>
+        </div>
+      </div>
+
     </div>
-</div>
-<a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Open first modal</a>
+  </div>
+  <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle"
+     role="button">Open first modal</a>
 {% endblock %}
