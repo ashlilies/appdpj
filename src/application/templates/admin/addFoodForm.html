@@ -83,7 +83,7 @@
           /* Logic to generate new rows of text fields with unique IDs */
           specDiv = document.getElementById("specificationDiv");
           specificationId = 0;  /* defines the starting specification ID */
-          maxSpecificationId = 5;  /* max. no of specifications */
+          maxSpecificationId = {{ MAX_SPECIFICATION_ID }};  /* max. no of specifications */
 
           {#addNewSpecificationRow();  /* generate the first row */#}
       }
@@ -104,7 +104,8 @@
 
           var newInputRow = document.createElement("input");
           newInputRow.type = "text";
-          newInputRow.id = "specification" + specificationId++;
+          newInputRow.id = "specification" + specificationId;
+          newInputRow.name = "specification" + specificationId++;
           newInputRow.value = spec;
           newWholeInputRow.appendChild(newInputRow);
 
@@ -146,8 +147,10 @@
           /* dig through the DOM and set the IDs accordingly */
           let i = 0;
           /* count */
-          for (i = 0; i < specDiv.childElementCount; i++)
+          for (i = 0; i < specDiv.childElementCount; i++) {
               specDiv.childNodes[i].childNodes[0].id = "specification" + i;
+              specDiv.childNodes[i].childNodes[0].name = "specification" + i;
+          }
       }
 
 
