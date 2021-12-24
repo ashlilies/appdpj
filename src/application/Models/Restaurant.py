@@ -1,4 +1,5 @@
 # ruri flora newman
+from application.Models.Account import save_db
 from application.Models.Food import Food
 
 class Restaurant:
@@ -22,9 +23,12 @@ class Restaurant:
         self.deli_fee68 = deli_fee68
         self.table_plan = table_plan
 
+        save_db()
+
     # Add food from restaurant menu
     def add_food(self, food: Food):
         self.__list_of_food.append(food)
+        save_db()
 
     # Remove food from restaurant menu
     def remove_food(self, name_of_food_to_remove: str):
@@ -33,3 +37,4 @@ class Restaurant:
             if food.name == name_of_food_to_remove:
                 self.__list_of_food.remove(food)
                 del food
+        save_db()

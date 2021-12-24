@@ -1,4 +1,6 @@
 # Clara
+from application.Models.Account import save_db
+
 
 class Food:
     def __init__(self, image, name, description, price, allergy,
@@ -9,6 +11,8 @@ class Food:
         self.price = price
         self.allergy = allergy
         self.specification = specification
+
+        save_db()
 
     # Get the image as a file?
     def get_image(self):

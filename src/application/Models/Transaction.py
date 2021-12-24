@@ -1,7 +1,8 @@
 # xu yong lin
 
 class Transaction:
-    def __init__(self, accounts_ordered_from, option, price, used_coupons, ratings):
+    def __init__(self, accounts_ordered_from, option, price, used_coupons,
+                 ratings):
         self.__accounts_ordered_from = accounts_ordered_from
         self.__option = option
         self.__price = float(price)
@@ -37,4 +38,3 @@ class Transaction:
 
     def get_ratings(self):
         return self.__ratings
-
