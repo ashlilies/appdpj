@@ -105,10 +105,24 @@
         bottom:33px;
     }
 
+    #newTopping{
+        position:relative;
+        left:300px;
+        bottom:50px;
+    }
+
+    #plusTopping{
+        position:relative;
+        left:350px;
+        bottom:50px;
+    }
 
 
 
 </style>
+
+
+
 
 <script>
       /* Global variables */
@@ -195,6 +209,94 @@
       }
 
 
+
+
+/*FOR ADDING TOPPINGS*/
+ /* Global variables */
+      var topDiv;
+      var toppingId;
+      var maxToppingId;
+
+
+      function mains() {
+          /* Logic to generate new rows of text fields with unique IDs */
+          topDiv = document.getElementById("toppingDiv");
+          toppingId = 0;  /* defines the starting topping ID */
+          maxToppingId = {{ MAX_TOPPING_ID }};  /* max. no of toppings */
+
+          {#addNewToppingRow();  /* generate the first row */#}
+      }
+
+      function addNewToppingRow() {
+          /* are there too many toppings already? */
+          if (toppingId > maxToppingId) {
+              console.log("Too many toppings - can't add more");
+              alert("Too many toppings (" + parseInt(maxToppingId+1) + ")");
+              return;
+          }
+
+          /* get data from new topping text field */
+          top = document.getElementById("newTopping").value;
+f
+          /* with the minus button */
+          var wholeNewInputRow = document.createElement("div");
+
+          var newInputs = document.createElement("input");
+          newInputs.type = "text";
+          newInputs.id = "topping" + toppingId;
+          newInputs.name = "topping" + toppingId++;
+          newInputs.style.margin = "4px";
+          newInputs.style.borderRadius = "3px";
+          newInputs.style.borderColor = "grey";
+          newInputs.style.borderWidth = "thin";
+          newInputs.value = top;
+          wholeNewInputRow.appendChild(newInputs);
+
+          var buttonMinus = document.createElement("img");
+          buttonMinus.src = "{{ url_for("static",
+                               filename="foodManagement/minus-button.png") }}";
+          {#buttonMinus.style = "width: 20px; height: 20px; margin-left: 5px;"#}
+          buttonMinus.width = 20;
+          buttonMinus.height = 20;
+          buttonMinus.style.marginLeft = "5px";
+          buttonMinus.onclick = function() {
+              removeToppingRow(this);
+          };
+          wholeNewInputRow.appendChild(buttonMinus);
+
+          /* finally we append the whole row to our div */
+          document.getElementById("toppingDiv")
+              .appendChild(wholeNewInputRow);
+      }
+
+      /*
+       * Removes a topping row.
+       * But we have to re-set all the topping IDs in order,
+       * or it wouldn't work again :(
+       */
+      function removeToppingRow(thisButtonMinus) {
+          {#let textBox = thisButtonMinus.previousElementSibling;#}
+          {#console.log(thisButtonMinus.previousElementSibling);#}
+
+          /* remove this whole input field */
+          thisButtonMinus.parentElement.remove();
+
+          /*
+           * Reorder the IDs and decrement global counter
+           */
+          --toppingId;
+          let topDiv = document.getElementById("toppingDiv");
+
+          /* dig through the DOM and set the IDs accordingly */
+          let i = 0;
+          /* count */
+          for (i = 0; i < topDiv.childElementCount; i++) {
+              topDiv.childNodes[i].childNodes[0].id = "topping" + i;
+              topDiv.childNodes[i].childNodes[0].name = "topping" + i;
+          }
+      }
+
+
       document.addEventListener("DOMContentLoaded", main);
 
 </script>
@@ -250,6 +352,23 @@
                             style="width: 20px; height: 20px;"/>
                         </label>
                     </div>
+
+                     <div class="mb-3">
+                        <label id="toppingLabel" class="form-label">Add/Remove Topping:</label>
+                        <div id="toppingDiv"></div>
+                        <!-- Only to be used for JS. Not to be sent to our server! -->
+                        <input type="text" id="newTopping"
+                               placeholder="Type toppings here...">
+                        <label for="newTopping">
+                            <img id="plusTopping" src={{ url_for("static",
+                            filename="foodManagement/plus-button.png") }}
+                            onclick="addNewToppingRow()"
+                            style="width: 20px; height: 20px;"/>
+                        </label>
+                    </div>
+
+
+
                     <div class="form-group" id="description">
                         <label id="descriptionLabel">Description:</label>{{ render_field(form.description,
                         class="form-control") }}

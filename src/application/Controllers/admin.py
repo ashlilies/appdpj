@@ -127,7 +127,7 @@ def food_management():
 
 
 MAX_SPECIFICATION_ID = 5  # for adding food
-
+MAX_TOPPING_ID = 8
 
 # ADMIN FOOD FORM clara
 @app.route('/admin/addFoodForm', methods=['GET', 'POST'])
