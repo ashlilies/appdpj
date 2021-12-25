@@ -9,28 +9,29 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-<style>
-    body {
-    background-color: #9c9c9c;
+
+    <style>
+    {
+        box-sizing: border-box;
+    }
+    /* Set additional styling options for the columns*/
+    .column {
+    float: left;
+    width: 50%;
     margin-bottom: 50px;
     }
 
-    .nav-tabs {
-      margin-top: 50px;
+    .row:after {
+    content: "";
+    display: table;
+    clear: both;
     }
-    .nav-link :active{
-            color: #66008B;
-    }
-
-    .nav-link{
-      color: #66008B;
-    }
-    form{
+    .row{
         margin-top: 50px;
         margin-right: 50px;
         margin-left: 50px;
     }
-    .form-group{
+.form-group{
         margin-top: 5px;
     }
     .form-row{
@@ -47,113 +48,100 @@
         font-size: 15.5px;
     }
     #rest_logo{
-        margin-left: 340px;
+        margin-left: 260px;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<nav>
+<!-- start of navigation bar-->
+ <nav>
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
     <button class="nav-link active" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings" type="button" role="tab" aria-controls="nav-settings" aria-selected="true">Restaurant Information</button>
     <button class="nav-link" id="nav-restrictions-tab" data-bs-toggle="tab" data-bs-target="#nav-restrictions" type="button" role="tab" aria-controls="nav-restrictions" aria-selected="false">Food Restrictions</button>
   </div>
 </nav>
-<div class="tab-content" id="nav-tabContent">
+ <div class="tab-content" id="nav-tabContent">
   <div class="tab-pane fade show active" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">
 
-      <h3 style="margin-top: 50px; margin-left: 20px"><u>Your Restaurant's details: </u></h3>
-  <form>
-  <div class="form-row">
-    <div class="form-group col-md-5">
-      <label for="rest_name">Restaurant Name</label>
-      <input type="text" class="form-control" id="rest_name" placeholder="The Saffron Boutique">
-    </div>
-    <div class="form-group col-md-5">
-      <label style="margin-left: 300px;" for="rest_logo">Logo</label>
-      <input type="file" id="rest_logo" name="logo">
+
+
+<!-- start of division row-->
+  <h3 style="margin-top: 50px; margin-left: 5px"><u>Your Restaurant's details: </u></h3>
+
+    <div class="row">
+        <div class="column" style="background-color:#FFB695;"> <!--start of column one content-->
+             <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="rest_name">Restaurant Name</label>
+                  <input type="text" class="form-control" id="rest_name" placeholder="The Saffron Boutique">
+                </div>
+             </div>
+             <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="contact">Contact Number</label>
+                  <input type="tel" class="form-control" id="contact" placeholder="89898989">
+                </div>
+             </div>
+
+             <div class="form-row">
+                <div class="form-group col-md-3">
+                  <label for="openhour">Opening Hours</label>
+                    <input id="openhour" class="form-control" type="time" value="11:00">
+                </div>
+                <div class="form-group col-md-1">
+                    <label class="closehour" for="closehour">DUMMY TEXT</label>
+                    <h6 style="margin-top: -13px; margin-left: 12px;">TO</h6>
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="closehour" for="closehour">DUMMY TEXT</label>
+                    <input id="closehour" class="form-control" type="time" value="23:00">
+                </div>
+             </div>
+
+             <div class="form-row">
+
+                <label for="inputAddress">Address</label>
+                <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
+             </div>
+
+             <div class="form-row">
+                <div class="form-group col-md-10">
+                    <label for="inputAddress2">Address 2</label>
+                    <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
+                </div>
+                <div class="form-group col-md-2">
+                  <label for="postal">Postal Code</label>
+                  <input type="text" class="form-control" id="postal" placeholder="123456">
+                </div>
+             </div>
+            <div class="form-row">
+                <div class="form-group col-md-8">
+                  <label for="bank">Bank Account Number</label>
+                  <input type="text" class="form-control" id="bank">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                  <label for="desc">Description</label>
+                    <textarea class="form-control" id="desc"></textarea>
+                </div>
+            </div>
+
+
+        </div> <!--end of column one content-->
+
+        <div class="column" style="background-color:#96D1CD;">
+              <div class="form-row">
+                  <div class="form-group col-md-5">
+                      <label style="margin-left: 285px ;" for="rest_logo">Logo</label>
+                      <input type="file" id="rest_logo" name="logo">
+                  </div>
+              </div>
+        </div>
     </div>
 
-  </div>
-  <div class="form-row">
-     <div class="form-group col-md-5">
-      <label for="contact">Contact Number</label>
-      <input type="tel" class="form-control" id="contact" placeholder="89898989">
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group col-md-2">
-      <label for="openhour">Opening Hours</label>
-        <input id="openhour" class="form-control" type="time" value="11:00">
-    </div>
-    <div class="form-group col-md-2">
-        <label class="closehour" for="closehour">DUMMY TEXT</label>
-        <input id="closehour" class="form-control" type="time" value="23:00">
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label for="inputAddress">Address</label>
-    <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
-
-  <div class="form-row">
-    <div class="form-group col-md-10">
-        <label for="inputAddress2">Address 2</label>
-        <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
-    </div>
-    <div class="form-group col-md-2">
-      <label for="postal">Postal Code</label>
-      <input type="text" class="form-control" id="postal" placeholder="123456">
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group col-md-6">
-      <label for="bank">Bank Account Number</label>
-      <input type="text" class="form-control" id="bank">
-    </div>
-  </div>
-
-<h4>Delivery charges over distance ($):</h4>
-
-  <div class="form-row">
-    <div class="form-group col-md-1">
-        <label for="del12"><b>1-2km:</b></label>
-        <input type="text" class="form-control" id="del12" placeholder="1.20">
-    </div>
-      <div class="form-group col-md-1">
-        <label for="del12"><b>2-4km:</b></label>
-        <input type="text" class="form-control" id="del12" placeholder="2.40">
       </div>
-      <div class="form-group col-md-1">
-        <label for="del12"><b>4-6km:</b></label>
-        <input type="text" class="form-control" id="del12" placeholder="4.80">
-      </div>
-      <div class="form-group col-md-1">
-        <label for="del12"><b>6-8km:</b></label>
-        <input type="text" class="form-control" id="del12" placeholder="8.80">
-      </div>
-      <div class="form-group col-md-1">
-        <label for="del12"><b>>9km:</b></label>
-        <input type="text" class="form-control" id="del12" placeholder="10.00">
-      </div>
-  </div>
+     </div>
 
-
-
-
-  <div class="form-group">
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="gridCheck">
-      <label class="form-check-label" for="gridCheck">
-        Check me out
-      </label>
-    </div>
-  </div>
-  <button type="submit" class="btn btn-primary">Update</button>
-</form>
-  </div>
-
-{# start of food restrictions tab#}
-  <div class="tab-pane fade" id="nav-restrictions" role="tabpanel" aria-labelledby="nav-restrictions-tab">...</div>
-</div>
 {% endblock %}
