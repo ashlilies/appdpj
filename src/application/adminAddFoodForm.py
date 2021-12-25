@@ -5,11 +5,11 @@ class CreateFoodForm(Form):
     image = StringField('', [validators.Length(min=1, max=150),
                              validators.DataRequired()])
 
-    item_name = StringField('Dish name:', [validators.Length(min=1, max=10),
+    item_name = StringField('', [validators.Length(min=1, max=10),
                                            validators.DataRequired()])
 
-    description = TextAreaField('description:', [validators.Optional()])
+    description = TextAreaField('', [validators.Optional()])
 
-    price = TextAreaField('price:', [validators.Optional()])
+    price = TextAreaField('', [validators.Optional()])
 
-    allergy = TextAreaField('allergy:', [validators.Optional()])
+    allergy = TextAreaField('', [validators.Optional()])
