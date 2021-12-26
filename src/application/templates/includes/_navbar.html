@@ -161,6 +161,7 @@
                       <input type="password" name="updateSettingsPw" id="updateSettingsPw"><br>
                       <hr>
                       <div class="form-group row">
+                        <label for="changeEmail">Current Email: <b>{{ get_account_email(is_account_id_in_session()) }}</b></label>
                         <label for="changeEmail" class="col-form-label">New Email: </label>
                         <input type="text" name="changeEmail" id="changeEmail"><br>
                       </div>

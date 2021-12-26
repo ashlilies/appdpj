@@ -20,6 +20,10 @@ def admin_home():  # ashlee
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():  # ashlee
+    # if already logged in, what's the point?
+    if is_account_id_in_session():
+        return redirect(url_for("admin_home"))
+
     def login_error():
         return redirect("%s?error=1" % url_for("admin_login"))
 
@@ -38,6 +42,10 @@ def admin_login():  # ashlee
 
 @app.route("/admin/register", methods=["GET", "POST"])
 def admin_register():  # ashlee
+    # if already logged in, what's the point?
+    if is_account_id_in_session():
+        return redirect(url_for("admin_home"))
+
     def reg_error(ex=None):
         if ex is not None:
             if Account.EMAIL_ALREADY_EXISTS in ex.args:
@@ -85,6 +93,7 @@ def admin_logout():
 @app.route("/admin/updateAccount", methods=["GET", "POST"])
 def admin_update_account():
     # TODO: Implement admin account soft-deletion
+    #       and update restaurant name
 
     if request.method == "GET":
         return "fail"
@@ -152,6 +161,14 @@ def get_restaurant_name_by_id(id):
     return rname
 
 
+# Used for the Account Settings pane.
+def get_account_email(account: Account):
+    try:
+        return account.get_email()
+    except Exception as e:
+        logging.info(e)
+        return "ERROR"
+
 # TODO; store Flask session info in shelve db
 
 # Activate global function for jinja
@@ -159,6 +176,7 @@ app.jinja_env.globals.update(is_account_id_in_session=is_account_id_in_session)
 # app.jinja_env.globals.update(gabi=gabi)
 app.jinja_env.globals.update(
     get_restaurant_name_by_id=get_restaurant_name_by_id)
+app.jinja_env.globals.update(get_account_email=get_account_email)
 
 
 # <------------------------- CLARA ------------------------------>
