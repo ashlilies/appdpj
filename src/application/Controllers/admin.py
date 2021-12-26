@@ -166,18 +166,13 @@ def create_food():
     # using the WTForms way to get the data
     if request.method == 'POST' and create_food_form.validate():
         # Create a new food object
-        food = Food(create_food_form.image.data,
-                    create_food_form.item_name.data,
+        food = Food(create_food_form.item_name.data,
                     create_food_form.description.data,
                     create_food_form.price.data, create_food_form.allergy.data)
 
         food.specification = get_specs()  # set specifications as a List
-        return redirect(url_for('admin_home'))
-
         food.topping = get_top()  # set topping as a List
         return redirect(url_for('admin_home'))
-
-
 
     return render_template('admin/addFoodForm.html', form=create_food_form,
                            MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,

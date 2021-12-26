@@ -103,29 +103,38 @@
 
     #descriptionLabel{
         position:relative;
-        bottom:40px;
+        bottom:60px;
         left:15px;
     }
     #description{
         position:relative;
         width:800px;
         left:23px;
-        bottom:33px;
+        bottom:53px;
     }
-
+    #toppingLabel{
+        position:relative;
+        left:450px;
+        bottom:180px;
+    }
     #newTopping{
         position:relative;
-        left:300px;
-        bottom:50px;
+        left:530px;
+        width:190px;
+        bottom:173px;
     }
 
     #plusTopping{
         position:relative;
-        left:350px;
-        bottom:50px;
+        left:540px;
+        bottom:175px;
     }
 
-
+    #toppingDiv{
+        position:relative;
+        left:540px;
+        bottom:185px;
+    }
 
 </style>
 
@@ -246,7 +255,8 @@
           }
 
           /* get data from new topping text field */
-          top = document.getElementById("newTopping").value;
+          tops = document.getElementById("newTopping").value;
+
 
           /* with the minus button */
           var wholeNewInputRow = document.createElement("div");
@@ -259,7 +269,7 @@
           newInputs.style.borderRadius = "3px";
           newInputs.style.borderColor = "grey";
           newInputs.style.borderWidth = "thin";
-          newInputs.value = top;
+          newInputs.value = tops;
           wholeNewInputRow.appendChild(newInputs);
 
           var buttonMinus = document.createElement("img");
@@ -277,6 +287,7 @@
           /* finally we append the whole row to our div */
           document.getElementById("toppingDiv")
               .appendChild(wholeNewInputRow);
+
       }
 
       /*
@@ -331,8 +342,9 @@
             <div class="modal-body">
 
                 <form method="POST" action="">
+
                 <div class="mb-3">
-                  <input class="form-control" type="file" id="uploadImage" placeholder="Upload Image Here"  />
+                  <input class="form-control" type="file" id="uploadImage" accept="image/*" placeholder="Upload Image Here" required/>
                 </div>
                     <div class="form-group" id="name">
                         <label id="foodNameLabel">Food name:</label>{{ render_field(form.item_name,
@@ -343,12 +355,17 @@
                         <label id="priceLabel">Price(SGD):</label>{{ render_field(form.price, class="form-check",
                         style="list-style-type:none") }}
                     </div>
+
+
                     <div id="prof">
                         <div class="form-group" id="allergy">
                             <label id="allergyLabel">Allergies:</label>{{ render_field(form.allergy,
                             class="form-control") }}
                         </div>
                     </div>
+
+
+
                     <div class="mb-3">
                         <label id="specificationLabel" class="form-label">Specification:</label>
                         <div id="specificationDiv"></div>
@@ -362,8 +379,7 @@
                             style="width: 20px; height: 20px;"/>
                         </label>
                     </div>
-
-                     <div class="mb-3">
+                    <div class="mb-3">
                         <label id="toppingLabel" class="form-label">Add/Remove Topping:</label>
                         <div id="toppingDiv"></div>
                         <!-- Only to be used for JS. Not to be sent to our server! -->
@@ -379,10 +395,13 @@
 
 
 
+
                     <div class="form-group" id="description">
                         <label id="descriptionLabel">Description:</label>{{ render_field(form.description,
                         class="form-control") }}
                     </div>
+
+
 
                     <input type="submit" value="Submit" class="btn btn-primary"/>
                 </form>
