@@ -2,6 +2,8 @@
 # By Ashlee
 # Fulfils: Create, Read, Update, Delete (?)
 import logging
+import re   # regex
+
 
 from werkzeug.security import generate_password_hash, check_password_hash
 import shelve
@@ -91,15 +93,40 @@ class Account:
     def get_email(self):
         return self.__email
 
-    def set_email(self, email):
-        self.__email = email
+    EMAIL_CHANGE_SUCCESS = 0
+    EMAIL_CHANGE_ALREADY_EXISTS = 1
+    EMAIL_CHANGE_INVALID = 2
+
+    # 0 indicates success, 1 indicates email exists already,
+    # 2 indicates invalid email
+    def set_email(self, email) -> int:
+        load_db()
+
+        # Hacky way to prevent Python from duplicating object??? check repr
+        account = Account.get_account_by_id(self.account_id)
+
+        # First, check if email is even valid
+        if not check_email(email):
+            # TODO: Handle validation at signup as well
+            return self.__class__.EMAIL_CHANGE_INVALID
+
+        # Check if the email already exists
+        if self.__class__.email_exists(email):
+            return self.__class__.EMAIL_CHANGE_ALREADY_EXISTS
+
+        account.__email = email
         save_db()
+        return self.__class__.EMAIL_CHANGE_SUCCESS
 
     def set_password_hash(self, password):  # update the password
         logging.info("BaseAccount: Updating pw hash for %s" % self.__email)
         self.__password_hash = generate_password_hash(password=password,
                                                       method='sha256')
         save_db()
+
+    def check_password_hash(self, password) -> bool:
+        logging.info("BaseAccount: Checking pw hash for %s" % self.__email)
+        return check_password_hash(self.__password_hash, password)
 
     # Returns a pointer to an account, or None if not found
     @classmethod
@@ -129,3 +156,11 @@ def save_db():
     with shelve.open("accounts", 'c') as db:
         db["count_id"] = Account.count_id
         db["list_of_accounts"] = Account.list_of_accounts
+
+
+# Some useful functions used here.
+regex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
+
+
+def check_email(email):  # check email using re(gex)
+    return re.search(regex, email)

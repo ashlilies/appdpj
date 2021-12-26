@@ -81,8 +81,49 @@ def admin_logout():
     return redirect(url_for("admin_home"))
 
 
-# IAIIS
-def is_account_id_in_session():  # for flask
+# API for updating account, to be called by Account Settings
+@app.route("/admin/updateAccount", methods=["GET", "POST"])
+def admin_update_account():
+    # TODO: Implement admin account soft-deletion
+
+    if request.method == "GET":
+        return "fail"
+    if not is_account_id_in_session():
+        return "fail"
+
+    # Check if current password entered was correct
+    if not is_account_id_in_session() \
+            .check_password_hash(request.form["updateSettingsPw"]):
+        return "Current Password is Wrong"
+
+    response = ""
+    if "changeEmail" in request.form:
+        if request.form["changeEmail"] is not "":
+            result = (is_account_id_in_session()
+                      .set_email(request.form["changeEmail"]))
+            if result == Account.EMAIL_CHANGE_SUCCESS:
+                response = ("%sSuccessfully updated email<br>" % response)
+            elif result == Account.EMAIL_CHANGE_ALREADY_EXISTS:
+                response = ("%sFailed updating email, Email already Exists<br>"
+                            % response)
+            elif result == Account.EMAIL_CHANGE_INVALID:
+                response = ("%sFailed updating email, email is Invalid<br>"
+                            % response)
+
+    if "changePw" in request.form:
+        if request.form["changePw"] != request.form["changePwConfirm"]:
+            response = ("%sConfirm Password does not match Password<br>"
+                        % response)
+        elif request.form["changePw"] is not "":
+            is_account_id_in_session() \
+                .set_password_hash(request.form["changePw"])
+            response = "%sSuccessfully updated Password<br>" % response
+
+    return response
+
+
+# IAIIS - is logged in?
+def is_account_id_in_session() -> Account or None:  # for flask
     if "account_id" in session:
         # account value exists in session, check if admin account active
         if Admin.check_active(gabi(session["account_id"])) is not None:
@@ -96,7 +137,7 @@ def is_account_id_in_session():  # for flask
 
 
 # Get account by ID
-def gabi(account_id):  # for flask
+def gabi(account_id) -> Account:  # for flask
     return Account.get_account_by_id(account_id)
 
 
@@ -140,7 +181,7 @@ def create_food():
         specs = []
 
         # do specifications exist in first place?
-        for i in range(MAX_SPECIFICATION_ID+1):
+        for i in range(MAX_SPECIFICATION_ID + 1):
             if "specification%d" % i in request.form:
                 specs.append(request.form["specification%d" % i])
             else:
