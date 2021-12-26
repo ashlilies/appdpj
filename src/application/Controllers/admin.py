@@ -134,6 +134,21 @@ MAX_TOPPING_ID = 8
 def create_food():
     create_food_form = CreateFoodForm(request.form)
 
+    # get toppings as a List, no WTForms
+    def get_top() -> list:
+        top = []
+
+        # do toppings exist in first place?
+        for i in range(MAX_TOPPING_ID + 1):
+            if "topping%d" % i in request.form:
+                top.append(request.form["topping%d" % i])
+            else:
+                break
+
+        logging.info("create_food: top is %s" % top)
+        return top
+
+
     # get specifications as a List, no WTForms
     def get_specs() -> list:
         specs = []
@@ -159,8 +174,15 @@ def create_food():
         food.specification = get_specs()  # set specifications as a List
         return redirect(url_for('admin_home'))
 
+        food.topping = get_top()  # set topping as a List
+        return redirect(url_for('admin_home'))
+
+
+
     return render_template('admin/addFoodForm.html', form=create_food_form,
-                           MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID)
+                           MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
+                           MAX_TOPPING_ID=MAX_TOPPING_ID,)
+
 
 
 # <------------------------- YONGLIN ------------------------------>

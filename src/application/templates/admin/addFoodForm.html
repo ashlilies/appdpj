@@ -16,13 +16,21 @@
         background-color:#ffd1d1;
         padding:10px;
       }
-      #image{
+
+
+      #uploadImage{
         position:relative;
-        bottom:10%;
-        left:20px;
+        left:50px;
         width:300px;
         height:300px;
-        margin:5px;
+      }
+
+      #upload{
+        position:relative;
+        left:70px;
+        bottom:270px;
+        width:300px;
+        height:280px;
       }
       #foodNameLabel{
         position:relative;
@@ -125,6 +133,8 @@
 
 
 <script>
+
+
       /* Global variables */
       var specDiv;
       var specificationId;
@@ -237,7 +247,7 @@
 
           /* get data from new topping text field */
           top = document.getElementById("newTopping").value;
-f
+
           /* with the minus button */
           var wholeNewInputRow = document.createElement("div");
 
@@ -297,7 +307,7 @@ f
       }
 
 
-      document.addEventListener("DOMContentLoaded", main);
+      document.addEventListener("DOMContentLoaded", mains);
 
 </script>
 {% endblock %}
@@ -321,9 +331,9 @@ f
             <div class="modal-body">
 
                 <form method="POST" action="">
-                    <div class="form-group" id="image">
-                        {{ render_field(form.image, class="form-control") }}
-                    </div>
+                <div class="mb-3">
+                  <input class="form-control" type="file" id="uploadImage" placeholder="Upload Image Here"  />
+                </div>
                     <div class="form-group" id="name">
                         <label id="foodNameLabel">Food name:</label>{{ render_field(form.item_name,
                         class="form-control") }}
