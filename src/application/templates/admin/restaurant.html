@@ -62,6 +62,7 @@
 <div class="tab-content" id="nav-tabContent">
   <div class="tab-pane fade show active" id="nav-settings" role="tabpanel" aria-labelledby="nav-settings-tab">
 
+      <h3 style="margin-top: 50px; margin-left: 20px"><u>Your Restaurant's details: </u></h3>
   <form>
   <div class="form-row">
     <div class="form-group col-md-5">
@@ -69,6 +70,7 @@
       <input type="text" class="form-control" id="rest_name" placeholder="The Saffron Boutique">
     </div>
     <div class="form-group col-md-5">
+      <label style="margin-left: 300px;" for="rest_logo">Logo</label>
       <input type="file" id="rest_logo" name="logo">
     </div>
 
@@ -111,12 +113,34 @@
     </div>
   </div>
 
+<h4>Delivery charges over distance ($):</h4>
+
   <div class="form-row">
-    <div class="form-group col-md-6">
-      <label for="bank">Bank Account Number</label>
-      <input type="text" class="form-control" id="bank">
+    <div class="form-group col-md-1">
+        <label for="del12"><b>1-2km:</b></label>
+        <input type="text" class="form-control" id="del12" placeholder="1.20">
     </div>
+      <div class="form-group col-md-1">
+        <label for="del12"><b>2-4km:</b></label>
+        <input type="text" class="form-control" id="del12" placeholder="2.40">
+      </div>
+      <div class="form-group col-md-1">
+        <label for="del12"><b>4-6km:</b></label>
+        <input type="text" class="form-control" id="del12" placeholder="4.80">
+      </div>
+      <div class="form-group col-md-1">
+        <label for="del12"><b>6-8km:</b></label>
+        <input type="text" class="form-control" id="del12" placeholder="8.80">
+      </div>
+      <div class="form-group col-md-1">
+        <label for="del12"><b>>9km:</b></label>
+        <input type="text" class="form-control" id="del12" placeholder="10.00">
+      </div>
   </div>
+
+
+
+
   <div class="form-group">
     <div class="form-check">
       <input class="form-check-input" type="checkbox" id="gridCheck">

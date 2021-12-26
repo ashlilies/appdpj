@@ -2,9 +2,10 @@
 
 from flask import render_template, request, redirect, url_for, session
 from application.Models.Admin import *
+from application.Models.Food import Food
 from application import app
 from application.adminAddFoodForm import CreateFoodForm
-import shelve, application.Models.Food as Food
+import shelve
 
 
 # <------------------------- ASHLEE ------------------------------>
@@ -84,7 +85,9 @@ def is_account_id_in_session():  # for flask
     if "account_id" in session:
         # account value exists in session, check if admin account active
         if Admin.check_active(gabi(session["account_id"])) is not None:
-            logging.info("IAIIS: Account id of %s is active and inside session" % session["account_id"])
+            logging.info(
+                "IAIIS: Account id of %s is active and inside session" %
+                session["account_id"])
             return gabi(session["account_id"])
     else:
         logging.info("IAIIS: Account id is NOT inside session or disabled")
@@ -112,7 +115,8 @@ def get_restaurant_name_by_id(id):
 # Activate global function for jinja
 app.jinja_env.globals.update(is_account_id_in_session=is_account_id_in_session)
 # app.jinja_env.globals.update(gabi=gabi)
-app.jinja_env.globals.update(get_restaurant_name_by_id=get_restaurant_name_by_id)
+app.jinja_env.globals.update(
+    get_restaurant_name_by_id=get_restaurant_name_by_id)
 
 
 # <------------------------- CLARA ------------------------------>
@@ -122,33 +126,41 @@ def food_management():
     return render_template('admin/foodManagement.html')
 
 
+MAX_SPECIFICATION_ID = 5  # for adding food
+
+
 # ADMIN FOOD FORM clara
 @app.route('/admin/addFoodForm', methods=['GET', 'POST'])
 def create_food():
     create_food_form = CreateFoodForm(request.form)
+
+    # get specifications as a List, no WTForms
+    def get_specs() -> list:
+        specs = []
+
+        # do specifications exist in first place?
+        for i in range(MAX_SPECIFICATION_ID+1):
+            if "specification%d" % i in request.form:
+                specs.append(request.form["specification%d" % i])
+            else:
+                break
+
+        logging.info("create_food: specs is %s" % specs)
+        return specs
+
+    # using the WTForms way to get the data
     if request.method == 'POST' and create_food_form.validate():
-        food_dict = {}
-        db = shelve.open('food.db', 'c')
+        # Create a new food object
+        food = Food(create_food_form.image.data,
+                    create_food_form.item_name.data,
+                    create_food_form.description.data,
+                    create_food_form.price.data, create_food_form.allergy.data)
 
-        try:
-            food_dict = db['Food']
-        except:
-            print("Error in retrieving food from food.db.")
-
-        user = Food.Food(create_food_form.image.data, create_food_form.item_name.data,
-                         create_food_form.description.data, create_food_form.price.data, create_food_form.allergy.data)
-        food_dict[user.get_item_name()] = user
-        db['Food'] = food_dict
-
-        # Test codes
-        food_dict = db['Food']
-        user = food_dict[user.get_item_name()]
-        print(user.get_item_name(), "was stored in user.db successfully with user_id ==", user.get_item_name_())
-
-        db.close()
-
+        food.specification = get_specs()  # set specifications as a List
         return redirect(url_for('admin_home'))
-    return render_template('admin/addFoodForm.html', form=create_food_form)
+
+    return render_template('admin/addFoodForm.html', form=create_food_form,
+                           MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID)
 
 
 # <------------------------- YONGLIN ------------------------------>
