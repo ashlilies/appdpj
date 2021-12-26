@@ -179,3 +179,7 @@ def admin_certification():
 @app.route("/admin/myRestaurant")
 def admin_myrestaurant():  # ruri
     return render_template("admin/restaurant.html")
+
+@app.route("/admin/tags")
+def admin_tags():  # ruri
+    return render_template("admin/tags.html")
