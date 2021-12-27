@@ -54,6 +54,8 @@
 {% endblock %}
 
 {% block content %}
+  {% from "includes/_formHelper.html" import render_field %}
+
 <div>
     <h1>Restaurant Details</h1>
 </div>
@@ -67,40 +69,40 @@
           </div>
           <div class="modal-body">
             <h5>Upload your hygiene certification here</h5>
-            <div class="mb-3">
+            <form action="" id="restaurantCertification" enctype="multipart/form-data" method="post">
+              <div class="mb-3">
                 <input class="form-control" type="file" id="hygieneCert" style="margin-top: 20px; width: 100%">
-            </div>
-            <br>
-            <h5>Select an Option</h5>
-            <form action="" enctype="multipart/form-data" method="post">
+              </div>
+                <br>
+                <h5>Select an Option</h5>
                 <div class="body-left">
-                <!--blanked option-->
-                <div class="form-check">
-                   <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
-                   <label class="form-check-label" for="flexCheckCheckedDisabled">Tick the ones you serve</label>
+                    <!--blanked option-->
+                    <div class="form-check">
+                       <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
+                       <label class="form-check-label" for="flexCheckCheckedDisabled">Tick the ones you serve</label>
+                    </div>
+                    <!--checkboxes here-->
+                    <div class="form-check">
+                     <input class="form-check-input" type="checkbox" value="Halal" id="halalCheck" onclick="fileUpload1()">
+                     <label class="form-check-label" for="halalCheck">Halal</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="Vegetarian" id="vegetarianCheck" onclick="fileUpload2()">
+                        <label class="form-check-label" for="vegetarianCheck">Vegetarian</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="NoPorkNoLard" id="NoPorkNoLardCheck" onclick="fileUpload3()">
+                      <label class="form-check-label" for="NoPorkNoLardCheck">No Pork, No Lard</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="Vegan" id="veganCheck" onclick="fileUpload3()">
+                      <label class="form-check-label" for="veganCheck">Vegan</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="NoBeef" id="flexCheckDefault">
+                      <label class="form-check-label" for="flexCheckDefault">No beef</label>
+                    </div>
                 </div>
-                <!--checkboxes here-->
-                <div class="form-check">
-                 <input class="form-check-input" type="checkbox" value="Halal" id="halalCheck" onclick="fileUpload1()">
-                 <label class="form-check-label" for="halalCheck">Halal</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="Vegetarian" id="vegetarianCheck" onclick="fileUpload2()">
-                    <label class="form-check-label" for="vegetarianCheck">Vegetarian</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="NoPorkNoLard" id="NoPorkNoLardCheck" onclick="fileUpload3()">
-                  <label class="form-check-label" for="NoPorkNoLardCheck">No Pork, No Lard</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="Vegan" id="veganCheck" onclick="fileUpload3()">
-                  <label class="form-check-label" for="veganCheck">Vegan</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="NoBeef" id="flexCheckDefault">
-                  <label class="form-check-label" for="flexCheckDefault">No beef</label>
-                </div>
-            </div>
                 <div class="body-right">
                   <!--file thing here-->
                   <div class="mb-3" id="halalFile" style="display: none">

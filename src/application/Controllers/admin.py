@@ -1,11 +1,12 @@
 # Controller for the Admin side of things.
 
-from flask import render_template, request, redirect, url_for, session
+from flask import render_template, request, redirect, url_for, session, flash
 from application.Models.Admin import *
 from application.Models.Food import Food
 from application import app
 from application.adminAddFoodForm import CreateFoodForm
-import shelve
+import shelve, os
+from werkzeug.utils import secure_filename
 
 
 # <------------------------- ASHLEE ------------------------------>
@@ -170,9 +171,33 @@ def admin_transaction():
 
 
 # certification -- xu yong lin
-@app.route("/admin/certification")
+UPLOAD_FOLDER = 'application/static/restaurantCertification'    # where the files are stored to
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png','jpg', 'jpeg'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route("/admin/certification", methods = ['GET', 'POST'])
 def admin_certification():
-    return render_template("admin/certification.html")
+    if request.method == "POST":
+        # check if the post request has file
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(url_for(admin_certification))
+        restaurantFile = request.files['file']
+
+        # if user did not select a file, the browser submits an empty file w/o a filename
+        if restaurantFile.filename == '':
+            flash('No selected file')
+            return redirect(url_for(admin_certification))
+        if restaurantFile and allowed_file(restaurantFile.filename):
+            restaurantFile.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('download_file', name=filename))
+
+    return render_template("admin/certification.html", form=restaurantCertification)
 
 
 # <------------------------- RURI ------------------------------>
