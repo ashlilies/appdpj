@@ -167,9 +167,10 @@ def create_food():
     # using the WTForms way to get the data
     if request.method == 'POST' and create_food_form.validate():
         # Create a new food object
-        food = Food(create_food_form.item_name.data,
+        food = Food(request.form["image"], create_food_form.item_name.data,
                     create_food_form.description.data,
                     create_food_form.price.data, create_food_form.allergy.data)
+        logging.info(food)
 
         food.specification = get_specs()  # set specifications as a List
         food.topping = get_top()  # set topping as a List

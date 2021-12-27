@@ -3,8 +3,8 @@ from application.Models.Account import save_db
 
 
 class Food:
-    def __init__(self, name, description, price, allergy,
-                 specification=None, topping=None, image=None):
+    def __init__(self, image, name, description, price, allergy,
+                 specification=None, topping=None):
         self.__image = image
         self.name = name
         self.description = description
