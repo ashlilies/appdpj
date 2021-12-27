@@ -129,18 +129,18 @@ def food_management():
 MAX_SPECIFICATION_ID = 5  # for adding food
 MAX_TOPPING_ID = 8
 
+
 # ADMIN FOOD FORM clara
 @app.route('/admin/addFoodForm', methods=['GET', 'POST'])
 def create_food():
     create_food_form = CreateFoodForm(request.form)
-
 
     # get specifications as a List, no WTForms
     def get_specs() -> list:
         specs = []
 
         # do specifications exist in first place?
-        for i in range(MAX_SPECIFICATION_ID+1):
+        for i in range(MAX_SPECIFICATION_ID + 1):
             if "specification%d" % i in request.form:
                 specs.append(request.form["specification%d" % i])
             else:
@@ -150,6 +150,7 @@ def create_food():
         return specs
 
         # get toppings as a List, no WTForms
+
     def get_top() -> list:
         top = []
 
@@ -162,8 +163,6 @@ def create_food():
 
         logging.info("create_food: top is %s" % top)
         return top
-
-
 
     # using the WTForms way to get the data
     if request.method == 'POST' and create_food_form.validate():
@@ -179,8 +178,7 @@ def create_food():
 
     return render_template('admin/addFoodForm.html', form=create_food_form,
                            MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
-                           MAX_TOPPING_ID=MAX_TOPPING_ID,)
-
+                           MAX_TOPPING_ID=MAX_TOPPING_ID, )
 
 
 # <------------------------- YONGLIN ------------------------------>
