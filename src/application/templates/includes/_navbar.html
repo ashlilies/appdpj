@@ -138,9 +138,57 @@
                  data-bs-toggle="dropdown">
                 Hi, {{ get_restaurant_name_by_id(session["account_id"]) }}</a>
               <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#accountSettingsModal">
+                  Account Settings
+                </a></li>
                 <li><a class="dropdown-item" href={{ url_for("admin_logout") }}>Log Out</a></li>
               </ul>
             </li>
+
+            <!-- Account Settings modal -->
+            <!-- using BS5 Modal -->
+            <div class="modal fade" id="accountSettingsModal" tabindex="-1" aria-labelledby="accountSettingsModalLabel"
+                 aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="accountSettingsModalLabel">Account Settings</h5>
+                  </div>
+                  <div class="modal-body">
+                    <form action="{{ url_for("admin_update_account") }}" id="accountSettingsForm" method="post">
+                      <label for="updateSettingsPw">To update any settings, you must enter your current password.</label>
+                      <label for="updateSettingsPw" style="margin-top: 1.5rem;">Current Password: </label>
+                      <input type="password" name="updateSettingsPw" id="updateSettingsPw"><br>
+                      <hr>
+                      <div class="form-group row">
+                        <label for="changeEmail">Current Email: <b>{{ get_account_email(is_account_id_in_session()) }}</b></label>
+                        <label for="changeEmail" class="col-form-label">New Email: </label>
+                        <input type="text" name="changeEmail" id="changeEmail"><br>
+                      </div>
+                      <div class="form-group row">
+                      <label for="changePw" class="col-form-label">New Password: </label>
+                      <input type="password" name="changePw" id="changePw"><br>
+                      </div>
+                      <div class="form-group row">
+                      <label for="changePwConfirm" class="col-form-label">Confirm Password: </label>
+                      <input type="password" name="changePwConfirm" id="changePwConfirm"><br>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="updateAccount()">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Account Settings modal script -->
+            <script>
+              function updateAccount() {
+                document.getElementById("accountSettingsForm").submit();
+              }
+            </script>
           {% endif %}
 
         </ul>
