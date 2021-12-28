@@ -187,6 +187,7 @@ def food_management():
 
 
 MAX_SPECIFICATION_ID = 5  # for adding food
+MAX_TOPPING_ID = 8
 
 
 # ADMIN FOOD FORM clara
@@ -208,19 +209,51 @@ def create_food():
         logging.info("create_food: specs is %s" % specs)
         return specs
 
+        # get toppings as a List, no WTForms
+
+    def get_top() -> list:
+        top = []
+
+        # do toppings exist in first place?
+        for i in range(MAX_TOPPING_ID + 1):
+            if "topping%d" % i in request.form:
+                top.append(request.form["topping%d" % i])
+            else:
+                break
+
+        logging.info("create_food: top is %s" % top)
+        return top
+
     # using the WTForms way to get the data
     if request.method == 'POST' and create_food_form.validate():
+        food_list = []
+        with shelve.open("foodypulse", "c") as db:
+            try:
+                if 'food' in db:
+                    food_list = db['food']
+                else:
+                    db['food'] = food_list
+            except Exception as e:
+                logging.error("create_food: error opening db (%s)" % e)
+
         # Create a new food object
-        food = Food(create_food_form.image.data,
-                    create_food_form.item_name.data,
+        food = Food(request.form["image"], create_food_form.item_name.data,
                     create_food_form.description.data,
                     create_food_form.price.data, create_food_form.allergy.data)
 
         food.specification = get_specs()  # set specifications as a List
+        food.topping = get_top()  # set topping as a List
+        food_list.append(food)
+
+        # writeback
+        with shelve.open("foodypulse", 'c') as db:
+            db['food'] = food_list
+
         return redirect(url_for('admin_home'))
 
     return render_template('admin/addFoodForm.html', form=create_food_form,
-                           MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID)
+                           MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
+                           MAX_TOPPING_ID=MAX_TOPPING_ID, )
 
 
 # <------------------------- YONGLIN ------------------------------>
