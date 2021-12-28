@@ -107,26 +107,18 @@
                   <!--file thing here-->
                   <div class="mb-3" id="halalFile" style="display: none">
                     <label for="halalFormFile" class="form-label">Halal</label>
-                    <input name="halalDocument" class="form-control" type="file" id="halalFormFile">
-                    {% for error in form.halalDocument.errors %}
-                      <small class="text-danger"{{ error }}></small>
-                    {% endfor %}
+                    <input name="halalDocument" class="form-control" type="file" id="halalFormFile" required>
                   </div>
                   <div class="mb-3" id="vegetarianFile" style="display:none">
                     <label for="vegetarianFormFile" class="form-label">Vegetarian</label>
                     <input name="vegetarianDocument" class="form-control" type="file" id="vegetarianFormFile">
-                    {% for error in form.vegetarianDocument.errors %}
-                      <small class="text-danger"{{ error }}></small>
-                    {% endfor %}
                   </div>
                   <div class="mb-3" id="veganFile" style="display:none">
                     <label for="veganFormFile" class="form-label">Vegan</label>
                     <input name="veganDocument" class="form-control" type="file" id="veganFormFile">
-                    {% for error in form.veganDocument.errors %}
-                      <small class="text-danger"{{ error }}></small>
-                    {% endfor %}
                   </div>
             </div>
+              <input type="submit" value="Submit" class="btn btn-primary"/>
             </form>
             <script>
                 function fileUpload1(){
