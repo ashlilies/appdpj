@@ -5,9 +5,13 @@ from application.Forms import CreateUserForm, CreateCustomerForm
 import shelve
 from application.Models.User import User
 from application.Models.Customer import Customer
+import atexit
 
 app = Flask(__name__)
 app.secret_key = "doofypulseEngineers"  # used for stuff e.g. Flask sessions
+
+# The name of our db file. Syntax: with shelve.open(DB_NAME, 'c') as db:
+DB_NAME = "foodypulse"
 
 # CONSTANTS USED BY OUR PAGES
 # For stuff like colour schemes.
@@ -29,6 +33,13 @@ logging.basicConfig(level=logging.DEBUG,
 logging.info("Logger configured!")
 
 
+# after the app quits, we save all databases -ashlee
+def exit_handler():
+    logging.info("Exit Handler: Stopping Flask! Saving db...")
+    save_db()
+
+
+atexit.register(exit_handler)
 # ALL BELOW are for the Practical LLS.
 # Please add new routes to Controllers. -ash
 
@@ -273,8 +284,9 @@ with app.app_context():
     #     else:
     #         print("Initializing user count in db")
     #         db["count"] = User.count_id  # initialize it:
-
+    load_db()  # load and cache db before app runs
     app.run()
 
 if __name__ == '__main__':
+    load_db()  # load and cache db before app runs
     app.run()
