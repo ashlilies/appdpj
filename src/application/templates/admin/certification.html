@@ -71,7 +71,10 @@
             <h5>Upload your hygiene certification here</h5>
             <form action="" id="restaurantCertification" enctype="multipart/form-data" method="post">
               <div class="mb-3">
-                <input class="form-control" type="file" id="hygieneCert" style="margin-top: 20px; width: 100%">
+                <input class="form-control" type="file" id="hygieneCert" style="margin-top: 20px; width: 100%" required>
+                {% for error in form.hygiene_cert.errors %}
+                  <small class="text-danger">{{ error }}</small>
+                {% endfor %}
               </div>
                 <br>
                 <h5>Select an Option</h5>
@@ -108,14 +111,23 @@
                   <div class="mb-3" id="halalFile" style="display: none">
                     <label for="halalFormFile" class="form-label">Halal</label>
                     <input name="halalDocument" class="form-control" type="file" id="halalFormFile" required>
+                    {% for error in form.halal_cert.errors %}
+                      <small class="text-danger">{{ error }}</small>
+                    {% endfor %}
                   </div>
                   <div class="mb-3" id="vegetarianFile" style="display:none">
                     <label for="vegetarianFormFile" class="form-label">Vegetarian</label>
-                    <input name="vegetarianDocument" class="form-control" type="file" id="vegetarianFormFile">
+                    <input name="vegetarianDocument" class="form-control" type="file" id="vegetarianFormFile" required>
+                    {% for error in form.vegetarian_cert.errors %}
+                      <small class="text-danger">{{ error }}</small>
+                    {% endfor %}
                   </div>
                   <div class="mb-3" id="veganFile" style="display:none">
                     <label for="veganFormFile" class="form-label">Vegan</label>
-                    <input name="veganDocument" class="form-control" type="file" id="veganFormFile">
+                    <input name="veganDocument" class="form-control" type="file" id="veganFormFile" required>
+                    {% for error in form.vegan_cert.errors %}
+                      <small class="text-danger">{{ error }}</small>
+                    {% endfor %}
                   </div>
             </div>
               <input type="submit" value="Submit" class="btn btn-primary"/>
