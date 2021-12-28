@@ -164,21 +164,17 @@ def create_food():
         logging.info("create_food: top is %s" % top)
         return top
 
-
-
     # using the WTForms way to get the data
     if request.method == 'POST' and create_food_form.validate():
         food_list = []
-        food_dict = {}
         with shelve.open("foodypulse", "c") as db:
             try:
-                if 'Food' in db:
-                    food_dict = db['Food']
+                if 'food' in db:
+                    food_list = db['food']
                 else:
-                    db['Food'] = food_dict
-            except:
-                print("Error in retrieving food from user.db.")
-
+                    db['food'] = food_list
+            except Exception as e:
+                logging.error("create_food: error opening db (%s)" % e)
 
         # Create a new food object
         food = Food(request.form["image"], create_food_form.item_name.data,
@@ -189,8 +185,9 @@ def create_food():
         food.topping = get_top()  # set topping as a List
         food_list.append(food)
 
-        food_dict[food.get_name()] = food_list
-        db['Food'] = food_dict
+        # writeback
+        with shelve.open("foodypulse", 'c') as db:
+            db['food'] = food_list
 
         return redirect(url_for('admin_home'))
 
