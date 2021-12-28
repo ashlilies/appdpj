@@ -18,26 +18,38 @@
         left: 30px;
         top:100px;
     }
+    .modal-content{
+        background-color:#ffd1d1;
+        padding:10px;
+    }
     .modal-body{
-        position: relative;
-        padding: 30px;
-        display: inline;
+        /*position: relative;*/
+        padding: 20px;
+        display: block;
     }
     .body-left{
         position: relative;
-        width: 450px;
+        width: 50%;
         float: left;
+    }
+    .form-check{
+        margin-bottom: 10px;
+    }
+    .form-label{
+        font-size: 16px;
+        width: 90px;
+        display: inline-block;
+    }
+    .form-control{
+        width: 100%;
+        height: 70%;
+        display: inline-block;
     }
     .body-right{
         position: relative;
-        width: 450px;
         float: right;
+        width: 50%;
     }
-    .btn{
-        position: relative;
-        left: 30px;
-    }
-
 </style>
 {% endblock %}
 
@@ -54,65 +66,103 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <div class="body-left">
-                <h5>Select an Option</h5>
-                <div class="checkbox">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
-                      <label class="form-check-label" for="flexCheckCheckedDisabled">Tick the ones you serve</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="Halal" id="flexCheckDefault">
-                      <label class="form-check-label" for="flexCheckDefault">Halal</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="Vegetarian" id="flexCheckDefault">
-                      <label class="form-check-label" for="flexCheckDefault">Vegetarian</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="NoPorkNoLard" id="flexCheckDefault">
-                      <label class="form-check-label" for="flexCheckDefault">No Pork No Lard</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="Vegan" id="flexCheckDefault">
-                      <label class="form-check-label" for="flexCheckDefault">Vegan</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="NoBeef" id="flexCheckDefault">
-                      <label class="form-check-label" for="flexCheckDefault">No beef</label>
-                    </div>
+            <h5>Upload your hygiene certification here</h5>
+            <div class="mb-3">
+                <input class="form-control" type="file" id="hygieneCert" style="margin-top: 20px; width: 100%">
+            </div>
+            <br>
+            <h5>Select an Option</h5>
+            <form action="" enctype="multipart/form-data" method="post">
+                <div class="body-left">
+                <!--blanked option-->
+                <div class="form-check">
+                   <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
+                   <label class="form-check-label" for="flexCheckCheckedDisabled">Tick the ones you serve</label>
+                </div>
+                <!--checkboxes here-->
+                <div class="form-check">
+                 <input class="form-check-input" type="checkbox" value="Halal" id="halalCheck" onclick="fileUpload1()">
+                 <label class="form-check-label" for="halalCheck">Halal</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="Vegetarian" id="vegetarianCheck" onclick="fileUpload2()">
+                    <label class="form-check-label" for="vegetarianCheck">Vegetarian</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="NoPorkNoLard" id="NoPorkNoLardCheck" onclick="fileUpload3()">
+                  <label class="form-check-label" for="NoPorkNoLardCheck">No Pork, No Lard</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="Vegan" id="veganCheck" onclick="fileUpload3()">
+                  <label class="form-check-label" for="veganCheck">Vegan</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="NoBeef" id="flexCheckDefault">
+                  <label class="form-check-label" for="flexCheckDefault">No beef</label>
                 </div>
             </div>
-            <div class="body-right">
-                <div class="mb-3">
-                  <label for="formFile" class="form-label">Halal</label>
-                  <input class="form-control" type="file" id="formFile">
-                </div>
-                <div class="mb-3">
-                  <label for="formFile" class="form-label">Vegetarian</label>
-                  <input class="form-control" type="file" id="formFile">
-                </div>
-                <div class="mb-3">
-                  <label for="formFile" class="form-label">No Pork, No Lard</label>
-                  <input class="form-control" type="file" id="formFile">
-                </div>
-                <div class="mb-3">
-                  <label for="formFile" class="form-label">Vegan</label>
-                  <input class="form-control" type="file" id="formFile">
-                </div>
-                <div class="mb-3">
-                  <label for="formFile" class="form-label">No beef</label>
-                  <input class="form-control" type="file" id="formFile">
-                </div>
+                <div class="body-right">
+                  <!--file thing here-->
+                  <div class="mb-3" id="halalFile" style="display: none">
+                    <label for="halalFormFile" class="form-label">Halal</label>
+                    <input name="halalDocument" class="form-control" type="file" id="halalFormFile">
+                    {% for error in form.halalDocument.errors %}
+                      <small class="text-danger"{{ error }}></small>
+                    {% endfor %}
+                  </div>
+                  <div class="mb-3" id="vegetarianFile" style="display:none">
+                    <label for="vegetarianFormFile" class="form-label">Vegetarian</label>
+                    <input name="vegetarianDocument" class="form-control" type="file" id="vegetarianFormFile">
+                    {% for error in form.vegetarianDocument.errors %}
+                      <small class="text-danger"{{ error }}></small>
+                    {% endfor %}
+                  </div>
+                  <div class="mb-3" id="veganFile" style="display:none">
+                    <label for="veganFormFile" class="form-label">Vegan</label>
+                    <input name="veganDocument" class="form-control" type="file" id="veganFormFile">
+                    {% for error in form.veganDocument.errors %}
+                      <small class="text-danger"{{ error }}></small>
+                    {% endfor %}
+                  </div>
             </div>
+            </form>
+            <script>
+                function fileUpload1(){
+                    var checkBox = document.getElementById("halalCheck");
+                    var halalUpload = document.getElementById("halalFile");
+                    if(checkBox.checked == true){
+                        halalUpload.style.display = "block";
+                    } else{
+                        halalUpload.style.display = "none";
+                    }
+                }
+                function fileUpload2(){
+                    var checkBox2 = document.getElementById("vegetarianCheck");
+                    var vegetarianUpload = document.getElementById("vegetarianFile");
+                    if (checkBox2.checked == true){
+                        vegetarianUpload.style.display = "block";
+                    } else{
+                        vegetarianUpload.style.display = "none";
+                    }
+                }
+                function fileUpload3(){
+                    var veganCheckBox = document.getElementById("veganCheck");
+                    var veganUpload = document.getElementById("veganFile");
+                    if (veganCheckBox.checked == true){
+                        veganUpload.style.display = "block";
+                    } else{
+                        veganUpload.style.display = "none";
+                    }
+                }
+            </script>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">Open second modal</button>
+            <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">Next</button>
           </div>
         </div>
       </div>
     </div>
-<!--    uploading of files-->
+    <!--Proceed to tell users that they are successful in uploading the files-->
     <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
       <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
@@ -129,7 +179,7 @@
         </div>
       </div>
     </div>
-    <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Open first modal</a>
+    <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Upload Your Certification!</a>
 </div>
 
 {% endblock %}
