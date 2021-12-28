@@ -1,0 +1,36 @@
+<!--xu yong lin-->
+{% extends "admin/admin_base.html" %}
+{% block title %}Restaurant Certification{% endblock %}
+
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js"></script>
+
+<style>
+</style>
+{% endblock %}
+
+{% block content %}
+    <canvas id="linechart" width="900" height="400"></canvas>
+        <script>
+            var ctx = document.getElementById("linechart").getContext('2d');
+            var linechart = new Chart(ctx,{
+                type: 'line',
+                data:{
+                    labels: {labels|safe},
+                    datasets: [
+                        {
+                        label: "Data points",
+                        data: {values | safe},
+                        fill: false,
+                        borderColor: "rgb(75,192,192)",
+                        lineTension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: false
+                }
+            });
+        </script>
+
+{% endblock %}
