@@ -8,6 +8,7 @@ from application.Models.Admin import *
 from application.Models.Food import Food
 from application import app
 from application.adminAddFoodForm import CreateFoodForm
+from application.rest_details_form import RestaurantDetailsForm
 import shelve
 
 
@@ -269,10 +270,28 @@ def admin_certification():
 
 
 # <------------------------- RURI ------------------------------>
-@app.route("/admin/myRestaurant")
+@app.route("/admin/myrestaurant")
 def admin_myrestaurant():  # ruri
-    return render_template("admin/restaurant.html")
+    # restaurant_details_form: RestaurantDetailsForm = RestaurantDetailsForm(request.form)
+    # if request.method == 'POST' and restaurant_details_form():
+    #     restaurants_dict = {}
+    #     db = shelve.open('restaurants.db', 'c')
+    #     try:
+    #         restaurants_dict = db['Restaurants']
+    #     except:
+    #         print("Error in retrieving Customers from restaurants.db.")
+    #
+    # restaurant = Restaurant.Restaurant(restaurant_details_form.rest_name.data, )
+    # restaurants_dict[restaurant.get_restaurant_id()] = restaurant
+    # db['Restaurants'] = restaurants_dict
+    #
+    # db.close()
+    #
+    # return render_template("admin/restaurant.html")
+    return render_template('admin/restaurant.html')
+
 
 @app.route("/admin/dashboard")
 def dashboard():  # ruri
     return render_template("admin/dashboard.html")
+

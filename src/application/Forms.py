@@ -23,3 +23,5 @@ class CreateCustomerForm(Form):
     membership = RadioField('Membership', choices=[('F', 'Fellow'), ('S', 'Senior'), ('P', 'Professional')],
                             default='F')
     remarks = TextAreaField('Remarks', [validators.Optional()])
+
+

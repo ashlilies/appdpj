@@ -3,9 +3,12 @@ from application.Models.Account import save_db
 from application.Models.Food import Food
 
 class Restaurant:
+    count_id = 0
     def __init__(self, name, contact, open_hour, close_hour, address, tags,
                  bank, desc, deli_fee12, deli_fee24,
                  deli_fee46, deli_fee68, table_plan):
+        Restaurant.count_id +=1
+        self.customer_id = Restaurant.count_id
         self.name = name
         self.contact = contact
         self.open_hour = open_hour
