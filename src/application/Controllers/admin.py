@@ -155,10 +155,9 @@ def gabi(account_id) -> Account:  # for flask
 #     return Admin.get_account_by_id(account_id)
 
 
-def get_restaurant_name_by_id(id):
-    restaurant_account = gabi(id)
-    rname = restaurant_account.restaurant_name
-    return rname
+def get_restaurant_name_by_id(restaurant_id):
+    restaurant_account = gabi(restaurant_id)
+    return getattr(restaurant_account, "restaurant_name", None)
 
 
 # Used for the Account Settings pane.
@@ -168,6 +167,7 @@ def get_account_email(account: Account):
     except Exception as e:
         logging.info(e)
         return "ERROR"
+
 
 # TODO; store Flask session info in shelve db
 
@@ -272,6 +272,7 @@ def admin_certification():
 @app.route("/admin/myRestaurant")
 def admin_myrestaurant():  # ruri
     return render_template("admin/restaurant.html")
+
 
 @app.route("/admin/tags")
 def admin_tags():  # ruri
