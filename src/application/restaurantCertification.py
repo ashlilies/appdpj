@@ -3,8 +3,7 @@ from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 
 class RestaurantCertification(Form):
-    hygiene_cert = FileField('Document', validators=[FileRequired(), FileAllowed(['pdf']), 'PDF Document only!'])
-    halal_cert = FileField('Document', validators=[FileRequired(), FileAllowed(['pdf']), 'PDF Document only!'])
-    vegetarian_cert = FileField('Document', validators=[FileRequired(), FileAllowed(['pdf']), 'PDF Document only!'])
-    vegan_cert = FileField('Document', validators=[FileRequired(), FileAllowed(['pdf']), 'PDF Document only!'])
-
+    hygiene_cert = FileField('Hygiene Certification', validators=[FileRequired(), FileAllowed(['pdf'])])
+    halal_cert = FileField('Halal', validators=[FileRequired(), FileAllowed(['pdf'])])
+    vegetarian_cert = FileField('Vegetarian', validators=[FileRequired(), FileAllowed(['pdf'])])
+    vegan_cert = FileField('Vegan', validators=[FileRequired(), FileAllowed(['pdf'])])

@@ -4,14 +4,13 @@
 # New routes go here, not in __init__.
 
 from flask import render_template, request, redirect, url_for, session, flash
-from flask_wtf.csrf import CSRFProtect
 from application.Models.Admin import *
 from application.Models.Food import Food
 from application import app
 from application.adminAddFoodForm import CreateFoodForm
 from werkzeug.utils import secure_filename
 
-from src.application.restaurantCertification import RestaurantCertification
+from application.restaurantCertification import RestaurantCertification
 import shelve, os
 
 
@@ -315,9 +314,9 @@ def admin_certification():
 
         flash('Document uploaded successfully')
 
-        return redirect(url_for('admin_transaction'))
+        return redirect(url_for('admin_myrestaurant'))
 
-    return render_template("admin/certification.html")
+    return render_template("admin/certification.html", form=certification_form)
 
 
 # <------------------------- RURI ------------------------------>
