@@ -8,6 +8,8 @@ import re   # regex
 from werkzeug.security import generate_password_hash, check_password_hash
 import shelve
 
+from application import DB_NAME
+
 
 class Account:
     count_id = 0  # ADVANTAGE: Can handle soft-deleted accounts better
@@ -141,7 +143,7 @@ class Account:
 #       Since is a generic db that caches everything, including cascading.
 def load_db():
     Account.log("Attempting to load DB")
-    with shelve.open("accounts", 'c') as db:
+    with shelve.open(DB_NAME, 'c') as db:
         if "count_id" in db:  # has db been initialized?
             Account.log("Found count_id in db, hence db exists")
             Account.count_id = db["count_id"]
@@ -153,7 +155,7 @@ def load_db():
 def save_db():
     Account.log("Attempting to save db (count_id=%s, len(list_of_accs)=%s)..."
                 % (Account.count_id, len(Account.list_of_accounts)))
-    with shelve.open("accounts", 'c') as db:
+    with shelve.open(DB_NAME, 'c') as db:
         db["count_id"] = Account.count_id
         db["list_of_accounts"] = Account.list_of_accounts
 
