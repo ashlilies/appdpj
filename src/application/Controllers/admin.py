@@ -172,6 +172,7 @@ def get_account_email(account: Account):
         logging.info(e)
         return "ERROR"
 
+
 # TODO; store Flask session info in shelve db
 
 # Activate global function for jinja
@@ -266,14 +267,16 @@ def admin_transaction():
 
 
 # certification -- xu yong lin
-# UPLOAD_FOLDER = 'application/static/restaurantCertification'  # where the files are stored to
+# UPLOAD_FOLDER = 'application/static/restaurantCertification'  # where the
+# files are stored to
 # ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 #
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 #
 #
 # def allowed_file(filename):
-#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in
+#     ALLOWED_EXTENSIONS
 
 
 @app.route("/admin/certification", methods=['GET', 'POST'])
@@ -285,12 +288,14 @@ def admin_certification():
     #         return redirect(url_for('admin_myrestaurant'))
     #     restaurantFile = request.files['file']
     #
-    #     # if user did not select a file, the browser submits an empty file w/o a filename
+    #     # if user did not select a file, the browser submits an empty file
+    #     w/o a filename
     #     if restaurantFile.filename == '':
     #         flash('No selected file')
     #         return redirect(url_for('admin_certification'))
     #     if restaurantFile and allowed_file(restaurantFile.filename):
-    #         restaurantFile.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    #         restaurantFile.save(os.path.join(app.config['UPLOAD_FOLDER'],
+    #         filename))
     #         return redirect(url_for('download_file', name=filename))
 
     # set upload directory path
@@ -309,20 +314,23 @@ def admin_certification():
 
         # document save
         halal.save(os.path.join(assets_dir, 'halal', halaldoc_name))
-        vegetarian.save(os.path.join(assets_dir,'vegetarian', vegetariandoc_name))
-        vegan.save(os.path.join(assets_dir,'vegan', vegandoc_name))
+        vegetarian.save(
+            os.path.join(assets_dir, 'vegetarian', vegetariandoc_name))
+        vegan.save(os.path.join(assets_dir, 'vegan', vegandoc_name))
 
         flash('Document uploaded successfully')
 
         return redirect(url_for('admin_myrestaurant'))
 
-    return render_template("admin/certification.html", form=certification_form)
+    return render_template("admin/certification.html",
+                           certification_form=certification_form)
 
 
 # <------------------------- RURI ------------------------------>
 @app.route("/admin/myRestaurant")
 def admin_myrestaurant():  # ruri
     return render_template("admin/restaurant.html")
+
 
 @app.route("/admin/tags")
 def admin_tags():  # ruri
