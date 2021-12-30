@@ -11,3 +11,7 @@ class CreateFoodForm(Form):
     price = TextAreaField('', [validators.Optional()])
 
     allergy = TextAreaField('', [validators.Optional()])
+    
+    
+    
+    
