@@ -1,0 +1,34 @@
+Index: application/dbhandler.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/application/dbhandler.py b/application/dbhandler.py
+new file mode 100644
+--- /dev/null	(date 1640676825552)
++++ b/application/dbhandler.py	(date 1640676825552)
+@@ -0,0 +1,24 @@
++# Centralized handling of FoodyPulse db
++# By Ashlee
++import logging
++import shelve
++
++DB_NAME = "foodypulse"
++
++
++def db_read(key: str) -> list or None:
++    try:
++        with shelve.open(DB_NAME, 'c') as db:
++            return db[key]
++    except Exception as e:
++        logging.info("db_read(): %s" % e)
++        return None
++
++
++# Always remember to write back! Value is typically a list.
++def db_write(key: str, value):
++    try:
++        with shelve.open(DB_NAME, 'c') as db:
++            db[key] = value
++    except Exception as e:
++        logging.info("db_write(): %s" % e)

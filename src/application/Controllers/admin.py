@@ -6,11 +6,9 @@
 from flask import render_template, request, redirect, url_for, session
 from application.Models.Admin import *
 from application.Models.Food import Food
-from application.Models.Restaurant import Restaurant
 from application import app
 from application.adminAddFoodForm import CreateFoodForm
 from application.rest_details_form import RestaurantDetailsForm
-# from application.rest_details_form import RestaurantDetailsForm
 import shelve
 
 
@@ -274,22 +272,23 @@ def admin_certification():
 # <------------------------- RURI ------------------------------>
 @app.route("/admin/myrestaurant")
 def admin_myrestaurant():  # ruri
-
-    restaurant_details_form: RestaurantDetailsForm(request.form)
-    if request.method == 'POST' and restaurant_details_form():
-        restaurants_dict = {}
-        db = shelve.open('restaurants.db', 'c')
-        try:
-            restaurants_dict = db['Restaurants']
-        except:
-            print("Error in retrieving Customers from restaurants.db.")
-
-    restaurant = Restaurant(restaurant_details_form.rest_name.data)
-    restaurants_dict_dict[restaurant.get_rest_id_id()] = restaurant
-    db['Restaurants'] = restaurants_dict
-
-    db.close()
-    return render_template('admin/restaurant.html', form=restaurant_details_form)
+    # restaurant_details_form: RestaurantDetailsForm = RestaurantDetailsForm(request.form)
+    # if request.method == 'POST' and restaurant_details_form():
+    #     restaurants_dict = {}
+    #     db = shelve.open('restaurants.db', 'c')
+    #     try:
+    #         restaurants_dict = db['Restaurants']
+    #     except:
+    #         print("Error in retrieving Customers from restaurants.db.")
+    #
+    # restaurant = Restaurant.Restaurant(restaurant_details_form.rest_name.data, )
+    # restaurants_dict[restaurant.get_restaurant_id()] = restaurant
+    # db['Restaurants'] = restaurants_dict
+    #
+    # db.close()
+    #
+    # return render_template("admin/restaurant.html")
+    return render_template('admin/restaurant.html')
 
 
 @app.route("/admin/dashboard")
