@@ -273,22 +273,23 @@ def admin_certification():
 # <------------------------- RURI ------------------------------>
 @app.route("/admin/myrestaurant")
 def admin_myrestaurant():  # ruri
-    restaurant_details_form: RestaurantDetailsForm(request.form)
-    if request.method == 'POST' and restaurant_details_form():
-        restaurants_dict = {}
-        db = shelve.open('restaurants.db', 'c')
+    restaurant_details_form = RestaurantDetailsForm(request.form)
+    restaurants_dict = {}
+    if request.method == 'POST' and restaurant_details_form.validate():
+        db = shelve.open(DB_NAME, 'c')
         try:
             restaurants_dict = db['Restaurants']
-        except:
-            print("Error in retrieving Customers from restaurants.db.")
+        except Exception as e:
+            logging.error("Error in retrieving Customers from "
+                          "restaurants.db (%s)" % e)
 
-    restaurant = Restaurant(restaurant_details_form.rest_name.data)
-    restaurants_dict[restaurant.get_restaurant_id()] = restaurant
-    db['Restaurants'] = restaurants_dict
+        restaurant = Restaurant(restaurant_details_form.rest_name.data)
+        restaurants_dict[restaurant.rest_id] = restaurant
+        db['Restaurants'] = restaurants_dict
 
-    db.close()
+        db.close()
 
-    return render_template("admin/restaurant.html", form=create_user_form)
+    return render_template("admin/restaurant.html", form=restaurant_details_form)
 
 
 @app.route("/admin/dashboard")
