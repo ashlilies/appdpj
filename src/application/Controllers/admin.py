@@ -109,7 +109,7 @@ def admin_update_account():
 
     response = ""
     if "changeEmail" in request.form:
-        if request.form["changeEmail"] is not "":
+        if request.form["changeEmail"] != "":
             result = (is_account_id_in_session()
                       .set_email(request.form["changeEmail"]))
             if result == Account.EMAIL_CHANGE_SUCCESS:
@@ -125,7 +125,7 @@ def admin_update_account():
         if request.form["changePw"] != request.form["changePwConfirm"]:
             response = ("%sConfirm Password does not match Password<br>"
                         % response)
-        elif request.form["changePw"] is not "":
+        elif request.form["changePw"] != "":
             is_account_id_in_session() \
                 .set_password_hash(request.form["changePw"])
             response = "%sSuccessfully updated Password<br>" % response
