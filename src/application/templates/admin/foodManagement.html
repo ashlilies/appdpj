@@ -1,166 +1,65 @@
 <!--Clara-->
 {% extends "admin/admin_base.html" %}
-{% block title %}Food Mnagement {% endblock %}
+{% block title %}Food Management {% endblock %}
 
 {% block head %}
-<style>
-    h1 {
-        font-weight: bold;
-        position:relative;
-        left: 30px;
-        top:20px;
-        text-decoration-line: underline;
-        font-size:28px;
-        width:150px;
-    }
+    <style>
+        div.scroll {
+            background-color: #fed9ff;
+            width: 900px;
+            height: 300px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            top: 150px;
+            left: 200px;
 
-    #infoBar{
-        background-color:#a84dc9;
-        height:50px;
-        padding:20px;
-        position:relative;
-        left:60px;
-        top:50px;
-        width:1200px;
-    }
-
-    ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-        color:white;
-    }
-    li{
-        display: inline-block;
-    }
-
-
-
-
-
-
-    #left-home-content {
-        width: 60%;
-        margin: auto;
-        margin-left: 0;
-        display: grid;
-        justify-content: center;
-    }
-    #right-home-content {
-        width: 40%;
-        padding-top: 16.5%;
-        padding-bottom: 16.5%;
-        margin: auto;
-        margin-right: 0;
-        display: grid;
-        justify-content: left;
-    }
-    #right-home-content>img {
-        width: 100%;
-        height: 100%;
-    }
-</style>
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-<div id="whole-homepage" class="d-flex flex-row">
-    <div>
-        <h1>Food Menu</h1>
+
+    <div class="scroll">
+
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>User ID BITCH</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Gender</th>
+                    <th>Membership</th>
+                    <th>Remarks</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for food in food_list %}
+                    <tr>
+                        <td>{{ food.get_name() }}</td>
+                        <td>{{ food.get_description() }}</td>
+                        <td>{{ food.get_price() }}</td>
+                        <td>{{ food.get_allergy() }}</td>
+                        <td>{{ food.get_specfication() }}</td>
+
+                        <td>{{ food.get_topping() }}</td>
+                        <td><a href="#" class="btn btn-warning">Update</a></td>
+                        <td>
+                            <form action="" method="POST">
+                                <input type="submit" value="Delete" class="btn btn-danger">
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
     </div>
 
-    <div id="addFood">
-
-  <div class="column-labels">
-    <label class="image">Image</label>
-    <label class="name">Item Name</label>
-    <label class="description">Description</label>
-    <label class="price">Prices</label>
-    <label class="allergy">Allergies</label>
-    <label class="specification">Specifications</label>
-  </div>
-
-   <!--  <div class="column-labels">
-    <label class="product-image">Image</label>
-    <label class="product-details">Product</label>
-    <label class="product-price">Price</label>
-    <label class="product-quantity">Quantity</label>
-    <label class="product-removal">Remove</label>
-    <label class="product-line-price">Total</label>
-  </div> -->
-
-  <div class="product">
-    <div class="product-image">
-      <img src="https://s.cdpn.io/3/dingo-dog-bones.jpg">
-    </div>
-    <div class="product-details">
-      <div class="product-title">Dingo Dog Bones</div>
-      <p class="product-description">The best dog bones of all time. Holy crap. Your dog will be begging for these things! I got curious once and ate one myself. I'm a fan.</p>
-    </div>
-    <div class="product-price">12.99</div>
-    <div class="product-quantity">
-      <input type="number" value="2" min="1">
-    </div>
-    <div class="product-removal">
-      <button class="remove-product">
-        Remove
-      </button>
-    </div>
-    <div class="product-line-price">25.98</div>
-  </div>
-
-  <div class="product">
-    <div class="product-image">
-      <img src="https://s.cdpn.io/3/large-NutroNaturalChoiceAdultLambMealandRiceDryDogFood.png">
-    </div>
-    <div class="product-details">
-      <div class="product-title">Nutro™ Adult Lamb and Rice Dog Food</div>
-      <p class="product-description">Who doesn't like lamb and rice? We've all hit the halal cart at 3am while quasi-blackout after a night of binge drinking in Manhattan. Now it's your dog's turn!</p>
-    </div>
-    <div class="product-price">45.99</div>
-    <div class="product-quantity">
-      <input type="number" value="1" min="1">
-    </div>
-    <div class="product-removal">
-      <button class="remove-product">
-        Remove
-      </button>
-    </div>
-    <div class="product-line-price">45.99</div>
-  </div>
-
-  <div class="totals">
-    <div class="totals-item">
-      <label>Subtotal</label>
-      <div class="totals-value" id="cart-subtotal">71.97</div>
-    </div>
-    <div class="totals-item">
-      <label>Tax (5%)</label>
-      <div class="totals-value" id="cart-tax">3.60</div>
-    </div>
-    <div class="totals-item">
-      <label>Shipping</label>
-      <div class="totals-value" id="cart-shipping">15.00</div>
-    </div>
-    <div class="totals-item totals-item-total">
-      <label>Grand Total</label>
-      <div class="totals-value" id="cart-total">90.57</div>
-    </div>
-  </div>
-
-      <button class="checkout">Checkout</button>
-
-</div>
-
-
-
-
-
-
-    <div id="right-home-content">
-        <img src={{ url_for("static", filename="home/shop_admin.png") }} />
-    </div>
-</div>
 {% endblock %}
-
-
-

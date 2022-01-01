@@ -253,7 +253,7 @@ def create_food():
         with shelve.open("foodypulse", 'c') as db:
             db['food'] = food_list
 
-        return redirect(url_for('admin_home'))
+        return redirect(url_for("admin_home"))
 
     return render_template('admin/addFoodForm.html', form=create_food_form,
                            MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
