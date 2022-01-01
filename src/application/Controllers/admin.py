@@ -271,25 +271,50 @@ def admin_certification():
 
 
 # <------------------------- RURI ------------------------------>
-@app.route("/admin/myrestaurant")
-def admin_myrestaurant():  # ruri
-    restaurant_details_form = RestaurantDetailsForm(request.form)
-    restaurants_dict = {}
-    if request.method == 'POST' and restaurant_details_form.validate():
-        db = shelve.open(DB_NAME, 'c')
-        try:
-            restaurants_dict = db['Restaurants']
-        except Exception as e:
-            logging.error("Error in retrieving Customers from "
-                          "restaurants.db (%s)" % e)
-
-        restaurant = Restaurant(restaurant_details_form.rest_name.data)
-        restaurants_dict[restaurant.rest_id] = restaurant
-        db['Restaurants'] = restaurants_dict
-
-        db.close()
-
-    return render_template("admin/restaurant.html", form=restaurant_details_form)
+# # @app.route('/admin/myrestaurant', methods=['GET', 'POST'])
+# # def admin_myrestaurant():  # ruri
+# #     restaurant_details_form = RestaurantDetailsForm(request.form)
+# #     restaurants_dict = {}
+# #     if request.method == 'POST' and restaurant_details_form.validate():
+# #         db = shelve.open(DB_NAME, 'c')
+# #         try:
+# #             restaurants_dict = db['Restaurants']
+# #         except Exception as e:
+# #             logging.error("Error in retrieving Restaurants from "
+# #                           "restaurants.db (%s)" % e)
+# #
+# #         restaurant = Restaurant(restaurant_details_form.rest_name.data)
+# #         restaurants_dict[restaurant.rest_name] = restaurant
+# #         db['Restaurants'] = restaurants_dict
+# #
+# #         db.close()
+# #
+# #     return render_template("includes/restaurant.html", form=restaurant_details_form)
+# #
+# @app.route('admin/myrestaurant', methods=['GET', 'POST'])
+# def create_customer():
+#     create_customer_form: CreateCustomerForm = CreateCustomerForm(request.form)
+#     if request.method == 'POST' and create_customer_form.validate():
+#         customers_dict = {}
+#         db = shelve.open('customer.db', 'c')
+#
+#         try:
+#             customers_dict = db['Customers']
+#         except:
+#             print("Error in retrieving Customers from customer.db.")
+#
+#         customer = Customer.Customer(create_customer_form.first_name.data, create_customer_form.last_name.data,
+#                                      create_customer_form.gender.data, create_customer_form.membership.data,
+#                                      create_customer_form.remarks.data, create_customer_form.email.data,
+#                                      create_customer_form.date_joined.data,
+#                                      create_customer_form.address.data, )
+#         customers_dict[customer.get_customer_id()] = customer
+#         db['Customers'] = customers_dict
+#
+#         db.close()
+#
+#         return redirect(url_for('home'))
+#     return render_template('includes/createCustomer.html', form=create_customer_form)
 
 
 @app.route("/admin/dashboard")
