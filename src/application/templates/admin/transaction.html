@@ -119,7 +119,7 @@
 {#              {% endfor %}#}
 {#              </tr>#}
 
-              {% if transaction[4] == '2' %}
+              {% if transaction[4] == '2' or transaction[4] == "1" %}
                   <tr class="highlight">
                     <th scope="row">3</th>
                     {% for i in transaction %}

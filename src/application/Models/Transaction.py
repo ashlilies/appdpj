@@ -8,8 +8,8 @@ from application.Models.Account import Account
 class Transaction:
     transaction_no = 0  # counts the number of transactions in the restaurant per month
 
-    def __init__(self, transaction_no, option, price, used_coupons,
-                 ratings):
+    def __init__(self, transaction_no=0, option=None, price=0, used_coupons=None,
+                 ratings=0):
         self.transaction_no = transaction_no
         self.__account_id = Account.count_id
         self.__option = option
@@ -49,3 +49,4 @@ class Transaction:
 
     def get_ratings(self):
         return self.__ratings
+

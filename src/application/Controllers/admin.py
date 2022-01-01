@@ -265,11 +265,18 @@ def create_food():
 @app.route("/admin/transaction")
 def admin_transaction():
     # creating a shelve file with dummy data
-    transaction_dict = {'1': ['Yong Lin','delivery','100.20','SPAGETIT','10'], '2': ['Yuen Loong', 'Dine-in', '40.35', 'SPAGETIT', '5']}
+    transaction_dict = {'1': ['Yong Lin', 'Delivery', '60.40', 'SPAGETIT', '1'],
+    '2': ['Yuen Loong', 'Dine-in', '40.35', 'SPAGETIT', '2']}
 
     # 1: transaction no. ; <user_id> ; <option> ; <price> ; <coupons> , <rating>
     # TODO: associate an transaction_id as transaction number as key
     # TODO: input the details of the transactions (eg userid, price, option, etc)
+
+    # below code is only usable when we use nested dictionary
+    for key, value in transaction_dict.items(): # for every transaction
+        print(key, ":", value, "\n")
+    #     for i in value:
+    #         print(i +":", value[i])
 
     with shelve.open("transactions", "c") as db:
         try:
@@ -295,6 +302,8 @@ def admin_transaction():
         for key in transaction_dict:
             transaction = transaction_dict.get(key)
             transaction_list.append(transaction)
+
+            print(transaction)
         print(transaction_list)
 
     return render_template("admin/transaction.html", count=len(transaction_list),
