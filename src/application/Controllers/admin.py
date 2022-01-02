@@ -6,7 +6,9 @@
 from flask import render_template, request, redirect, url_for, session, flash
 from application.Models.Admin import *
 from application.Models.Food import Food
+from application.Models.Restaurant import Restaurant
 from application import app
+from application.Models.Transaction import Transaction
 from application.adminAddFoodForm import CreateFoodForm
 from werkzeug.utils import secure_filename
 
@@ -172,7 +174,6 @@ def get_account_email(account: Account):
         logging.info(e)
         return "ERROR"
 
-
 # TODO; store Flask session info in shelve db
 
 # Activate global function for jinja
@@ -187,7 +188,11 @@ app.jinja_env.globals.update(get_account_email=get_account_email)
 # APP ROUTE TO FOOD MANAGEMENT clara
 @app.route("/admin/foodManagement")
 def food_management():
-    return render_template('admin/foodManagement.html')
+    with shelve.open(DB_NAME, 'c') as db:
+        food_list = db['food']
+
+    return render_template('admin/foodManagement.html',
+                           food_list=food_list)
 
 
 MAX_SPECIFICATION_ID = 5  # for adding food
@@ -263,7 +268,50 @@ def create_food():
 # <------------------------- YONGLIN ------------------------------>
 @app.route("/admin/transaction")
 def admin_transaction():
-    return render_template("admin/transaction.html")
+    # creating a shelve file with dummy data
+    transaction_dict = {'1': ['Yong Lin', 'Delivery', '60.40', 'SPAGETIT', '1'],
+    '2': ['Yuen Loong', 'Dine-in', '40.35', 'SPAGETIT', '2']}
+
+    # 1: transaction no. ; <user_id> ; <option> ; <price> ; <coupons> , <rating>
+    # TODO: associate an transaction_id as transaction number as key
+    # TODO: input the details of the transactions (eg userid, price, option, etc)
+
+    # below code is only usable when we use nested dictionary
+    for key, value in transaction_dict.items(): # for every transaction
+        print(key, ":", value, "\n")
+    #     for i in value:
+    #         print(i +":", value[i])
+
+    with shelve.open("transactions", "c") as db:
+        try:
+            if 'shop_transactions' in db:
+                transaction_dict = db['shop_transactions']
+            else:
+                db['shop_transactions'] = transaction_dict
+        except Exception as e:
+            logging.error("read_transaction: error opening db (%s)" % e)
+
+    # reading the shelve
+    with shelve.open("transactions", "c") as db:
+        try:
+            print(db['shop_transactions']) # debug
+            if 'shop_transactions' in db:
+                transaction_dict = db['shop_transactions']
+            else:
+                db['shop_transactions'] = transaction_dict
+        except Exception as e:
+            logging.error("read_transaction: error opening db (%s)" % e)
+
+        transaction_list = []
+        for key in transaction_dict:
+            transaction = transaction_dict.get(key)
+            transaction_list.append(transaction)
+
+            print(transaction)
+        print(transaction_list)
+
+    return render_template("admin/transaction.html", count=len(transaction_list),
+                           transaction_list=transaction_list)
 
 
 # certification -- xu yong lin
@@ -277,33 +325,22 @@ def admin_transaction():
 # def allowed_file(filename):
 #     return '.' in filename and filename.rsplit('.', 1)[1].lower() in
 #     ALLOWED_EXTENSIONS
+path = os.getcwd()
+
+UPLOAD_CERT = os.path.join(path, 'uploads')
+
+app.config['UPLOAD_CERT'] = UPLOAD_CERT
 
 
 @app.route("/admin/certification", methods=['GET', 'POST'])
 def admin_certification():
-    # if request.method == "POST":
-    #     # check if the post request has file
-    #     if 'file' not in request.files:
-    #         flash('No file part')
-    #         return redirect(url_for('admin_myrestaurant'))
-    #     restaurantFile = request.files['file']
-    #
-    #     # if user did not select a file, the browser submits an empty file
-    #     w/o a filename
-    #     if restaurantFile.filename == '':
-    #         flash('No selected file')
-    #         return redirect(url_for('admin_certification'))
-    #     if restaurantFile and allowed_file(restaurantFile.filename):
-    #         restaurantFile.save(os.path.join(app.config['UPLOAD_FOLDER'],
-    #         filename))
-    #         return redirect(url_for('download_file', name=filename))
-
     # set upload directory path
     certification_form = RestaurantCertification()
     if certification_form.validate_on_submit():
-        assets_dir = os.path.join(
-            os.path.dirname(app.instance_path), 'assets'
-        )
+        # assets_dir = os.path.join(
+        #     os.path.dirname(app.instance_path), 'assets'
+        # )
+        hygiene = certification_form.hygiene_cert.data
         halal = certification_form.halal_cert.data
         vegetarian = certification_form.vegetarian_cert.data
         vegan = certification_form.vegan_cert.data
@@ -313,46 +350,72 @@ def admin_certification():
         vegandoc_name = secure_filename(vegan.filename)
 
         # document save
-        halal.save(os.path.join(assets_dir, 'halal', halaldoc_name))
-        vegetarian.save(
-            os.path.join(assets_dir, 'vegetarian', vegetariandoc_name))
-        vegan.save(os.path.join(assets_dir, 'vegan', vegandoc_name))
+        # halal.save(os.path.join(app.config['UPLOAD_FOLDER'], halaldoc_name))
+        # TODO: SAVING OF FILE
+        # TODO: DISPLAYING OF AVAILABLE FILES UNDER myrestaurant
+        # todo: updating of cert under myrestaurant
+
+        # halal.save(os.path.join('/application/static/restaurantCertification', halaldoc_name))
+        # vegetarian.save(
+        #     os.path.join('/application/static/restaurantCertification', vegetariandoc_name))
+        # vegan.save(os.path.join('/application/static/restaurantCertification', vegandoc_name))
 
         flash('Document uploaded successfully')
 
-        return redirect(url_for('admin_myrestaurant'))
+        # return redirect(url_for('admin_myrestaurant'))
 
     return render_template("admin/certification.html",
                            certification_form=certification_form)
 
 
 # <------------------------- RURI ------------------------------>
-@app.route("/admin/myRestaurant")
+@app.route('/admin/myRestaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
-    # restaurant_details_form: RestaurantDetailsForm = RestaurantDetailsForm(request.form)
-    # if request.method == 'POST' and restaurant_details_form():
-    #     restaurants_dict = {}
-    #     db = shelve.open('restaurants.db', 'c')
-    #     try:
-    #         restaurants_dict = db['Restaurants']
-    #     except:
-    #         print("Error in retrieving Customers from restaurants.db.")
-    #
-    # restaurant = Restaurant.Restaurant(restaurant_details_form.rest_name.data, )
-    # restaurants_dict[restaurant.get_restaurant_id()] = restaurant
-    # db['Restaurants'] = restaurants_dict
-    #
-    # db.close()
-    #
-    # return render_template("admin/restaurant.html")
-    return render_template('admin/restaurant.html')
+    restaurant_details_form = RestaurantDetailsForm(request.form)
+    restaurants_dict = {}
+    if request.method == 'POST' and restaurant_details_form.validate():
+        db = shelve.open(DB_NAME, 'c')
+        try:
+            restaurants_dict = db['Restaurants']
+        except Exception as e:
+            logging.error("Error in retrieving Restaurants from "
+                          "restaurants.db (%s)" % e)
+
+        restaurant = Restaurant(restaurant_details_form.rest_name.data)
+        restaurants_dict[restaurant.name] = restaurant
+        db['Restaurants'] = restaurants_dict
+
+        db.close()
+
+    return render_template("admin/restaurant.html", form=restaurant_details_form)
+# #
+# @app.route('admin/myrestaurant', methods=['GET', 'POST'])
+# def create_customer():
+#     create_customer_form: CreateCustomerForm = CreateCustomerForm(request.form)
+#     if request.method == 'POST' and create_customer_form.validate():
+#         customers_dict = {}
+#         db = shelve.open('customer.db', 'c')
+#
+#         try:
+#             customers_dict = db['Customers']
+#         except:
+#             print("Error in retrieving Customers from customer.db.")
+#
+#         customer = Customer.Customer(create_customer_form.first_name.data, create_customer_form.last_name.data,
+#                                      create_customer_form.gender.data, create_customer_form.membership.data,
+#                                      create_customer_form.remarks.data, create_customer_form.email.data,
+#                                      create_customer_form.date_joined.data,
+#                                      create_customer_form.address.data, )
+#         customers_dict[customer.get_customer_id()] = customer
+#         db['Customers'] = customers_dict
+#
+#         db.close()
+#
+#         return redirect(url_for('home'))
+#     return render_template('includes/createCustomer.html', form=create_customer_form)
 
 
 @app.route("/admin/dashboard")
 def dashboard():  # ruri
     return render_template("admin/dashboard.html")
 
-
-@app.route("/admin/tags")
-def admin_tags():  # ruri
-    return render_template("admin/tags.html")

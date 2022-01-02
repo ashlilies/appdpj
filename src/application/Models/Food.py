@@ -15,12 +15,6 @@ class Food:
 
         save_db()
 
-    def get_name(self):
-        return self.name
-
-    def get_price(self):
-        return self.price
-
     # Get the image as a file?
     def get_image(self):
         return self.__image

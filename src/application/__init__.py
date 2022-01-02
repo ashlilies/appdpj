@@ -145,7 +145,8 @@ def retrieve_customers():
         customer = customers_dict.get(key)
         customers_list.append(customer)
 
-    return render_template('retrieveCustomers.html', count=len(customers_list),
+    return render_template('retrieveCustomers.html',
+                           count=len(customers_list),
                            customers_list=customers_list)
 
 
