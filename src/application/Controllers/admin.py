@@ -271,25 +271,25 @@ def admin_certification():
 
 
 # <------------------------- RURI ------------------------------>
-# # @app.route('/admin/myrestaurant', methods=['GET', 'POST'])
-# # def admin_myrestaurant():  # ruri
-# #     restaurant_details_form = RestaurantDetailsForm(request.form)
-# #     restaurants_dict = {}
-# #     if request.method == 'POST' and restaurant_details_form.validate():
-# #         db = shelve.open(DB_NAME, 'c')
-# #         try:
-# #             restaurants_dict = db['Restaurants']
-# #         except Exception as e:
-# #             logging.error("Error in retrieving Restaurants from "
-# #                           "restaurants.db (%s)" % e)
-# #
-# #         restaurant = Restaurant(restaurant_details_form.rest_name.data)
-# #         restaurants_dict[restaurant.rest_name] = restaurant
-# #         db['Restaurants'] = restaurants_dict
-# #
-# #         db.close()
-# #
-# #     return render_template("includes/restaurant.html", form=restaurant_details_form)
+@app.route('/admin/myrestaurant', methods=['GET', 'POST'])
+def admin_myrestaurant():  # ruri
+    restaurant_details_form = RestaurantDetailsForm(request.form)
+    restaurants_dict = {}
+    if request.method == 'POST' and restaurant_details_form.validate():
+        db = shelve.open(DB_NAME, 'c')
+        try:
+            restaurants_dict = db['Restaurants']
+        except Exception as e:
+            logging.error("Error in retrieving Restaurants from "
+                          "restaurants.db (%s)" % e)
+
+        restaurant = Restaurant(restaurant_details_form.rest_name.data)
+        restaurants_dict[restaurant.name] = restaurant
+        db['Restaurants'] = restaurants_dict
+
+        db.close()
+
+    return render_template("admin/restaurant.html", form=restaurant_details_form)
 # #
 # @app.route('admin/myrestaurant', methods=['GET', 'POST'])
 # def create_customer():
