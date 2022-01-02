@@ -189,7 +189,11 @@ app.jinja_env.globals.update(get_account_email=get_account_email)
 @app.route("/admin/foodManagement")
 def food_management():
     with shelve.open(DB_NAME, 'c') as db:
-        food_list = db['food']
+        if "food" in db:
+            food_list = db['food']
+        else:
+            food_list = []
+            db["food"] = food_list
 
     return render_template('admin/foodManagement.html',
                            food_list=food_list)
