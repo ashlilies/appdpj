@@ -336,6 +336,7 @@ def admin_certification():
         # assets_dir = os.path.join(
         #     os.path.dirname(app.instance_path), 'assets'
         # )
+        hygiene = certification_form.hygiene_cert.data
         halal = certification_form.halal_cert.data
         vegetarian = certification_form.vegetarian_cert.data
         vegan = certification_form.vegan_cert.data
@@ -345,7 +346,7 @@ def admin_certification():
         vegandoc_name = secure_filename(vegan.filename)
 
         # document save
-        halal.save(os.path.join(app.config['UPLOAD_FOLDER'], halaldoc_name))
+        # halal.save(os.path.join(app.config['UPLOAD_FOLDER'], halaldoc_name))
         # TODO: SAVING OF FILE
         # TODO: DISPLAYING OF AVAILABLE FILES UNDER myrestaurant
         # todo: updating of cert under myrestaurant
@@ -357,7 +358,7 @@ def admin_certification():
 
         flash('Document uploaded successfully')
 
-        return redirect(url_for('admin_myrestaurant'))
+        # return redirect(url_for('admin_myrestaurant'))
 
     return render_template("admin/certification.html",
                            certification_form=certification_form)
