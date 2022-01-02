@@ -3,14 +3,18 @@
 
 # New routes go here, not in __init__.
 
-from flask import render_template, request, redirect, url_for, session
+from flask import render_template, request, redirect, url_for, session, flash
 from application.Models.Admin import *
 from application.Models.Food import Food
 from application.Models.Restaurant import Restaurant
 from application import app
+from application.Models.Transaction import Transaction
 from application.adminAddFoodForm import CreateFoodForm
+from werkzeug.utils import secure_filename
+
+from application.restaurantCertification import RestaurantCertification
+import shelve, os
 from application.rest_details_form import RestaurantDetailsForm
-import shelve
 
 
 # <------------------------- ASHLEE ------------------------------>
@@ -157,10 +161,9 @@ def gabi(account_id) -> Account:  # for flask
 #     return Admin.get_account_by_id(account_id)
 
 
-def get_restaurant_name_by_id(id):
-    restaurant_account = gabi(id)
-    rname = restaurant_account.restaurant_name
-    return rname
+def get_restaurant_name_by_id(restaurant_id):
+    restaurant_account = gabi(restaurant_id)
+    return getattr(restaurant_account, "restaurant_name", None)
 
 
 # Used for the Account Settings pane.
@@ -185,7 +188,11 @@ app.jinja_env.globals.update(get_account_email=get_account_email)
 # APP ROUTE TO FOOD MANAGEMENT clara
 @app.route("/admin/foodManagement")
 def food_management():
-    return render_template('admin/foodManagement.html')
+    with shelve.open(DB_NAME, 'c') as db:
+        food_list = db['food']
+
+    return render_template('admin/foodManagement.html',
+                           food_list=food_list)
 
 
 MAX_SPECIFICATION_ID = 5  # for adding food
@@ -261,17 +268,108 @@ def create_food():
 # <------------------------- YONGLIN ------------------------------>
 @app.route("/admin/transaction")
 def admin_transaction():
-    return render_template("admin/transaction.html")
+    # creating a shelve file with dummy data
+    transaction_dict = {'1': ['Yong Lin', 'Delivery', '60.40', 'SPAGETIT', '1'],
+    '2': ['Yuen Loong', 'Dine-in', '40.35', 'SPAGETIT', '2']}
+
+    # 1: transaction no. ; <user_id> ; <option> ; <price> ; <coupons> , <rating>
+    # TODO: associate an transaction_id as transaction number as key
+    # TODO: input the details of the transactions (eg userid, price, option, etc)
+
+    # below code is only usable when we use nested dictionary
+    for key, value in transaction_dict.items(): # for every transaction
+        print(key, ":", value, "\n")
+    #     for i in value:
+    #         print(i +":", value[i])
+
+    with shelve.open("transactions", "c") as db:
+        try:
+            if 'shop_transactions' in db:
+                transaction_dict = db['shop_transactions']
+            else:
+                db['shop_transactions'] = transaction_dict
+        except Exception as e:
+            logging.error("read_transaction: error opening db (%s)" % e)
+
+    # reading the shelve
+    with shelve.open("transactions", "c") as db:
+        try:
+            print(db['shop_transactions']) # debug
+            if 'shop_transactions' in db:
+                transaction_dict = db['shop_transactions']
+            else:
+                db['shop_transactions'] = transaction_dict
+        except Exception as e:
+            logging.error("read_transaction: error opening db (%s)" % e)
+
+        transaction_list = []
+        for key in transaction_dict:
+            transaction = transaction_dict.get(key)
+            transaction_list.append(transaction)
+
+            print(transaction)
+        print(transaction_list)
+
+    return render_template("admin/transaction.html", count=len(transaction_list),
+                           transaction_list=transaction_list)
 
 
 # certification -- xu yong lin
-@app.route("/admin/certification")
+# UPLOAD_FOLDER = 'application/static/restaurantCertification'  # where the
+# files are stored to
+# ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
+#
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+#
+#
+# def allowed_file(filename):
+#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in
+#     ALLOWED_EXTENSIONS
+path = os.getcwd()
+
+UPLOAD_CERT = os.path.join(path, 'uploads')
+
+app.config['UPLOAD_CERT'] = UPLOAD_CERT
+
+
+@app.route("/admin/certification", methods=['GET', 'POST'])
 def admin_certification():
-    return render_template("admin/certification.html")
+    # set upload directory path
+    certification_form = RestaurantCertification()
+    if certification_form.validate_on_submit():
+        # assets_dir = os.path.join(
+        #     os.path.dirname(app.instance_path), 'assets'
+        # )
+        hygiene = certification_form.hygiene_cert.data
+        halal = certification_form.halal_cert.data
+        vegetarian = certification_form.vegetarian_cert.data
+        vegan = certification_form.vegan_cert.data
+
+        halaldoc_name = secure_filename(halal.filename)
+        vegetariandoc_name = secure_filename(vegetarian.filename)
+        vegandoc_name = secure_filename(vegan.filename)
+
+        # document save
+        # halal.save(os.path.join(app.config['UPLOAD_FOLDER'], halaldoc_name))
+        # TODO: SAVING OF FILE
+        # TODO: DISPLAYING OF AVAILABLE FILES UNDER myrestaurant
+        # todo: updating of cert under myrestaurant
+
+        # halal.save(os.path.join('/application/static/restaurantCertification', halaldoc_name))
+        # vegetarian.save(
+        #     os.path.join('/application/static/restaurantCertification', vegetariandoc_name))
+        # vegan.save(os.path.join('/application/static/restaurantCertification', vegandoc_name))
+
+        flash('Document uploaded successfully')
+
+        # return redirect(url_for('admin_myrestaurant'))
+
+    return render_template("admin/certification.html",
+                           certification_form=certification_form)
 
 
 # <------------------------- RURI ------------------------------>
-@app.route('/admin/myrestaurant', methods=['GET', 'POST'])
+@app.route('/admin/myRestaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
     restaurant_details_form = RestaurantDetailsForm(request.form)
     restaurants_dict = {}

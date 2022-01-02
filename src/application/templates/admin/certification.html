@@ -14,6 +14,9 @@
           width: 500px;
       }
 
+      .error{
+          color: red;
+      }
       .modaldiv {
           position: relative;
           left: 30px;
@@ -80,14 +83,13 @@
           </div>
           <div class="modal-body">
             <h5>Upload your hygiene certification here</h5>
-            <form action="" id="restaurantCertification"
-                  enctype="multipart/form-data" method="post">
+            <form method="POST" action="" id="restaurantCertification" enctype="multipart/form-data">
               <div class="mb-3">
                 <label>Hygiene Certification</label>
-                <input class="form-control" type="file" id="hygieneCert"
-                       style="margin-top: 20px; width: 100%" required>
+                <input class="form-control" name="hygieneInput" type="file" id="hygieneCert"
+                       style="margin-top: 20px; width: 100%" >
                 {% for error in certification_form.hygiene_cert.errors %}
-                  <small class="text-danger">{{ error }}</small>
+                  <h1 class="error">{{ ', '.join(certification_form.hygiene_cert.errors) }}</h1>
                 {% endfor %}
               </div>
               <br>
