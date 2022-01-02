@@ -41,13 +41,13 @@
                 <tbody>
                 {% for food in food_list %}
                     <tr>
-                        <td>{{ food.get_name() }}</td>
-                        <td>{{ food.get_description() }}</td>
-                        <td>{{ food.get_price() }}</td>
-                        <td>{{ food.get_allergy() }}</td>
-                        <td>{{ food.get_specfication() }}</td>
+                        <td>{{ food.name }}</td>
+                        <td>{{ food.description }}</td>
+                        <td>{{ food.price }}</td>
+                        <td>{{ food.allergy }}</td>
+                        <td>{{ food.specfication }}</td>
 
-                        <td>{{ food.get_topping() }}</td>
+                        <td>{{ food.topping }}</td>
                         <td><a href="#" class="btn btn-warning">Update</a></td>
                         <td>
                             <form action="" method="POST">

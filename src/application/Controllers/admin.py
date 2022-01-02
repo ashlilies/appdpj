@@ -187,7 +187,11 @@ app.jinja_env.globals.update(get_account_email=get_account_email)
 # APP ROUTE TO FOOD MANAGEMENT clara
 @app.route("/admin/foodManagement")
 def food_management():
-    return render_template('admin/foodManagement.html')
+    with shelve.open(DB_NAME, 'c') as db:
+        food_list = db['food']
+
+    return render_template('admin/foodManagement.html',
+                           food_list=food_list)
 
 
 MAX_SPECIFICATION_ID = 5  # for adding food
