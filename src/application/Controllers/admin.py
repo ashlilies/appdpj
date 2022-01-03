@@ -269,46 +269,50 @@ def create_food():
 @app.route("/admin/transaction")
 def admin_transaction():
     # creating a shelve file with dummy data
-    transaction_dict = {'1': ['Yong Lin', 'Delivery', '60.40', 'SPAGETIT', '1'],
-    '2': ['Yuen Loong', 'Dine-in', '40.35', 'SPAGETIT', '2']}
+    # 1: <account id> ; <user_id> ; <option> ; <price> ; <coupons> , <rating>
+    transaction_list = []
+    t1 = Transaction()
+    t1.set_account_id('Yong Lin')
+    t1.set_option('Delivery')
+    t1.set_price(50.30)
+    t1.set_used_coupons('SPAGETIT')
+    t1.set_ratings(2)
+    print(t1)
+    transaction_list.append(t1)
+    print('Debug for transaction_list',transaction_list)
+    t2 = Transaction()
+    t2.set_account_id('Ching Chong')
+    t2.set_option('Dine-in')
+    t2.set_price(80.90)
+    t2.set_used_coupons('50PASTA')
+    t2.set_ratings(5)
+    print(t2)
+    transaction_list.append(t2)
+    print('UPDATED TLIST: ',transaction_list)
+    t3 = Transaction()
+    t3.set_account_id('Hosea')
+    t3.set_option('Delivery')
+    t3.set_price(20.10)
+    t3.set_used_coupons('50PASTA')
+    t3.set_ratings(1)
+    print(t3)
+    transaction_list.append(t3)
 
-    # 1: transaction no. ; <user_id> ; <option> ; <price> ; <coupons> , <rating>
-    # TODO: associate an transaction_id as transaction number as key
-    # TODO: input the details of the transactions (eg userid, price, option, etc)
-
-    # below code is only usable when we use nested dictionary
-    for key, value in transaction_dict.items(): # for every transaction
-        print(key, ":", value, "\n")
-    #     for i in value:
-    #         print(i +":", value[i])
-
-    with shelve.open("transactions", "c") as db:
-        try:
-            if 'shop_transactions' in db:
-                transaction_dict = db['shop_transactions']
-            else:
-                db['shop_transactions'] = transaction_dict
-        except Exception as e:
-            logging.error("read_transaction: error opening db (%s)" % e)
 
     # reading the shelve
     with shelve.open("transactions", "c") as db:
         try:
-            print(db['shop_transactions']) # debug
+            print("Debug for db['shop_transactions']",db['shop_transactions']) # debug
             if 'shop_transactions' in db:
-                transaction_dict = db['shop_transactions']
+                transaction_list = db['shop_transactions']
             else:
-                db['shop_transactions'] = transaction_dict
+                db['shop_transactions'] = transaction_list
         except Exception as e:
             logging.error("read_transaction: error opening db (%s)" % e)
 
-        transaction_list = []
-        for key in transaction_dict:
-            transaction = transaction_dict.get(key)
-            transaction_list.append(transaction)
+    # soft delete -> restaurant can soft delete transactions jic if the transaction is cancelled
+    # set instance attribute of Transaction.py = False
 
-            print(transaction)
-        print(transaction_list)
 
     return render_template("admin/transaction.html", count=len(transaction_list),
                            transaction_list=transaction_list)

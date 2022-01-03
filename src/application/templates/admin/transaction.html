@@ -70,7 +70,6 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col">#</th>
             <th scope="col">Username</th>
             <th scope="col">Option</th>
             <th scope="col">Price</th>
@@ -79,77 +78,25 @@
           </tr>
         </thead>
         <tbody>
-          <div class="redhighlight">
-            <tr class="highlight">
-            <th scope="row">1</th>
-            <td>Yuen Loong</td>
-            <td>Delivery</td>
-            <td>20.25</td>
-            <td>SPAGETIT</td>
-            <td>2</td>
-            </tr>
-          </div>
-          <tr>
-            <th scope="row">2</th>
-            <td>Yin Loong</td>
-            <td>Delivery</td>
-            <td>50.25</td>
-            <td>SPAGETIT</td>
-              <td>4</td>
-          </tr>
           {% for transaction in transaction_list %}
-            {# without appending values to Transaction.py #}
-{#              {% for i in transaction %}#}
-{#                  {% if i == '2' %}#}
-{#                    <tr class="highlight">#}
-{#                      <th scope="row">{{ key }}</th>#}
-{#                      {% for i in transaction %}#}
-{#                        <td> {{ i }}</td>#}
-{#                      {% endfor %}#}
-{#                    </tr>#}
-{#                  {% else %}#}
-{#                      <tr>#}
-{#                        <th scope="row">{{ key }}</th>#}
-{#                        {% for i in transaction %}#}
-{#                          <td> {{ i }}</td>#}
-{#                        {% endfor %}#}
-{#                      </tr>#}
-{#                  {% endif %}#}
-{#                    <td>{{ i }}</td>#}
-{#              {% endfor %}#}
-{#              </tr>#}
-
-              {% if transaction[4] == '2' or transaction[4] == "1" %}
-                  <tr class="highlight">
-                    <th scope="row">3</th>
-                    {% for i in transaction %}
-                        <td> {{ i }}</td>
-                    {% endfor %}
-                  </tr>
+              {# reading attributes from Transaction.py in each Class obj in transaction_list #}
+              {% if transaction.get_ratings() <= 2 %}
+              <tr class="highlight">
+                    <td>{{ transaction.get_account_id() }}</td>
+                    <td>{{ transaction.get_option() }}</td>
+                    <td>{{ transaction.get_price() }}</td>
+                    <td>{{ transaction.get_used_coupons() }}</td>
+                    <td>{{ transaction.get_ratings() }}</td>
+              </tr>
               {% else %}
-                  <tr>
-                    <th scope="row">3</th>
-                    {% for i in transaction %}
-                          <td> {{ i }}</td>
-                    {% endfor %}
-                  </tr>
+              <tr>
+                    <td>{{ transaction.get_account_id() }}</td>
+                    <td>{{ transaction.get_option() }}</td>
+                    <td>{{ transaction.get_price() }}</td>
+                    <td>{{ transaction.get_used_coupons() }}</td>
+                    <td>{{ transaction.get_ratings() }}</td>
+              </tr>
               {% endif %}
-
-
-
-
-
-
-{#              when we implement Transaction.py in#}
-{#              <tr>#}
-{#                  <th scope="row">{{ key }}</th>#}
-{#                    <td>{{ transaction_list[transaction] }}#}
-{#                    <td>{{ transaction.get_account_id() }}</td>#}
-{#                    <td>{{ transaction.get_option() }}</td>#}
-{#                    <td>{{ transaction.get_price() }}</td>#}
-{#                    <td>{{ transaction.get_used_coupons() }}</td>#}
-{#                    <td>{{ transaction.get_rating() }}</td>#}
-{#              </tr>#}
           {% endfor %}
         </tbody>
       </table>
