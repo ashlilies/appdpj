@@ -371,19 +371,19 @@ def admin_certification():
 # <------------------------- RURI ------------------------------>
 @app.route('/admin/myRestaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
-    Count = count
-    def get_tags() -> list:
-        tag = []
-
-        # do tags exist in first place?
-        for i in range(Count + 1):
-            if "tag%d" % i in request.form:
-                tags.append(request.form["tags%d" % i])
-            else:
-                break
-
-        logging.info("create_restaurant: tag is %s" % tag)
-        return tag
+    # Count = count
+    # def get_tags() -> list:
+    #     tag = []
+    #
+    #     # do tags exist in first place?
+    #     for i in range(Count + 1):
+    #         if "tag%d" % i in request.form:
+    #             tags.append(request.form["tags%d" % i])
+    #         else:
+    #             break
+    #
+    #     logging.info("create_restaurant: tag is %s" % tag)
+    #     return tag
 
 
     restaurant_details_form = RestaurantDetailsForm(request.form)
@@ -424,7 +424,7 @@ def admin_myrestaurant():  # ruri
         #
         # db.close()
 
-    return render_template("admin/restaurant.html", form=restaurant_details_form, Count=Count)
+    return render_template("admin/restaurant.html", form=restaurant_details_form)
 # #
 # @app.route('admin/myrestaurant', methods=['GET', 'POST'])
 # def create_customer():
