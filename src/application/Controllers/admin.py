@@ -371,23 +371,60 @@ def admin_certification():
 # <------------------------- RURI ------------------------------>
 @app.route('/admin/myRestaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
+    Count = count
+    def get_tags() -> list:
+        tag = []
+
+        # do tags exist in first place?
+        for i in range(Count + 1):
+            if "tag%d" % i in request.form:
+                tags.append(request.form["tags%d" % i])
+            else:
+                break
+
+        logging.info("create_restaurant: tag is %s" % tag)
+        return tag
+
+
     restaurant_details_form = RestaurantDetailsForm(request.form)
-    restaurants_dict = {}
+    restaurants_list = {}
     if request.method == 'POST' and restaurant_details_form.validate():
         db = shelve.open(DB_NAME, 'c')
         try:
-            restaurants_dict = db['Restaurants']
+            restaurants_list = db['Restaurants']
         except Exception as e:
             logging.error("Error in retrieving Restaurants from "
                           "restaurants.db (%s)" % e)
 
-        restaurant = Restaurant(restaurant_details_form.rest_name.data)
-        restaurants_dict[restaurant.name] = restaurant
-        db['Restaurants'] = restaurants_dict
+        restaurant = Restaurant(restaurant_details_form.rest_name.data,
+                                restaurant_details_form.rest_contact.data,
+                                restaurant_details_form.rest_hour_open.data,
+                                restaurant_details_form.rest_hour_close.data,
+                                restaurant_details_form.rest_address1.data,
+                                restaurant_details_form.rest_address2.data,
+                                restaurant_details_form.rest_postcode.data,
+                                restaurant_details_form.rest_desc.data,
+                                restaurant_details_form.rest_bank.data,
+                                restaurant_details_form.rest_del1.data,
+                                restaurant_details_form.rest_del2.data,
+                                restaurant_details_form.rest_del3.data,
+                                restaurant_details_form.rest_del4.data,
+                                restaurant_details_form.rest_del5.data,
+        )
+        restaurant.tags = get_tags()  # set specifications as a List
+        restaurants_list.append(restaurant)
 
-        db.close()
+        with shelve.open("Restaurants", 'c') as db:
+            db['Restaurants'] = restaurants_list
 
-    return render_template("admin/restaurant.html", form=restaurant_details_form)
+        return redirect(url_for('admin_home'))
+
+        # restaurants_dict[restaurant.name] = restaurant
+        # db['Restaurants'] = restaurants_dict
+        #
+        # db.close()
+
+    return render_template("admin/restaurant.html", form=restaurant_details_form, Count=Count)
 # #
 # @app.route('admin/myrestaurant', methods=['GET', 'POST'])
 # def create_customer():
