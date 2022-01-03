@@ -185,8 +185,8 @@
           <div class="form">
             {#                    <form action="javascript:void(0);" method="POST" onsubmit="app.Add()">#}
             <form action="javascript:void(0);" method="POST">
-              <input type="text" class="form-control" id="add-todo" placeholder="'Bakery'"
-                     style="display:inline-block">
+              <input type="text" class="form-control" id="add-todo" placeholder="'Bakery'" style="display:inline-block">
+              <input type=“text” name=“count” id=“count” hidden>
               <!--                <input type="bu" value="Add" class="btn btn-primary">-->
               <button class="btn" value="Add" style="display:inline-block" onclick="app.Add()"><i class="fa fa-plus-circle"></i>
               </button>
