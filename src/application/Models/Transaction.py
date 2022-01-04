@@ -1,27 +1,14 @@
 # xu yong lin
-import logging
-
-from application.Models.Account import Account
-
-
 # yet to include this part in python
 class Transaction:
-    transaction_no = 0  # counts the number of transactions in the restaurant per month
 
     def __init__(self, account_id=None, option=None, price=0, used_coupons=None,
                  ratings=0):
-        self.transaction_no = Account.count_id
-        self.__account_id = account_id
+        self.account_id = account_id
         self.__option = option
         self.__price = float(price)
         self.__used_coupons = used_coupons
         self.__ratings = int(ratings)
-
-    def set_account_id(self, accounts):
-        self.__account_id = str(accounts)
-
-    def get_account_id(self):
-        return self.__account_id
 
     def set_option(self, option):
         self.__option = option
