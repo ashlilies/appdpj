@@ -1,14 +1,21 @@
 # xu yong lin
 # yet to include this part in python
+from application.Models.Account import Account
+
+
 class Transaction:
 
-    def __init__(self, account_id=None, option=None, price=0, used_coupons=None,
+    def __init__(self, account_name=None, option=None, price=0, used_coupons=None,
                  ratings=0):
-        self.account_id = account_id
+        self.count_id = Account.count_id # temporary as the 'count id' in Account is not set for users yet
+        self.account_name = account_name
         self.__option = option
         self.__price = float(price)
         self.__used_coupons = used_coupons
         self.__ratings = int(ratings)
+        Account.count_id += 1
+
+    print(Account.count_id)
 
     def set_option(self, option):
         self.__option = option

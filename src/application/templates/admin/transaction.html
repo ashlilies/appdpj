@@ -58,6 +58,7 @@
       <table class="table table-hover">
         <thead>
           <tr>
+            <th scope="col">Account ID</th>
             <th scope="col">Username</th>
             <th scope="col">Option</th>
             <th scope="col">Price</th>
@@ -71,20 +72,21 @@
               {# reading attributes from Transaction.py in each Class obj in transaction_list #}
               {% if transaction.get_ratings() <= 2 %}
               <tr class="highlight">
-                    <td>{{ transaction.account_id }}</td>
+                    <td>{{ transaction.count_id }}</td>
+                    <td>{{ transaction.account_name }}</td>
                     <td>{{ transaction.get_option() }}</td>
                     <td>{{ transaction.get_price() }}</td>
                     <td>{{ transaction.get_used_coupons() }}</td>
                     <td>{{ transaction.get_ratings() }}</td>
                     <td>
-                        <form action="" method="POST">
+                        <form action="{{ url_for('delete_transaction', id=transaction.count_id) }}" method="POST">
                             <!-- Button to Open the Modal -->
                             <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#myModal_{{ transaction.account_id }}">
+                                    data-bs-target="#myModal_{{ transaction.count_id }}">
                                 Delete
                             </button>
                             <!-- Vertically centered modal -->
-                            <div class="modal" id="myModal_{{ transaction.account_id }}">
+                            <div class="modal" id="myModal_{{ transaction.count_id }}">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                           <div class="modal-header">
@@ -92,39 +94,23 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                           </div>
                                           <div class="modal-body">
-                                            <p>Are you sure you want to delete {{ transaction.account_id }}?</p>
+                                            <p>Are you sure you want to delete {{ transaction.account_name }}?</p>
                                           </div>
                                           <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <input type="submit" value="Delete" class="btn btn-danger">
+                                            <input type="submit" value="Delete" class="btn btn-danger" onclick="deleteTransaction()">
                                           </div>
 
                                     </div>
                                 </div>
                             </div>
-
-{#                            <!-- The Modal -->#}
-{#                            <div class="modal" id="myModal_{{ transaction }}">#}
-{#                                <div class="modal-dialog">#}
-{#                                    <div class="modal-content">#}
-{##}
-{##}
-{#                                        <!-- Modal footer -->#}
-{#                                        <div class="modal-footer">#}
-{#                                            <input type="submit" value="Delete" class="btn btn-danger" onclick="deleteTransaction()">#}
-{#                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel#}
-{#                                            </button>#}
-{#                                        </div>#}
-{##}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
                         </form>
                     </td>
               </tr>
               {% else %}
               <tr class="trow">
-                    <td>{{ transaction.account_id }}</td>
+                    <td>{{ transaction.count_id }}</td>
+                    <td>{{ transaction.account_name }}</td>
                     <td>{{ transaction.get_option() }}</td>
                     <td>{{ transaction.get_price() }}</td>
                     <td>{{ transaction.get_used_coupons() }}</td>
@@ -133,11 +119,11 @@
                         <form action="" method="POST">
                             <!-- Button to Open the Modal -->
                             <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#myModal_{{ transaction.account_id }}">
+                                    data-bs-target="#myModal_{{ transaction.count_id }}">
                                 Delete
                             </button>
                             <!-- Vertically centered modal -->
-                            <div class="modal" id="myModal_{{ transaction.account_id }}">
+                            <div class="modal" id="myModal_{{ transaction.count_id }}">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                           <div class="modal-header">
@@ -145,11 +131,11 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                           </div>
                                           <div class="modal-body">
-                                            <p>Are you sure you want to delete {{ transaction.account_id }}?</p>
+                                            <p>Are you sure you want to delete {{ transaction.account_name }}?</p>
                                           </div>
                                           <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <input type="submit" value="Delete" class="btn btn-danger">
+                                            <input type="submit" value="Delete" class="btn btn-danger" onclick="deleteTransaction()">
                                           </div>
 
                                     </div>

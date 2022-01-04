@@ -266,77 +266,76 @@ def create_food():
                            MAX_TOPPING_ID=MAX_TOPPING_ID, )
 
 
-# <------------------------- YONGLIN ------------------------------>
+# <------------------------- YONG LIN ------------------------------>
 @app.route("/admin/transaction")
 def admin_transaction():
+    transaction_list = []
     # creating a shelve file with dummy data
     # 1: <account id> ; <user_id> ; <option> ; <price> ; <coupons> , <rating>
-    transaction_list = []
     t1 = Transaction()
-    t1.account_id = 'Yong Lin'
+    t1.account_name = 'Yong Lin'
     t1.set_option('Delivery')
     t1.set_price(50.30)
     t1.set_used_coupons('SPAGETIT')
     t1.set_ratings(2)
-    print(t1)
     transaction_list.append(t1)
     print('Debug for transaction_list', transaction_list)
+
     t2 = Transaction()
-    t2.account_id = 'Ching Chong'
+    t2.account_name = 'Ching Chong'
     t2.set_option('Dine-in')
     t2.set_price(80.90)
     t2.set_used_coupons('50PASTA')
     t2.set_ratings(5)
     print(t2)
     transaction_list.append(t2)
-    print('UPDATED TLIST: ', transaction_list)
+
     t3 = Transaction()
-    t3.account_id = 'Hosea'
+    t3.account_name = 'Hosea'
     t3.set_option('Delivery')
     t3.set_price(20.10)
     t3.set_used_coupons('50PASTA')
     t3.set_ratings(1)
-    print(t3)
     transaction_list.append(t3)
 
     t4 = Transaction()
-    t4.account_id = 'Clara'
+    t4.account_name = 'Clara'
     t4.set_option('Delivery')
-    t4.set_price(40.30)
+    t4.set_price(58.30)
     t4.set_used_coupons('SPAGETIT')
     t4.set_ratings(2)
-    print(t4)
     transaction_list.append(t4)
     print('Debug for transaction_list', transaction_list)
+
     t5 = Transaction()
-    t5.account_id = 'Ruri'
+    t5.account_name = 'Ruri'
     t5.set_option('Dine-in')
     t5.set_price(80.90)
     t5.set_used_coupons('50PASTA')
     t5.set_ratings(3)
     transaction_list.append(t5)
+
     t6 = Transaction()  # t6
-    t6.account_id = 'Ashlee'
+    t6.account_name = 'Ashlee'
     t6.set_option('Delivery')
     t6.set_price(100.10)
     t6.set_used_coupons('50PASTA')
     t6.set_ratings(2)
-    print(t6)
     transaction_list.append(t6)
+
     t7 = Transaction()
-    t7.account_id = 'Hello'
+    t7.account_name = 'Hello'
     t7.set_option('Dine-in')
     t7.set_price(10.90)
     t7.set_used_coupons('50PASTA')
     t7.set_ratings(4)
     transaction_list.append(t7)
 
-
     # reading the shelve
     with shelve.open("transactions", "c") as db:
         try:
             print("Debug for db['shop_transactions']", db['shop_transactions'])  # debug
-            if 'shop_transactions' in db:
+            if 'transactions' in db:
                 transaction_list = db['shop_transactions']
             else:
                 db['shop_transactions'] = transaction_list
@@ -349,10 +348,13 @@ def admin_transaction():
 
 # soft delete -> restaurant can soft delete transactions jic if the transaction is cancelled
 # set instance attribute of Transaction.py = False
-# @app.route('/admin/transaction', methods=['POST'])
-# def delete_transaction():
-#     admin_transaction
-#     return redirect(url_for('admin_transaction'))
+@app.route('/admin/transaction/<string:id>', methods=['POST'])
+def delete_transaction(id):
+    test = admin_transaction()
+    # TODO: SOFT DELETE TRANSACTIONS -> set instance attribute to False
+    if id in test:
+        id = Transaction(None, None, 0, None, 0)
+    return redirect(url_for('admin_transaction'))
 
 
 # certification -- xu yong lin
