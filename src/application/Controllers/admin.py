@@ -387,16 +387,17 @@ def admin_myrestaurant():  # ruri
 
 
     restaurant_details_form = RestaurantDetailsForm(request.form)
-    restaurants_list = {}
+    restaurants_dict = {}
     if request.method == 'POST' and restaurant_details_form.validate():
         db = shelve.open(DB_NAME, 'c')
         try:
-            restaurants_list = db['Restaurants']
+            restaurants_dict = db['Restaurants']
         except Exception as e:
             logging.error("Error in retrieving Restaurants from "
                           "restaurants.db (%s)" % e)
 
-        restaurant = Restaurant(restaurant_details_form.rest_name.data,
+        restaurant = Restaurant(request.form["rest_logo"],
+                                restaurant_details_form.rest_name.data,
                                 restaurant_details_form.rest_contact.data,
                                 restaurant_details_form.rest_hour_open.data,
                                 restaurant_details_form.rest_hour_close.data,
@@ -409,20 +410,11 @@ def admin_myrestaurant():  # ruri
                                 restaurant_details_form.rest_del2.data,
                                 restaurant_details_form.rest_del3.data,
                                 restaurant_details_form.rest_del4.data,
-                                restaurant_details_form.rest_del5.data,
-        )
-        restaurant.tags = get_tags()  # set specifications as a List
-        restaurants_list.append(restaurant)
+                                restaurant_details_form.rest_del5.data)
+        restaurants_dict[restaurant.name] = restaurant
+        db['Restaurants'] = restaurants_dict
 
-        with shelve.open("Restaurants", 'c') as db:
-            db['Restaurants'] = restaurants_list
-
-        return redirect(url_for('admin_home'))
-
-        # restaurants_dict[restaurant.name] = restaurant
-        # db['Restaurants'] = restaurants_dict
-        #
-        # db.close()
+        db.close()
 
     return render_template("admin/restaurant.html", form=restaurant_details_form)
 # #

@@ -2,8 +2,9 @@
 from application.Models.Account import save_db
 
 class Restaurant:
-    def __init__(self, name, contact, open, close, add1, add2, postc, desc, bank, del1, del2, del3, del4, del5, tags=None):
+    def __init__(self, name, logo, contact, open, close, add1, add2, postc, desc, bank, del1, del2, del3, del4, del5, tags=None):
         self.name = name
+        self.logo = logo
         self.contact = contact
         self.open = open
         self.close = close
