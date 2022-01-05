@@ -279,7 +279,6 @@ def admin_transaction():
     t1.set_used_coupons('SPAGETIT')
     t1.set_ratings(2)
     transaction_list.append(t1)
-    print('Debug for transaction_list', transaction_list)
 
     t2 = Transaction()
     t2.account_name = 'Ching Chong'
@@ -287,7 +286,6 @@ def admin_transaction():
     t2.set_price(80.90)
     t2.set_used_coupons('50PASTA')
     t2.set_ratings(5)
-    print(t2)
     transaction_list.append(t2)
 
     t3 = Transaction()
@@ -305,7 +303,6 @@ def admin_transaction():
     t4.set_used_coupons('SPAGETIT')
     t4.set_ratings(2)
     transaction_list.append(t4)
-    print('Debug for transaction_list', transaction_list)
 
     t5 = Transaction()
     t5.account_name = 'Ruri'
@@ -332,11 +329,11 @@ def admin_transaction():
     transaction_list.append(t7)
 
     # reading the shelve
-    with shelve.open("transactions", "c") as db:
+    with shelve.open(DB_NAME, "c") as db:
         try:
-            print("Debug for db['shop_transactions']", db['shop_transactions'])  # debug
-            if 'transactions' in db:
+            if 'shop_transactions' in db:
                 transaction_list = db['shop_transactions']
+                print("Debug for db['shop_transactions']", db['shop_transactions'])  # debug
             else:
                 db['shop_transactions'] = transaction_list
         except Exception as e:
@@ -348,12 +345,14 @@ def admin_transaction():
 
 # soft delete -> restaurant can soft delete transactions jic if the transaction is cancelled
 # set instance attribute of Transaction.py = False
-@app.route('/admin/transaction/<string:id>', methods=['POST'])
+@app.route('/admin/transaction/delete/<string:id>', methods=['GET'])
 def delete_transaction(id):
-    test = admin_transaction()
+    print(id)
     # TODO: SOFT DELETE TRANSACTIONS -> set instance attribute to False
-    if id in test:
-        id = Transaction(None, None, 0, None, 0)
+    with shelve.open(DB_NAME, 'c') as db:
+        for transaction in db['shop_transactions']:
+            if transaction.count_id == id:
+                id.deleted = True
     return redirect(url_for('admin_transaction'))
 
 

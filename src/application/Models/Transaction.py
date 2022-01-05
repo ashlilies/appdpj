@@ -1,19 +1,32 @@
 # xu yong lin
 # yet to include this part in python
+import logging
+import shelve
+
+from application import DB_NAME
 from application.Models.Account import Account
 
 
 class Transaction:
+    transaction_id = 1
 
     def __init__(self, account_name=None, option=None, price=0, used_coupons=None,
                  ratings=0):
-        self.count_id = Account.count_id # temporary as the 'count id' in Account is not set for users yet
+        with shelve.open(DB_NAME, 'c') as db:
+            try:
+                Transaction.transaction_id = db['transaction_id_count']
+            except Exception as e:
+                logging.info("transaction_id_count: error reading from db (%s)" % e)
+        self.count_id = Transaction.transaction_id  # temporary as the 'count id' in Account is not set for users yet
         self.account_name = account_name
         self.__option = option
         self.__price = float(price)
         self.__used_coupons = used_coupons
         self.__ratings = int(ratings)
-        Account.count_id += 1
+        self.deleted = False
+        Transaction.transaction_id += 1
+        with shelve.open(DB_NAME, 'c') as db:
+            db['transaction_id_count'] = Transaction.transaction_id
 
     print(Account.count_id)
 
@@ -40,4 +53,3 @@ class Transaction:
 
     def get_ratings(self):
         return self.__ratings
-
