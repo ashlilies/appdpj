@@ -7,7 +7,7 @@ from flask import render_template, request, redirect, url_for, session, flash
 from application.Models.Admin import *
 from application.Models.Food import Food
 from application.Models.Restaurant import Restaurant
-from application import app
+from application import app, DB_NAME
 from application.Models.Transaction import Transaction
 from application.adminAddFoodForm import CreateFoodForm
 from werkzeug.utils import secure_filename
@@ -267,9 +267,11 @@ def create_food():
 
 
 # <------------------------- YONG LIN ------------------------------>
-@app.route("/admin/transaction")
-def admin_transaction():
+@app.route("/admin/transaction/createExampleTransactions")
+def create_example_transactions():
+    # WARNING - Overrides ALL transactions in the db!
     transaction_list = []
+
     # creating a shelve file with dummy data
     # 1: <account id> ; <user_id> ; <option> ; <price> ; <coupons> , <rating>
     t1 = Transaction()
@@ -328,16 +330,32 @@ def admin_transaction():
     t7.set_ratings(4)
     transaction_list.append(t7)
 
-    # reading the shelve
+    # writing to the database
     with shelve.open(DB_NAME, "c") as db:
         try:
-            if 'shop_transactions' in db:
-                transaction_list = db['shop_transactions']
-                print("Debug for db['shop_transactions']", db['shop_transactions'])  # debug
-            else:
-                db['shop_transactions'] = transaction_list
+            db['shop_transactions'] = transaction_list
         except Exception as e:
-            logging.error("read_transaction: error opening db (%s)" % e)
+            logging.error("create_example_transactions: error writing to db (%s)" % e)
+
+    return redirect(url_for("admin_transaction"))
+
+
+@app.route("/admin/transaction")
+def admin_transaction():
+    # read transactions from db
+    with shelve.open(DB_NAME, 'c') as db:
+        if 'shop_transactions' in db:
+            transaction_list = db['shop_transactions']
+            logging.info("admin_transaction: reading from db['shop_transactions']"
+                         ", %d elems" % len(db["shop_transactions"]))
+        else:
+            logging.info("admin_transaction: nothing found in db, starting empty")
+            transaction_list = []
+
+    def get_transaction_by_id(transaction_id):  # debug
+        for transaction in transaction_list:
+            if transaction_id == transaction.count_id:
+                return transaction
 
     return render_template("admin/transaction.html", count=len(transaction_list),
                            transaction_list=transaction_list)
@@ -345,14 +363,27 @@ def admin_transaction():
 
 # soft delete -> restaurant can soft delete transactions jic if the transaction is cancelled
 # set instance attribute of Transaction.py = False
-@app.route('/admin/transaction/delete/<string:id>', methods=['GET'])
-def delete_transaction(id):
-    print(id)
+@app.route('/admin/transaction/delete/<transaction_id>')
+def delete_transaction(transaction_id):
+    transaction_id = int(transaction_id)
+
+    transaction_list = []
     # TODO: SOFT DELETE TRANSACTIONS -> set instance attribute to False
     with shelve.open(DB_NAME, 'c') as db:
         for transaction in db['shop_transactions']:
-            if transaction.count_id == id:
-                id.deleted = True
+            transaction_list.append(transaction)
+
+    def get_transaction_by_id(t_id):  # debug
+        for t in transaction_list:
+            if t_id == t.count_id:
+                return t
+
+    logging.info("delete_transaction: deleted transaction with id %d"
+                 % transaction_id)
+    get_transaction_by_id(transaction_id).deleted = True
+    with shelve.open(DB_NAME, 'c') as db:
+        db["shop_transactions"] = transaction_list
+
     return redirect(url_for('admin_transaction'))
 
 
