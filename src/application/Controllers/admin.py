@@ -267,6 +267,7 @@ def create_food():
 
 
 # <------------------------- YONG LIN ------------------------------>
+# for transactions -- creating of dummy data
 @app.route("/admin/transaction/createExampleTransactions")
 def create_example_transactions():
     # WARNING - Overrides ALL transactions in the db!
@@ -282,7 +283,7 @@ def create_example_transactions():
     t1.set_ratings(2)
     transaction_list.append(t1)
 
-    t2 = Transaction()
+    t2 = Transaction()  # t2
     t2.account_name = 'Ching Chong'
     t2.set_option('Dine-in')
     t2.set_price(80.90)
@@ -290,7 +291,7 @@ def create_example_transactions():
     t2.set_ratings(5)
     transaction_list.append(t2)
 
-    t3 = Transaction()
+    t3 = Transaction()  # t3
     t3.account_name = 'Hosea'
     t3.set_option('Delivery')
     t3.set_price(20.10)
@@ -298,7 +299,7 @@ def create_example_transactions():
     t3.set_ratings(1)
     transaction_list.append(t3)
 
-    t4 = Transaction()
+    t4 = Transaction()  # t4
     t4.account_name = 'Clara'
     t4.set_option('Delivery')
     t4.set_price(58.30)
@@ -306,7 +307,7 @@ def create_example_transactions():
     t4.set_ratings(2)
     transaction_list.append(t4)
 
-    t5 = Transaction()
+    t5 = Transaction()  # t5
     t5.account_name = 'Ruri'
     t5.set_option('Dine-in')
     t5.set_price(80.90)
@@ -340,6 +341,7 @@ def create_example_transactions():
     return redirect(url_for("admin_transaction"))
 
 
+# for transactions -- reading of data and displaying (R in CRUD)
 @app.route("/admin/transaction")
 def admin_transaction():
     # read transactions from db
@@ -361,14 +363,13 @@ def admin_transaction():
                            transaction_list=transaction_list)
 
 
+# for transactions -- soft delete (D in CRUD)
 # soft delete -> restaurant can soft delete transactions jic if the transaction is cancelled
-# set instance attribute of Transaction.py = False
 @app.route('/admin/transaction/delete/<transaction_id>')
 def delete_transaction(transaction_id):
     transaction_id = int(transaction_id)
 
     transaction_list = []
-    # TODO: SOFT DELETE TRANSACTIONS -> set instance attribute to False
     with shelve.open(DB_NAME, 'c') as db:
         for transaction in db['shop_transactions']:
             transaction_list.append(transaction)
@@ -380,7 +381,11 @@ def delete_transaction(transaction_id):
 
     logging.info("delete_transaction: deleted transaction with id %d"
                  % transaction_id)
+
+    # set instance attribute 'deleted' of Transaction.py = False
     get_transaction_by_id(transaction_id).deleted = True
+
+    # writeback to shelve
     with shelve.open(DB_NAME, 'c') as db:
         db["shop_transactions"] = transaction_list
 
@@ -388,6 +393,20 @@ def delete_transaction(transaction_id):
 
 
 # certification -- xu yong lin
+# for certification -- form (C in CRUD)
+# TODO: FILE VALIDATION, FILE UPLOAD, FILE SAVING, SHELVE UPDATE
+
+# for certification -- reading of data and displaying it to myRestaurant (C in CRUD)
+# TODO: READ DATA FROM SHELVE
+
+# for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)
+# TODO: REDIRECT BACK TO FORM IN 'C IN CRUD'
+# TODO: CHECK IF THE FILES ARE THE SAME AND UPDATE THE DETAILS
+
+# for certification -- Delete (D in CRUD)
+# TODO: DELETE BUTTON (similar to delete User in SimpleWebApplication)
+# not soft delete!
+
 # UPLOAD_FOLDER = 'application/static/restaurantCertification'  # where the
 # files are stored to
 # ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
