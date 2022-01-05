@@ -70,6 +70,7 @@ def admin_register():  # ashlee
                 account = Admin(request.form["name"], request.form["email"],
                                 request.form["password"])
             except Exception as e:
+                logging.info("admin_register: error %s" % e)
                 return reg_error(e)  # handle errors here
         else:
             return reg_error()
@@ -189,7 +190,11 @@ app.jinja_env.globals.update(get_account_email=get_account_email)
 @app.route("/admin/foodManagement")
 def food_management():
     with shelve.open(DB_NAME, 'c') as db:
-        food_list = db['food']
+        if "food" in db:
+            food_list = db['food']
+        else:
+            food_list = []
+            db["food"] = food_list
 
     return render_template('admin/foodManagement.html',
                            food_list=food_list)
