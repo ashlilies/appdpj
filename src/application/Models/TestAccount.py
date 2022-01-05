@@ -1,5 +1,5 @@
 # Account login tester... Meant to be run standalone
-from Account import *
+from application.Models.Account import *
 
 
 def main():

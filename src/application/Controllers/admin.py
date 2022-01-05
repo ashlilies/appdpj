@@ -7,7 +7,7 @@ from flask import render_template, request, redirect, url_for, session, flash
 from application.Models.Admin import *
 from application.Models.Food import Food
 from application.Models.Restaurant import Restaurant
-from application import app
+from application import app, DB_NAME
 from application.Models.Transaction import Transaction
 from application.adminAddFoodForm import CreateFoodForm
 from werkzeug.utils import secure_filename
