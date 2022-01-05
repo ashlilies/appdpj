@@ -70,6 +70,7 @@ def admin_register():  # ashlee
                 account = Admin(request.form["name"], request.form["email"],
                                 request.form["password"])
             except Exception as e:
+                logging.info("admin_register: error %s" % e)
                 return reg_error(e)  # handle errors here
         else:
             return reg_error()
