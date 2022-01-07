@@ -239,18 +239,18 @@ def update_customer(id):
         return render_template('updateCustomer.html', form=update_customer_form)
 
 
-@app.route('/deleteUser/<int:id>', methods=['POST'])
-def delete_user(id):
-    try:
-        with shelve.open('user.db', 'w') as db:
-            users_dict = db['Users']
-            if id in users_dict:
-                users_dict.pop(id)
-            db['Users'] = users_dict
-    except Exception as e:
-        print(f'An Error have occurred in delete_user({id}) - {e}')
-
-    return redirect(url_for('retrieve_users'))
+# @app.route('/deleteUser/<int:id>', methods=['POST'])
+# def delete_user(id):
+#     try:
+#         with shelve.open('user.db', 'w') as db:
+#             users_dict = db['Users']
+#             if id in users_dict:
+#                 users_dict.pop(id)
+#             db['Users'] = users_dict
+#     except Exception as e:
+#         print(f'An Error have occurred in delete_user({id}) - {e}')
+#
+#     return redirect(url_for('retrieve_users'))
 
 
 @app.route('/deleteCustomer/<int:id>', methods=['POST'])
