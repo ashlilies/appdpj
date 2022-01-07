@@ -1,6 +1,13 @@
 # IF YOU'RE HERE: New routes go in Controllers > admin or consumer!
 
 from flask import Flask, render_template, request, redirect, url_for
+
+app = Flask(__name__)
+app.secret_key = "doofypulseEngineers"  # used for stuff e.g. Flask sessions
+
+# The name of our db file. Syntax: with shelve.open(DB_NAME, 'c') as db:
+DB_NAME = "foodypulse"
+
 from application.Forms import CreateUserForm, CreateCustomerForm
 import shelve
 from application.Models.User import User
@@ -11,11 +18,6 @@ from application.Controllers.admin import *
 from application.Controllers.consumer import *
 
 
-app = Flask(__name__)
-app.secret_key = "doofypulseEngineers"  # used for stuff e.g. Flask sessions
-
-# The name of our db file. Syntax: with shelve.open(DB_NAME, 'c') as db:
-DB_NAME = "foodypulse"
 
 # CONSTANTS USED BY OUR PAGES
 # For stuff like colour schemes.
