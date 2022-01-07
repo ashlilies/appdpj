@@ -1,0 +1,65 @@
+{#<!--Clara-->#}
+{#{% extends "admin/admin_base.html" %}#}
+{#{% block title %}Food Management {% endblock %}#}
+{##}
+{#{% block head %}#}
+{#    <style>#}
+{#        div.scroll {#}
+{#            background-color: #fed9ff;#}
+{#            width: 900px;#}
+{#            height: 400px;#}
+{#            overflow-x: hidden;#}
+{#            overflow-y: auto;#}
+{#            text-align: center;#}
+{#            padding: 20px;#}
+{#            position: relative;#}
+{#            top: 70px;#}
+{#            left: 150px;#}
+{##}
+{#        }#}
+{#    </style>#}
+{#{% endblock %}#}
+{##}
+{#{% block content %}#}
+{##}
+{#    <div class="scroll">#}
+{##}
+{#        <div>#}
+{#            <table class="table table-striped">#}
+{#                <thead>#}
+{#                <tr>#}
+{#                    <th>User ID beach</th>#}
+{#                    <th>First Name</th>#}
+{#                    <th>Last Name</th>#}
+{#                    <th>Gender</th>#}
+{#                    <th>Membership</th>#}
+{#                    <th>Remarks</th>#}
+{#                    <th></th>#}
+{#                    <th></th>#}
+{#                </tr>#}
+{#                </thead>#}
+{#                <tbody>#}
+{#                {% for food in food_list %}#}
+{#                    <tr>#}
+{#                        <td>{{ food.name }}</td>#}
+{#                        <td>{{ food.description }}</td>#}
+{#                        <td>{{ food.price }}</td>#}
+{#                        <td>{{ food.allergy }}</td>#}
+{#                        <td>{{ food.specfication }}</td>#}
+{##}
+{#                        <td>{{ food.topping }}</td>#}
+{#                        <td><a href="#" class="btn btn-warning">Update</a></td>#}
+{#                        <td>#}
+{#                            <form action="" method="POST">#}
+{#                                <input type="submit" value="Delete" class="btn btn-danger">#}
+{#                            </form>#}
+{#                        </td>#}
+{#                    </tr>#}
+{#                {% endfor %}#}
+{#                </tbody>#}
+{#            </table>#}
+{#        </div>#}
+{##}
+{#    </div>#}
+{##}
+{#{% endblock %}#}

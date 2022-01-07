@@ -7,7 +7,7 @@ from flask import render_template, request, redirect, url_for, session, flash
 from application.Models.Admin import *
 from application.Models.Food import Food
 from application.Models.Restaurant import Restaurant
-from application import app
+from application import app, DB_NAME
 from application.Models.Transaction import Transaction
 from application.adminAddFoodForm import CreateFoodForm
 from werkzeug.utils import secure_filename
@@ -268,6 +268,53 @@ def create_food():
     return render_template('admin/addFoodForm.html', form=create_food_form,
                            MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
                            MAX_TOPPING_ID=MAX_TOPPING_ID, )
+
+
+# @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
+# def update_food(id):
+#     update_food_form = CreateFoodForm(request.form)
+#     if request.method == 'POST' and update_food_form.validate():
+#
+#         with shelve.open(DB_NAME, 'c') as db:
+#             food_dict = db['food']
+#
+#             user = food_dict.get(id)
+#             user.set_image(request.form["image"])
+#             user.set_name(update_food_form.item_name.data)
+#             user.set_description(update_food_form.description.data)
+#             user.set_price(update_food_form.price.data)
+#             user.set_allergy(update_food_form.allergy.data)
+#             user.set_topping(update_food_form.topping.data)
+#
+#             db['food'] = food_dict
+#         db.close()
+#
+#         return redirect(url_for('retrieve_users'))
+#     else:
+#
+#         db = shelve.open('user.db', 'r')
+#         users_dict = db['Users']
+#         db.close()
+#
+#         user = users_dict.get(id)
+#         update_user_form.first_name.data = user.get_first_name()
+#         update_user_form.last_name.data = user.get_last_name()
+#         update_user_form.gender.data = user.get_gender()
+#         update_user_form.membership.data = user.get_membership()
+#         update_user_form.remarks.data = user.get_remarks()
+#
+#         return render_template('updateUser.html', form=update_user_form)
+#
+
+
+@app.route('/deleteUser/<int:id>', methods=['POST'])
+def delete_user_lls(id):
+    food_list = []
+    with shelve.open('foodypulse', 'c') as db:
+        food_list = db['food']
+        food_list.pop(id)
+        db['food'] = food_list
+    return "Deleted!!!!!!"
 
 
 # <------------------------- YONGLIN ------------------------------>

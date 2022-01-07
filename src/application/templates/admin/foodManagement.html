@@ -7,14 +7,14 @@
         div.scroll {
             background-color: #fed9ff;
             width: 900px;
-            height: 300px;
+            height: 400px;
             overflow-x: hidden;
             overflow-y: auto;
             text-align: center;
             padding: 20px;
             position: relative;
-            top: 150px;
-            left: 200px;
+            top: 70px;
+            left: 150px;
 
         }
     </style>
@@ -28,7 +28,7 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>User ID BITCH</th>
+                    <th>User ID beach</th>
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Gender</th>
@@ -50,7 +50,7 @@
                         <td>{{ food.topping }}</td>
                         <td><a href="#" class="btn btn-warning">Update</a></td>
                         <td>
-                            <form action="" method="POST">
+                             <form action="{{url_for('delete_user', id=user.get_user_id())}}" method="POST">
                                 <input type="submit" value="Delete" class="btn btn-danger">
                             </form>
                         </td>
