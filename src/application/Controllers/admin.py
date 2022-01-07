@@ -308,7 +308,7 @@ def create_food():
 
 
 @app.route('/deleteUser/<int:id>', methods=['POST'])
-def delete_user(id):
+def delete_user_lls(id):
     food_list = []
     with shelve.open('foodypulse', 'c') as db:
         food_list = db['food']
