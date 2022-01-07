@@ -175,6 +175,7 @@ def get_account_email(account: Account):
         logging.info(e)
         return "ERROR"
 
+
 # TODO; store Flask session info in shelve db
 
 # Activate global function for jinja
@@ -270,100 +271,125 @@ def create_food():
                            MAX_TOPPING_ID=MAX_TOPPING_ID, )
 
 
-# @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
-# def update_food(id):
-#     update_food_form = CreateFoodForm(request.form)
-#     if request.method == 'POST' and update_food_form.validate():
-#
-#         with shelve.open(DB_NAME, 'c') as db:
-#             food_dict = db['food']
-#
-#             user = food_dict.get(id)
-#             user.set_image(request.form["image"])
-#             user.set_name(update_food_form.item_name.data)
-#             user.set_description(update_food_form.description.data)
-#             user.set_price(update_food_form.price.data)
-#             user.set_allergy(update_food_form.allergy.data)
-#             user.set_topping(update_food_form.topping.data)
-#
-#             db['food'] = food_dict
-#         db.close()
-#
-#         return redirect(url_for('retrieve_users'))
-#     else:
-#
-#         db = shelve.open('user.db', 'r')
-#         users_dict = db['Users']
-#         db.close()
-#
-#         user = users_dict.get(id)
-#         update_user_form.first_name.data = user.get_first_name()
-#         update_user_form.last_name.data = user.get_last_name()
-#         update_user_form.gender.data = user.get_gender()
-#         update_user_form.membership.data = user.get_membership()
-#         update_user_form.remarks.data = user.get_remarks()
-#
-#         return render_template('updateUser.html', form=update_user_form)
-#
+# <------------------------- YONG LIN ------------------------------>
+@app.route("/admin/transaction/createExampleTransactions")
+def create_example_transactions():
+    # WARNING - Overrides ALL transactions in the db!
+    transaction_list = []
+
+    # creating a shelve file with dummy data
+    # 1: <account id> ; <user_id> ; <option> ; <price> ; <coupons> , <rating>
+    t1 = Transaction()
+    t1.account_name = 'Yong Lin'
+    t1.set_option('Delivery')
+    t1.set_price(50.30)
+    t1.set_used_coupons('SPAGETIT')
+    t1.set_ratings(2)
+    transaction_list.append(t1)
+
+    t2 = Transaction()
+    t2.account_name = 'Ching Chong'
+    t2.set_option('Dine-in')
+    t2.set_price(80.90)
+    t2.set_used_coupons('50PASTA')
+    t2.set_ratings(5)
+    transaction_list.append(t2)
+
+    t3 = Transaction()
+    t3.account_name = 'Hosea'
+    t3.set_option('Delivery')
+    t3.set_price(20.10)
+    t3.set_used_coupons('50PASTA')
+    t3.set_ratings(1)
+    transaction_list.append(t3)
+
+    t4 = Transaction()
+    t4.account_name = 'Clara'
+    t4.set_option('Delivery')
+    t4.set_price(58.30)
+    t4.set_used_coupons('SPAGETIT')
+    t4.set_ratings(2)
+    transaction_list.append(t4)
+
+    t5 = Transaction()
+    t5.account_name = 'Ruri'
+    t5.set_option('Dine-in')
+    t5.set_price(80.90)
+    t5.set_used_coupons('50PASTA')
+    t5.set_ratings(3)
+    transaction_list.append(t5)
+
+    t6 = Transaction()  # t6
+    t6.account_name = 'Ashlee'
+    t6.set_option('Delivery')
+    t6.set_price(100.10)
+    t6.set_used_coupons('50PASTA')
+    t6.set_ratings(2)
+    transaction_list.append(t6)
+
+    t7 = Transaction()
+    t7.account_name = 'Hello'
+    t7.set_option('Dine-in')
+    t7.set_price(10.90)
+    t7.set_used_coupons('50PASTA')
+    t7.set_ratings(4)
+    transaction_list.append(t7)
+
+    # writing to the database
+    with shelve.open(DB_NAME, "c") as db:
+        try:
+            db['shop_transactions'] = transaction_list
+        except Exception as e:
+            logging.error("create_example_transactions: error writing to db (%s)" % e)
+
+    return redirect(url_for("admin_transaction"))
 
 
-@app.route('/deleteUser/<int:id>', methods=['POST'])
-def delete_user_lls(id):
-    food_list = []
-    with shelve.open('foodypulse', 'c') as db:
-        food_list = db['food']
-        food_list.pop(id)
-        db['food'] = food_list
-    return "Deleted!!!!!!"
-
-
-# <------------------------- YONGLIN ------------------------------>
 @app.route("/admin/transaction")
 def admin_transaction():
-    # creating a shelve file with dummy data
-    transaction_dict = {'1': ['Yong Lin', 'Delivery', '60.40', 'SPAGETIT', '1'],
-    '2': ['Yuen Loong', 'Dine-in', '40.35', 'SPAGETIT', '2']}
+    # read transactions from db
+    with shelve.open(DB_NAME, 'c') as db:
+        if 'shop_transactions' in db:
+            transaction_list = db['shop_transactions']
+            logging.info("admin_transaction: reading from db['shop_transactions']"
+                         ", %d elems" % len(db["shop_transactions"]))
+        else:
+            logging.info("admin_transaction: nothing found in db, starting empty")
+            transaction_list = []
 
-    # 1: transaction no. ; <user_id> ; <option> ; <price> ; <coupons> , <rating>
-    # TODO: associate an transaction_id as transaction number as key
-    # TODO: input the details of the transactions (eg userid, price, option, etc)
-
-    # below code is only usable when we use nested dictionary
-    for key, value in transaction_dict.items(): # for every transaction
-        print(key, ":", value, "\n")
-    #     for i in value:
-    #         print(i +":", value[i])
-
-    with shelve.open("transactions", "c") as db:
-        try:
-            if 'shop_transactions' in db:
-                transaction_dict = db['shop_transactions']
-            else:
-                db['shop_transactions'] = transaction_dict
-        except Exception as e:
-            logging.error("read_transaction: error opening db (%s)" % e)
-
-    # reading the shelve
-    with shelve.open("transactions", "c") as db:
-        try:
-            print(db['shop_transactions']) # debug
-            if 'shop_transactions' in db:
-                transaction_dict = db['shop_transactions']
-            else:
-                db['shop_transactions'] = transaction_dict
-        except Exception as e:
-            logging.error("read_transaction: error opening db (%s)" % e)
-
-        transaction_list = []
-        for key in transaction_dict:
-            transaction = transaction_dict.get(key)
-            transaction_list.append(transaction)
-
-            print(transaction)
-        print(transaction_list)
+    def get_transaction_by_id(transaction_id):  # debug
+        for transaction in transaction_list:
+            if transaction_id == transaction.count_id:
+                return transaction
 
     return render_template("admin/transaction.html", count=len(transaction_list),
                            transaction_list=transaction_list)
+
+
+# soft delete -> restaurant can soft delete transactions jic if the transaction is cancelled
+# set instance attribute of Transaction.py = False
+@app.route('/admin/transaction/delete/<transaction_id>')
+def delete_transaction(transaction_id):
+    transaction_id = int(transaction_id)
+
+    transaction_list = []
+    # TODO: SOFT DELETE TRANSACTIONS -> set instance attribute to False
+    with shelve.open(DB_NAME, 'c') as db:
+        for transaction in db['shop_transactions']:
+            transaction_list.append(transaction)
+
+    def get_transaction_by_id(t_id):  # debug
+        for t in transaction_list:
+            if t_id == t.count_id:
+                return t
+
+    logging.info("delete_transaction: deleted transaction with id %d"
+                 % transaction_id)
+    get_transaction_by_id(transaction_id).deleted = True
+    with shelve.open(DB_NAME, 'c') as db:
+        db["shop_transactions"] = transaction_list
+
+    return redirect(url_for('admin_transaction'))
 
 
 # certification -- xu yong lin
@@ -423,21 +449,6 @@ def admin_certification():
 # <------------------------- RURI ------------------------------>
 @app.route('/admin/myRestaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
-    # Count = count
-    # def get_tags() -> list:
-    #     tag = []
-    #
-    #     # do tags exist in first place?
-    #     for i in range(Count + 1):
-    #         if "tag%d" % i in request.form:
-    #             tags.append(request.form["tags%d" % i])
-    #         else:
-    #             break
-    #
-    #     logging.info("create_restaurant: tag is %s" % tag)
-    #     return tag
-
-
     restaurant_details_form = RestaurantDetailsForm(request.form)
     restaurants_dict = {}
     if request.method == 'POST' and restaurant_details_form.validate():
@@ -448,27 +459,15 @@ def admin_myrestaurant():  # ruri
             logging.error("Error in retrieving Restaurants from "
                           "restaurants.db (%s)" % e)
 
-        restaurant = Restaurant(request.form["rest_logo"],
-                                restaurant_details_form.rest_name.data,
-                                restaurant_details_form.rest_contact.data,
-                                restaurant_details_form.rest_hour_open.data,
-                                restaurant_details_form.rest_hour_close.data,
-                                restaurant_details_form.rest_address1.data,
-                                restaurant_details_form.rest_address2.data,
-                                restaurant_details_form.rest_postcode.data,
-                                restaurant_details_form.rest_desc.data,
-                                restaurant_details_form.rest_bank.data,
-                                restaurant_details_form.rest_del1.data,
-                                restaurant_details_form.rest_del2.data,
-                                restaurant_details_form.rest_del3.data,
-                                restaurant_details_form.rest_del4.data,
-                                restaurant_details_form.rest_del5.data)
+        restaurant = Restaurant(restaurant_details_form.rest_name.data)
         restaurants_dict[restaurant.name] = restaurant
         db['Restaurants'] = restaurants_dict
 
         db.close()
 
     return render_template("admin/restaurant.html", form=restaurant_details_form)
+
+
 # #
 # @app.route('admin/myrestaurant', methods=['GET', 'POST'])
 # def create_customer():

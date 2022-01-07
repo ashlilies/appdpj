@@ -1,27 +1,34 @@
 # xu yong lin
+# yet to include this part in python
 import logging
+import shelve
 
+from application import DB_NAME
 from application.Models.Account import Account
 
 
-# yet to include this part in python
 class Transaction:
-    transaction_no = 0  # counts the number of transactions in the restaurant per month
+    transaction_id = 1
 
-    def __init__(self, transaction_no=0, option=None, price=0, used_coupons=None,
+    def __init__(self, account_name=None, option=None, price=0, used_coupons=None,
                  ratings=0):
-        self.transaction_no = transaction_no
-        self.__account_id = Account.count_id
+        with shelve.open(DB_NAME, 'c') as db:
+            try:
+                Transaction.transaction_id = db['transaction_id_count']
+            except Exception as e:
+                logging.info("transaction_id_count: error reading from db (%s)" % e)
+        self.count_id = Transaction.transaction_id  # temporary as the 'count id' in Account is not set for users yet
+        self.account_name = account_name
         self.__option = option
         self.__price = float(price)
         self.__used_coupons = used_coupons
         self.__ratings = int(ratings)
+        self.deleted = False
+        Transaction.transaction_id += 1
+        with shelve.open(DB_NAME, 'c') as db:
+            db['transaction_id_count'] = Transaction.transaction_id
 
-    def set_account_id(self, accounts):
-        self.__account_id = str(accounts)
-
-    def get_account_id(self):
-        return self.__account_id
+    print(Account.count_id)
 
     def set_option(self, option):
         self.__option = option
@@ -42,11 +49,7 @@ class Transaction:
         return self.__used_coupons
 
     def set_ratings(self, ratings):
-        if ratings >= 5:
-            print("rating is above 5! Please double check with customer")
-        else:
-            self.__ratings = ratings
+        self.__ratings = ratings
 
     def get_ratings(self):
         return self.__ratings
-
