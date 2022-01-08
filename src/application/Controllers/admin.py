@@ -189,15 +189,17 @@ app.jinja_env.globals.update(get_account_email=get_account_email)
 # APP ROUTE TO FOOD MANAGEMENT clara
 @app.route("/admin/foodManagement")
 def food_management():
+    food_dict = {}
     with shelve.open(DB_NAME, 'c') as db:
         if "food" in db:
             food_list = db['food']
         else:
             food_list = []
-            db["food"] = food_list
+            for key in food_dict:
+                food = food_dict.get(key)
+                food_list.append(food)
 
-    return render_template('admin/foodManagement.html',
-                           food_list=food_list)
+    return render_template('admin/foodManagement.html', count=len(food_list), food_list=food_list)
 
 
 MAX_SPECIFICATION_ID = 5  # for adding food
@@ -240,28 +242,30 @@ def create_food():
 
     # using the WTForms way to get the data
     if request.method == 'POST' and create_food_form.validate():
-        food_list = []
+        food_dict = {}
         with shelve.open("foodypulse", "c") as db:
             try:
                 if 'food' in db:
-                    food_list = db['food']
+                    food_dict = db['food']
                 else:
-                    db['food'] = food_list
+                    db['food'] = food_dict
             except Exception as e:
                 logging.error("create_food: error opening db (%s)" % e)
 
-        # Create a new food object
-        food = Food(request.form["image"], create_food_form.item_name.data,
-                    create_food_form.description.data,
-                    create_food_form.price.data, create_food_form.allergy.data)
+            # Create a new food object
+            food = Food(request.form["image"], create_food_form.item_name.data,
+                        create_food_form.description.data,
+                        create_food_form.price.data, create_food_form.allergy.data)
 
-        food.specification = get_specs()  # set specifications as a List
-        food.topping = get_top()  # set topping as a List
-        food_list.append(food)
+            food.specification = get_specs()  # set specifications as a List
+            food.topping = get_top()  # set topping as a List
+            food_dict[food.get_food_id()] = food
+            db['food'] = food_dict
+
 
         # writeback
         with shelve.open("foodypulse", 'c') as db:
-            db['food'] = food_list
+            db['food'] = food_dict
 
         return redirect(url_for('admin_home'))
 
@@ -306,15 +310,6 @@ def create_food():
 #         return render_template('updateUser.html', form=update_user_form)
 #
 
-
-@app.route('/deleteUser/<int:id>', methods=['POST'])
-def delete_user_lls(id):
-    food_list = []
-    with shelve.open('foodypulse', 'c') as db:
-        food_list = db['food']
-        food_list.pop(id)
-        db['food'] = food_list
-    return "Deleted!!!!!!"
 
 
 # <------------------------- YONGLIN ------------------------------>

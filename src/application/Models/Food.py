@@ -3,8 +3,12 @@ from application.Models.Account import save_db
 
 
 class Food:
+    count_id = 0
+
     def __init__(self, image, name, description, price, allergy,
                  specification=None, topping=None):
+        Food.count_id += 1
+        self.__food_id = Food.count_id
         self.__image = image
         self.name = name
         self.description = description
@@ -14,6 +18,30 @@ class Food:
         self.topping = topping
 
         save_db()
+
+    def get_food_id(self):
+        return self.__food_id
+
+    def set_food_id(self, food_id):
+        self.__food_id = food_id
+
+    def get_name(self):
+        return self.name
+
+    def get_description(self):
+        return self.description
+
+    def get_price(self):
+        return self.price
+
+    def get_allergy(self):
+        return self.allergy
+
+    def get_specification(self):
+        return self.specification
+
+    def get_topping(self):
+        return self.topping
 
     # Get the image as a file?
     def get_image(self):
