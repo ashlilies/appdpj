@@ -371,20 +371,20 @@ def admin_certification():
 # <------------------------- RURI ------------------------------>
 @app.route('/admin/myRestaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
-    # Count = count
-    # def get_tags() -> list:
-    #     tag = []
-    #
-    #     # do tags exist in first place?
-    #     for i in range(Count + 1):
-    #         if "tag%d" % i in request.form:
-    #             tags.append(request.form["tags%d" % i])
-    #         else:
-    #             break
-    #
-    #     logging.info("create_restaurant: tag is %s" % tag)
-    #     return tag
+    max_tags = 5
 
+    def get_tags() -> list:
+        tag = []
+
+        # do toppings exist in first place?
+        for i in range(max_tags + 1):
+            if "tag%d" % i in request.form:
+                tag.append(request.form["tag%d" % i])
+            else:
+                break
+
+        logging.info("create_food: top is %s" % tag)
+        return tag
 
     restaurant_details_form = RestaurantDetailsForm(request.form)
     restaurants_dict = {}
@@ -397,6 +397,7 @@ def admin_myrestaurant():  # ruri
                           "restaurants.db (%s)" % e)
 
         restaurant = Restaurant(request.form["rest_logo"],
+                                request.form["alltasks"],
                                 restaurant_details_form.rest_name.data,
                                 restaurant_details_form.rest_contact.data,
                                 restaurant_details_form.rest_hour_open.data,
@@ -411,12 +412,15 @@ def admin_myrestaurant():  # ruri
                                 restaurant_details_form.rest_del3.data,
                                 restaurant_details_form.rest_del4.data,
                                 restaurant_details_form.rest_del5.data)
+        restaurant.tags = get_tags()  # set topping as a List
+        restaurants_dict.append(restaurant)
+
         restaurants_dict[restaurant.name] = restaurant
         db['Restaurants'] = restaurants_dict
 
         db.close()
 
-    return render_template("admin/restaurant.html", form=restaurant_details_form)
+    return render_template("admin/restaurant.html", form=restaurant_details_form, max_tags=max_tags)
 # #
 # @app.route('admin/myrestaurant', methods=['GET', 'POST'])
 # def create_customer():
