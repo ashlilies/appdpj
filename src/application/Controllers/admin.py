@@ -11,9 +11,11 @@ from application import app, DB_NAME
 from application.Models.Transaction import Transaction
 from application.adminAddFoodForm import CreateFoodForm
 from werkzeug.utils import secure_filename
+from application.Controllers.restaurant_controller import Restaurant_controller
 
 from application.restaurantCertification import RestaurantCertification
 import shelve, os
+import uuid
 from application.rest_details_form import RestaurantDetailsForm
 
 
@@ -503,7 +505,7 @@ def admin_certification():
 
 
 # <------------------------- RURI ------------------------------>
-@app.route('/admin/myRestaurant', methods=['GET', 'POST'])
+@app.route('/admin/edit-restaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
     restaurant_details_form = RestaurantDetailsForm(request.form)
     restaurants_dict = {}
@@ -512,12 +514,18 @@ def admin_myrestaurant():  # ruri
         try:
             restaurants_dict = db['Restaurants']
         except Exception as e:
-            logging.error("Error in retrieving Restaurants from "
+            logging.error("Error in retriedb file doesn't existving Restaurants from "
                           "restaurants.db (%s)" % e)
 
-        restaurant = Restaurant(request.form["rest_logo"],
+        user_id = session["account_id"]
+        user_object = Restaurant_controller()
+        get_user_object = user_object.find_user_by_id(user_id)
+
+        restaurant = Restaurant(get_user_object,
+                                uuid.uuid4().hex,
                                 # request.form["alltasks"],
                                 restaurant_details_form.rest_name.data,
+                                request.form["rest_logo"],
                                 restaurant_details_form.rest_contact.data,
                                 restaurant_details_form.rest_hour_open.data,
                                 restaurant_details_form.rest_hour_close.data,
@@ -531,7 +539,8 @@ def admin_myrestaurant():  # ruri
                                 restaurant_details_form.rest_del3.data,
                                 restaurant_details_form.rest_del4.data,
                                 restaurant_details_form.rest_del5.data)
-        restaurants_dict[restaurant.name] = restaurant
+        print(restaurant.get_user_object.get_email())
+        restaurants_dict[restaurant.get_id()] = restaurant
         db['Restaurants'] = restaurants_dict
         db.close()
         return redirect(url_for('admin_home'))
@@ -539,31 +548,19 @@ def admin_myrestaurant():  # ruri
     return render_template("admin/restaurant.html", form=restaurant_details_form)
 
 
-# #
-# @app.route('admin/myrestaurant', methods=['GET', 'POST'])
-# def create_customer():
-#     create_customer_form: CreateCustomerForm = CreateCustomerForm(request.form)
-#     if request.method == 'POST' and create_customer_form.validate():
-#         customers_dict = {}
-#         db = shelve.open('customer.db', 'c')
-#
-#         try:
-#             customers_dict = db['Customers']
-#         except:
-#             print("Error in retrieving Customers from customer.db.")
-#
-#         customer = Customer.Customer(create_customer_form.first_name.data, create_customer_form.last_name.data,
-#                                      create_customer_form.gender.data, create_customer_form.membership.data,
-#                                      create_customer_form.remarks.data, create_customer_form.email.data,
-#                                      create_customer_form.date_joined.data,
-#                                      create_customer_form.address.data, )
-#         customers_dict[customer.get_customer_id()] = customer
-#         db['Customers'] = customers_dict
-#
-#         db.close()
-#
-#         return redirect(url_for('home'))
-#     return render_template('includes/createCustomer.html', form=create_customer_form)
+@app.route('/admin/my-restaurant')
+def retrieve_restaurant():
+    restaurants_dict = {}
+    db = shelve.open(DB_NAME, 'r')
+    restaurants_dict = db['Restaurants']
+    db.close()
+    restaurants_list = []
+    for key in restaurants_dict:
+        restaurant = restaurants_dict.get(key)
+        restaurants_list.append(restaurant)
+
+    return render_template('admin/myrestaurant.html', count=len(restaurants_list), restaurants_list=restaurants_list)
+
 
 
 @app.route("/admin/dashboard")

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Library Loan System - Retrieve Users{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Retrieve Users</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no users.</p>
+  {% elif count == 1 %}
+  <p>There is 1 user.</p>
+  {% else %}
+  <p>There are {{ count }} users.</p>
+  {% endif %}
+</div>
+<div>
+    {% for restaurant in restaurants_list %}
+      <div class="row">
+      <div class="column" style="background-color:#DCDCDC;"> <!--start of column one content-->
+        <div class="form-row">
+          <div class="form-group col-md-6">
+              {{ restaurant.get_name() }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+              {{ restaurant.get_contact() }}
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-3">
+              {{ restaurant.get_open() }}
+          </div>
+          <div class="form-group col-md-1">
+            <label class="closehour">DUMMY TEXT</label>
+            <h6 style="margin-top: -13px; margin-left: 12px;">TO</h6>
+          </div>
+          <div class="form-group col-md-3">
+              {{ restaurant.get_close() }}
+
+          </div>
+        </div>
+
+        <div class="form-row">
+              {{ restaurant.get_add1() }}
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-10">
+              {{ restaurant.get_add2() }}
+          </div>
+          <div class="form-group col-md-2">
+              {{ restaurant.get_postc() }}
+
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-8">
+              {{ restaurant.get_bank() }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-12">
+              {{ restaurant.get_desc() }}
+          </div>
+        </div>
+
+
+      </div> <!--end of column one content-->
+
+      <div class="column" style="background-color:#dcdcdc;margin-left: 50px;">
+        <div class="form-row">
+          <div class="form-group col-md-5">
+            <label style="margin-left: 285px ;" for="rest_logo">Logo</label>
+<!--            <input type="file" id="rest_logo" name="logo">-->
+            <input class="form-control" type="file" name="rest_logo" id="rest_logo" accept="image/*" placeholder="Upload your logo"/>
+          </div>
+        </div>
+
+
+        <h4 style="margin-top: 30px">Delivery charges over distance ($):</h4>
+        <div class="form-row" style="position: relative">
+          <div class="form-group col-md-2">
+              {{ restaurant.get_del1() }}
+          </div>
+          <div class="form-group col-md-2">
+              {{ restaurant.get_del2() }}
+          </div>
+          <div class="form-group col-md-2">
+              {{ restaurant.get_del3() }}
+          </div>
+          <div class="form-group col-md-2">
+              {{ restaurant.get_del4() }}
+          </div>
+          <div class="form-group col-md-2">
+              {{ restaurant.get_del5() }}
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2">
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}
