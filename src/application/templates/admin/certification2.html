@@ -1,73 +1,45 @@
+<!--xu yong lin-->
 {% extends "admin/admin_base.html" %}
-{% block title %}Restaurant Certification{% endblock %}
+{% block title %}Admin Display Certification{% endblock %}
 
 {% block head %}
     <style>
-        h1 {
-            font-weight: bold;
-            position: relative;
-            left: 30px;
-            top: 20px;
-            text-decoration-line: underline;
-            font-size: 28px;
-            width: 500px;
-        }
-
-        .error {
-            color: red;
-        }
-
-        .modaldiv {
-            position: relative;
-            left: 30px;
-            top: 100px;
-        }
-
-        .modal-content {
-            background-color: #ffd1d1;
-            padding: 10px;
-        }
-
-        .modal-body {
-            /*position: relative;*/
-            padding: 20px;
-            display: block;
-        }
-
-        .body-left {
-            position: relative;
-            width: 50%;
-            float: left;
-        }
-
-        .form-check {
-            margin-bottom: 10px;
-        }
-
-        .form-label {
-            font-size: 16px;
-            width: 90px;
-            display: inline-block;
-        }
-
-        .form-control {
-            width: 100%;
-            height: 70%;
-            display: inline-block;
-        }
-
-        .body-right {
-            position: relative;
-            float: right;
-            width: 50%;
-        }
     </style>
 {% endblock %}
 
 {% block content %}
-    <div>
-        <h1>Restaurant Details -- Just the Certification</h1>
-        <h5>Extension of Restaurant details</h5>
+    <h1>EXTENSION TO RESTAURANT DETAILS</h1>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Launch demo modal
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">restaurant name's Certifications</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                {# modal body #}
+                <div class="modal-body">
+                    <p>Here are your certifications</p>
+                    <br>
+                    {# hygiene cert #}
+                    <h5>Hygiene Certification: </h5>
+                    {# halal cert #}
+                    {# vegetarian cert #}
+                    {# no pork no lard indication #}
+                    {# vegan cert #}
+                    {# no beef indication #}
+                </div>
+                {# modal footer #}
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 
 {% endblock %}

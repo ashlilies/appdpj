@@ -455,7 +455,7 @@ def delete_transaction(transaction_id):
 # certification -- xu yong lin
 # YL: for certification -- form (C in CRUD)
 # TODO: FILE UPLOAD, FILE SAVING, SHELVE UPDATE
-@app.route("/admin/uploadCertification", methods=['GET', 'POST'])
+@app.route("/admin/uploadCertification", methods=['POST'])
 def upload_cert():
     certification_dict = {}
     if request.method == 'POST':
@@ -477,6 +477,25 @@ def upload_cert():
             return redirect(url_for('certification2.html'))
 
     return render_template("admin/certification.html")
+
+
+# YL: for certification -- reading of data and displaying it to myRestaurant (C in CRUD)
+@app.route("/admin/certification")
+def read_cert():
+    # TODO: READ DATA FROM SHELVE
+    # with shelve.open(DB_NAME, 'c') as db:
+    #     try:
+    #         if 'certification' in db:
+    #             certification_dict = db['certification']
+    #             print(certification_dict)
+    #             logging.info("admin_certification: reading from db['certification']"
+    #                          ", %d elems" % len(db["certification"]))
+    #         else:
+    #             logging.info("admin_certification: nothing found in db, starting empty")
+    #     except Exception as e:
+    #         logging.error("Error in retrieving certificate from ""restaurants.db (%s)" % e)
+
+    return render_template("admin/certification2.html")
 
 
 # def upload_cert():
@@ -544,14 +563,6 @@ def upload_cert():
 #
 #     return render_template("admin/certification.html",
 #                            certification_form=certification_form)
-
-
-# YL: for certification -- reading of data and displaying it to myRestaurant (C in CRUD)
-@app.route("/admin/certification")
-def read_cert():
-    # TODO: READ DATA FROM SHELVE
-
-    return render_template("admin/certification2.html")
 
 
 # YL: for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)
