@@ -10,9 +10,8 @@ from application.Models.Restaurant import Restaurant
 from application import app, DB_NAME
 from application.Models.Transaction import Transaction
 from application.adminAddFoodForm import CreateFoodForm
-from werkzeug.utils import secure_filename
 
-from application.restaurantCertification import RestaurantCertification
+from application.restaurantCertification import DocumentUploadForm
 import shelve, os
 from application.rest_details_form import RestaurantDetailsForm
 
@@ -331,6 +330,7 @@ def update_food(id):
 @app.route("/admin/transaction")
 def admin_transaction():
 # <------------------------- YONG LIN ------------------------------>
+# YL: for transactions -- creating of dummy data
 @app.route("/admin/transaction/createExampleTransactions")
 def create_example_transactions():
     # WARNING - Overrides ALL transactions in the db!
@@ -346,7 +346,7 @@ def create_example_transactions():
     t1.set_ratings(2)
     transaction_list.append(t1)
 
-    t2 = Transaction()
+    t2 = Transaction()  # t2
     t2.account_name = 'Ching Chong'
     t2.set_option('Dine-in')
     t2.set_price(80.90)
@@ -354,7 +354,7 @@ def create_example_transactions():
     t2.set_ratings(5)
     transaction_list.append(t2)
 
-    t3 = Transaction()
+    t3 = Transaction()  # t3
     t3.account_name = 'Hosea'
     t3.set_option('Delivery')
     t3.set_price(20.10)
@@ -362,7 +362,7 @@ def create_example_transactions():
     t3.set_ratings(1)
     transaction_list.append(t3)
 
-    t4 = Transaction()
+    t4 = Transaction()  # t4
     t4.account_name = 'Clara'
     t4.set_option('Delivery')
     t4.set_price(58.30)
@@ -370,7 +370,7 @@ def create_example_transactions():
     t4.set_ratings(2)
     transaction_list.append(t4)
 
-    t5 = Transaction()
+    t5 = Transaction()  # t5
     t5.account_name = 'Ruri'
     t5.set_option('Dine-in')
     t5.set_price(80.90)
@@ -404,6 +404,7 @@ def create_example_transactions():
     return redirect(url_for("admin_transaction"))
 
 
+# YL: for transactions -- reading of data and displaying (R in CRUD)
 @app.route("/admin/transaction")
 def admin_transaction():
     # read transactions from db
@@ -425,14 +426,13 @@ def admin_transaction():
                            transaction_list=transaction_list)
 
 
+# YL: for transactions -- soft delete (D in CRUD)
 # soft delete -> restaurant can soft delete transactions jic if the transaction is cancelled
-# set instance attribute of Transaction.py = False
 @app.route('/admin/transaction/delete/<transaction_id>')
 def delete_transaction(transaction_id):
     transaction_id = int(transaction_id)
 
     transaction_list = []
-    # TODO: SOFT DELETE TRANSACTIONS -> set instance attribute to False
     with shelve.open(DB_NAME, 'c') as db:
         for transaction in db['shop_transactions']:
             transaction_list.append(transaction)
@@ -444,7 +444,11 @@ def delete_transaction(transaction_id):
 
     logging.info("delete_transaction: deleted transaction with id %d"
                  % transaction_id)
+
+    # set instance attribute 'deleted' of Transaction.py = False
     get_transaction_by_id(transaction_id).deleted = True
+
+    # writeback to shelve
     with shelve.open(DB_NAME, 'c') as db:
         db["shop_transactions"] = transaction_list
 
@@ -452,57 +456,69 @@ def delete_transaction(transaction_id):
 
 
 # certification -- xu yong lin
-# UPLOAD_FOLDER = 'application/static/restaurantCertification'  # where the
-# files are stored to
-# ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
-#
-# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-#
-#
-# def allowed_file(filename):
-#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in
-#     ALLOWED_EXTENSIONS
-path = os.getcwd()
-
-UPLOAD_CERT = os.path.join(path, 'uploads')
-
-app.config['UPLOAD_CERT'] = UPLOAD_CERT
+# YL: for certification -- form (C in CRUD)
+# TODO: FILE UPLOAD, FILE SAVING, SHELVE UPDATE
+UPLOAD_FOLDER = './static/restaurantCertification'  # where the files are stored to
+ALLOWED_EXTENSIONS = {'pdf'}
 
 
 @app.route("/admin/certification", methods=['GET', 'POST'])
-def admin_certification():
-    # set upload directory path
-    certification_form = RestaurantCertification()
+def upload_cert():
+    certification_form = DocumentUploadForm(request.form)
     if certification_form.validate_on_submit():
-        # assets_dir = os.path.join(
-        #     os.path.dirname(app.instance_path), 'assets'
-        # )
-        hygiene = certification_form.hygiene_cert.data
-        halal = certification_form.halal_cert.data
-        vegetarian = certification_form.vegetarian_cert.data
-        vegan = certification_form.vegan_cert.data
+        assets_dir = os.path.join(os.path.dirname(app.instance_path))
 
-        halaldoc_name = secure_filename(halal.filename)
-        vegetariandoc_name = secure_filename(vegetarian.filename)
-        vegandoc_name = secure_filename(vegan.filename)
+    return render_template("admin/certification2.html",
+                           form=certification_form)
 
-        # document save
-        # halal.save(os.path.join(app.config['UPLOAD_FOLDER'], halaldoc_name))
-        # TODO: SAVING OF FILE
-        # TODO: DISPLAYING OF AVAILABLE FILES UNDER myrestaurant
-        # todo: updating of cert under myrestaurant
 
-        # halal.save(os.path.join('/application/static/restaurantCertification', halaldoc_name))
-        # vegetarian.save(
-        #     os.path.join('/application/static/restaurantCertification', vegetariandoc_name))
-        # vegan.save(os.path.join('/application/static/restaurantCertification', vegandoc_name))
+# @app.route("/admin/certification", methods=['GET', 'POST'])
+# def admin_certification():
+#     # TODO: FILE UPLOAD, FILE SAVING, SHELVE UPDATE
+#     # set upload directory path
+#     certification_form = RestaurantCertification()
+#     if certification_form.validate_on_submit():
+#         assets_dir = os.path.join(os.path.dirname('./static/restaurantCertification'))
+#
+#         hygiene = certification_form.hygiene_cert.data
+#         halal = certification_form.halal_cert.data
+#         vegetarian = certification_form.vegetarian_cert.data
+#         vegan = certification_form.vegan_cert.data
+#
+#         # document save
+#         # halal.save(os.path.join(app.config['UPLOAD_FOLDER'], halaldoc_name))
+#         hygiene.save(os.path.join(assets_dir, '<userid>', hygiene))
+#         halal.save(os.path.join(assets_dir, '<userid>', halal))
+#         vegetarian.save(os.path.join(assets_dir, '<userid>', vegetarian))
+#         vegan.save(os.path.join(assets_dir, '<userid>', vegan))
+#
+#         # halal.save(os.path.join('/application/static/restaurantCertification', halaldoc_name))
+#         # vegetarian.save(
+#         #     os.path.join('/application/static/restaurantCertification', vegetariandoc_name))
+#         # vegan.save(os.path.join('/application/static/restaurantCertification', vegandoc_name))
+#
+#         flash('Document uploaded successfully')
+#
+#         return redirect(url_for('admin_transaction'))
+#
+#     return render_template("admin/certification.html",
+#                            certification_form=certification_form)
 
-        flash('Document uploaded successfully')
 
-        # return redirect(url_for('admin_myrestaurant'))
+# YL: for certification -- reading of data and displaying it to myRestaurant (C in CRUD)
+@app.route("/admin/certification")
+def read_cert():
+    # TODO: READ DATA FROM SHELVE
+    return render_template("admin/certification.html")
 
-    return render_template("admin/certification.html",
-                           certification_form=certification_form)
+
+# YL: for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)
+# TODO: REDIRECT BACK TO FORM IN 'C IN CRUD'
+# TODO: CHECK IF THE FILES ARE THE SAME AND UPDATE THE DETAILS
+
+# YL: for certification -- Delete (D in CRUD)
+# TODO: DELETE BUTTON (similar to delete User in SimpleWebApplication)
+# not soft delete!
 
 
 # <------------------------- RURI ------------------------------>

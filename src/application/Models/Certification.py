@@ -10,6 +10,5 @@ class Certification:
         self.vegan = vegan
         self.noBeef = noBeef
 
-    def set_halal_certified(self,halal):
+    def set_halal_certified(self, halal):
         self.halal = halal
-
