@@ -460,24 +460,28 @@ def upload_cert():
     i = 1
     certification_form = DocumentUploadForm(request.form)
     certification_dict = {}
-    if request.method == 'POST' and certification_form.validate_on_submit():
-        db = shelve.open(DB_NAME, 'c')
-        try:
-            certification_dict = db['certification']
-            print(certification_dict)
-        except Exception as e:
-            logging.error("Error in retrieving certificate from "
-                          "restaurants.db (%s)" % e)
+    if request.method == 'POST' and certification_form.validate():
+        with shelve.open(DB_NAME, 'c') as db:
+            try:
+                certification_dict = db['certification']
+                print(certification_dict)
+            except Exception as e:
+                logging.error("Error in retrieving certificate from "
+                              "restaurants.db (%s)" % e)
 
-        certification = Certification(request.form["hygieneDocument"])
+            # create a new Certification Object
+            certification = Certification(request.form["hygieneDocument"])
 
-        certification_dict[i] = certification
-        db['certification'] = certification_dict
+            certification_dict[i] = certification
+            db['certification'] = certification_dict
+        # writeback
+        with shelve.open(DB_NAME, 'c') as db:
+            db['certification'] = certification_dict
 
-        db.close()
         return redirect(url_for('admin_home'))
 
     return render_template("admin/certification2.html", form=certification_form)
+
 
 # def upload_cert():
 #     i = 1
