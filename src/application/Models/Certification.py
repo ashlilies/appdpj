@@ -1,7 +1,7 @@
 # xu yong lin
 
 class Certification:
-    def __init__(self, hygiene_cert, halal, noPork_noLard, vegetarian, vegan, noBeef):
+    def __init__(self, hygiene_cert):
         self.hygiene_cert = hygiene_cert
         self.halal = halal
 

@@ -464,16 +464,18 @@ def upload_cert():
         db = shelve.open(DB_NAME, 'c')
         try:
             certification_dict = db['certification']
-            logging.info('Succesfully saved into db')
+            print(certification_dict)
         except Exception as e:
             logging.error("Error in retrieving certificate from "
                           "restaurants.db (%s)" % e)
 
-        certification = Restaurant(request.form["hygieneDocument"])
+        certification = Certification(request.form["hygieneDocument"])
+
         certification_dict[i] = certification
         db['certification'] = certification_dict
 
         db.close()
+        return redirect(url_for('admin_home'))
 
     return render_template("admin/certification2.html", form=certification_form)
 
