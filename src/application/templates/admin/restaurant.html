@@ -126,8 +126,7 @@
             <h6 style="margin-top: -13px; margin-left: 12px;">TO</h6>
           </div>
           <div class="form-group col-md-3">
-            <!-- <label class="closehour" for="closehour">DUMMY TEXT</label> -->
-            {{ render_field(form.rest_hour_close, class="form-control") }}
+            {{ render_field(form.rest_hour_close, class="form-control", style="margin-top: 9px") }}
 
           </div>
         </div>
@@ -167,117 +166,6 @@
           </div>
         </div>
 
-
-        <div class="form-row">
-          <div class="form-group col-md-12">
-
-         <div class="mb-3">
-                        <label id="tag" class="form-label">Tags:</label>
-                        <div id="tags"></div>
-                        <!-- Only to be used for JS. Not to be sent to our server! -->
-                        <input type="text" id="newtag"
-                               placeholder="Type toppings here...">
-                        <label for="newtag">
-                            <img id="addtag" src={{ url_for("static",
-                            filename="foodManagement/plus-button.png") }}
-                            onclick="addnewtag()"
-                            style="width: 20px; height: 20px;"/>
-                        </label>
-         </div>
-            <script>
-
-/*FOR ADDING TOPPINGS*/
- /* Global variables */
-      var topDiv;
-      var toppingId;
-      var maxToppingId;
-
-
-      function mains() {
-          console.log("running mains()");
-          /* Logic to generate new rows of text fields with unique IDs */
-          topDiv = document.getElementById("toppingDiv");
-          toppingId = 0;  /* defines the starting topping ID */
-          maxToppingId = {{ MAX_TOPPING_ID }};  /* max. no of toppings */
-
-          {#addNewToppingRow();  /* generate the first row */#}
-      }
-
-      function addNewToppingRow() {
-          /* are there too many toppings already? */
-          if (toppingId > maxToppingId) {
-              console.log("Too many toppings - can't add more");
-              alert("Too many toppings (" + parseInt(maxToppingId+1) + ")");
-              return;
-          }
-
-          /* get data from new topping text field */
-          tops = document.getElementById("newTopping").value;
-
-
-          /* with the minus button */
-          var wholeNewInputRow = document.createElement("div");
-
-          var newInputs = document.createElement("input");
-          newInputs.type = "text";
-          newInputs.id = "topping" + toppingId;
-          newInputs.name = "topping" + toppingId++;
-          newInputs.style.margin = "4px";
-          newInputs.style.borderRadius = "3px";
-          newInputs.style.borderColor = "grey";
-          newInputs.style.borderWidth = "thin";
-          newInputs.value = tops;
-          wholeNewInputRow.appendChild(newInputs);
-
-          var buttonMinus = document.createElement("img");
-          buttonMinus.src = "{{ url_for("static",
-                               filename="foodManagement/minus-button.png") }}";
-          {#buttonMinus.style = "width: 20px; height: 20px; margin-left: 5px;"#}
-          buttonMinus.width = 20;
-          buttonMinus.height = 20;
-          buttonMinus.style.marginLeft = "5px";
-          buttonMinus.onclick = function() {
-              removeToppingRow(this);
-          };
-          wholeNewInputRow.appendChild(buttonMinus);
-
-          /* finally we append the whole row to our div */
-          document.getElementById("toppingDiv")
-              .appendChild(wholeNewInputRow);
-
-      }
-
-      /*
-       * Removes a topping row.
-       * But we have to re-set all the topping IDs in order,
-       * or it wouldn't work again :(
-       */
-      function removeToppingRow(thisButtonMinus) {
-          {#let textBox = thisButtonMinus.previousElementSibling;#}
-          {#console.log(thisButtonMinus.previousElementSibling);#}
-
-          /* remove this whole input field */
-          thisButtonMinus.parentElement.remove();
-
-          /*
-           * Reorder the IDs and decrement global counter
-           */
-          --toppingId;
-          let topDiv = document.getElementById("toppingDiv");
-
-          /* dig through the DOM and set the IDs accordingly */
-          let i = 0;
-          /* count */
-          for (i = 0; i < topDiv.childElementCount; i++) {
-              topDiv.childNodes[i].childNodes[0].id = "topping" + i;
-              topDiv.childNodes[i].childNodes[0].name = "topping" + i;
-          }
-      }
-
-
-            </script>
-          </div>
-        </div>
 
         <h4 style="margin-top: 30px">Delivery charges over distance ($):</h4>
 
