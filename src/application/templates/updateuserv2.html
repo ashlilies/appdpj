@@ -1,0 +1,199 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Restaurant Details{% endblock %}
+
+{% from "includes/_formHelper.html" import render_field %}
+{% block head %}
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+          integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+          crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+          integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+          crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+          integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+          crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+      {
+          box-sizing: border-box
+      ;
+      }
+      /* Set additional styling options for the columns*/
+      .column {
+          float: left;
+          width: 45%;
+          margin-bottom: 50px;
+      }
+
+      .row:after {
+          content: "";
+          display: table;
+          clear: both;
+      }
+
+      .row {
+          margin-top: 50px;
+          margin-right: 50px;
+          margin-left: 50px;
+      }
+
+      .form-group {
+          margin-top: 5px;
+      }
+
+      .form-row {
+          margin-top: 5px;
+      }
+
+      input::placeholder {
+          font-style: italic;
+          font-size: 13px;
+      }
+
+      .closehour {
+          visibility: hidden;
+      }
+
+      label {
+          font-size: 15.5px;
+      }
+
+      #rest_logo {
+          margin-left: 260px;
+      }
+
+
+      input[type='submit'], button, [aria-label] {
+          cursor: pointer;
+      }
+
+      #edit-box {
+          display: none;
+          max-width: 80%;
+          margin-top: 10px;
+      }
+
+      td {
+          background-color: transparent;
+          padding-right: 10px;
+          text-align: left;
+      }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <!-- start of navigation bar-->
+  <nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+      <button class="nav-link active" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings"
+              type="button" role="tab" aria-controls="nav-settings" aria-selected="true">Restaurant Information
+      </button>
+      <button class="nav-link" id="nav-restrictions-tab" data-bs-toggle="tab" data-bs-target="#nav-restrictions"
+              type="button" role="tab" aria-controls="nav-restrictions" aria-selected="false">Food Restrictions
+      </button>
+    </div>
+  </nav>
+{% for restaurant_object in restaurant %}
+  <!-- start of division row-->
+  <h3 style="margin-top: 50px; margin-left: 5px"><u>Update {{ restaurant_object.get_name() }}!: </u></h3>
+
+<form class="edit-restaurant-confirm" method="POST" action='/updateRestaurantConfirm/{{ restaurant_object.get_id() }}'>
+    <div class="row">
+      <div class="column" style="background-color:#DCDCDC;"> <!--start of column one content-->
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            {{ render_field(form.rest_name, class="form-control", placeholder="The Saffron Boutique") }}
+            <!--    <input type="text" class="form-control" id="rest_name" placeholder="The Saffron Boutique">-->
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            {{ render_field(form.rest_contact, class="form-control", placeholder="89898989") }}
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-3">
+            {{ render_field(form.rest_hour_open, class="form-control") }}
+          </div>
+          <div class="form-group col-md-1">
+            <label class="closehour">DUMMY TEXT</label>
+            <h6 style="margin-top: -13px; margin-left: 12px;">TO</h6>
+          </div>
+          <div class="form-group col-md-3">
+            {{ render_field(form.rest_hour_close, class="form-control", style="margin-top: 7px; margin-left:7px;") }}
+
+          </div>
+        </div>
+
+        <div class="form-row">
+          {{ render_field(form.rest_address1, class="form-control", placeholder="123 Floral Street") }}
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-10">
+            {{ render_field(form.rest_address2, class="form-control", placeholder="Apartment, Studio, or Floor") }}
+          </div>
+          <div class="form-group col-md-2">
+            {{ render_field(form.rest_postcode, class="form-control", placeholder="123456") }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-8">
+            {{ render_field(form.rest_bank, class="form-control", placeholder="123456") }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            {{ render_field(form.rest_desc, class="form-control", placeholder="A little something about your restaurant...") }}
+          </div>
+        </div>
+
+
+      </div> <!--end of column one content-->
+
+      <div class="column" style="background-color:#dcdcdc;margin-left: 50px;">
+        <div class="form-row">
+          <div class="form-group col-md-5">
+            <label style="margin-left: 285px ;" for="rest_logo">Logo</label>
+<!--            <input type="file" id="rest_logo" name="logo">-->
+            <input class="form-control" type="file" name="rest_logo" id="rest_logo" accept="image/*" placeholder="Upload your logo"/>
+          </div>
+        </div>
+
+
+        <h4 style="margin-top: 30px">Delivery charges over distance ($):</h4>
+
+        <div class="form-row" style="position: relative">
+          <div class="form-group col-md-2">
+            {{ render_field(form.rest_del1, class="form-control", placeholder="1.20") }}
+          </div>
+          <div class="form-group col-md-2">
+            {{ render_field(form.rest_del2, class="form-control", placeholder="2.40") }}
+          </div>
+          <div class="form-group col-md-2">
+            {{ render_field(form.rest_del3, class="form-control", placeholder="3.60") }}
+          </div>
+          <div class="form-group col-md-2">
+            {{ render_field(form.rest_del4, class="form-control", placeholder="4.80") }}
+          </div>
+          <div class="form-group col-md-2">
+            {{ render_field(form.rest_del5, class="form-control", placeholder="6.00") }}
+
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2">
+    <button type="submit" class="btn btn-border-underline">Edit Restaurant Details</button>
+</td>         </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
+{% endfor %}
+{% endblock %}
