@@ -5,6 +5,7 @@
 
 from flask import render_template, request, redirect, url_for, session, flash
 from application.Models.Admin import *
+from application.Models.Certification import Certification
 from application.Models.Food import Food
 from application.Models.Restaurant import Restaurant
 from application import app, DB_NAME
@@ -292,8 +293,7 @@ def delete_food(id):
 
 
 @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
-
-#save new specification and list
+# save new specification and list
 
 def update_food(id):
     update_food_form = CreateFoodForm(request.form)
@@ -457,21 +457,58 @@ def delete_transaction(transaction_id):
 # TODO: FILE UPLOAD, FILE SAVING, SHELVE UPDATE
 @app.route("/admin/uploadCertification", methods=['GET', 'POST'])
 def upload_cert():
+    i = 1
     certification_form = DocumentUploadForm(request.form)
+    certification_dict = {}
+    if request.method == 'POST' and certification_form.validate_on_submit():
+        db = shelve.open(DB_NAME, 'c')
+        try:
+            certification_dict = db['certification']
+            logging.info('Succesfully saved into db')
+        except Exception as e:
+            logging.error("Error in retrieving certificate from "
+                          "restaurants.db (%s)" % e)
 
-    if certification_form.validate_on_submit():
-        # file path to save files to:
-        assets_dir = os.path.join(os.path.dirname(app.instance_path), 'restaurantCertification')
-        # assests_dir ==> C:\Users\yongl\appdpj\src\restaurantCertification
-        hygiene = certification_form.hygiene_doc.data
+        certification = Restaurant(request.form["hygieneDocument"])
+        certification_dict[i] = certification
+        db['certification'] = certification_dict
 
-        # saving
-        hygiene.save(os.path.join(assets_dir, 'hygiene', hygiene.filename))
+        db.close()
 
-        logging.info('Document uploaded successfully.')
-        return redirect(url_for('admin_home'))
+    return render_template("admin/certification2.html", form=certification_form)
 
-    return render_template("admin/certification2.html")
+# def upload_cert():
+#     i = 1
+#     certification_form = DocumentUploadForm(request.form)
+#     certifications_dict = {}
+#     if request.method == 'POST' and certification_form.validate():
+#         db = shelve.open(DB_NAME, 'c')
+#         try:
+#             certifications_dict = db['certification']
+#         except Exception as e:
+#             logging.error("Error in retrieving Certification from "
+#                           "certification.db (%s)" % e)
+#
+#         certifications_dict[i] = i
+#         db['certification'] = certifications_dict
+#
+#         db.close()
+#
+#     certification = Certification(request.form["hygieneDocument"])
+#
+#     # if certification_form.validate_on_submit():
+#     #     # file path to save files to:
+#     #     assets_dir = os.path.join(os.path.dirname(app.instance_path), 'restaurantCertification')
+#     #     # assests_dir ==> C:\Users\yongl\appdpj\src\restaurantCertification
+#     #     hygiene = certification_form.hygiene_doc.data
+#     #
+#     #     # saving
+#     #     hygiene.save(os.path.join(assets_dir, 'hygiene', hygiene.filename))
+#     #
+#     #     logging.info('Document uploaded successfully.')
+#     #     return redirect(url_for('admin_home'))
+#
+#     return render_template("admin/certification2.html")
 
 
 # @app.route("/admin/certification", methods=['GET', 'POST'])
