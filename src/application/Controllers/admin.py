@@ -533,8 +533,8 @@ def admin_myrestaurant():  # ruri
                                 restaurant_details_form.rest_del5.data)
         restaurants_dict[restaurant.name] = restaurant
         db['Restaurants'] = restaurants_dict
-
         db.close()
+        return redirect(url_for('admin_home'))
 
     return render_template("admin/restaurant.html", form=restaurant_details_form)
 
