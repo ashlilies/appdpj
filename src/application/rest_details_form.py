@@ -1,6 +1,6 @@
 from wtforms import Form, StringField, RadioField, SelectField, TextAreaField, validators
 from wtforms.fields import *
-from wtforms_components import TimeField
+# from wtforms_components import TimeField
 
 class RestaurantDetailsForm(Form):
     rest_name = StringField('Restaurant Name', [validators.Optional()])
