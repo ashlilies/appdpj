@@ -25,14 +25,26 @@ class Food:
     def set_food_id(self, food_id):
         self.__food_id = food_id
 
+    def set_name(self,name):
+        self.name = name
+
     def get_name(self):
         return self.name
+
+    def set_description(self,name):
+        self.name = name
 
     def get_description(self):
         return self.description
 
+    def set_price(self,name):
+        self.name = name
+
     def get_price(self):
         return self.price
+
+    def set_allergy(self,allergy):
+        self.allergy = allergy
 
     def get_allergy(self):
         return self.allergy

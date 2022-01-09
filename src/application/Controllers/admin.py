@@ -292,39 +292,118 @@ def delete_food(id):
     return redirect(url_for('food_management'))
 
 
+
 @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
-
 #save new specification and list
-
 def update_food(id):
     update_food_form = CreateFoodForm(request.form)
-
     if request.method == 'POST' and update_food_form.validate():
         food_dict = {}
-        with shelve.open("foodypulse", 'w') as db:
-            food_dict = db['food']
-
-            food = food_dict.get(id)
-            food.set_name(update_food_form.item_name.data)
-            food.set_description(update_food_form.description.data)
-            food.set_price(update_food_form.price.data)
-            food.set_allergy(update_food_form.allergy.data)
-
-            db['food'] = food_dict
+        try:
+            with shelve.open("foodypulse", 'w') as db:
+                food_dict = db['food']
+                food = food_dict.get(id)
+                food.set_image(request.form["image"])
+                food.set_name(update_food_form.item_name.data)
+                food.set_description(update_food_form.description.data)
+                food.set_price(update_food_form.price.data)
+                food.set_allergy(update_food_form.allergy.data)
+                db["food"] = food_dict
+        except:
+            print("an error has occured in update customer")
 
         return redirect(url_for('food_management'))
     else:
         food_dict = {}
-        with shelve.open("foodypulse", 'r') as db:
-            food_dict = db['food']
+        try:
+            with shelve.open("foodypulse", 'r') as db:
+                food_dict = db['food']
 
-        food = food_dict.get(id)
-        update_food_form.item_name.data = food.get_item_name()
-        update_food_form.description.data = food.get_description()
-        update_food_form.price.data = food.get_price()
-        update_food_form.allergy.data = food.get_allergy()
+                food = food_dict.get(id)
+                update_food_form.item_name.data = food.get_name()
+                update_food_form.description.data = food.get_description()
+                update_food_form.price.data = food.get_price()
+                update_food_form.allergy.data = food.get_allergy()
+        except:
+            print("Error occured when update food")
 
-        return render_template('updateFood.html', form=update_food_form)
+
+
+        return render_template('admin/updateFood.html', form=update_food_form)
+
+
+
+
+
+
+# @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
+#
+# #save new specification and list
+#
+# def update_food(id):
+#     update_food_form = CreateFoodForm(request.form)
+#
+#     # get specifications as a List, no WTForms
+#     def get_specs() -> list:
+#         specs = []
+#
+#         # do specifications exist in first place?
+#         for i in range(MAX_SPECIFICATION_ID + 1):
+#             if "specification%d" % i in request.form:
+#                 specs.append(request.form["specification%d" % i])
+#             else:
+#                 break
+#
+#         logging.info("create_food: specs is %s" % specs)
+#         return specs
+#
+#         # get toppings as a List, no WTForms
+#
+#     def get_top() -> list:
+#         top = []
+#
+#         # do toppings exist in first place?
+#         for i in range(MAX_TOPPING_ID + 1):
+#             if "topping%d" % i in request.form:
+#                 top.append(request.form["topping%d" % i])
+#             else:
+#                 break
+#
+#         logging.info("create_food: top is %s" % top)
+#         return top
+#
+#
+#     if request.method == 'POST' and update_food_form.validate():
+#         food_dict = {}
+#         with shelve.open("foodypulse", 'w') as db:
+#             food_dict = db['food']
+#
+#             food = food_dict.get(id)
+#             food.set_image(request.form["image"])
+#             food.set_name(update_food_form.item_name.data)
+#             food.set_description(update_food_form.description.data)
+#             food.set_price(update_food_form.price.data)
+#             food.set_allergy(update_food_form.allergy.data)
+#             food.specification = get_specs()  # set specifications as a List
+#             food.topping = get_top()  # set topping as a List
+#
+#             db['food'] = food_dict
+#
+#         return redirect(url_for('food_management'))
+#     else:
+#         food_dict = {}
+#         with shelve.open("foodypulse", 'r') as db:
+#             food_dict = db['food']
+#
+#         food = food_dict.get(id)
+#         update_food_form.item_name.data = food.get_name()
+#         update_food_form.description.data = food.get_description()
+#         update_food_form.price.data = food.get_price()
+#         update_food_form.allergy.data = food.get_allergy()
+#         food.specification = get_specs()  # set specifications as a List
+#         food.topping = get_top()  # set topping as a List
+#
+#         return render_template('admin/updateFood.html', form=update_food_form)
 
 
 # <------------------------- YONG LIN ------------------------------>

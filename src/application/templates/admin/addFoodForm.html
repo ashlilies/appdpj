@@ -156,7 +156,7 @@
           specificationId = 0;  /* defines the starting specification ID */
           maxSpecificationId = {{ MAX_SPECIFICATION_ID }};  /* max. no of specifications */
 
-          {#addNewSpecificationRow();  /* generate the first row */#}
+          addNewSpecificationRow();  /* generate the first row */
       }
 
       function addNewSpecificationRow() {
@@ -187,7 +187,7 @@
           var minusButton = document.createElement("img");
           minusButton.src = "{{ url_for("static",
                                filename="foodManagement/minus-button.png") }}";
-          {#minusButton.style = "width: 20px; height: 20px; margin-left: 5px;"#}
+          minusButton.style = "width: 20px; height: 20px; margin-left: 5px;"
           minusButton.width = 20;
           minusButton.height = 20;
           minusButton.style.marginLeft = "5px";
@@ -207,8 +207,8 @@
        * or it wouldn't work again :(
        */
       function removeSpecificationRow(thisMinusButton) {
-          {#let textBox = thisMinusButton.previousElementSibling;#}
-          {#console.log(thisMinusButton.previousElementSibling);#}
+          let textBox = thisMinusButton.previousElementSibling;
+          console.log(thisMinusButton.previousElementSibling);
 
           /* remove this whole input field */
           thisMinusButton.parentElement.remove();
@@ -245,7 +245,7 @@
           toppingId = 0;  /* defines the starting topping ID */
           maxToppingId = {{ MAX_TOPPING_ID }};  /* max. no of toppings */
 
-          {#addNewToppingRow();  /* generate the first row */#}
+          addNewToppingRow();  /* generate the first row */
       }
 
       function addNewToppingRow() {
@@ -277,7 +277,7 @@
           var buttonMinus = document.createElement("img");
           buttonMinus.src = "{{ url_for("static",
                                filename="foodManagement/minus-button.png") }}";
-          {#buttonMinus.style = "width: 20px; height: 20px; margin-left: 5px;"#}
+          buttonMinus.style = "width: 20px; height: 20px; margin-left: 5px;"
           buttonMinus.width = 20;
           buttonMinus.height = 20;
           buttonMinus.style.marginLeft = "5px";
@@ -298,8 +298,8 @@
        * or it wouldn't work again :(
        */
       function removeToppingRow(thisButtonMinus) {
-          {#let textBox = thisButtonMinus.previousElementSibling;#}
-          {#console.log(thisButtonMinus.previousElementSibling);#}
+          let textBox = thisButtonMinus.previousElementSibling;
+          console.log(thisButtonMinus.previousElementSibling);
 
           /* remove this whole input field */
           thisButtonMinus.parentElement.remove();
@@ -418,5 +418,5 @@
 
     </div>
 </div>
-<a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Open first modal</a>
+<a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Add Food</a>
 {% endblock %}
