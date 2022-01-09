@@ -3,44 +3,38 @@
 {% block title %}Admin Transaction History{% endblock %}
 
 {% block head %}
-<style>
-  .settings{
-    display: inline;
-  }
-  #current{
-    text-decoration: underline;
-  }
-  h1 {
-    font-weight: bold;
-    position:relative;
-    left: 30px;
-    top:20px;
-    text-decoration-line: underline;
-    font-size:28px;
-    width:150px;
-  }
-  .display{
-    padding: 30px;
-  }
-  .table{
-    background-color: white;
-  }
-  .highlight{
-    color: red;
-    font-weight: bold;
-  }
-  .highlight:hover{
-    color: red !important;
-    font-weight: bold;
-    background-color: yellow;
-  }
-  .redhighlight:hover{
-    color: yellow !important;
-    font-weight: bold;
-    background-color: red !important;
-  }
+  <style>
+      .settings {
+          display: inline;
+      }
 
-</style>
+      #current {
+          text-decoration: underline;
+      }
+
+      h1 {
+          font-weight: bold;
+          position: relative;
+          left: 30px;
+          top: 20px;
+          text-decoration-line: underline;
+          font-size: 28px;
+          width: 150px;
+      }
+
+      .display {
+          padding: 30px;
+      }
+
+      .table {
+          background-color: white;
+      }
+
+      .highlight {
+          color: red;
+          font-weight: bold;
+      }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -48,7 +42,7 @@
   <div id="settings">
     <div class="settingsrow">
       <h1>Dashboard</h1>
-  <!--      choosing of month to display(dropdown button)-->
+      <!--      choosing of month to display(dropdown button)-->
     </div>
   </div>
   <br>
@@ -60,97 +54,120 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
             <a class="nav-item nav-link" href="#">Dashboard</a>
-            <a class="nav-item nav-link active" href="#">Transaction <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link active" href="#">Transaction <span
+                class="sr-only">(current)</span></a>
           </div>
         </div>
       </nav>
     </div>
     <div class="table">
-    <h5> first 2 rows are dummy data</h5>
       <table class="table table-hover">
         <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Username</th>
-            <th scope="col">Option</th>
-            <th scope="col">Price</th>
-            <th scope="col">Coupons</th>
-            <th scope="col">Rating</th>
-          </tr>
+        <tr>
+          <th scope="col">Transaction ID</th>
+          <th scope="col">Username</th>
+          <th scope="col">Option</th>
+          <th scope="col">Price</th>
+          <th scope="col">Coupons</th>
+          <th scope="col">Rating</th>
+          <th></th>
+          {# for delete button #}
+        </tr>
         </thead>
         <tbody>
-          <div class="redhighlight">
+        {% for transaction in transaction_list %}
+        {% if not transaction.deleted %}
+          {# reading attributes from Transaction.py in each Class obj in transaction_list #}
+          {% if transaction.get_ratings() <= 2 %}
             <tr class="highlight">
-            <th scope="row">1</th>
-            <td>Yuen Loong</td>
-            <td>Delivery</td>
-            <td>20.25</td>
-            <td>SPAGETIT</td>
-            <td>2</td>
+              <td>{{ transaction.count_id }}</td>
+              <td>{{ transaction.account_name }}</td>
+              <td>{{ transaction.get_option() }}</td>
+              <td>{{ transaction.get_price() }}</td>
+              <td>{{ transaction.get_used_coupons() }}</td>
+              <td>{{ transaction.get_ratings() }}</td>
+              <td>
+                {#                                        <form action="{{ url_for('delete_transaction', id=transaction.count_id) }}"#}
+                {#                                              method="POST">#}
+                <form action="#" method="get">
+                  <!-- Button to Open the Modal -->
+                  <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                          data-bs-target="#myModal_{{ transaction.count_id }}">
+                    Delete
+                  </button>
+                  <!-- Vertically centered modal -->
+                  <div class="modal" id="myModal_{{ transaction.count_id }}">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Delete Confirmation</h5>
+                          <button type="button" class="btn-close"
+                                  data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Are you sure you want to
+                            delete {{ transaction.account_name }}?</p>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary"
+                                  data-bs-dismiss="modal">Close
+                          </button>
+                          <a href="/admin/transaction/delete/{{ transaction.count_id }}">
+                            <input type="button" value="Delete" class="btn btn-danger">
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </td>
             </tr>
-          </div>
-          <tr>
-            <th scope="row">2</th>
-            <td>Yin Loong</td>
-            <td>Delivery</td>
-            <td>50.25</td>
-            <td>SPAGETIT</td>
-              <td>4</td>
-          </tr>
-          {% for transaction in transaction_list %}
-            {# without appending values to Transaction.py #}
-{#              {% for i in transaction %}#}
-{#                  {% if i == '2' %}#}
-{#                    <tr class="highlight">#}
-{#                      <th scope="row">{{ key }}</th>#}
-{#                      {% for i in transaction %}#}
-{#                        <td> {{ i }}</td>#}
-{#                      {% endfor %}#}
-{#                    </tr>#}
-{#                  {% else %}#}
-{#                      <tr>#}
-{#                        <th scope="row">{{ key }}</th>#}
-{#                        {% for i in transaction %}#}
-{#                          <td> {{ i }}</td>#}
-{#                        {% endfor %}#}
-{#                      </tr>#}
-{#                  {% endif %}#}
-{#                    <td>{{ i }}</td>#}
-{#              {% endfor %}#}
-{#              </tr>#}
+          {% else %}
+            <tr class="trow">
+            <td>{{ transaction.count_id }}</td>
+            <td>{{ transaction.account_name }}</td>
+            <td>{{ transaction.get_option() }}</td>
+            <td>{{ transaction.get_price() }}</td>
+            <td>{{ transaction.get_used_coupons() }}</td>
+            <td>{{ transaction.get_ratings() }}</td>
+            <td>
+            <form action="" method="POST">
+            <!-- Button to Open the Modal -->
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                    data-bs-target="#myModal_{{ transaction.count_id }}">
+              Delete
+            </button>
+            <!-- Vertically centered modal -->
+            <div class="modal" id="myModal_{{ transaction.count_id }}">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Delete Confirmation</h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Are you sure you want to
+                      delete {{ transaction.account_name }}?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">Close
+                    </button>
+                    <a href="/admin/transaction/delete/{{ transaction.count_id }}">
+                      <input type="button" value="Delete" class="btn btn-danger">
+                    </a>
+                  </div>
 
-              {% if transaction[4] == '2' or transaction[4] == "1" %}
-                  <tr class="highlight">
-                    <th scope="row">3</th>
-                    {% for i in transaction %}
-                        <td> {{ i }}</td>
-                    {% endfor %}
-                  </tr>
-              {% else %}
-                  <tr>
-                    <th scope="row">3</th>
-                    {% for i in transaction %}
-                          <td> {{ i }}</td>
-                    {% endfor %}
-                  </tr>
-              {% endif %}
-
-
-
-
-
-
-{#              when we implement Transaction.py in#}
-{#              <tr>#}
-{#                  <th scope="row">{{ key }}</th>#}
-{#                    <td>{{ transaction_list[transaction] }}#}
-{#                    <td>{{ transaction.get_account_id() }}</td>#}
-{#                    <td>{{ transaction.get_option() }}</td>#}
-{#                    <td>{{ transaction.get_price() }}</td>#}
-{#                    <td>{{ transaction.get_used_coupons() }}</td>#}
-{#                    <td>{{ transaction.get_rating() }}</td>#}
-{#              </tr>#}
-          {% endfor %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        </form>
+        </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
         </tbody>
       </table>
     </div>

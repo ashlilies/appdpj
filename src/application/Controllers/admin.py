@@ -206,17 +206,8 @@ def food_management():
         food = food_dict.get(key)
         food_list.append(food)
 
-    # food_dict = {}
-    # food_list = []
-    # with shelve.open(DB_NAME, 'c') as db:
-    #     if "food" in db:
-    #         food_list = db['food']
-    #     else:
-    #         for key in food_dict:
-    #             food = food_dict.get(key)
-    #             food_list.append(food)
-
-    return render_template('admin/foodManagement.html', count=len(food_list), food_list=food_list)
+    return render_template('admin/foodManagement.html',
+                           food_list=food_list)
 
 
 MAX_SPECIFICATION_ID = 5  # for adding food
@@ -339,50 +330,125 @@ def update_food(id):
 # <------------------------- YONGLIN ------------------------------>
 @app.route("/admin/transaction")
 def admin_transaction():
+# <------------------------- YONG LIN ------------------------------>
+@app.route("/admin/transaction/createExampleTransactions")
+def create_example_transactions():
+    # WARNING - Overrides ALL transactions in the db!
+    transaction_list = []
+
     # creating a shelve file with dummy data
-    transaction_dict = {'1': ['Yong Lin', 'Delivery', '60.40', 'SPAGETIT', '1'],
-                        '2': ['Yuen Loong', 'Dine-in', '40.35', 'SPAGETIT', '2']}
+    # 1: <account id> ; <user_id> ; <option> ; <price> ; <coupons> , <rating>
+    t1 = Transaction()
+    t1.account_name = 'Yong Lin'
+    t1.set_option('Delivery')
+    t1.set_price(50.30)
+    t1.set_used_coupons('SPAGETIT')
+    t1.set_ratings(2)
+    transaction_list.append(t1)
 
-    # 1: transaction no. ; <user_id> ; <option> ; <price> ; <coupons> , <rating>
-    # TODO: associate an transaction_id as transaction number as key
-    # TODO: input the details of the transactions (eg userid, price, option, etc)
+    t2 = Transaction()
+    t2.account_name = 'Ching Chong'
+    t2.set_option('Dine-in')
+    t2.set_price(80.90)
+    t2.set_used_coupons('50PASTA')
+    t2.set_ratings(5)
+    transaction_list.append(t2)
 
-    # below code is only usable when we use nested dictionary
-    for key, value in transaction_dict.items():  # for every transaction
-        print(key, ":", value, "\n")
-    #     for i in value:
-    #         print(i +":", value[i])
+    t3 = Transaction()
+    t3.account_name = 'Hosea'
+    t3.set_option('Delivery')
+    t3.set_price(20.10)
+    t3.set_used_coupons('50PASTA')
+    t3.set_ratings(1)
+    transaction_list.append(t3)
 
-    with shelve.open("transactions", "c") as db:
+    t4 = Transaction()
+    t4.account_name = 'Clara'
+    t4.set_option('Delivery')
+    t4.set_price(58.30)
+    t4.set_used_coupons('SPAGETIT')
+    t4.set_ratings(2)
+    transaction_list.append(t4)
+
+    t5 = Transaction()
+    t5.account_name = 'Ruri'
+    t5.set_option('Dine-in')
+    t5.set_price(80.90)
+    t5.set_used_coupons('50PASTA')
+    t5.set_ratings(3)
+    transaction_list.append(t5)
+
+    t6 = Transaction()  # t6
+    t6.account_name = 'Ashlee'
+    t6.set_option('Delivery')
+    t6.set_price(100.10)
+    t6.set_used_coupons('50PASTA')
+    t6.set_ratings(2)
+    transaction_list.append(t6)
+
+    t7 = Transaction()
+    t7.account_name = 'Hello'
+    t7.set_option('Dine-in')
+    t7.set_price(10.90)
+    t7.set_used_coupons('50PASTA')
+    t7.set_ratings(4)
+    transaction_list.append(t7)
+
+    # writing to the database
+    with shelve.open(DB_NAME, "c") as db:
         try:
-            if 'shop_transactions' in db:
-                transaction_dict = db['shop_transactions']
-            else:
-                db['shop_transactions'] = transaction_dict
+            db['shop_transactions'] = transaction_list
         except Exception as e:
-            logging.error("read_transaction: error opening db (%s)" % e)
+            logging.error("create_example_transactions: error writing to db (%s)" % e)
 
-    # reading the shelve
-    with shelve.open("transactions", "c") as db:
-        try:
-            print(db['shop_transactions'])  # debug
-            if 'shop_transactions' in db:
-                transaction_dict = db['shop_transactions']
-            else:
-                db['shop_transactions'] = transaction_dict
-        except Exception as e:
-            logging.error("read_transaction: error opening db (%s)" % e)
+    return redirect(url_for("admin_transaction"))
 
-        transaction_list = []
-        for key in transaction_dict:
-            transaction = transaction_dict.get(key)
-            transaction_list.append(transaction)
 
-            print(transaction)
-        print(transaction_list)
+@app.route("/admin/transaction")
+def admin_transaction():
+    # read transactions from db
+    with shelve.open(DB_NAME, 'c') as db:
+        if 'shop_transactions' in db:
+            transaction_list = db['shop_transactions']
+            logging.info("admin_transaction: reading from db['shop_transactions']"
+                         ", %d elems" % len(db["shop_transactions"]))
+        else:
+            logging.info("admin_transaction: nothing found in db, starting empty")
+            transaction_list = []
+
+    def get_transaction_by_id(transaction_id):  # debug
+        for transaction in transaction_list:
+            if transaction_id == transaction.count_id:
+                return transaction
 
     return render_template("admin/transaction.html", count=len(transaction_list),
                            transaction_list=transaction_list)
+
+
+# soft delete -> restaurant can soft delete transactions jic if the transaction is cancelled
+# set instance attribute of Transaction.py = False
+@app.route('/admin/transaction/delete/<transaction_id>')
+def delete_transaction(transaction_id):
+    transaction_id = int(transaction_id)
+
+    transaction_list = []
+    # TODO: SOFT DELETE TRANSACTIONS -> set instance attribute to False
+    with shelve.open(DB_NAME, 'c') as db:
+        for transaction in db['shop_transactions']:
+            transaction_list.append(transaction)
+
+    def get_transaction_by_id(t_id):  # debug
+        for t in transaction_list:
+            if t_id == t.count_id:
+                return t
+
+    logging.info("delete_transaction: deleted transaction with id %d"
+                 % transaction_id)
+    get_transaction_by_id(transaction_id).deleted = True
+    with shelve.open(DB_NAME, 'c') as db:
+        db["shop_transactions"] = transaction_list
+
+    return redirect(url_for('admin_transaction'))
 
 
 # certification -- xu yong lin
@@ -442,7 +508,6 @@ def admin_certification():
 # <------------------------- RURI ------------------------------>
 @app.route('/admin/myRestaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
-
     restaurant_details_form = RestaurantDetailsForm(request.form)
     restaurants_dict = {}
     if request.method == 'POST' and restaurant_details_form.validate():
