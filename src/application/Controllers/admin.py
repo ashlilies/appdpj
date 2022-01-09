@@ -185,7 +185,6 @@ app.jinja_env.globals.update(
     get_restaurant_name_by_id=get_restaurant_name_by_id)
 app.jinja_env.globals.update(get_account_email=get_account_email)
 
-
 # <------------------------- CLARA ------------------------------>
 # APP ROUTE TO FOOD MANAGEMENT clara
 @app.route("/admin/foodManagement")
@@ -327,13 +326,7 @@ def update_food(id):
         except:
             print("Error occured when update food")
 
-
-
         return render_template('admin/updateFood.html', form=update_food_form)
-
-
-
-
 
 
 # @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
@@ -404,7 +397,6 @@ def update_food(id):
 #         food.topping = get_top()  # set topping as a List
 #
 #         return render_template('admin/updateFood.html', form=update_food_form)
-
 
 # <------------------------- YONG LIN ------------------------------>
 @app.route("/admin/transaction/createExampleTransactions")

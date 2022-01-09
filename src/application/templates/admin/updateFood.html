@@ -4,6 +4,19 @@
 
 {% block head %}
 <style>
+     div.scroll {
+            background-color: #fed9ff;
+            width: 900px;
+            height: 400px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            top: 70px;
+            left: 150px;
+
+        }
       h1{
         color:red;
       }
@@ -330,11 +343,49 @@
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
 
-<h1>HELO I AM CLARA NG KHAI EHAARN FREAK U</h1>
+    <div class="scroll">
+
+        <div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>price</th>
+                    <th>Allergy</th>
+                    <th>Specification</th>
+                    <th>Remarks</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for food in food_list %}
+                    <tr>
+                        <td>{{ food.name }}</td>
+                        <td>{{ food.description }}</td>
+                        <td>{{ food.price }}</td>
+                        <td>{{ food.allergy }}</td>
+                        <td>{{ food.specfication }}</td>
+
+                        <td>{{ food.topping }}</td>
+                        <td><a href="/updateFood/{{food.get_food_id()}}" class="btn btn-warning">Update</a>
+                        <td>
+                                   <form action="{{url_for('delete_food', id=food.get_food_id())}}" method="POST">
+                                <input type="submit" value="Delete" class="btn btn-danger">
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
 <!--POP UP MODEL-->
 
 
-<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
+<div class="modal fade" id="exampleModalToggle" aria-hidden="false" aria-labelledby="exampleModalToggleLabel"
      tabindex="-1">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
