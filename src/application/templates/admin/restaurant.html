@@ -6,315 +6,196 @@
 {% from "includes/_formHelper.html" import render_field %}
 {% block head %}
 
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <style>
-    {
-        box-sizing: border-box;
-    }
-    /* Set additional styling options for the columns*/
-    .column {
-    float: left;
-    width: 50%;
-    margin-bottom: 50px;
-    }
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+          integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+          crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+          integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+          crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+          integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+          crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+      {
+          box-sizing: border-box
+      ;
+      }
+      /* Set additional styling options for the columns*/
+      .column {
+          float: left;
+          width: 45%;
+          margin-bottom: 50px;
+      }
 
-    .row:after {
-    content: "";
-    display: table;
-    clear: both;
-    }
-    .row{
-        margin-top: 50px;
-        margin-right: 50px;
-        margin-left: 50px;
-    }
-.form-group{
-        margin-top: 5px;
-    }
-    .form-row{
-        margin-top: 5px;
-    }
-    input::placeholder {
-        font-style: italic;
-        font-size: 13px;
-    }
-    .closehour{
-        visibility: hidden;
-    }
-    label{
-        font-size: 15.5px;
-    }
-    #rest_logo{
-        margin-left: 260px;
-    }
+      .row:after {
+          content: "";
+          display: table;
+          clear: both;
+      }
+
+      .row {
+          margin-top: 50px;
+          margin-right: 50px;
+          margin-left: 50px;
+      }
+
+      .form-group {
+          margin-top: 5px;
+      }
+
+      .form-row {
+          margin-top: 5px;
+      }
+
+      input::placeholder {
+          font-style: italic;
+          font-size: 13px;
+      }
+
+      .closehour {
+          visibility: hidden;
+      }
+
+      label {
+          font-size: 15.5px;
+      }
+
+      #rest_logo {
+          margin-left: 260px;
+      }
 
 
-  input[type='submit'], button, [aria-label]{
-    cursor: pointer;
-  }
-  #edit-box{
-    display: none;
-    max-width: 80%;
-    margin-top: 10px;
-  }
+      input[type='submit'], button, [aria-label] {
+          cursor: pointer;
+      }
 
-  td{
-      background-color: transparent;
-      padding-right: 10px;
-      text-align: left;
-  }
-</style>
+      #edit-box {
+          display: none;
+          max-width: 80%;
+          margin-top: 10px;
+      }
+
+      td {
+          background-color: transparent;
+          padding-right: 10px;
+          text-align: left;
+      }
+  </style>
 {% endblock %}
 
 {% block content %}
-<!-- start of navigation bar-->
- <nav>
-  <div class="nav nav-tabs" id="nav-tab" role="tablist">
-    <button class="nav-link active" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings" type="button" role="tab" aria-controls="nav-settings" aria-selected="true">Restaurant Information</button>
-    <button class="nav-link" id="nav-restrictions-tab" data-bs-toggle="tab" data-bs-target="#nav-restrictions" type="button" role="tab" aria-controls="nav-restrictions" aria-selected="false">Food Restrictions</button>
-  </div>
-</nav>
+  <!-- start of navigation bar-->
+  <nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+      <button class="nav-link active" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings"
+              type="button" role="tab" aria-controls="nav-settings" aria-selected="true">Restaurant Information
+      </button>
+      <button class="nav-link" id="nav-restrictions-tab" data-bs-toggle="tab" data-bs-target="#nav-restrictions"
+              type="button" role="tab" aria-controls="nav-restrictions" aria-selected="false">Food Restrictions
+      </button>
+    </div>
+  </nav>
 
-<!-- start of division row-->
-<h3 style="margin-top: 50px; margin-left: 5px"><u>Your Restaurant's details: </u></h3>
+  <!-- start of division row-->
+  <h3 style="margin-top: 50px; margin-left: 5px"><u>Your Restaurant's details: </u></h3>
 
-<form method="POST" action="">
+  <form method="POST" action="">
     <div class="row">
-        <div class="column" style="background-color:#FFB695;"> <!--start of column one content-->
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    {{ render_field(form.rest_name, class="form-control") }}
-                    <!--    <input type="text" class="form-control" id="rest_name" placeholder="The Saffron Boutique">-->
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-6">
-<!--                    {{ render_field(form.rest_contact, class="form-control", placeholder="89898989") }}-->
-<!--                    <input type="tel" class="form-control" id="contact" placeholder="89898989">-->
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group col-md-3">
-{#<!--                    {{ render_field(form.rest), class="form-control", placeholder="89898989") }}-->#}
-                    <input id="openhour" class="form-control" type="time" value="11:00">
-                </div>
-                <div class="form-group col-md-1">
-                    <label class="closehour" for="closehour">DUMMY TEXT</label>
-                    <h6 style="margin-top: -13px; margin-left: 12px;">TO</h6>
-                </div>
-                <div class="form-group col-md-3">
-                    <label class="closehour" for="closehour">DUMMY TEXT</label>
-                    <input id="closehour" class="form-control" type="time" value="23:00">
-                </div>
-            </div>
-
-            <div class="form-row">
-
-                <label for="inputAddress">Address</label>
-                <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main St">
-            </div>
-
-            <div class="form-row">
-                <div class="form-group col-md-10">
-                    <label for="inputAddress2">Address 2</label>
-                    <input type="text" class="form-control" id="inputAddress2" placeholder="Apartment, studio, or floor">
-                </div>
-                <div class="form-group col-md-2">
-                    <label for="postal">Postal Code</label>
-                    <input type="text" class="form-control" id="postal" placeholder="123456">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-8">
-                    <label for="bank">Bank Account Number</label>
-                    <input type="text" class="form-control" id="bank">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-12">
-                    <label for="desc">Description</label>
-                    <textarea class="form-control" id="desc"></textarea>
-                </div>
-            </div>
-
-
-        </div> <!--end of column one content-->
-
-        <div class="column" style="background-color:#96D1CD;">
-            <div class="form-row">
-                <div class="form-group col-md-5">
-                    <label style="margin-left: 285px ;" for="rest_logo">Logo</label>
-                    <input type="file" id="rest_logo" name="logo">
-                </div>
-            </div>
-
-
-            <div>
-                <h4 style="display: inline-block">Tags:</h4><h6 style="display: inline-block; margin-left: 5px; margin-top: -5px;">&#9432;</h6><h6 id="counter"></h6>
-            </div>
-            <div class="form-row" style="margin-left: 10px">
-                <table>
-                    <td>
-                        <tbody id="tasks"></tbody>
-                    </td>
-                </table>
-            </div>
-
-
-
-            <div class="form-row">
-                <div class="form">
-                    <form action="javascript:void(0);" method="POST" onsubmit="app.Add()">
-                        <input type="text" class="form-control" id="add-todo" placeholder="'Bakery'" style="display:inline-block">
-                        <!--                <input type="bu" value="Add" class="btn btn-primary">-->
-                        <button class="btn" value="Add" style="display:inline-block"><i class="fa fa-plus-circle"></i></button>
-
-                    </form>
-
-                </div>
-
-                <div id="edit-box" role="aria-hidden">
-                    <form action="javascript:void(0);" method="POST" id="save-edit">
-                        <input type="text" id="edit-todo">
-                        <input type="submit" value="Save" class="btn btn-success"/> <a onclick="CloseInput()" aria-label="Close">&#10006;</a>
-                    </form>
-                </div>
-
-
-
-                <script>
-                    var app = new function() {
-                        this.el = document.getElementById('tasks');
-
-                        this.tasks = [];
-
-
-
-                        this.FetchAll = function() {
-                            var data = '';
-
-                            if (this.tasks.length > 0) {
-                                for (i = 0; i < this.tasks.length; i++) {
-                                    data += '<tr>';
-                                    data += '<td>'+ this.tasks[i] + '</td>';
-                                    data += '<td><button onclick="app.Edit(' + i + ')"  class="btn btn-warning"><i class="fa fa-pencil"></i></button></td>';
-                                    data += '<td><button onclick="app.Delete(' + i + ')"  class="btn btn-danger"><i class="fa fa-trash"></i></button></td>';
-                                    data += '</tr>';
-                                }
-                            }
-
-                            this.Count(this.tasks.length);
-                            return this.el.innerHTML = data;
-                        };
-
-                        this.Add = function () {
-                            el = document.getElementById('add-todo');
-                            // Get the value
-                            var task = el.value;
-
-                            if (task) {
-                                // Add the new value
-                                this.tasks.push(task.trim());
-                                // Reset input value
-                                el.value = '';
-                                // Dislay the new list
-                                this.FetchAll();
-                            }
-                        };
-
-                        this.Edit = function (item) {
-                            var el = document.getElementById('edit-todo');
-                            // Display value in the field
-                            el.value = this.tasks[item];
-                            // Display fields
-                            document.getElementById('edit-box').style.display = 'block';
-                            self = this;
-
-                            document.getElementById('save-edit').onsubmit = function() {
-                                // Get value
-                                var task = el.value;
-
-                                if (task) {
-                                    // Edit value
-                                    self.tasks.splice(item, 1, task.trim());
-                                    // Display the new list
-                                    self.FetchAll();
-                                    // Hide fields
-                                    CloseInput();
-                                }
-                            }
-                        };
-
-                        this.Delete = function (item) {
-                            // Delete the current row
-                            this.tasks.splice(item, 1);
-                            // Display the new list
-                            this.FetchAll();
-                        };
-
-                        this.Count = function(data) {
-                            var el   = document.getElementById('counter');
-                            var name = 'tags';
-
-                            if (data) {
-                                if(data ==1){
-                                    name = 'tag'
-                                }
-                                el.innerHTML = data + ' ' + name ;
-                            }
-                            else {
-                                el.innerHTML = 'No ' + name;
-                            }
-                        };
-
-                    }
-
-                    app.FetchAll();
-
-                    function CloseInput() {
-                        document.getElementById('edit-box').style.display = 'none';
-                    }
-
-                </script>
-            </div>
-            <h4 style="margin-top: 30px">Delivery charges over distance ($):</h4>
-
-            <div class="form-row" style="position: relative">
-                <div class="form-group col-md-2">
-                    <label for="del12"><b>1-2km:</b></label>
-                    <input type="text" class="form-control" id="del12" placeholder="1.20">
-                </div>
-                <div class="form-group col-md-2">
-                    <label for="del24"><b>2-4km:</b></label>
-                    <input type="text" class="form-control" id="del24" placeholder="2.40">
-                </div>
-                <div class="form-group col-md-2">
-                    <label for="del46"><b>4-6km:</b></label>
-                    <input type="text" class="form-control" id="del46" placeholder="4.80">
-                </div>
-                <div class="form-group col-md-2">
-                    <label for="del68"><b>6-8km:</b></label>
-                    <input type="text" class="form-control" id="del68" placeholder="8.80">
-                </div>
-                <div class="form-group col-md-2">
-                    <label for="del9"><b>>9km:</b></label>
-                    <input type="text" class="form-control" id="del9" placeholder="10.00">
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <div class="col-sm-2">
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </div>
-            </div>
+      <div class="column" style="background-color:#DCDCDC;"> <!--start of column one content-->
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            {{ render_field(form.rest_name, class="form-control") }}
+            <!--    <input type="text" class="form-control" id="rest_name" placeholder="The Saffron Boutique">-->
+          </div>
         </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            {{ render_field(form.rest_contact, class="form-control", placeholder="89898989") }}
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-3">
+            {{ render_field(form.rest_hour_open, class="form-control") }}
+          </div>
+          <div class="form-group col-md-1">
+            <label class="closehour">DUMMY TEXT</label>
+            <h6 style="margin-top: -13px; margin-left: 12px;">TO</h6>
+          </div>
+          <div class="form-group col-md-3">
+            {{ render_field(form.rest_hour_close, class="form-control", style="margin-top: 9px") }}
+
+          </div>
+        </div>
+
+        <div class="form-row">
+          {{ render_field(form.rest_address1, class="form-control", placeholder="123 Floral Street") }}
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-10">
+            {{ render_field(form.rest_address2, class="form-control", placeholder="Apartment, Studio, or Floor") }}
+          </div>
+          <div class="form-group col-md-2">
+            {{ render_field(form.rest_postcode, class="form-control", placeholder="123456") }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-8">
+            {{ render_field(form.rest_bank, class="form-control", placeholder="123456") }}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            {{ render_field(form.rest_desc, class="form-control", placeholder="A little something about your restaurant...") }}
+          </div>
+        </div>
+
+
+      </div> <!--end of column one content-->
+
+      <div class="column" style="background-color:#dcdcdc;margin-left: 50px;">
+        <div class="form-row">
+          <div class="form-group col-md-5">
+            <label style="margin-left: 285px ;" for="rest_logo">Logo</label>
+<!--            <input type="file" id="rest_logo" name="logo">-->
+            <input class="form-control" type="file" name="rest_logo" id="rest_logo" accept="image/*" placeholder="Upload your logo"/>
+          </div>
+        </div>
+
+
+        <h4 style="margin-top: 30px">Delivery charges over distance ($):</h4>
+
+        <div class="form-row" style="position: relative">
+          <div class="form-group col-md-2">
+            {{ render_field(form.rest_del1, class="form-control", placeholder="1.20") }}
+          </div>
+          <div class="form-group col-md-2">
+            {{ render_field(form.rest_del2, class="form-control", placeholder="2.40") }}
+          </div>
+          <div class="form-group col-md-2">
+            {{ render_field(form.rest_del3, class="form-control", placeholder="3.60") }}
+          </div>
+          <div class="form-group col-md-2">
+            {{ render_field(form.rest_del4, class="form-control", placeholder="4.80") }}
+          </div>
+          <div class="form-group col-md-2">
+            {{ render_field(form.rest_del5, class="form-control", placeholder="6.00") }}
+
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2">
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </div>
+      </div>
     </div>
 
-</form>
+  </form>
 
 {% endblock %}

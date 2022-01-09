@@ -442,6 +442,7 @@ def admin_certification():
 # <------------------------- RURI ------------------------------>
 @app.route('/admin/myRestaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
+
     restaurant_details_form = RestaurantDetailsForm(request.form)
     restaurants_dict = {}
     if request.method == 'POST' and restaurant_details_form.validate():
@@ -452,7 +453,22 @@ def admin_myrestaurant():  # ruri
             logging.error("Error in retrieving Restaurants from "
                           "restaurants.db (%s)" % e)
 
-        restaurant = Restaurant(restaurant_details_form.rest_name.data)
+        restaurant = Restaurant(request.form["rest_logo"],
+                                # request.form["alltasks"],
+                                restaurant_details_form.rest_name.data,
+                                restaurant_details_form.rest_contact.data,
+                                restaurant_details_form.rest_hour_open.data,
+                                restaurant_details_form.rest_hour_close.data,
+                                restaurant_details_form.rest_address1.data,
+                                restaurant_details_form.rest_address2.data,
+                                restaurant_details_form.rest_postcode.data,
+                                restaurant_details_form.rest_desc.data,
+                                restaurant_details_form.rest_bank.data,
+                                restaurant_details_form.rest_del1.data,
+                                restaurant_details_form.rest_del2.data,
+                                restaurant_details_form.rest_del3.data,
+                                restaurant_details_form.rest_del4.data,
+                                restaurant_details_form.rest_del5.data)
         restaurants_dict[restaurant.name] = restaurant
         db['Restaurants'] = restaurants_dict
 
