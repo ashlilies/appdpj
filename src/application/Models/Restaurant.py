@@ -5,9 +5,9 @@ import uuid
 
 
 class Restaurant():
-    def __init__(self, user_object, id, name, logo, contact, open, close, add1, add2, postc, desc, bank, del1, del2, del3, del4, del5):
+    def __init__(self, id, name, logo, contact, open, close, add1, add2, postc, desc, bank, del1, del2, del3, del4, del5):
         # super().__init__(restaurant_name)  #using the restaurant name created @ account level
-        self.user_object = user_object
+        # self.user_object = user_object
         self.set_id(id)
         self.name = name
         self.logo = logo
@@ -123,11 +123,11 @@ class Restaurant():
     def get_del5(self):
         return self.del5
     
-    def get_user_object(self):
-        return self.user_object
-    
-    def set_user_object(self, user_object):
-        self.user_object = user_object
-        
+    # def get_user_object(self):
+    #     return self.user_object
+    # 
+    # def set_user_object(self, user_object):
+    #     self.user_object = user_object
+    #     
 
 

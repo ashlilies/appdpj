@@ -11,7 +11,6 @@ from application import app, DB_NAME
 from application.Models.Transaction import Transaction
 from application.adminAddFoodForm import CreateFoodForm
 from werkzeug.utils import secure_filename
-from application.Controllers.restaurant_controller import Restaurant_controller
 
 from application.restaurantCertification import RestaurantCertification
 import shelve, os
@@ -505,7 +504,7 @@ def admin_certification():
 
 
 # <------------------------- RURI ------------------------------>
-@app.route('/admin/edit-restaurant', methods=['GET', 'POST'])
+@app.route('/admin/create-restaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
     restaurant_details_form = RestaurantDetailsForm(request.form)
     restaurants_dict = {}
@@ -517,12 +516,11 @@ def admin_myrestaurant():  # ruri
             logging.error("Error in retriedb file doesn't existving Restaurants from "
                           "restaurants.db (%s)" % e)
 
-        user_id = session["account_id"]
-        user_object = Restaurant_controller()
-        get_user_object = user_object.find_user_by_id(user_id)
+        # user_id = session["account_id"]
+        # user_object = Restaurant_controller()
+        # get_user_object = user_object.find_user_by_id(user_id)
 
-        restaurant = Restaurant(get_user_object,
-                                uuid.uuid4().hex,
+        restaurant = Restaurant(uuid.uuid4().hex,
                                 # request.form["alltasks"],
                                 restaurant_details_form.rest_name.data,
                                 request.form["rest_logo"],
@@ -539,7 +537,8 @@ def admin_myrestaurant():  # ruri
                                 restaurant_details_form.rest_del3.data,
                                 restaurant_details_form.rest_del4.data,
                                 restaurant_details_form.rest_del5.data)
-        print(restaurant.get_user_object.get_email())
+
+        # print(uuid.uuid4().hex())
         restaurants_dict[restaurant.get_id()] = restaurant
         db['Restaurants'] = restaurants_dict
         db.close()
@@ -560,6 +559,40 @@ def retrieve_restaurant():
         restaurants_list.append(restaurant)
 
     return render_template('admin/myrestaurant.html', count=len(restaurants_list), restaurants_list=restaurants_list)
+
+@app.route('/updateRestaurant/<int:id>/', methods=['GET', 'POST'])
+def update_restaurant(id):
+    update_restaurant_form = RestaurantDetailsForm(request.form)
+    if request.method == 'POST' and update_restaurant_form.validate():
+        users_dict = {}
+        db = shelve.open('restaurant.db', 'w')
+        restaurants_dict = db['Users']
+
+        user = users_dict.get(id)
+        user.set_first_name(update_restaurant_form.first_name.data)
+        user.set_last_name(update_restaurant_form.last_name.data)
+        user.set_gender(update_restaurant_form.gender.data)
+        user.set_membership(update_restaurant_form.membership.data)
+        user.set_remarks(update_restaurant_form.remarks.data)
+
+        db['Restaurants'] = restaurants_dict
+        db.close()
+
+        return redirect(url_for('retrieve_users'))
+    else:
+        users_dict = {}
+        db = shelve.open('user.db', 'r')
+        users_dict = db['Users']
+        db.close()
+
+        user = users_dict.get(id)
+        update_user_form.first_name.data = user.get_first_name()
+        update_user_form.last_name.data = user.get_last_name()
+        update_user_form.gender.data = user.get_gender()
+        update_user_form.membership.data = user.get_membership()
+        update_user_form.remarks.data = user.get_remarks()
+
+        return render_template('updateUser.html', form=update_user_form)
 
 
 
