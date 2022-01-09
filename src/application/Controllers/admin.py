@@ -457,30 +457,26 @@ def delete_transaction(transaction_id):
 # TODO: FILE UPLOAD, FILE SAVING, SHELVE UPDATE
 @app.route("/admin/uploadCertification", methods=['GET', 'POST'])
 def upload_cert():
-    i = 1
-    certification_form = DocumentUploadForm(request.form)
     certification_dict = {}
-    if request.method == 'POST' and certification_form.validate():
+    if request.method == 'POST':
         with shelve.open(DB_NAME, 'c') as db:
             try:
                 certification_dict = db['certification']
                 print(certification_dict)
             except Exception as e:
-                logging.error("Error in retrieving certificate from "
-                              "restaurants.db (%s)" % e)
+                logging.error("Error in retrieving certificate from ""restaurants.db (%s)" % e)
 
             # create a new Certification Object
-            certification = Certification(request.form["hygieneDocument"])
+            certification = Certification(request.form["hygieneDocument"], request.form["halalDocument"],
+                                          request.form["vegetarianDocument"], request.form["veganDocument"])
+            print(certification)
 
-            certification_dict[i] = certification
+            certification_dict[Certification.count_id] = certification
             db['certification'] = certification_dict
-        # writeback
-        with shelve.open(DB_NAME, 'c') as db:
-            db['certification'] = certification_dict
 
-        return redirect(url_for('admin_home'))
+            return redirect(url_for('certification2.html'))
 
-    return render_template("admin/certification2.html", form=certification_form)
+    return render_template("admin/certification.html")
 
 
 # def upload_cert():
@@ -554,7 +550,8 @@ def upload_cert():
 @app.route("/admin/certification")
 def read_cert():
     # TODO: READ DATA FROM SHELVE
-    return render_template("admin/certification.html")
+
+    return render_template("admin/certification2.html")
 
 
 # YL: for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)

@@ -1,10 +1,10 @@
 from wtforms import Form, StringField, RadioField, SelectField, TextAreaField, validators
 from wtforms.fields import *
-# from wtforms_components import TimeField
+
 
 class RestaurantDetailsForm(Form):
     rest_name = StringField('Restaurant Name', [validators.Optional()])
-    rest_contact = IntegerField('Contact Number',  [validators.Optional()])
+    rest_contact = IntegerField('Contact Number', [validators.Optional()])
     rest_hour_open = TimeField('Opening Hours:', [validators.Optional()])
     rest_hour_close = TimeField(' ', [validators.Optional()])
     rest_address1 = StringField('Address line 1', [validators.Optional()])
