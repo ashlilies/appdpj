@@ -15,7 +15,7 @@
             <div class="mb-3">
                 <label>Hygiene Certification</label>
                 <input class="form-control" type="file" name="hygieneDocument" id="hygieneFile" accept="application/pdf"
-                       />
+                required/>
             </div>
         </div>
 
@@ -23,65 +23,65 @@
             <h3>Please click on the certifications your restaurant can serve</h3>
         </div>
         {# halal check #}
-        <div class="halalcheck">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="Halal"
-                       id="halalCheck" onclick="fileUpload1()">
-                <label class="form-check-label" for="halalCheck">Halal</label>
-            </div>
-        </div>
+        {#        <div class="halalcheck">#}
+        {#            <div class="form-check">#}
+        {#                <input class="form-check-input" type="checkbox" value="Halal"#}
+        {#                       id="halalCheck" onclick="fileUpload1()">#}
+        {#                <label class="form-check-label" for="halalCheck">Halal</label>#}
+        {#            </div>#}
+        {#        </div>#}
         {# halal file #}
-        <div class="mb-3" id="halalFile" style="display: none">
-            <input name="halalDocument" class="form-control" type="file"
-                   id="halalFormFile" accept="application/pdf" required>
-            {#            {% for error in certification_form.halal_cert.errors %}#}
-            {#                <small class="text-danger">{{ error }}</small>#}
-            {#            {% endfor %}#}
+        {#        <div class="mb-3" id="halalFile" style="display: none">#}
+        {#            <input name="halalDocument" class="form-control" type="file"#}
+        {#                   id="halalFormFile" accept="application/pdf" required>#}
+        {#            {% for error in certification_form.halal_cert.errors %}#}
+        {#                <small class="text-danger">{{ error }}</small>#}
+        {#            {% endfor %}#}
         </div>
         {# vegetarian check #}
-{#        <div class="form-check">#}
-{#            <input class="form-check-input" type="checkbox"#}
-{#                   value="Vegetarian" id="vegetarianCheck"#}
-{#                   onclick="fileUpload2()">#}
-{#            <label class="form-check-label" for="vegetarianCheck">Vegetarian</label>#}
-{#        </div>#}
+        {#        <div class="form-check">#}
+        {#            <input class="form-check-input" type="checkbox"#}
+        {#                   value="Vegetarian" id="vegetarianCheck"#}
+        {#                   onclick="fileUpload2()">#}
+        {#            <label class="form-check-label" for="vegetarianCheck">Vegetarian</label>#}
+        {#        </div>#}
         {# vegetarian file #}
-{#        <div class="mb-3" id="vegetarianFile" style="display:none">#}
-{#            <input name="vegetarianDocument" class="form-control"#}
-{#                   type="file" id="vegetarianFormFile" accept="application/pdf" required>#}
-            {#            {% for error in certification_form.vegetarian_cert.errors %}#}
-            {#                <small class="text-danger">{{ error }}</small>#}
-            {#            {% endfor %}#}
-{#        </div>#}
+        {#        <div class="mb-3" id="vegetarianFile" style="display:none">#}
+        {#            <input name="vegetarianDocument" class="form-control"#}
+        {#                   type="file" id="vegetarianFormFile" accept="application/pdf" required>#}
+        {#            {% for error in certification_form.vegetarian_cert.errors %}#}
+        {#                <small class="text-danger">{{ error }}</small>#}
+        {#            {% endfor %}#}
+        {#        </div>#}
         {# no pork no lard check #}
-{#        <div class="form-check">#}
-{#            <input class="form-check-input" type="checkbox"#}
-{#                   value="NoPorkNoLard" id="NoPorkNoLardCheck">#}
-{#            <label class="form-check-label" for="NoPorkNoLardCheck">No#}
-{#                Pork, No Lard</label>#}
-{#        </div>#}
+        {#        <div class="form-check">#}
+        {#            <input class="form-check-input" type="checkbox"#}
+        {#                   value="NoPorkNoLard" id="NoPorkNoLardCheck">#}
+        {#            <label class="form-check-label" for="NoPorkNoLardCheck">No#}
+        {#                Pork, No Lard</label>#}
+        {#        </div>#}
         {# vegan check #}
-{#        <div class="form-check">#}
-{#            <input class="form-check-input" type="checkbox" value="Vegan"#}
-{#                   id="veganCheck" onclick="fileUpload3()">#}
-{#            <label class="form-check-label" for="veganCheck">Vegan</label>#}
-{#        </div>#}
+        {#        <div class="form-check">#}
+        {#            <input class="form-check-input" type="checkbox" value="Vegan"#}
+        {#                   id="veganCheck" onclick="fileUpload3()">#}
+        {#            <label class="form-check-label" for="veganCheck">Vegan</label>#}
+        {#        </div>#}
         {# vegan file #}
-{#        <div class="mb-3" id="veganFile" style="display:none">#}
-{#            <input name="veganDocument" class="form-control" type="file"#}
-{#                   id="veganFormFile" accept="application/pdf" required>#}
-            {#            {% for error in certification_form.vegan_cert.errors %}#}
-            {#                <small class="text-danger">{{ error }}</small>#}
-            {#            {% endfor %}#}
-{#        </div>#}
-{##}
+        {#        <div class="mb-3" id="veganFile" style="display:none">#}
+        {#            <input name="veganDocument" class="form-control" type="file"#}
+        {#                   id="veganFormFile" accept="application/pdf" required>#}
+        {#            {% for error in certification_form.vegan_cert.errors %}#}
+        {#                <small class="text-danger">{{ error }}</small>#}
+        {#            {% endfor %}#}
+        {#        </div>#}
+        {##}
         {# no beef check #}
-{#        <div class="form-check">#}
-{#            <input class="form-check-input" type="checkbox" value="NoBeef"#}
-{#                   id="flexCheckDefault">#}
-{#            <label class="form-check-label" for="flexCheckDefault">No#}
-{#                beef</label>#}
-{#        </div>#}
+        {#        <div class="form-check">#}
+        {#            <input class="form-check-input" type="checkbox" value="NoBeef"#}
+        {#                   id="flexCheckDefault">#}
+        {#            <label class="form-check-label" for="flexCheckDefault">No#}
+        {#                beef</label>#}
+        {#        </div>#}
 
         <script>
             function fileUpload1() {

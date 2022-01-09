@@ -455,28 +455,23 @@ def delete_transaction(transaction_id):
 # certification -- xu yong lin
 # YL: for certification -- form (C in CRUD)
 # TODO: FILE UPLOAD, FILE SAVING, SHELVE UPDATE
-UPLOAD_FOLDER = './static/restaurantCertification'  # where the files are stored to
-ALLOWED_EXTENSIONS = {'pdf'}
-
-
-@app.route("/admin/certification", methods=['GET', 'POST'])
+@app.route("/admin/uploadCertification", methods=['GET', 'POST'])
 def upload_cert():
     certification_form = DocumentUploadForm(request.form)
 
     if certification_form.validate_on_submit():
-        assets_dir = os.path.join(os.path.dirname(app.instance_path), 'restaurantCerts')
-        # assests_dir ==> C:\Users\yongl\appdpj\src\restaurantCerts
+        # file path to save files to:
+        assets_dir = os.path.join(os.path.dirname(app.instance_path), 'restaurantCertification')
+        # assests_dir ==> C:\Users\yongl\appdpj\src\restaurantCertification
         hygiene = certification_form.hygiene_doc.data
 
         # saving
         hygiene.save(os.path.join(assets_dir, 'hygiene', hygiene.filename))
 
-        flash('Document uploaded successfully.')
+        logging.info('Document uploaded successfully.')
+        return redirect(url_for('admin_home'))
 
-        return redirect(url_for('admin_transaction'))
-
-    return render_template("admin/certification2.html",
-                           form=certification_form)
+    return render_template("admin/certification2.html")
 
 
 # @app.route("/admin/certification", methods=['GET', 'POST'])
