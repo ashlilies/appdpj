@@ -3,42 +3,96 @@
 {% block title %}Admin Display Certification{% endblock %}
 
 {% block head %}
-    <style>
-    </style>
 {% endblock %}
 
 {% block content %}
-    <h1>EXTENSION TO RESTAURANT DETAILS</h1>
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Launch demo modal
-    </button>
+    <div style="background-color: lightgrey">
+        <h1>EXTENSION TO RESTAURANT DETAILS</h1>
+        <div class="modal-body">
+            <p>Here are your certifications</p>
+            <br>
+            {#            for key in certification_dict:#}
+            {#                food = certification_dict.get(key)#}
+            {#                certification_list.append(food)#}
+            {#                print(food.hygiene_cert)#}
+            {#                print(certification_list)#}
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">restaurant name's Certifications</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                {# modal body #}
-                <div class="modal-body">
-                    <p>Here are your certifications</p>
-                    <br>
-                    {# hygiene cert #}
-                    <h5>Hygiene Certification: </h5>
-                    {# halal cert #}
-                    {# vegetarian cert #}
-                    {# no pork no lard indication #}
-                    {# vegan cert #}
-                    {# no beef indication #}
-                </div>
-                {# modal footer #}
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
+            {# hygiene cert #}
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Res ID</th>
+                    <th scope="col">Hygiene</th>
+                    <th scope="col">Halal</th>
+                    <th scope="col">Vegetarian</th>
+                    <th scope="col">No Pork No Lard</th>
+                    <th scope="col">Vegan</th>
+                    <th scope="col">No Beef</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                {% for key in certification_list %}
+                    <tr>
+                        <td>{{ key }}</td>
+                        <td>{{ key.hygiene_cert }}</td>
+                        <td>{{ key.halal_cert }}</td>
+                        <td>{{ key.vegetarian_cert }}</td>
+                        <td>{{ key.vegan_cert }}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td>hi</td>
+                    <td>
+                        {#                        <a href="/updateCertification/{{ key.count_id() }}" class="btn btn-warning">Update</a>#}
+                    </td>
+                    {#                    <td>#}
+                    {#                        <form action="{{ url_for('delete_user', id=restaurant.count_id) }}" method="POST">#}
+                    {#                            <!-- Button to Open the Modal -->#}
+                    {#                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"#}
+                    {#                                    data-bs-target="#myModal_{{ restaurant.count_id }}">#}
+                    {#                                Delete#}
+                    {#                            </button>#}
+                    {##}
+                    {#                            <!-- The Modal -->#}
+                    {#                            <div class="modal" id="myModal_{{ restaurant.count_id() }}">#}
+                    {#                                <div class="modal-dialog">#}
+                    {#                                    <div class="modal-content">#}
+                    {##}
+                    {#                                        <!-- Modal Header -->#}
+                    {#                                        <div class="modal-header">#}
+                    {#                                            <h4 class="modal-title">Delete Confirmation</h4>#}
+                    {#                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>#}
+                    {#                                        </div>#}
+                    {##}
+                    {#                                        <!-- Modal body -->#}
+                    {#                                        <div class="modal-body">#}
+                    {#                                            Are you sure you want to#}
+                    {#                                            delete {{ restaurant.hygiene_cert }}?#}
+                    {#                                        </div>#}
+                    {##}
+                    {#                                        <!-- Modal footer -->#}
+                    {#                                        <div class="modal-footer">#}
+                    {#                                            <input type="submit" value="Delete" class="btn btn-danger">#}
+                    {#                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">#}
+                    {#                                                Cancel#}
+                    {#                                            </button>#}
+                    {#                                        </div>#}
+                    {##}
+                    {#                                    </div>#}
+                    {#                                </div>#}
+                    {#                            </div>#}
+                    {#                        </form>#}
+                    {##}
+                    {#                    </td>#}
+                </tr>
+                </tbody>
+            </table>
+            {# halal cert #}
+            {# vegetarian cert #}
+            {# no pork no lard indication #}
+            {# vegan cert #}
+            {# no beef indication #}
         </div>
     </div>
 

@@ -408,6 +408,7 @@ def admin_transaction():
     with shelve.open(DB_NAME, 'c') as db:
         if 'shop_transactions' in db:
             transaction_list = db['shop_transactions']
+            print(db['shop_transactions'])
             logging.info("admin_transaction: reading from db['shop_transactions']"
                          ", %d elems" % len(db["shop_transactions"]))
         else:
@@ -455,7 +456,7 @@ def delete_transaction(transaction_id):
 # certification -- xu yong lin
 # YL: for certification -- form (C in CRUD)
 # TODO: FILE UPLOAD, FILE SAVING, SHELVE UPDATE
-@app.route("/admin/uploadCertification", methods=['POST'])
+@app.route("/admin/uploadCertification", methods=['GET','POST'])
 def upload_cert():
     certification_dict = {}
     if request.method == 'POST':
@@ -474,7 +475,7 @@ def upload_cert():
             certification_dict[Certification.count_id] = certification
             db['certification'] = certification_dict
 
-            return redirect(url_for('certification2.html'))
+            return redirect(url_for('read_cert'))
 
     return render_template("admin/certification.html")
 
@@ -483,19 +484,20 @@ def upload_cert():
 @app.route("/admin/certification")
 def read_cert():
     # TODO: READ DATA FROM SHELVE
-    # with shelve.open(DB_NAME, 'c') as db:
-    #     try:
-    #         if 'certification' in db:
-    #             certification_dict = db['certification']
-    #             print(certification_dict)
-    #             logging.info("admin_certification: reading from db['certification']"
-    #                          ", %d elems" % len(db["certification"]))
-    #         else:
-    #             logging.info("admin_certification: nothing found in db, starting empty")
-    #     except Exception as e:
-    #         logging.error("Error in retrieving certificate from ""restaurants.db (%s)" % e)
+    certification_dict = {}
 
-    return render_template("admin/certification2.html")
+    db = shelve.open(DB_NAME, 'c')
+    certification_dict = db['certification']
+
+    # storing the certification keys in certification_dict into a new list for displaying and deleting
+    certification_list = []
+    for key in certification_dict:
+        cert = certification_dict.get(key)
+        certification_list.append(cert)
+    db['certification'] = certification_dict
+    db.close()
+    return render_template("admin/certification2.html", count=len(certification_list),
+                           transaction_list=certification_list)
 
 
 # def upload_cert():
@@ -568,10 +570,25 @@ def read_cert():
 # YL: for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)
 # TODO: REDIRECT BACK TO FORM IN 'C IN CRUD'
 # TODO: CHECK IF THE FILES ARE THE SAME AND UPDATE THE DETAILS
+# @app.route('/updateCertification/<int:id>', methods=['POST'])
+# def update_cert(id):
+#     return redirect(url_for('read_cert'))
 
 # YL: for certification -- Delete (D in CRUD)
 # TODO: DELETE BUTTON (similar to delete User in SimpleWebApplication)
 # not soft delete!
+# @app.route('/deleteCertification/<int:id>', methods=['POST'])
+# def delete_cert(id):
+#     with shelve.open(DB_NAME, 'w') as db:
+#         try:
+#             certification_dict = db['certification']
+#             if id in certification_dict:
+#                 certification_dict.pop(id)
+#             db['certification'] = certification_dict
+#         except Exception as e:
+#             logging.error("delete_food: error opening db (%s)" % e)
+#
+#     return redirect(url_for('read_cert'))
 
 
 # <------------------------- RURI ------------------------------>
