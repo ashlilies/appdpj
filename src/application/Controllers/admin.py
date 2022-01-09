@@ -465,8 +465,18 @@ ALLOWED_EXTENSIONS = {'pdf'}
 @app.route("/admin/certification", methods=['GET', 'POST'])
 def upload_cert():
     certification_form = DocumentUploadForm(request.form)
+
     if certification_form.validate_on_submit():
-        assets_dir = os.path.join(os.path.dirname(app.instance_path))
+        assets_dir = os.path.join(os.path.dirname(app.instance_path), 'restaurantCerts')
+        # assests_dir ==> C:\Users\yongl\appdpj\src\restaurantCerts
+        hygiene = certification_form.hygiene_doc.data
+
+        # saving
+        hygiene.save(os.path.join(assets_dir, 'hygiene', hygiene.filename))
+
+        flash('Document uploaded successfully.')
+
+        return redirect(url_for('admin_transaction'))
 
     return render_template("admin/certification2.html",
                            form=certification_form)
