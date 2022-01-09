@@ -8,7 +8,8 @@ import re   # regex
 from werkzeug.security import generate_password_hash, check_password_hash
 import shelve
 
-from application import DB_NAME
+DB_NAME = "foodypulse"
+# from application import DB_NAME
 
 
 class Account:

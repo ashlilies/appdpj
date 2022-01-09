@@ -1,11 +1,6 @@
 # IF YOU'RE HERE: New routes go in Controllers > admin or consumer!
 
 from flask import Flask, render_template, request, redirect, url_for
-from application.Forms import CreateUserForm, CreateCustomerForm
-import shelve
-from application.Models.User import User
-from application.Models.Customer import Customer
-import atexit
 
 app = Flask(__name__)
 app.secret_key = "doofypulseEngineers"  # used for stuff e.g. Flask sessions
@@ -13,13 +8,20 @@ app.secret_key = "doofypulseEngineers"  # used for stuff e.g. Flask sessions
 # The name of our db file. Syntax: with shelve.open(DB_NAME, 'c') as db:
 DB_NAME = "foodypulse"
 
-# CONSTANTS USED BY OUR PAGES
-# For stuff like colour schemes.
-# Todo
-
+from application.Forms import CreateUserForm, CreateCustomerForm
+import shelve
+from application.Models.User import User
+from application.Models.Customer import Customer
+import atexit
 # Includes
 from application.Controllers.admin import *
 from application.Controllers.consumer import *
+
+
+
+# CONSTANTS USED BY OUR PAGES
+# For stuff like colour schemes.
+# Todo
 
 # todo: add a proper logging system
 import logging
@@ -40,6 +42,8 @@ def exit_handler():
 
 
 atexit.register(exit_handler)
+
+
 # ALL BELOW are for the Practical LLS.
 # Please add new routes to Controllers. -ash
 
@@ -268,25 +272,25 @@ def delete_customer(id):
 
 
 # Run before doing anything else; a la main() -ash
-with app.app_context():
-    # # Get current customer and admin ID count to prevent overriding
-    # with shelve.open("customer.db", 'c') as db:
-    #     if "count" in db:
-    #         print("Found customer count in db: %d" % db["count"])
-    #         Customer.count_id = db["count"]
-    #     else:
-    #         print("Initializing customer count in db")
-    #         db["count"] = Customer.count_id  # initialize it:
-    #
-    # with shelve.open("user.db", 'c') as db:
-    #     if "count" in db:
-    #         print("Found user count in db: %d" % db["count"])
-    #         User.count_id = db["count"]
-    #     else:
-    #         print("Initializing user count in db")
-    #         db["count"] = User.count_id  # initialize it:
-    load_db()  # load and cache db before app runs
-    app.run()
+# with app.app_context():
+#     # # Get current customer and admin ID count to prevent overriding
+#     # with shelve.open("customer.db", 'c') as db:
+#     #     if "count" in db:
+#     #         print("Found customer count in db: %d" % db["count"])
+#     #         Customer.count_id = db["count"]
+#     #     else:
+#     #         print("Initializing customer count in db")
+#     #         db["count"] = Customer.count_id  # initialize it:
+#     #
+#     # with shelve.open("user.db", 'c') as db:
+#     #     if "count" in db:
+#     #         print("Found user count in db: %d" % db["count"])
+#     #         User.count_id = db["count"]
+#     #     else:
+#     #         print("Initializing user count in db")
+#     #         db["count"] = User.count_id  # initialize it:
+#     load_db()  # load and cache db before app runs
+#     app.run()
 
 if __name__ == '__main__':
     load_db()  # load and cache db before app runs
