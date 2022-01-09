@@ -326,9 +326,6 @@ def update_food(id):
         return render_template('updateFood.html', form=update_food_form)
 
 
-# <------------------------- YONGLIN ------------------------------>
-@app.route("/admin/transaction")
-def admin_transaction():
 # <------------------------- YONG LIN ------------------------------>
 # YL: for transactions -- creating of dummy data
 @app.route("/admin/transaction/createExampleTransactions")
