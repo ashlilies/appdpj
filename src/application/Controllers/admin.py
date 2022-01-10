@@ -338,7 +338,7 @@ def create_example_transactions():
     t1 = Transaction()
     t1.account_name = 'Yong Lin'
     t1.set_option('Delivery')
-    t1.set_price(50.30)
+    t1.set_price('absae')
     t1.set_used_coupons('SPAGETIT')
     t1.set_ratings(2)
     transaction_list.append(t1)
@@ -348,7 +348,7 @@ def create_example_transactions():
     t2.set_option('Dine-in')
     t2.set_price(80.90)
     t2.set_used_coupons('50PASTA')
-    t2.set_ratings(5)
+    t2.set_ratings('yooo')
     transaction_list.append(t2)
 
     t3 = Transaction()  # t3

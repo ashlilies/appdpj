@@ -19,11 +19,9 @@ class Transaction:
         self.count_id = Transaction.transaction_id
         self.account_name = account_name
         self.__option = option
-        # price must be in 2 dp, can only accept numbers
-        self.__price = float(price)
+        self.__price = price
         self.__used_coupons = used_coupons
-        # ratings must be in 2 dp, can only accept numbers
-        self.__ratings = int(ratings)
+        self.__ratings = ratings
         self.deleted = False
         Transaction.transaction_id += 1
         # writeback
@@ -36,8 +34,13 @@ class Transaction:
     def get_option(self):
         return self.__option
 
+    # price must be in 2 dp, can only accept numbers
     def set_price(self, price):
-        self.__price = price
+        try:
+            if price == float(price):
+                self.__price = price
+        except:
+            self.deleted = True
 
     def get_price(self):
         return self.__price
@@ -48,8 +51,13 @@ class Transaction:
     def get_used_coupons(self):
         return self.__used_coupons
 
+    # ratings must be in 2 dp, can only accept numbers
     def set_ratings(self, ratings):
-        self.__ratings = ratings
+        try:
+            if ratings == int(ratings):
+                self.__ratings = ratings
+        except:
+            self.deleted = True
 
     def get_ratings(self):
         return self.__ratings

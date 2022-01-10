@@ -11,14 +11,6 @@
     <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
     <style>
-        .settings {
-            display: inline;
-        }
-
-        #current {
-            text-decoration: underline;
-        }
-
         h1 {
             font-weight: bold;
             position: relative;
@@ -29,12 +21,18 @@
             width: 150px;
         }
 
+        .row {
+            margin: 0px;
+            width: 100%;
+        }
+
         .display {
             padding: 30px;
         }
 
         .table {
             background-color: white;
+
         }
 
         .highlight {
@@ -49,24 +47,12 @@
         <div id="settings">
             <div class="settingsrow">
                 <h1>Dashboard</h1>
-                <!--      choosing of month to display(dropdown button)-->
             </div>
         </div>
         <br>
         <!--table-->
         <div class="display">
             <!--    table form to go back to dashboard? (might change to standardise with dashboard)-->
-            <div>
-                <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                        <div class="navbar-nav">
-                            <a class="nav-item nav-link" href="#">Dashboard</a>
-                            <a class="nav-item nav-link active" href="#">Transaction <span
-                                    class="sr-only">(current)</span></a>
-                        </div>
-                    </div>
-                </nav>
-            </div>
             <div class="table">
                 <table class="table table-hover" id="myTable">
                     <thead>
@@ -90,7 +76,11 @@
                                     <td>{{ transaction.count_id }}</td>
                                     <td>{{ transaction.account_name }}</td>
                                     <td>{{ transaction.get_option() }}</td>
-                                    <td>{{ '%0.2f'% transaction.get_price()|float }}</td>
+                                    {% if transaction.get_price == 0 %}
+                                        <td>NIL</td>
+                                    {% else %}
+                                        <td>{{ '%0.2f'% transaction.get_price()|float }}</td>
+                                    {% endif %}
                                     <td>{{ transaction.get_used_coupons() }}</td>
                                     <td>{{ transaction.get_ratings() }}</td>
                                     <td>
