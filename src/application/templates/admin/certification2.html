@@ -25,8 +25,8 @@
                     <th scope="col">Hygiene</th>
                     <th scope="col">Halal</th>
                     <th scope="col">Vegetarian</th>
-                    <th scope="col">No Pork<br>No Lard</th>
                     <th scope="col">Vegan</th>
+                    <th scope="col">No Pork<br>No Lard</th>
                     <th scope="col">No Beef</th>
                     <th scope="col"></th>
                     <th scope="col"></th>
@@ -50,16 +50,16 @@
                         {% else %}
                             <td>{{ cert.vegetarian_cert }}</td>
                         {% endif %}
-                        {# display if the person ticked no pork no lard #}
-                        <td></td>
                         {# vegan cert #}
                         {% if not cert.vegan_cert %}
                             <td>NIL</td>
                         {% else %}
                             <td>{{ cert.vegan_cert }}</td>
                         {% endif %}
+                        {# display if the person ticked no pork no lard #}
+                        <td>{{ cert.noPorknoLard }}</td>
                         {# display if the person ticked no beef #}
-                        <td></td>
+                        <td>{{ cert.noBeef }}</td>
                         {# update button #}
                         <td><a href="/updateCertification/{{ cert.count_id }}" class="btn btn-warning">Update</a></td>
                         {# delete button #}
@@ -85,7 +85,9 @@
                                             <!-- Modal body -->
                                             <div class="modal-body">
                                                 Are you sure you want to
-                                                delete <bold>ALL</bold> the certification of {{ cert.count_id }}?
+                                                delete
+                                                <bold>ALL</bold>
+                                                the certification of {{ cert.count_id }}?
                                             </div>
 
                                             <!-- Modal footer -->
