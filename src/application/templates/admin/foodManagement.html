@@ -27,7 +27,7 @@
     <div class="scroll">
 
         <div>
-            <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Add Food</a>
+            <a class="btn btn-primary" data-bs-toggle="modal" href="#createFoodModalToggle" role="button">Add Food</a>
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -66,12 +66,12 @@
     </div>
 
 
-    <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
+    <div class="modal fade" id="createFoodModalToggle" aria-hidden="true" aria-labelledby="createFoodModalToggleLabel"
          tabindex="-1">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalToggleLabel">Create User</h5>
+                    <h5 class="modal-title" id="createFoodModalToggleLabel">Create User</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -324,4 +324,265 @@
 
         </script>
     </div>
+
+
+    <div class="modal fade" id="updateFoodModalToggle" aria-hidden="true" aria-labelledby="updateFoodModalToggleLabel"
+         tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateFoodModalToggleLabel">Create User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <form method="POST" action="{{ url_for("create_food") }}">
+
+                        <div class="mb-3">
+                            <input class="form-control" type="file" name="image" id="uploadImage" accept="image/*"
+                                   placeholder="Upload Image Here" required/>
+                        </div>
+                        <div class="form-group" id="name">
+                            <label id="foodNameLabel">Food name:</label>{{ render_field(create_food_form.item_name,
+                        class="form-control") }}
+                        </div>
+
+                        <div class="form-group" id="price">
+                            <label id="priceLabel">Price(SGD):</label>{{ render_field(create_food_form.price, class="form-check",
+                        style="list-style-type:none") }}
+                        </div>
+
+
+                        <div id="prof">
+                            <div class="form-group" id="allergy">
+                                <label id="allergyLabel">Allergies:</label>{{ render_field(create_food_form.allergy,
+                            class="form-control") }}
+                            </div>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label id="specificationLabel" class="form-label">Specification:</label>
+                            <div id="specificationDiv"></div>
+                            <!-- Only to be used for JS. Not to be sent to our server! -->
+                            <input type="text" id="newSpecification"
+                                   placeholder="Type specification here...">
+                            <label for="newSpecification">
+                                <img id="plus" src={{ url_for("static",
+                            filename="foodManagement/plus-button.png") }}
+                                        onclick="addNewSpecificationRow()"
+                                     style="width: 20px; height: 20px;"/>
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label id="toppingLabel" class="form-label">Add/Remove Topping:</label>
+                            <div id="toppingDiv"></div>
+                            <!-- Only to be used for JS. Not to be sent to our server! -->
+                            <input type="text" id="newTopping"
+                                   placeholder="Type toppings here...">
+                            <label for="newTopping">
+                                <img id="plusTopping" src={{ url_for("static",
+                            filename="foodManagement/plus-button.png") }}
+                                        onclick="addNewToppingRow()"
+                                     style="width: 20px; height: 20px;"/>
+                            </label>
+                        </div>
+
+
+                        <div class="form-group" id="description">
+                            <label id="descriptionLabel">Description:</label>{{ render_field(create_food_form.description,
+                        class="form-control") }}
+                        </div>
+
+
+                        <input type="submit" value="Submit" class="btn btn-primary"/>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        {# Script is for the adding new specifications and toppign to work #}
+        <script>
+
+
+            /* Global variables */
+            var specDiv;
+            var specificationId;
+            var maxSpecificationId;
+
+            function main() {
+                console.log("running main()");
+                /* Logic to generate new rows of text fields with unique IDs */
+                specDiv = document.getElementById("specificationDiv");
+                specificationId = 0;  /* defines the starting specification ID */
+                maxSpecificationId = {{ MAX_SPECIFICATION_ID }};  /* max. no of specifications */
+
+                addNewSpecificationRow();  /* generate the first row */
+            }
+
+            function addNewSpecificationRow() {
+                /* are there too many specifications already? */
+                if (specificationId > maxSpecificationId) {
+                    console.log("Too many specifications - can't add more");
+                    alert("Too many specifications (" + parseInt(maxSpecificationId + 1) + ")");
+                    return;
+                }
+
+                /* get data from new specification text field */
+                spec = document.getElementById("newSpecification").value;
+
+                /* with the minus button */
+                var newWholeInputRow = document.createElement("div");
+
+                var newInputRow = document.createElement("input");
+                newInputRow.type = "text";
+                newInputRow.id = "specification" + specificationId;
+                newInputRow.name = "specification" + specificationId++;
+                newInputRow.style.margin = "4px";
+                newInputRow.style.borderRadius = "3px";
+                newInputRow.style.borderColor = "grey";
+                newInputRow.style.borderWidth = "thin";
+                newInputRow.value = spec;
+                newWholeInputRow.appendChild(newInputRow);
+
+                var minusButton = document.createElement("img");
+                minusButton.src = "{{ url_for("static",
+                               filename="foodManagement/minus-button.png") }}";
+                minusButton.style = "width: 20px; height: 20px; margin-left: 5px;"
+                minusButton.width = 20;
+                minusButton.height = 20;
+                minusButton.style.marginLeft = "5px";
+                minusButton.onclick = function () {
+                    removeSpecificationRow(this);
+                };
+                newWholeInputRow.appendChild(minusButton);
+
+                /* finally we append the whole row to our div */
+                document.getElementById("specificationDiv")
+                    .appendChild(newWholeInputRow);
+            }
+
+            /*
+             * Removes a specification row.
+             * But we have to re-set all the specification IDs in order,
+             * or it wouldn't work again :(
+             */
+            function removeSpecificationRow(thisMinusButton) {
+                let textBox = thisMinusButton.previousElementSibling;
+                console.log(thisMinusButton.previousElementSibling);
+
+                /* remove this whole input field */
+                thisMinusButton.parentElement.remove();
+
+                /*
+                 * Reorder the IDs and decrement global counter
+                 */
+                --specificationId;
+                let specDiv = document.getElementById("specificationDiv");
+
+                /* dig through the DOM and set the IDs accordingly */
+                let i = 0;
+                /* count */
+                for (i = 0; i < specDiv.childElementCount; i++) {
+                    specDiv.childNodes[i].childNodes[0].id = "specification" + i;
+                    specDiv.childNodes[i].childNodes[0].name = "specification" + i;
+                }
+            }
+
+
+            /*FOR ADDING TOPPINGS*/
+            /* Global variables */
+            var topDiv;
+            var toppingId;
+            var maxToppingId;
+
+
+            function mains() {
+                console.log("running mains()");
+                /* Logic to generate new rows of text fields with unique IDs */
+                topDiv = document.getElementById("toppingDiv");
+                toppingId = 0;  /* defines the starting topping ID */
+                maxToppingId = {{ MAX_TOPPING_ID }};  /* max. no of toppings */
+
+                addNewToppingRow();  /* generate the first row */
+            }
+
+            function addNewToppingRow() {
+                /* are there too many toppings already? */
+                if (toppingId > maxToppingId) {
+                    console.log("Too many toppings - can't add more");
+                    alert("Too many toppings (" + parseInt(maxToppingId + 1) + ")");
+                    return;
+                }
+
+                /* get data from new topping text field */
+                tops = document.getElementById("newTopping").value;
+
+
+                /* with the minus button */
+                var wholeNewInputRow = document.createElement("div");
+
+                var newInputs = document.createElement("input");
+                newInputs.type = "text";
+                newInputs.id = "topping" + toppingId;
+                newInputs.name = "topping" + toppingId++;
+                newInputs.style.margin = "4px";
+                newInputs.style.borderRadius = "3px";
+                newInputs.style.borderColor = "grey";
+                newInputs.style.borderWidth = "thin";
+                newInputs.value = tops;
+                wholeNewInputRow.appendChild(newInputs);
+
+                var buttonMinus = document.createElement("img");
+                buttonMinus.src = "{{ url_for("static",
+                               filename="foodManagement/minus-button.png") }}";
+                buttonMinus.style = "width: 20px; height: 20px; margin-left: 5px;"
+                buttonMinus.width = 20;
+                buttonMinus.height = 20;
+                buttonMinus.style.marginLeft = "5px";
+                buttonMinus.onclick = function () {
+                    removeToppingRow(this);
+                };
+                wholeNewInputRow.appendChild(buttonMinus);
+
+                /* finally we append the whole row to our div */
+                document.getElementById("toppingDiv")
+                    .appendChild(wholeNewInputRow);
+
+            }
+
+            /*
+             * Removes a topping row.
+             * But we have to re-set all the topping IDs in order,
+             * or it wouldn't work again :(
+             */
+            function removeToppingRow(thisButtonMinus) {
+                let textBox = thisButtonMinus.previousElementSibling;
+                console.log(thisButtonMinus.previousElementSibling);
+
+                /* remove this whole input field */
+                thisButtonMinus.parentElement.remove();
+
+                /*
+                 * Reorder the IDs and decrement global counter
+                 */
+                --toppingId;
+                let topDiv = document.getElementById("toppingDiv");
+
+                /* dig through the DOM and set the IDs accordingly */
+                let i = 0;
+                /* count */
+                for (i = 0; i < topDiv.childElementCount; i++) {
+                    topDiv.childNodes[i].childNodes[0].id = "topping" + i;
+                    topDiv.childNodes[i].childNodes[0].name = "topping" + i;
+                }
+            }
+
+
+            document.addEventListener("DOMContentLoaded", mains);
+            document.addEventListener("DOMContentLoaded", main);
+
+        </script>
+    </div>
+
 {% endblock %}

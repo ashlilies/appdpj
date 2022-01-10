@@ -4,10 +4,12 @@
 # New routes go here, not in __init__.
 
 from flask import render_template, request, redirect, url_for, session, flash
+from flask_login import logout_user
+
 from application.Models.Admin import *
 from application.Models.Food import Food
 from application.Models.Restaurant import Restaurant
-from application import app, DB_NAME
+from application import app, DB_NAME, login_manager
 from application.Models.Transaction import Transaction
 from application.adminAddFoodForm import CreateFoodForm
 from werkzeug.utils import secure_filename
@@ -18,6 +20,12 @@ from application.rest_details_form import RestaurantDetailsForm
 
 
 # <------------------------- ASHLEE ------------------------------>
+# Our Login Manager
+@login_manager.user_loader
+def load_user(user_id):
+    return Account.get_account_by_id(user_id)  # Fetch user from the database
+
+
 @app.route("/admin")
 @app.route("/admin/home")
 def admin_home():  # ashlee
@@ -86,6 +94,7 @@ def admin_register():  # ashlee
 
 @app.route("/admin/logout")
 def admin_logout():
+    # TODO: Replace with flask-login
     if "account_id" in session:
         logging.info("admin_logout(): Admin %s logged out"
                      % gabi(session["account_id"]).get_email())
@@ -93,6 +102,7 @@ def admin_logout():
     else:
         logging.info("admin_logout(): Failed logout - lag or click twice")
 
+    logout_user()
     return redirect(url_for("admin_home"))
 
 

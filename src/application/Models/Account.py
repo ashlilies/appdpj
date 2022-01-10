@@ -4,7 +4,7 @@
 import logging
 import re   # regex
 
-
+from flask_login import login_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import shelve
 
@@ -52,6 +52,7 @@ class Account:
         logging.info("BaseAccount: Successfully created account, email=%s"
                      % email)
         save_db()
+        login_user(self)
 
     # Str: returns email of any account easily.
     def __str__(self):
@@ -69,7 +70,9 @@ class Account:
                              "checking pw...")
                 if check_password_hash(account.__password_hash, password):
                     logging.info("BaseAccount: Correct email and pw!")
-                    return account  # return account obj if correct pw
+                    login_user(account, remember=False)
+                    # TODO: Support flask-login everywhere.
+                    # return account  # return account obj if correct pw
                 logging.warning("BaseAccount: Email exists, wrong pw")
 
         logging.warning("BaseAccount: No email-pw match found in db")
