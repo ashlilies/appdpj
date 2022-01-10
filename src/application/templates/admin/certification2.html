@@ -3,6 +3,12 @@
 {% block title %}Admin Display Certification{% endblock %}
 
 {% block head %}
+    <style>
+        td {
+            width: 200px;
+            overflow: visible;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -11,12 +17,6 @@
         <div class="modal-body">
             <p>Here are your certifications</p>
             <br>
-            {#            for key in certification_dict:#}
-            {#                food = certification_dict.get(key)#}
-            {#                certification_list.append(food)#}
-            {#                print(food.hygiene_cert)#}
-            {#                print(certification_list)#}
-
             {# hygiene cert #}
             <table class="table table-hover">
                 <thead>
@@ -25,67 +25,84 @@
                     <th scope="col">Hygiene</th>
                     <th scope="col">Halal</th>
                     <th scope="col">Vegetarian</th>
-                    <th scope="col">No Pork No Lard</th>
+                    <th scope="col">No Pork<br>No Lard</th>
                     <th scope="col">Vegan</th>
-                    <th scope="col">No Beef</th>
-
+                    <th scope="col">No<br>Beef</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for key in certification_list %}
+                {% for cert in certificate_list %}
                     <tr>
-                        <td>{{ key }}</td>
-                        <td>{{ key.hygiene_cert }}</td>
-                        <td>{{ key.halal_cert }}</td>
-                        <td>{{ key.vegetarian_cert }}</td>
-                        <td>{{ key.vegan_cert }}</td>
+                        <td>{{ cert.count_id }}</td>
+                        {# display hygiene cert name #}
+                        <td>{{ cert.hygiene_cert }}</td>
+                        {# display halal cert name #}
+                        {% if not cert.halal_cert %}
+                            <td>NIL</td>
+                        {% else %}
+                            <td>{{ cert.halal_cert }}</td>
+                        {% endif %}
+                        {# display vegetarian cert #}
+                        {% if not cert.vegetarian_cert %}
+                            <td>NIL</td>
+                        {% else %}
+                            <td>{{ cert.vegetarian_cert }}</td>
+                        {% endif %}
+                        {# display if the person ticked no pork no lard #}
+                        <td></td>
+                        {# vegan cert #}
+                        {% if not cert.vegan_cert %}
+                            <td>NIL</td>
+                        {% else %}
+                            <td>{{ cert.vegan_cert }}</td>
+                        {% endif %}
+                        {# display if the person ticked no beef #}
+                        <td></td>
+                        {# update button #}
+                        <td><a href="/updateCertification/{{ cert.count_id }}" class="btn btn-warning">Update</a></td>
+                        {# delete button #}
+                        <td>
+                            <form action="" method="POST">
+                                <!--        <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {#user.get_first_name()#} {#user.get_last_name()#}?');">-->
+                                <!-- Button to Open the Modal -->
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                        data-bs-target="#myModal_">
+                                    Delete
+                                </button>
+
+                                <!-- The Modal -->
+                                <div class="modal" id="myModal_">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <!-- Modal Header -->
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Delete Confirmation</h4>
+                                                <button type="button" class="btn-close"
+                                                        data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <!-- Modal body -->
+                                            <div class="modal-body">
+                                                Are you sure you want to
+                                                delete <bold>ALL</bold> the certification of {{ cert.count_id }}?
+                                            </div>
+
+                                            <!-- Modal footer -->
+                                            <div class="modal-footer">
+                                                <input type="submit" value="Delete" class="btn btn-danger">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Cancel
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </td>
                     </tr>
                 {% endfor %}
-                <tr>
-                    <td>hi</td>
-                    <td>
-                        {#                        <a href="/updateCertification/{{ key.count_id() }}" class="btn btn-warning">Update</a>#}
-                    </td>
-                    {#                    <td>#}
-                    {#                        <form action="{{ url_for('delete_user', id=restaurant.count_id) }}" method="POST">#}
-                    {#                            <!-- Button to Open the Modal -->#}
-                    {#                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"#}
-                    {#                                    data-bs-target="#myModal_{{ restaurant.count_id }}">#}
-                    {#                                Delete#}
-                    {#                            </button>#}
-                    {##}
-                    {#                            <!-- The Modal -->#}
-                    {#                            <div class="modal" id="myModal_{{ restaurant.count_id() }}">#}
-                    {#                                <div class="modal-dialog">#}
-                    {#                                    <div class="modal-content">#}
-                    {##}
-                    {#                                        <!-- Modal Header -->#}
-                    {#                                        <div class="modal-header">#}
-                    {#                                            <h4 class="modal-title">Delete Confirmation</h4>#}
-                    {#                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>#}
-                    {#                                        </div>#}
-                    {##}
-                    {#                                        <!-- Modal body -->#}
-                    {#                                        <div class="modal-body">#}
-                    {#                                            Are you sure you want to#}
-                    {#                                            delete {{ restaurant.hygiene_cert }}?#}
-                    {#                                        </div>#}
-                    {##}
-                    {#                                        <!-- Modal footer -->#}
-                    {#                                        <div class="modal-footer">#}
-                    {#                                            <input type="submit" value="Delete" class="btn btn-danger">#}
-                    {#                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">#}
-                    {#                                                Cancel#}
-                    {#                                            </button>#}
-                    {#                                        </div>#}
-                    {##}
-                    {#                                    </div>#}
-                    {#                                </div>#}
-                    {#                            </div>#}
-                    {#                        </form>#}
-                    {##}
-                    {#                    </td>#}
-                </tr>
                 </tbody>
             </table>
             {# halal cert #}

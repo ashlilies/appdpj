@@ -471,6 +471,7 @@ def upload_cert():
             certification = Certification(request.form["hygieneDocument"], request.form["halalDocument"],
                                           request.form["vegetarianDocument"], request.form["veganDocument"])
             print(certification)
+            print(certification.count_id)
 
             certification_dict[Certification.count_id] = certification
             db['certification'] = certification_dict
@@ -483,21 +484,25 @@ def upload_cert():
 # YL: for certification -- reading of data and displaying it to myRestaurant (C in CRUD)
 @app.route("/admin/certification")
 def read_cert():
-    # TODO: READ DATA FROM SHELVE
     certification_dict = {}
+    with shelve.open(DB_NAME, "c") as db:
+        try:
+            if 'certification' in db:
+                certification_dict = db['certification']
+                print(certification_dict)
+            else:
+                db['certification'] = certification_dict
+                print(certification_dict)
+                logging.info("read_cert: nothing found in db, starting empty")
+        except:
+            logging.error("no sleep")
 
-    db = shelve.open(DB_NAME, 'c')
-    certification_dict = db['certification']
+        certificate_list = []
+        for key in certification_dict:
+            food = certification_dict.get(key)
+            certificate_list.append(food)
 
-    # storing the certification keys in certification_dict into a new list for displaying and deleting
-    certification_list = []
-    for key in certification_dict:
-        cert = certification_dict.get(key)
-        certification_list.append(cert)
-    db['certification'] = certification_dict
-    db.close()
-    return render_template("admin/certification2.html", count=len(certification_list),
-                           transaction_list=certification_list)
+    return render_template("admin/certification2.html", certificate_list=certificate_list)
 
 
 # def upload_cert():
