@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Library Loan System - Retrieve Users{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Retrieve Restaurants</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no users.</p>
+  {% elif count == 1 %}
+  <p>There is 1 user.</p>
+  {% else %}
+  <p>There are {{ count }} users.</p>
+  {% endif %}
+</div>
+
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+          <th>Logo</th>
+        <th>Restaurant Name</th>
+        <th>Contact Number</th>
+        <th>Opening Hours</th>
+        <th>Address</th>
+        <th>Description</th>
+        <th>Bank Account</th>
+        <th>Delivery fees</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for restaurant_object in restaurant %}
+      <tr>
+        <td>{{ restaurant_object.get_id }}</td>
+        <td>{{ restaurant_object.get_name() }}</td>
+        <td>{{ restaurant_object.get_contact() }}</td>
+        <td>{{ restaurant_object.get_open() }} TO {{ restaurant_object.get_close() }}</td>
+        <td>{{ restaurant_object.get_add1() }} {{ restaurant_object.get_add2() }}, S{{ restaurant_object.get_postc() }}</td>
+        <td>{{ restaurant_object.get_desc() }}</td>
+        <td>{{ restaurant_object.get_bank() }}</td>
+        <td>{{ restaurant_object.get_del1() }},{{ restaurant_object.get_del2() }},{{ restaurant_object.get_del3() }},{{ restaurant_object.get_del4() }},{{ restaurant_object.get_del5() }}</td>
+
+
+        <td>
+<form class="edit-restaurant" method="POST" action='/updateRestaurant/{{ restaurant_object.get_id() }}'>
+    <button type="submit" class="btn btn-border-underline">Edit Restaurant Details</button>
+</form></td>
+{#<!--        {% if restaurant.get_membership() == 'F' %}-->#}
+{#<!--        <td>Fellow</td>-->#}
+{#<!--        {% elif restaurant.get_membership() == 'S' %}-->#}
+{#<!--        <td>Senior</td>-->#}
+{#<!--        {% elif user.get_membership() == 'P' %}-->#}
+{#<!--        <td>Professional</td>-->#}
+{#<!--        {% endif %}-->#}
+
+    {% endfor %}
+</div>
+{% endblock %}
