@@ -1,5 +1,5 @@
 {% extends "admin/admin_base.html" %}
-{% block title %}Food Management{% endblock %}
+{% block title %}Food Mnagement {% endblock %}
 
 
 {% block head %}
@@ -170,6 +170,7 @@
           maxSpecificationId = {{ MAX_SPECIFICATION_ID }};  /* max. no of specifications */
 
           addNewSpecificationRow();  /* generate the first row */
+          document.getElementById("showModalButton").click();
       }
 
       function addNewSpecificationRow() {
@@ -244,7 +245,7 @@
 
 
 
- /* FOR ADDING TOPPINGS */
+/FOR ADDING TOPPINGS/
  /* Global variables */
       var topDiv;
       var toppingId;
@@ -391,7 +392,6 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalToggleLabel">Create User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
 
@@ -469,11 +469,9 @@
 
     </div>
 </div>
-<button id="showUpdateFoodModalButton" class="btn btn-primary" data-bs-toggle="modal" data-target="#exampleModalToggle" role="button">Open first modal</button>
-  {# Automatically open the modal on load #}
-  <script>
-  document.addEventListener("DOMContentLoaded", function() {
-      document.getElementById("showUpdateFoodModalButton").click();
-  })
-  </script>
+{#<a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Open first modal</a>#}
+  <button id="showModalButton"hidden type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalToggle">
+  Launch demo modal
+</button>
+  {# Load the modal now #}
 {% endblock %}
