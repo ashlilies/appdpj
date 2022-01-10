@@ -346,8 +346,10 @@ def update_food(id):
         except:
             print("Error occured when update food")
 
-        return redirect("/admin/foodManagement")
-        # return render_template('admin/updateFood.html', form=update_food_form)
+        return render_template('admin/updateFood.html',
+                               form=update_food_form,
+                               MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
+                               MAX_TOPPING_ID=MAX_TOPPING_ID)
 
 
 # @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])

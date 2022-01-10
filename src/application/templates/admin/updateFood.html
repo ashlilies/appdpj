@@ -1,5 +1,5 @@
 {% extends "admin/admin_base.html" %}
-{% block title %}Food Mnagement {% endblock %}
+{% block title %}Food Management{% endblock %}
 
 
 {% block head %}
@@ -244,7 +244,7 @@
 
 
 
-/FOR ADDING TOPPINGS/
+ /* FOR ADDING TOPPINGS */
  /* Global variables */
       var topDiv;
       var toppingId;
@@ -469,5 +469,11 @@
 
     </div>
 </div>
-<a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Open first modal</a>
+<button id="showUpdateFoodModalButton" class="btn btn-primary" data-bs-toggle="modal" data-target="#exampleModalToggle" role="button">Open first modal</button>
+  {# Automatically open the modal on load #}
+  <script>
+  document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById("showUpdateFoodModalButton").click();
+  })
+  </script>
 {% endblock %}
