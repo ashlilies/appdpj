@@ -4,7 +4,6 @@
 # New routes go here, not in __init__.
 
 from flask import render_template, request, redirect, url_for, session, flash
-from application import app
 from application.Models.Admin import *
 from application.Models.Food import Food
 from application.Models.Restaurant import Restaurant
