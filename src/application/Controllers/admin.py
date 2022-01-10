@@ -512,8 +512,9 @@ def admin_myrestaurant():  # ruri
     if request.method == 'POST' and restaurant_details_form.validate():
         #  The Below code is using one of the controller's method "Create_restaurant"
         # It's passing in the form argument to instantiate the restaurant object
+        restaurant_id = uuid.uuid4().hex
         create_restaurant.create_restaurant(
-            uuid.uuid4().hex,
+            restaurant_id,
             restaurant_details_form.rest_name.data,
             request.form["rest_logo"],
             restaurant_details_form.rest_contact.data,
@@ -530,6 +531,7 @@ def admin_myrestaurant():  # ruri
             restaurant_details_form.rest_del4.data,
             restaurant_details_form.rest_del5.data
         )
+        # flask_login.current_user.restaurant = restaurant_id
         # Once done, it'll redirect to the home page
         return redirect(url_for('admin_home'))
     restaurants_dict = {}
@@ -584,7 +586,7 @@ def view_restaurant():
 # This route contains the form that allows us to update the restaurant details
 @app.route('/updateRestaurant/<id>', methods=['GET', 'POST'])
 def update_restaurant(id):
-    edit_restaurant = EditRestaurantDetailsForm(request.form)
+    edit_restaurant = RestaurantDetailsForm(request.form)
     restaurant = filter(lambda r : r.get_id() == id, all_restaurant()) # Array Filtering that allows me to track which restaurant the restaurant belongs to for example (ID 1 == ID 1)
     # This lambda is a callback function, it's pretty much comparing if the ID of the restaurant is equal to our id argument
     if request.method == 'POST' and edit_restaurant.validate():
@@ -675,3 +677,57 @@ def retrieve_restaurant():
 @app.route("/admin/dashboard")
 def dashboard():  # ruri
     return render_template("admin/dashboard.html")
+
+
+import urllib.request
+import os
+from werkzeug.utils import secure_filename
+
+app = Flask(__name__)
+
+UPLOAD_FOLDER = 'static/uploads/'
+
+app.secret_key = "secret key"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+
+@app.route('/', methods=['POST'])
+def upload_image():
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect(request.url)
+    file = request.files['file']
+    if file.filename == '':
+        flash('No image selected for uploading')
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        # print('upload_image filename: ' + filename)
+        flash('Image successfully uploaded and displayed below')
+        return render_template('index.html', filename=filename)
+    else:
+        flash('Allowed image types are - png, jpg, jpeg, gif')
+        return redirect(request.url)
+
+
+@app.route('/display/<filename>')
+def display_image(filename):
+    # print('display_image filename: ' + filename)
+    return redirect(url_for('static', filename='uploads/' + filename), code=301)
+
+
+if __name__ == "__main__":
+    app.run()
