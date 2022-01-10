@@ -46,7 +46,10 @@ class Transaction:
         return self.__price
 
     def set_used_coupons(self, used_coupons):
-        self.__used_coupons = used_coupons
+        if used_coupons != '':
+            self.__used_coupons = used_coupons
+        else:
+            self.__used_coupons = 'NIL'
 
     def get_used_coupons(self):
         return self.__used_coupons

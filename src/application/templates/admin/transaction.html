@@ -76,11 +76,7 @@
                                     <td>{{ transaction.count_id }}</td>
                                     <td>{{ transaction.account_name }}</td>
                                     <td>{{ transaction.get_option() }}</td>
-                                    {% if transaction.get_price == 0 %}
-                                        <td>NIL</td>
-                                    {% else %}
-                                        <td>{{ '%0.2f'% transaction.get_price()|float }}</td>
-                                    {% endif %}
+                                    <td>{{ '%0.2f'% transaction.get_price()|float }}</td>
                                     <td>{{ transaction.get_used_coupons() }}</td>
                                     <td>{{ transaction.get_ratings() }}</td>
                                     <td>
@@ -102,6 +98,17 @@
                                                         <div class="modal-body">
                                                             <p>Are you sure you want to
                                                                 delete {{ transaction.account_name }}?</p>
+                                                            <p>Transaction Details:</p>
+                                                            <ul>
+                                                                <li>Account name: {{ transaction.account_name }}</li>
+                                                                <li>Option: {{ transaction.get_option() }}</li>
+                                                                <li>Transaction
+                                                                    Amount: {{ '%0.2f'% transaction.get_price()|float }}</li>
+                                                                <li>Used
+                                                                    coupons: {{ transaction.get_used_coupons() }}</li>
+                                                                <li>Transaction
+                                                                    Rating: {{ transaction.get_ratings() }}</li>
+                                                            </ul>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
@@ -147,6 +154,15 @@
                                             <div class="modal-body">
                                                 <p>Are you sure you want to
                                                     delete {{ transaction.account_name }}?</p>
+                                                <p>Transaction Details:</p>
+                                                <ul>
+                                                    <li>Account name: {{ transaction.account_name }}</li>
+                                                    <li>Option: {{ transaction.get_option() }}</li>
+                                                    <li>Transaction
+                                                        Amount: {{ '%0.2f'% transaction.get_price()|float }}</li>
+                                                    <li>Used coupons: {{ transaction.get_used_coupons() }}</li>
+                                                    <li>Transaction Rating: {{ transaction.get_ratings() }}</li>
+                                                </ul>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"

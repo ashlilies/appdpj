@@ -355,7 +355,7 @@ def create_example_transactions():
     t3.account_name = 'Hosea'
     t3.set_option('Delivery')
     t3.set_price(20.10)
-    t3.set_used_coupons('50PASTA')
+    t3.set_used_coupons('')
     t3.set_ratings(1)
     transaction_list.append(t3)
 
