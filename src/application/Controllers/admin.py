@@ -189,6 +189,12 @@ app.jinja_env.globals.update(get_account_email=get_account_email)
 # APP ROUTE TO FOOD MANAGEMENT clara
 @app.route("/admin/foodManagement")
 def food_management():
+    create_food_form = CreateFoodForm(request.form)
+
+    # For the add food form
+    MAX_SPECIFICATION_ID = 5  # for adding food
+    MAX_TOPPING_ID = 8
+
     food_dict = {}
     with shelve.open("foodypulse", "c") as db:
         try:
@@ -206,6 +212,9 @@ def food_management():
         food_list.append(food)
 
     return render_template('admin/foodManagement.html',
+                           create_food_form=create_food_form,
+                           MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
+                           MAX_TOPPING_ID=MAX_TOPPING_ID,
                            food_list=food_list)
 
 
@@ -273,7 +282,7 @@ def create_food():
         with shelve.open("foodypulse", 'c') as db:
             db['food'] = food_dict
 
-        return redirect(url_for('admin_home'))
+        return redirect(url_for('food_management'))
 
     return render_template('admin/addFoodForm.html', form=create_food_form,
                            MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
@@ -308,10 +317,11 @@ def update_food(id):
                 food.set_price(update_food_form.price.data)
                 food.set_allergy(update_food_form.allergy.data)
                 db["food"] = food_dict
-        except:
+        except Exception as e:
+            logging.error("update_customer: %s" % e)
             print("an error has occured in update customer")
 
-        return redirect(url_for('food_management'))
+        return redirect("/admin/foodManagement")
     else:
         food_dict = {}
         try:
@@ -326,7 +336,8 @@ def update_food(id):
         except:
             print("Error occured when update food")
 
-        return render_template('admin/updateFood.html', form=update_food_form)
+        return redirect("/admin/foodManagement")
+        # return render_template('admin/updateFood.html', form=update_food_form)
 
 
 # @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
