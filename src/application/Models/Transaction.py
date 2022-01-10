@@ -19,8 +19,10 @@ class Transaction:
         self.count_id = Transaction.transaction_id
         self.account_name = account_name
         self.__option = option
+        # price must be in 2 dp, can only accept numbers
         self.__price = float(price)
         self.__used_coupons = used_coupons
+        # ratings must be in 2 dp, can only accept numbers
         self.__ratings = int(ratings)
         self.deleted = False
         Transaction.transaction_id += 1

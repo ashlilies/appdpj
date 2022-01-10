@@ -5,29 +5,29 @@
 {% block head %}
     <style>
         td {
-            width: 200px;
+            width: 250px;
             overflow: visible;
         }
     </style>
 {% endblock %}
 
 {% block content %}
-    <div style="background-color: lightgrey">
+    <div class="">
         <h1>EXTENSION TO RESTAURANT DETAILS</h1>
-        <div class="modal-body">
+        <div>
             <p>Here are your certifications</p>
             <br>
             {# hygiene cert #}
-            <table class="table table-hover">
+            <table class="table table-hover" style="background-color: white">
                 <thead>
                 <tr>
-                    <th scope="col">Res ID</th>
+                    <th scope="col">Certification<br>ID</th>
                     <th scope="col">Hygiene</th>
                     <th scope="col">Halal</th>
                     <th scope="col">Vegetarian</th>
                     <th scope="col">No Pork<br>No Lard</th>
                     <th scope="col">Vegan</th>
-                    <th scope="col">No<br>Beef</th>
+                    <th scope="col">No Beef</th>
                     <th scope="col"></th>
                     <th scope="col"></th>
                 </tr>
@@ -35,7 +35,7 @@
                 <tbody>
                 {% for cert in certificate_list %}
                     <tr>
-                        <td>{{ cert.count_id }}</td>
+                        <td>{{ cert.id }}</td>
                         {# display hygiene cert name #}
                         <td>{{ cert.hygiene_cert }}</td>
                         {# display halal cert name #}

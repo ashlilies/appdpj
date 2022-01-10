@@ -12,7 +12,7 @@ from application import app, DB_NAME
 from application.Models.Transaction import Transaction
 from application.adminAddFoodForm import CreateFoodForm
 
-from application.restaurantCertification import DocumentUploadForm
+# from application.restaurantCertification import DocumentUploadForm
 import shelve, os
 from application.rest_details_form import RestaurantDetailsForm
 
@@ -391,6 +391,110 @@ def create_example_transactions():
     t7.set_ratings(4)
     transaction_list.append(t7)
 
+    t8 = Transaction()
+    t8.account_name = 'Lolita'
+    t8.set_option('Delivery')
+    t8.set_price(50.30)
+    t8.set_used_coupons('SPAGETIT')
+    t8.set_ratings(2)
+    transaction_list.append(t8)
+
+    t9 = Transaction()  # t2
+    t9.account_name = 'Cheryln'
+    t9.set_option('Dine-in')
+    t9.set_price(80.90)
+    t9.set_used_coupons('50PASTA')
+    t9.set_ratings(5)
+    transaction_list.append(t9)
+
+    t10 = Transaction()  # t4
+    t10.account_name = 'Swee Koon'
+    t10.set_option('Delivery')
+    t10.set_price(58.30)
+    t10.set_used_coupons('SPAGETIT')
+    t10.set_ratings(2)
+    transaction_list.append(t10)
+
+    t11 = Transaction()  # t5
+    t11.account_name = 'Adrian'
+    t11.set_option('Dine-in')
+    t11.set_price(80.90)
+    t11.set_used_coupons('50PASTA')
+    t11.set_ratings(3)
+    transaction_list.append(t11)
+
+    t12 = Transaction()  # t6
+    t12.account_name = 'Ryan'
+    t12.set_option('Delivery')
+    t12.set_price(100.10)
+    t12.set_used_coupons('50PASTA')
+    t12.set_ratings(2)
+    transaction_list.append(t12)
+
+    t13 = Transaction()
+    t13.account_name = 'Sammi'
+    t13.set_option('Dine-in')
+    t13.set_price(10.90)
+    t13.set_used_coupons('50PASTA')
+    t13.set_ratings(4)
+    transaction_list.append(t13)
+
+    t14 = Transaction()  # t4
+    t14.account_name = 'Vianna'
+    t14.set_option('Delivery')
+    t14.set_price(58.30)
+    t14.set_used_coupons('SPAGETIT')
+    t14.set_ratings(2)
+    transaction_list.append(t14)
+
+    t15 = Transaction()  # t5
+    t15.account_name = 'Dylan'
+    t15.set_option('Dine-in')
+    t15.set_price(80.90)
+    t15.set_used_coupons('50PASTA')
+    t15.set_ratings(3)
+    transaction_list.append(t15)
+
+    t16 = Transaction()  # t6
+    t16.account_name = 'Chit Boon'
+    t16.set_option('Delivery')
+    t16.set_price(100.10)
+    t16.set_used_coupons('50PASTA')
+    t16.set_ratings(2)
+    transaction_list.append(t16)
+
+    t17 = Transaction()
+    t17.account_name = 'Kit Fan'
+    t17.set_option('Dine-in')
+    t17.set_price(10.90)
+    t17.set_used_coupons('50PASTA')
+    t17.set_ratings(4)
+    transaction_list.append(t17)
+
+    t18 = Transaction()
+    t18.account_name = 'Gabriel Choo'
+    t18.set_option('Delivery')
+    t18.set_price(50.30)
+    t18.set_used_coupons('SPAGETIT')
+    t18.set_ratings(2)
+    transaction_list.append(t18)
+
+    t19 = Transaction()  # t2
+    t19.account_name = 'Bryan Hoo'
+    t19.set_option('Dine-in')
+    t19.set_price(80.90)
+    t19.set_used_coupons('50PASTA')
+    t19.set_ratings(5)
+    transaction_list.append(t19)
+
+    t20 = Transaction()  # t3
+    t20.account_name = 'Yuen Loong'
+    t20.set_option('Delivery')
+    t20.set_price(20.10)
+    t20.set_used_coupons('50PASTA')
+    t20.set_ratings(1)
+    transaction_list.append(t20)
+
     # writing to the database
     with shelve.open(DB_NAME, "c") as db:
         try:
@@ -459,6 +563,8 @@ def delete_transaction(transaction_id):
 @app.route("/admin/uploadCertification", methods=['GET','POST'])
 def upload_cert():
     certification_dict = {}
+    nb = 'NIL'
+    npnl = 'NIL'
     if request.method == 'POST':
         with shelve.open(DB_NAME, 'c') as db:
             try:
@@ -468,15 +574,28 @@ def upload_cert():
                 logging.error("Error in retrieving certificate from ""restaurants.db (%s)" % e)
 
             # create a new Certification Object
+            certchecks = request.form.getlist('certCheck')
+            print(certchecks)
+            print(len(certchecks))
+            for i in certchecks:
+                if 'NoBeef' in certchecks:
+                    nb = 'No Beef'
+                elif 'No Pork No Lard' in certchecks:
+                    npnl = 'No Pork No Lard'
+                else:
+                    print('error lah')
+
+            print(npnl)
+            print(nb)
             certification = Certification(request.form["hygieneDocument"], request.form["halalDocument"],
-                                          request.form["vegetarianDocument"], request.form["veganDocument"])
-            print(certification)
-            print(certification.count_id)
+                                          request.form["vegetarianDocument"], request.form["veganDocument"],
+                                          npnl, nb)
 
             certification_dict[Certification.count_id] = certification
             db['certification'] = certification_dict
 
             return redirect(url_for('read_cert'))
+        # update: cert dict => get the correct cert by id
 
     return render_template("admin/certification.html")
 
@@ -494,8 +613,8 @@ def read_cert():
                 db['certification'] = certification_dict
                 print(certification_dict)
                 logging.info("read_cert: nothing found in db, starting empty")
-        except:
-            logging.error("no sleep")
+        except Exception as e:
+            logging.error("read_cert: error opening db (%s)" % e)
 
         certificate_list = []
         for key in certification_dict:
@@ -503,6 +622,30 @@ def read_cert():
             certificate_list.append(food)
 
     return render_template("admin/certification2.html", certificate_list=certificate_list)
+
+
+# YL: for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)
+# TODO: REDIRECT BACK TO FORM IN 'C IN CRUD'
+# TODO: CHECK IF THE FILES ARE THE SAME AND UPDATE THE DETAILS
+@app.route('/updateCertification/<int:id>', methods=['POST'])
+def update_cert(id):
+    return redirect(url_for('read_cert'))
+
+# YL: for certification -- Delete (D in CRUD)
+# TODO: DELETE BUTTON (similar to delete User in SimpleWebApplication)
+# not soft delete!
+@app.route('/deleteCertification/<int:id>', methods=['POST'])
+def delete_cert(id):
+    with shelve.open(DB_NAME, 'w') as db:
+        try:
+            certification_dict = db['certification']
+            if id in certification_dict:
+                certification_dict.pop(id)
+            db['certification'] = certification_dict
+        except Exception as e:
+            logging.error("delete_food: error opening db (%s)" % e)
+
+    return redirect(url_for('read_cert'))
 
 
 # def upload_cert():
@@ -570,30 +713,6 @@ def read_cert():
 #
 #     return render_template("admin/certification.html",
 #                            certification_form=certification_form)
-
-
-# YL: for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)
-# TODO: REDIRECT BACK TO FORM IN 'C IN CRUD'
-# TODO: CHECK IF THE FILES ARE THE SAME AND UPDATE THE DETAILS
-# @app.route('/updateCertification/<int:id>', methods=['POST'])
-# def update_cert(id):
-#     return redirect(url_for('read_cert'))
-
-# YL: for certification -- Delete (D in CRUD)
-# TODO: DELETE BUTTON (similar to delete User in SimpleWebApplication)
-# not soft delete!
-# @app.route('/deleteCertification/<int:id>', methods=['POST'])
-# def delete_cert(id):
-#     with shelve.open(DB_NAME, 'w') as db:
-#         try:
-#             certification_dict = db['certification']
-#             if id in certification_dict:
-#                 certification_dict.pop(id)
-#             db['certification'] = certification_dict
-#         except Exception as e:
-#             logging.error("delete_food: error opening db (%s)" % e)
-#
-#     return redirect(url_for('read_cert'))
 
 
 # <------------------------- RURI ------------------------------>

@@ -15,7 +15,7 @@
             <div class="mb-3">
                 <label>Hygiene Certification</label>
                 <input class="form-control" type="file" name="hygieneDocument" id="hygieneDocument"
-                       accept="application/pdf"
+                       accept="application/pdf" value="NIL"
                        required/>
             </div>
         </div>
@@ -26,7 +26,7 @@
         {#halal check #}
         <div class="halalcheck">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="Halal"
+                <input class="form-check-input" type="checkbox" value="Halal" name="certCheck"
                        id="halalCheck" onclick="fileUpload1()">
                 <label class="form-check-label" for="halalCheck">Halal</label>
             </div>
@@ -34,44 +34,43 @@
         {# halal file#}
         <div class="mb-3" id="halalFile" style="display: none">
             <input name="halalDocument" class="form-control" type="file"
-                   id="halalFormFile" accept="application/pdf">
+                   id="halalFormFile" value="NIL" accept="application/pdf">
         </div>
         {# vegetarian check #}
         <div class="form-check">
-            <input class="form-check-input" type="checkbox"
-                   value="Vegetarian" id="vegetarianCheck"
-                   onclick="fileUpload2()">
+            <input class="form-check-input" type="checkbox"  name="certCheck"
+                   value="Vegetarian" id="vegetarianCheck" onclick="fileUpload2()">
             <label class="form-check-label" for="vegetarianCheck">Vegetarian</label>
         </div>
         {# vegetarian file #}
         <div class="mb-3" id="vegetarianFile" style="display:none">
             <input name="vegetarianDocument" class="form-control"
-                   type="file" id="vegetarianFormFile" accept="application/pdf">
+                   type="file" id="vegetarianFormFile" value="NIL" accept="application/pdf">
         </div>
         {# no pork no lard check #}
         <div class="form-check">
-            <input class="form-check-input" type="checkbox"
-                   value="NoPorkNoLard" id="NoPorkNoLardCheck">
-            <label class="form-check-label" for="NoPorkNoLardCheck">No
+            <input class="form-check-input" type="checkbox"  name="certCheck"
+                   value="No Pork No Lard" id="NoPorkNoLard">
+            <label class="form-check-label" for="NoPorkNoLard">No
                 Pork, No Lard</label>
         </div>
         {# vegan check #}
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="Vegan"
+            <input class="form-check-input" type="checkbox" value="Vegan"  name="certCheck"
                    id="veganCheck" onclick="fileUpload3()">
             <label class="form-check-label" for="veganCheck">Vegan</label>
         </div>
         {# vegan file #}
         <div class="mb-3" id="veganFile" style="display:none">
             <input name="veganDocument" class="form-control" type="file"
-                   id="veganFormFile" accept="application/pdf">
+                   id="veganFormFile" value="NIL" accept="application/pdf">
         </div>
 
         {# no beef check #}
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="NoBeef"
-                   id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">No
+            <input class="form-check-input" type="checkbox" value="NoBeef" name="certCheck"
+                   id="NoBeef">
+            <label class="form-check-label" for="NoBeef">No
                 beef</label>
         </div>
 
