@@ -4,6 +4,7 @@
 # New routes go here, not in __init__.
 
 from flask import render_template, request, redirect, url_for, session, flash
+from application import app
 from application.Models.Admin import *
 from application.Models.Food import Food
 from application.Models.Restaurant import Restaurant
@@ -201,7 +202,8 @@ def food_management():
         except Exception as e:
             logging.error("create_food: error opening db (%s)" % e)
 
-    # storing the food keys in food_dict into a new list for displaying and deleting
+    # storing the food keys in food_dict into a new list for displaying and
+    # deleting
     food_list = []
     for key in food_dict:
         food = food_dict.get(key)
@@ -264,11 +266,14 @@ def create_food():
             # Create a new food object
             food = Food(request.form["image"], create_food_form.item_name.data,
                         create_food_form.description.data,
-                        create_food_form.price.data, create_food_form.allergy.data)
+                        create_food_form.price.data,
+                        create_food_form.allergy.data)
 
             food.specification = get_specs()  # set specifications as a List
             food.topping = get_top()  # set topping as a List
-            food_dict[food.get_food_id()] = food  # set the food_id as key to store the food object
+            food_dict[
+                food.get_food_id()] = food  # set the food_id as key to store
+            # the food object
             db['food'] = food_dict
 
         # writeback
@@ -294,8 +299,7 @@ def delete_food(id):
 
 
 @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
-
-#save new specification and list
+# save new specification and list
 
 def update_food(id):
     update_food_form = CreateFoodForm(request.form)
@@ -397,7 +401,8 @@ def create_example_transactions():
         try:
             db['shop_transactions'] = transaction_list
         except Exception as e:
-            logging.error("create_example_transactions: error writing to db (%s)" % e)
+            logging.error(
+                "create_example_transactions: error writing to db (%s)" % e)
 
     return redirect(url_for("admin_transaction"))
 
@@ -408,10 +413,12 @@ def admin_transaction():
     with shelve.open(DB_NAME, 'c') as db:
         if 'shop_transactions' in db:
             transaction_list = db['shop_transactions']
-            logging.info("admin_transaction: reading from db['shop_transactions']"
-                         ", %d elems" % len(db["shop_transactions"]))
+            logging.info(
+                "admin_transaction: reading from db['shop_transactions']"
+                ", %d elems" % len(db["shop_transactions"]))
         else:
-            logging.info("admin_transaction: nothing found in db, starting empty")
+            logging.info(
+                "admin_transaction: nothing found in db, starting empty")
             transaction_list = []
 
     def get_transaction_by_id(transaction_id):  # debug
@@ -419,11 +426,13 @@ def admin_transaction():
             if transaction_id == transaction.count_id:
                 return transaction
 
-    return render_template("admin/transaction.html", count=len(transaction_list),
+    return render_template("admin/transaction.html",
+                           count=len(transaction_list),
                            transaction_list=transaction_list)
 
 
-# soft delete -> restaurant can soft delete transactions jic if the transaction is cancelled
+# soft delete -> restaurant can soft delete transactions jic if the
+# transaction is cancelled
 # set instance attribute of Transaction.py = False
 @app.route('/admin/transaction/delete/<transaction_id>')
 def delete_transaction(transaction_id):
@@ -490,10 +499,13 @@ def admin_certification():
         # TODO: DISPLAYING OF AVAILABLE FILES UNDER myrestaurant
         # todo: updating of cert under myrestaurant
 
-        # halal.save(os.path.join('/application/static/restaurantCertification', halaldoc_name))
+        # halal.save(os.path.join(
+        # '/application/static/restaurantCertification', halaldoc_name))
         # vegetarian.save(
-        #     os.path.join('/application/static/restaurantCertification', vegetariandoc_name))
-        # vegan.save(os.path.join('/application/static/restaurantCertification', vegandoc_name))
+        #     os.path.join('/application/static/restaurantCertification',
+        #     vegetariandoc_name))
+        # vegan.save(os.path.join(
+        # '/application/static/restaurantCertification', vegandoc_name))
 
         flash('Document uploaded successfully')
 
@@ -507,10 +519,13 @@ def admin_certification():
 # C (Create)
 @app.route('/admin/create-restaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
-    restaurant_details_form = RestaurantDetailsForm(request.form) # Using the Create Restaurant Form
-    create_restaurant = Restaurant_controller() # Creating a controller / The controller will be the place where we do all the interaction
+    restaurant_details_form = RestaurantDetailsForm(
+        request.form)  # Using the Create Restaurant Form
+    create_restaurant = Restaurant_controller()  # Creating a controller /
+    # The controller will be the place where we do all the interaction
     if request.method == 'POST' and restaurant_details_form.validate():
-        #  The Below code is using one of the controller's method "Create_restaurant"
+        #  The Below code is using one of the controller's method
+        #  "Create_restaurant"
         # It's passing in the form argument to instantiate the restaurant object
         restaurant_id = uuid.uuid4().hex
         create_restaurant.create_restaurant(
@@ -540,46 +555,49 @@ def admin_myrestaurant():  # ruri
     #     try:
     #         restaurants_dict = db['Restaurants']
     #     except Exception as e:
-    #         logging.error("Error in retriedb file doesn't existving Restaurants from "
+    #         logging.error("Error in retriedb file doesn't existving
+    #         Restaurants from "
     #                       "restaurants.db (%s)" % e)
 
-        # user_id = session["account_id"]
-        # user_object = Restaurant_controller()
-        # get_user_object = user_object.find_user_by_id(user_id)
+    # user_id = session["account_id"]
+    # user_object = Restaurant_controller()
+    # get_user_object = user_object.find_user_by_id(user_id)
 
-        # restaurant = Restaurant(uuid.uuid4().hex,
-        #                         # request.form["alltasks"],
-        #                         restaurant_details_form.rest_name.data,
-        #                         request.form["rest_logo"],
-        #                         restaurant_details_form.rest_contact.data,
-        #                         restaurant_details_form.rest_hour_open.data,
-        #                         restaurant_details_form.rest_hour_close.data,
-        #                         restaurant_details_form.rest_address1.data,
-        #                         restaurant_details_form.rest_address2.data,
-        #                         restaurant_details_form.rest_postcode.data,
-        #                         restaurant_details_form.rest_desc.data,
-        #                         restaurant_details_form.rest_bank.data,
-        #                         restaurant_details_form.rest_del1.data,
-        #                         restaurant_details_form.rest_del2.data,
-        #                         restaurant_details_form.rest_del3.data,
-        #                         restaurant_details_form.rest_del4.data,
-        #                         restaurant_details_form.rest_del5.data)
-        #
-        # # print(uuid.uuid4().hex())
-        # restaurants_dict[restaurant.get_id()] = restaurant
-        # db['Restaurants'] = restaurants_dict
-        # db.close()
-        # return redirect(url_for('admin_home'))
+    # restaurant = Restaurant(uuid.uuid4().hex,
+    #                         # request.form["alltasks"],
+    #                         restaurant_details_form.rest_name.data,
+    #                         request.form["rest_logo"],
+    #                         restaurant_details_form.rest_contact.data,
+    #                         restaurant_details_form.rest_hour_open.data,
+    #                         restaurant_details_form.rest_hour_close.data,
+    #                         restaurant_details_form.rest_address1.data,
+    #                         restaurant_details_form.rest_address2.data,
+    #                         restaurant_details_form.rest_postcode.data,
+    #                         restaurant_details_form.rest_desc.data,
+    #                         restaurant_details_form.rest_bank.data,
+    #                         restaurant_details_form.rest_del1.data,
+    #                         restaurant_details_form.rest_del2.data,
+    #                         restaurant_details_form.rest_del3.data,
+    #                         restaurant_details_form.rest_del4.data,
+    #                         restaurant_details_form.rest_del5.data)
+    #
+    # # print(uuid.uuid4().hex())
+    # restaurants_dict[restaurant.get_id()] = restaurant
+    # db['Restaurants'] = restaurants_dict
+    # db.close()
+    # return redirect(url_for('admin_home'))
 
-    return render_template("admin/restaurant.html", form=restaurant_details_form,  restaurant=all_restaurant())
+    return render_template("admin/restaurant.html",
+                           form=restaurant_details_form,
+                           restaurant=all_restaurant())
 
 
 # R (Read)
 # This is the route that displays all the relevant restaurant details
 @app.route('/admin/my-restaurantV2')
 def view_restaurant():
-    return render_template('admin/myrestaurantv2.html',restaurant=all_restaurant())
-
+    return render_template('admin/myrestaurantv2.html',
+                           restaurant=all_restaurant())
 
 
 # U (Update Form) # This route is to showcase the update route
@@ -587,13 +605,17 @@ def view_restaurant():
 @app.route('/updateRestaurant/<id>', methods=['GET', 'POST'])
 def update_restaurant(id):
     edit_restaurant = RestaurantDetailsForm(request.form)
-    restaurant = filter(lambda r : r.get_id() == id, all_restaurant()) # Array Filtering that allows me to track which restaurant the restaurant belongs to for example (ID 1 == ID 1)
-    # This lambda is a callback function, it's pretty much comparing if the ID of the restaurant is equal to our id argument
+    restaurant = filter(lambda r: r.get_id() == id,
+                        all_restaurant())  # Array Filtering that allows me
+    # to track which restaurant the restaurant belongs to for example (ID 1
+    # == ID 1)
+    # This lambda is a callback function, it's pretty much comparing if the
+    # ID of the restaurant is equal to our id argument
     if request.method == 'POST' and edit_restaurant.validate():
-        return render_template('updateuserv2.html', form=edit_restaurant, restaurant=restaurant)
-    return render_template('updateuserv2.html', form=edit_restaurant, restaurant=all_restaurant())
-
-
+        return render_template('updateuserv2.html', form=edit_restaurant,
+                               restaurant=restaurant)
+    return render_template('updateuserv2.html', form=edit_restaurant,
+                           restaurant=all_restaurant())
 
 
 # U (Update)
@@ -623,8 +645,6 @@ def update_restaurant_confirm(id):
     return redirect(url_for('view_restaurant'))
 
 
-
-
 @app.route('/admin/my-restaurant')
 def retrieve_restaurant():
     restaurants_dict = {}
@@ -636,7 +656,10 @@ def retrieve_restaurant():
         restaurant = restaurants_dict.get(key)
         restaurants_list.append(restaurant)
 
-    return render_template('admin/myrestaurant.html', count=len(restaurants_list), restaurants_list=restaurants_list)
+    return render_template('admin/myrestaurant.html',
+                           count=len(restaurants_list),
+                           restaurants_list=restaurants_list)
+
 
 # @app.route('/updateRestaurant/<int:id>/', methods=['GET', 'POST'])
 # def update_restaurant(id):
@@ -673,7 +696,6 @@ def retrieve_restaurant():
 #         return render_template('updateUser.html', form=update_user_form)
 
 
-
 @app.route("/admin/dashboard")
 def dashboard():  # ruri
     return render_template("admin/dashboard.html")
@@ -683,11 +705,8 @@ import urllib.request
 import os
 from werkzeug.utils import secure_filename
 
-app = Flask(__name__)
-
 UPLOAD_FOLDER = 'static/uploads/'
 
-app.secret_key = "secret key"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
@@ -695,12 +714,8 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-@app.route('/')
-def home():
-    return render_template('index.html')
+    return '.' in filename and filename.rsplit('.', 1)[
+        1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route('/', methods=['POST'])
