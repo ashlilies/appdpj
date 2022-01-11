@@ -98,12 +98,15 @@ def admin_register():  # ashlee
 @app.route("/admin/logout")
 def admin_logout():
     # TODO: Replace with flask-login
-    if "account_id" in session:
-        logging.info("admin_logout(): Admin %s logged out"
-                     % gabi(session["account_id"]).get_email())
-        del session["account_id"]
-    else:
-        logging.info("admin_logout(): Failed logout - lag or click twice")
+    try:
+        if "account_id" in session:
+            logging.info("admin_logout(): Admin %s logged out"
+                         % gabi(session["account_id"]).get_email())
+            del session["account_id"]
+        else:
+            raise Exception("account_id not valid in session")
+    except Exception as e:
+        logging.info("admin_logout(): Failed logout - lag or click twice (%s)" % e)
 
     logout_user()
     return redirect(url_for("admin_home"))
@@ -177,6 +180,16 @@ def is_account_id_in_session() -> Account or None:  # for flask
 def gabi(account_id) -> Account:  # for flask
     return Account.get_account_by_id(account_id)
 
+
+@app.route("/admin/deleteAccount")
+def delete_admin_account():
+    if is_account_id_in_session():
+        is_account_id_in_session().hard_delete_account()
+        flash("Successfully deleted your account")
+    else:
+        flash("Failed to delete your account!")
+
+    return redirect(url_for("admin_logout"))
 
 # Get ADMIN account by ID
 # def gaabi(account_id):  # for our internal use to make other Flask functions

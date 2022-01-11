@@ -144,6 +144,14 @@ class Account:
                 return account
         return None
 
+    def hard_delete_account(self):
+        for account in Account.list_of_accounts:
+            if self.account_id == account.account_id:
+                Account.list_of_accounts.remove(account)
+                del account
+                save_account_db()
+                return
+
     # # why do i even need this...
     # @property
     # def is_active(self):

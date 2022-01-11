@@ -182,6 +182,9 @@
                     </form>
                   </div>
                   <div class="modal-footer">
+                    <div class="d-flex align-items-start">
+                      <button type="button" class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
+                    </div>
                     <button type="button" class="btn btn-primary" onclick="updateAccount()">Save changes</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                   </div>
@@ -193,6 +196,10 @@
             <script>
               function updateAccount() {
                 document.getElementById("accountSettingsForm").submit();
+              }
+              function deleteAccount() {
+                  if (confirm("Are you REALLY SURE you want to delete your account? This cannot be undone!"))
+                      window.location.href = "{{ url_for("delete_admin_account") }}";
               }
             </script>
           {% endif %}
