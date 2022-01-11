@@ -195,6 +195,7 @@ app.jinja_env.globals.update(
     get_restaurant_name_by_id=get_restaurant_name_by_id)
 app.jinja_env.globals.update(get_account_email=get_account_email)
 
+
 # <------------------------- CLARA ------------------------------>
 # APP ROUTE TO FOOD MANAGEMENT clara
 @app.route("/admin/foodManagement")
@@ -299,6 +300,7 @@ def create_food():
                            MAX_TOPPING_ID=MAX_TOPPING_ID, )
 
 
+# Note from Ashlee: when doing integration, please prefix all URLs with /admin/
 @app.route('/deleteFood/<int:id>', methods=['POST'])
 def delete_food(id):
     food_dict = {}
@@ -310,9 +312,9 @@ def delete_food(id):
     return redirect(url_for('food_management'))
 
 
-
+# Note from Ashlee: when doing integration, please prefix all URLs with /admin/
 @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
-#save new specification and list
+# save new specification and list
 def update_food(id):
     update_food_form = CreateFoodForm(request.form)
     if request.method == 'POST' and update_food_form.validate():
