@@ -202,8 +202,8 @@ def food_management():
     create_food_form = CreateFoodForm(request.form)
 
     # For the add food form
-    MAX_SPECIFICATION_ID = 5  # for adding food
-    MAX_TOPPING_ID = 8
+    MAX_SPECIFICATION_ID = 2  # for adding food
+    MAX_TOPPING_ID = 3
 
     food_dict = {}
     with shelve.open("foodypulse", "c") as db:
@@ -228,8 +228,8 @@ def food_management():
                            food_list=food_list)
 
 
-MAX_SPECIFICATION_ID = 5  # for adding food
-MAX_TOPPING_ID = 8
+MAX_SPECIFICATION_ID = 2  # for adding food
+MAX_TOPPING_ID = 3
 
 
 # ADMIN FOOD FORM clara
@@ -321,7 +321,7 @@ def update_food(id):
             with shelve.open("foodypulse", 'w') as db:
                 food_dict = db['food']
                 food = food_dict.get(id)
-                food.set_image(request.form["image"])
+                # food.set_image(request.form["image"])
                 food.set_name(update_food_form.item_name.data)
                 food.set_description(update_food_form.description.data)
                 food.set_price(update_food_form.price.data)
@@ -339,10 +339,16 @@ def update_food(id):
                 food_dict = db['food']
 
                 food = food_dict.get(id)
+                # food.uploadImage = request.form.get("image")
                 update_food_form.item_name.data = food.get_name()
                 update_food_form.description.data = food.get_description()
                 update_food_form.price.data = food.get_price()
                 update_food_form.allergy.data = food.get_allergy()
+
+                # for food in food_dict:
+                #     food.get_specification()
+                #     food.get_topping()
+                #
         except:
             print("Error occured when update food")
 

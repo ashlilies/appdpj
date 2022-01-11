@@ -1,4 +1,7 @@
 # Clara
+import shelve
+
+from application import DB_NAME
 from application.Models.Account import save_db
 
 
@@ -7,6 +10,10 @@ class Food:
 
     def __init__(self, image, name, description, price, allergy,
                  specification=None, topping=None):
+        with shelve.open(DB_NAME, 'c') as db:
+            if "food_count_id" in db:
+                Food.count_id = db["food_count_id"]
+
         Food.count_id += 1
         self.__food_id = Food.count_id
         self.__image = image
@@ -16,6 +23,9 @@ class Food:
         self.allergy = allergy
         self.specification = specification
         self.topping = topping
+
+        with shelve.open(DB_NAME, 'c') as db:
+            db["food_count_id"] = Food.count_id
 
         save_db()
 

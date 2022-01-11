@@ -19,6 +19,143 @@
           left: 150px;
 
       }
+
+      h1{
+        color:red;
+      }
+
+      .model-header{
+        margin:10px;
+
+      }
+      .modal-content{
+        background-color:#ffd1d1;
+        padding:10px;
+      }
+
+
+      #uploadImage{
+        position:relative;
+        left:50px;
+        width:300px;
+        height:300px;
+      }
+
+      #upload{
+        position:relative;
+        left:70px;
+        bottom:270px;
+        width:300px;
+        height:280px;
+      }
+      #foodNameLabel{
+        position:relative;
+        right:25%;
+        top:28px;
+      }
+      #name{
+        position:relative;
+        left:550px;
+        width:400px;
+        bottom: 290px;
+        height:45px;
+      }
+
+      #priceLabel{
+        position:relative;
+        left:180px;
+        bottom: 95px;
+      }
+      #price{
+        width:400px;
+        height:45px;
+        position:relative;
+        left:277px;
+        bottom: 128px;
+      }
+
+      #allergyLabel{
+        position:relative;
+        left:192px;
+        bottom: 75px;
+      }
+
+      #allergy{
+        width:400px;
+        height:45px;
+        position:relative;
+        left:277px;
+        bottom:108px;
+      }
+
+/*specification label*/
+      #specificationLabel{
+        position:relative;
+        bottom:100px;
+        left:40px;
+      }
+
+/*Original textbox*/
+      #newSpecification{
+        position:relative;
+        bottom:90px;
+        left:53px;
+        width:190px;
+      }
+
+/*additional textboxes*/
+      #specificationDiv{
+        position:relative;
+        bottom:100px;
+        left:50px;
+      }
+
+/*plus button*/
+    #plus{
+        position:relative;
+        bottom:94px;
+        left:55px;
+    }
+
+    #descriptionLabel{
+        position:relative;
+        bottom:60px;
+        left:15px;
+    }
+    #description{
+        position:relative;
+        width:800px;
+        left:23px;
+        bottom:53px;
+    }
+    #toppingLabel{
+        position:relative;
+        left:450px;
+        bottom:180px;
+    }
+    #newTopping{
+        position:relative;
+        left:543px;
+        width:190px;
+        bottom:173px;
+    }
+
+    #plusTopping{
+        position:relative;
+        left:540px;
+        bottom:175px;
+    }
+
+    #toppingDiv{
+        position:relative;
+        left:540px;
+        bottom:185px;
+    }
+    #createFoodButton{
+        position:relative;
+        right:380px;
+        top:0px;
+    }
   </style>
 {% endblock %}
 
@@ -27,17 +164,18 @@
   <div class="scroll">
 
     <div>
-      <a class="btn btn-primary" data-bs-toggle="modal"
+      <a class="btn btn-primary" id="createFoodButton" data-bs-toggle="modal"
          href="#createFoodModalToggle" role="button">Add Food</a>
       <table class="table table-striped">
         <thead>
         <tr>
+            <th>Image</th>
           <th>Name</th>
           <th>Description</th>
           <th>price</th>
           <th>Allergy</th>
           <th>Specification</th>
-          <th>Remarks</th>
+          <th>Toppings</th>
           <th></th>
           <th></th>
         </tr>
@@ -45,13 +183,14 @@
         <tbody>
         {% for food in food_list %}
           <tr>
+            <td>{{ food.image }}</td>
             <td>{{ food.name }}</td>
             <td>{{ food.description }}</td>
             <td>{{ food.price }}</td>
             <td>{{ food.allergy }}</td>
-            <td>{{ food.specfication }}</td>
-
+            <td>{{ food.specification }}</td>
             <td>{{ food.topping }}</td>
+
             <td><button onclick="location='/updateFood/{{ food.get_food_id() }}'"
                    class="btn btn-warning">Update</button></td>
             <td>
@@ -150,7 +289,9 @@
       </div>
 
     </div>
-    {# Script is for the adding new specifications and toppign to work #}
+
+
+     Script is for the adding new specifications and toppign to work
     <script>
 
 
