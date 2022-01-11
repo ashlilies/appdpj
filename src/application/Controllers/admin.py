@@ -2,7 +2,7 @@
 # Do NOT run directly. Run main.py in the appdpj/src/ directory instead.
 
 # New routes go here, not in __init__.
-
+import flask
 from flask import render_template, request, redirect, url_for, session, flash
 from application.Models.Admin import *
 from application.Models.Certification import Certification
@@ -572,7 +572,6 @@ def upload_cert():
                 print(certification_dict)
             except Exception as e:
                 logging.error("Error in retrieving certificate from ""certification.db (%s)" % e)
-
             # create a new Certification Object
             certchecks = request.form.getlist('certCheck')
             print(certchecks)
@@ -580,11 +579,12 @@ def upload_cert():
                 if 'NoBeef' in certchecks:
                     nb = 'YES'
                 elif 'No Pork No Lard' in certchecks:
-                    npnl = 'Yes'
+                    npnl = 'YES'
                 else:
                     print('something is wrong ')
             print(npnl)
             print(nb)
+
             certification = Certification(request.form["hygieneDocument"], request.form["halalDocument"],
                                           request.form["vegetarianDocument"], request.form["veganDocument"],
                                           npnl, nb)

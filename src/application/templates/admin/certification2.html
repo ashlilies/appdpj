@@ -4,10 +4,13 @@
 
 {% block head %}
     <style>
-        #infodisplay td {
-            width: 250px;
-            overflow: visible;
+        .btn{
+            margin-left: 10px;
+            margin-right: 10px;
         }
+        .certdisplay{
+            width: 25%;
+         }
 
         #deletedisplay th {
             width: 30%;
@@ -26,58 +29,19 @@
     <div class="">
         <h1>EXTENSION TO RESTAURANT DETAILS</h1>
         <div>
-            <p>Here are your certifications</p>
-            <br>
             {# hygiene cert #}
-            <table class="table table-hover" id="infodisplay" style="background-color: white">
+            <table class="table" id="infodisplay"
+                    style="background-color: white">
                 <thead>
-                <tr>
-                    <th scope="col">Certification<br>ID</th>
-                    <th scope="col">Hygiene</th>
-                    <th scope="col">Halal</th>
-                    <th scope="col">Vegetarian</th>
-                    <th scope="col">Vegan</th>
-                    <th scope="col">No Pork<br>No Lard</th>
-                    <th scope="col">No Beef</th>
-                    <th scope="col"></th>
-                    <th scope="col"></th>
-                </tr>
-                </thead>
-                <tbody>
                 {% for cert in certificate_list %}
-                    <tr>
-                        <td>{{ cert.id }}</td>
-                        {# display hygiene cert name #}
-                        <td>{{ cert.hygiene_cert }}</td>
-                        {# display halal cert name #}
-                        {% if not cert.halal_cert %}
-                            <td>NIL</td>
-                        {% else %}
-                            <td>{{ cert.halal_cert }}</td>
-                        {% endif %}
-                        {# display vegetarian cert #}
-                        {% if not cert.vegetarian_cert %}
-                            <td>NIL</td>
-                        {% else %}
-                            <td>{{ cert.vegetarian_cert }}</td>
-                        {% endif %}
-                        {# vegan cert #}
-                        {% if not cert.vegan_cert %}
-                            <td>NIL</td>
-                        {% else %}
-                            <td>{{ cert.vegan_cert }}</td>
-                        {% endif %}
-                        {# display if the person ticked no pork no lard #}
-                        <td>{{ cert.noPorknoLard }}</td>
-                        {# display if the person ticked no beef #}
-                        <td>{{ cert.noBeef }}</td>
-                        {# update button #}
-                        <td><a href="/admin/updateCertification/{{ cert.id }}" class="btn btn-warning">Update</a></td>
-                        {# delete button #}
-                        <td>
-                            <form action="{{ url_for('delete_cert', id=cert.id) }}" method="POST">
-                                <!--        <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {#user.get_first_name()#} {#user.get_last_name()#}?');">-->
-                                <!-- Button to Open the Modal -->
+                    <tr style="background-color: rgba(175, 97, 203,0.4)">
+                        <th scope="col" colspan="2">
+                            {{ cert.id }}'s Certificates
+                        </th>
+                        <th style="width:300px; display: flex; float:right;">
+                            <a href="/admin/updateCertification/{{ cert.id }}" class="btn btn-warning">Update</a>
+                            <form action="{{ url_for('delete_cert', id=cert.id) }}"
+                                  method="POST">
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                         data-bs-target="#myModal_{{ cert.id }}">
                                     Delete
@@ -161,7 +125,48 @@
                                     </div>
                                 </div>
                             </form>
-                        </td>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td rowspan="6" style="background-color:rgba(56, 183, 78,0.4); width:20%;">{{ cert.id }}</td>
+                        <td class="certdisplay">Hygiene</td>
+                        <td>{{ cert.hygiene_cert }}</td>
+                    </tr>
+                    <tr>
+                        <td class="certdisplay">Halal</td>
+                        {% if not cert.halal_cert %}
+                            <td>NIL</td>
+                        {% else %}
+                            <td>{{ cert.halal_cert }}</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="certdisplay">Vegetarian</td>
+                        {# display vegetarian cert #}
+                        {% if not cert.vegetarian_cert %}
+                            <td>NIL</td>
+                        {% else %}
+                            <td>{{ cert.vegetarian_cert }}</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="certdisplay">Vegan</td>
+                        {# vegan cert #}
+                        {% if not cert.vegan_cert %}
+                            <td>NIL</td>
+                        {% else %}
+                            <td>{{ cert.vegan_cert }}</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="certdisplay">No Pork No Lard</td>
+                        <td>{{ cert.noPorknoLard }}</td>
+                    </tr>
+                    <tr>
+                        <td class="certdisplay">No Beef</td>
+                        <td>{{ cert.noBeef }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
