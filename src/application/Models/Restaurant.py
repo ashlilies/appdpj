@@ -1,5 +1,5 @@
 # Ruri
-from application.Models.Account import save_db
+from application.Models.Account import save_account_db
 
 class Restaurant:
     def __init__(self, name, logo, contact, open, close, add1, add2, postc, desc, bank, del1, del2, del3, del4, del5, tags):
@@ -20,7 +20,7 @@ class Restaurant:
         self.del5 = del5
         self.tags = tags
 
-        save_db()
+        save_account_db()
 
     # def get_name(self):
     #     return self.name

@@ -1,5 +1,5 @@
 # Clara
-from application.Models.Account import save_db
+from application.Models.Account import save_account_db
 
 
 class Food:
@@ -17,7 +17,7 @@ class Food:
         self.specification = specification
         self.topping = topping
 
-        save_db()
+        save_account_db()
 
     def get_food_id(self):
         return self.__food_id

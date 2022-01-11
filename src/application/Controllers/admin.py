@@ -2,6 +2,7 @@
 # Do NOT run directly. Run main.py in the appdpj/src/ directory instead.
 
 # New routes go here, not in __init__.
+import traceback
 
 from flask import render_template, request, redirect, url_for, session, flash
 from flask_login import logout_user
@@ -79,6 +80,7 @@ def admin_register():  # ashlee
                                 request.form["password"])
             except Exception as e:
                 logging.info("admin_register: error %s" % e)
+                traceback.print_exc()
                 return reg_error(e)  # handle errors here
         else:
             return reg_error()
@@ -113,39 +115,47 @@ def admin_update_account():
     #       and update restaurant name
 
     if request.method == "GET":
-        return "fail"
+        flash("fail")
+        return redirect(url_for("admin_home"))
     if not is_account_id_in_session():
-        return "fail"
+        flash("fail")
+        return redirect(url_for("admin_home"))
 
     # Check if current password entered was correct
     if not is_account_id_in_session() \
             .check_password_hash(request.form["updateSettingsPw"]):
-        return "Current Password is Wrong"
+        flash("Current Password is Wrong")
+        return redirect(url_for("admin_home"))
 
     response = ""
+    if "changeName" in request.form:
+        if request.form["changeName"] != "":
+            flash("Successfully updated account name from %s to %s"
+                  % (getattr(is_account_id_in_session(), "name"),
+                     request.form["changeName"]))
+            is_account_id_in_session().name = request.form["changeName"]
+
     if "changeEmail" in request.form:
         if request.form["changeEmail"] != "":
             result = (is_account_id_in_session()
                       .set_email(request.form["changeEmail"]))
             if result == Account.EMAIL_CHANGE_SUCCESS:
-                response = ("%sSuccessfully updated email<br>" % response)
+                flash("Successfully updated email")
             elif result == Account.EMAIL_CHANGE_ALREADY_EXISTS:
-                response = ("%sFailed updating email, Email already Exists<br>"
-                            % response)
+                flash("Failed updating email, Email already Exists")
             elif result == Account.EMAIL_CHANGE_INVALID:
-                response = ("%sFailed updating email, email is Invalid<br>"
-                            % response)
+                flash("Failed updating email, email is Invalid")
 
     if "changePw" in request.form:
         if request.form["changePw"] != request.form["changePwConfirm"]:
-            response = ("%sConfirm Password does not match Password<br>"
-                        % response)
+            flash("Confirm Password does not match Password")
         elif request.form["changePw"] != "":
             is_account_id_in_session() \
                 .set_password_hash(request.form["changePw"])
-            response = "%sSuccessfully updated Password<br>" % response
+            flash("Successfully updated Password")
 
-    return response
+    save_account_db()
+    return redirect(url_for("admin_home"))
 
 
 # IAIIS - is logged in?
@@ -194,6 +204,7 @@ app.jinja_env.globals.update(is_account_id_in_session=is_account_id_in_session)
 app.jinja_env.globals.update(
     get_restaurant_name_by_id=get_restaurant_name_by_id)
 app.jinja_env.globals.update(get_account_email=get_account_email)
+
 
 # <------------------------- CLARA ------------------------------>
 # APP ROUTE TO FOOD MANAGEMENT clara
@@ -310,9 +321,8 @@ def delete_food(id):
     return redirect(url_for('food_management'))
 
 
-
 @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
-#save new specification and list
+# save new specification and list
 def update_food(id):
     update_food_form = CreateFoodForm(request.form)
     if request.method == 'POST' and update_food_form.validate():
