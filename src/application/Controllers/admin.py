@@ -79,7 +79,7 @@ def admin_register():  # ashlee
         # TODO: Link dashboard or something
         # TODO: Set flask session
         session["account_id"] = account.account_id
-        return redirect(url_for("admin_home"))
+        return redirect(url_for("create"))
 
     return render_template("admin/register.html")
 

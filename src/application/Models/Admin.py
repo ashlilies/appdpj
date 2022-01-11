@@ -12,7 +12,8 @@ class Admin(Account):
         # self.restaurant = Restaurant(restaurant_name)
         # TODO: Remove the temporary None ones once Ruri removes the others
         #       from Restaurant class.
-        self.restaurant = Restaurant(restaurant_name)
+        # self.restaurant = Restaurant(restaurant_name)
+        self.restaurant_id = None  # set later
 
         # todo:
         self.list_of_transactions = []
