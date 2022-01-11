@@ -4,10 +4,21 @@
 
 {% block head %}
     <style>
-        td {
+        #infodisplay td {
             width: 250px;
             overflow: visible;
         }
+
+        #deletedisplay th {
+            width: 30%;
+            overflow: visible;
+        }
+
+        #deletedisplay td {
+            width: 70%;
+            overflow: visible;
+        }
+
     </style>
 {% endblock %}
 
@@ -18,7 +29,7 @@
             <p>Here are your certifications</p>
             <br>
             {# hygiene cert #}
-            <table class="table table-hover" style="background-color: white">
+            <table class="table table-hover" id="infodisplay" style="background-color: white">
                 <thead>
                 <tr>
                     <th scope="col">Certification<br>ID</th>
@@ -61,20 +72,20 @@
                         {# display if the person ticked no beef #}
                         <td>{{ cert.noBeef }}</td>
                         {# update button #}
-                        <td><a href="/updateCertification/{{ cert.count_id }}" class="btn btn-warning">Update</a></td>
+                        <td><a href="/admin/updateCertification/{{ cert.id }}" class="btn btn-warning">Update</a></td>
                         {# delete button #}
                         <td>
-                            <form action="" method="POST">
+                            <form action="{{ url_for('delete_cert', id=cert.id) }}" method="POST">
                                 <!--        <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {#user.get_first_name()#} {#user.get_last_name()#}?');">-->
                                 <!-- Button to Open the Modal -->
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                        data-bs-target="#myModal_">
+                                        data-bs-target="#myModal_{{ cert.id }}">
                                     Delete
                                 </button>
 
                                 <!-- The Modal -->
-                                <div class="modal" id="myModal_">
-                                    <div class="modal-dialog">
+                                <div class="modal" id="myModal_{{ cert.id }}">
+                                    <div class="modal-dialog modal-xl modal-dialog-centered">
                                         <div class="modal-content">
                                             <!-- Modal Header -->
                                             <div class="modal-header">
@@ -87,7 +98,56 @@
                                                 Are you sure you want to
                                                 delete
                                                 <bold>ALL</bold>
-                                                the certification of {{ cert.count_id }}?
+                                                the certification of {{ cert.id }}?
+                                                <hr>
+                                                <p>Overview of {{ cert.id }}'s Certifications:
+                                                <table class="table" id="deletedisplay">
+                                                    <thead>
+                                                    <tr>
+                                                        <th scope="col">Certificate Name</th>
+                                                        <th scope="col">File name</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <th scope="row">Hygiene Certificate</th>
+                                                        <td>{{ cert.hygiene_cert }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Halal Certificate</th>
+                                                        {% if not cert.halal_cert %}
+                                                            <td>NIL</td>
+                                                        {% else %}
+                                                            <td>{{ cert.halal_cert }}</td>
+                                                        {% endif %}
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Vegetarian Certificate</th>
+                                                        {% if not cert.vegetarian_cert %}
+                                                            <td>NIL</td>
+                                                        {% else %}
+                                                            <td>{{ cert.vegetarian_cert }}</td>
+                                                        {% endif %}
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Vegan Certificate</th>
+                                                        {% if not cert.vegan_cert %}
+                                                            <td>NIL</td>
+                                                        {% else %}
+                                                            <td>{{ cert.vegan_cert }}</td>
+                                                        {% endif %}
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">No Pork No lard</th>
+                                                        <td>{{ cert.noPorknoLard }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">No Beef</th>
+                                                        <td>{{ cert.noBeef }}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                                </p>
                                             </div>
 
                                             <!-- Modal footer -->

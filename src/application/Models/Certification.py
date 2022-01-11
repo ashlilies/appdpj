@@ -13,6 +13,3 @@ class Certification:
         self.noPorknoLard = noPorknoLard
         self.noBeef = noBeef
         Certification.count_id += 1
-
-    def get_hygiene_cert(self):
-        return self.hygiene_cert

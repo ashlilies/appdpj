@@ -588,7 +588,7 @@ def upload_cert():
             certification = Certification(request.form["hygieneDocument"], request.form["halalDocument"],
                                           request.form["vegetarianDocument"], request.form["veganDocument"],
                                           npnl, nb)
-            certification_dict[Certification.count_id] = certification
+            certification_dict[certification.id] = certification
             db['certification'] = certification_dict
 
             return redirect(url_for('read_cert'))
@@ -624,14 +624,17 @@ def read_cert():
 # YL: for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)
 # TODO: REDIRECT BACK TO FORM IN 'C IN CRUD'
 # TODO: CHECK IF THE FILES ARE THE SAME AND UPDATE THE DETAILS
-@app.route('/updateCertification/<id>', methods=['GET','POST'])
+@app.route('/admin/updateCertification/<int:id>', methods=['GET','POST'])
 def update_cert(id):
+    nb = 'NIL'
+    npnl = 'NIL'
     if request.method == 'POST':
         certification_dict = {}
         try:
             with shelve.open(DB_NAME, "c") as db:
                 certification_dict = db['certification']
 
+                # updating the information
                 certchecks = request.form.getlist('certCheck')
                 for i in certchecks:
                     if 'NoBeef' in certchecks:
@@ -649,31 +652,25 @@ def update_cert(id):
                 certification.vegan_cert = request.form["veganDocument"]
                 certification.noPorknoLard = npnl
                 certification.noBeef = nb
+                print(certification)
 
+                # writeback
                 db['certification'] = certification_dict
         except Exception as e:
             logging.error("Error in retrieving certificate from ""certification.db (%s)" % e)
 
         return redirect(url_for('read_cert'))
     else:
+        print('I am reading from shelve')
         certification_dict = {}
         try:
-            with shelve.open(DB_NAME,'r') as db:
+            # reading to display the pre-existing inputs
+            with shelve.open(DB_NAME, "c") as db:
                 certification_dict = db['certification']
-                certchecks = request.form.getlist('certCheck')
-                for i in certchecks:
-                    if 'NoBeef' in certchecks:
-                        nb = 'YES'
-                    elif 'No Pork No Lard' in certchecks:
-                        npnl = 'YES'
-                    else:
-                        print('something is wrong ')
-
         except Exception as e:
             logging.error("Error in retrieving certificate from ""certification.db (%s)" % e)
 
-        certification = certification_dict.get(id)
-        print(certification)
+        c = certification_dict.get(id)
 
     return render_template('admin/updateCertification.html')
 
