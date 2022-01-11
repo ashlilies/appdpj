@@ -4,13 +4,14 @@
 
 {% block head %}
     <style>
-        .btn{
+        .btn {
             margin-left: 10px;
             margin-right: 10px;
         }
-        .certdisplay{
+
+        .certdisplay {
             width: 25%;
-         }
+        }
 
         .modal {
             font-color: black;
@@ -36,7 +37,7 @@
         <div>
             {# hygiene cert #}
             <table class="table" id="infodisplay"
-                    style="background-color: white">
+                   style="background-color: white">
                 <thead>
                 {% for cert in certificate_list %}
                     <tr style="background-color: rgba(175, 97, 203,0.4)">
@@ -44,7 +45,7 @@
                             {{ cert.id }}'s Certificates
                         </th>
                         <th style="width:300px; display: flex; float:right;">
-                            <a href="/admin/updateCertification/{{ cert.id }}" class="btn btn-warning">Update</a>
+                            <a href="/admin/updateCertification/{{ cert.id }}" class="btn btn-danger">Update</a>
                             <form action="{{ url_for('delete_cert', id=cert.id) }}"
                                   method="POST">
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
@@ -53,7 +54,7 @@
                                 </button>
                                 <!-- The Modal -->
                                 <div class="modal" id="myModal_{{ cert.id }}">
-                                    <div class="modal-dialog modal-dialog-centered modal-xl">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
                                         <div class="modal-content">
                                             <!-- Modal Header -->
                                             <div class="modal-header">
@@ -120,10 +121,10 @@
 
                                             <!-- Modal footer -->
                                             <div class="modal-footer">
-                                                <input type="submit" value="Delete" class="btn btn-danger">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                     Cancel
                                                 </button>
+                                                <input type="submit" value="Delete" class="btn btn-danger" style="background-color: red !important;">
                                             </div>
 
                                         </div>
