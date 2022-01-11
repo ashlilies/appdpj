@@ -133,7 +133,7 @@ def admin_update_account():
             flash("Successfully updated account name from %s to %s"
                   % (getattr(is_account_id_in_session(), "name"),
                      request.form["changeName"]))
-            is_account_id_in_session().set_name(request.form["changeName"])
+            is_account_id_in_session().restaurant_name = request.form["changeName"]
 
     if "changeEmail" in request.form:
         if request.form["changeEmail"] != "":

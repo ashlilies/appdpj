@@ -28,7 +28,7 @@ class Admin(Account):
         save_account_db()  # ALWAYS REMEMBER THIS!!!!!!!!
 
     def set_name(self, new_name):
-        Admin.get_account_by_id(self.account_id).name = new_name
+        self.name = new_name
 
     # For backward-compatility after the latest merging of Restaurant class
     @property
