@@ -32,13 +32,39 @@
 
         .table {
             background-color: white;
-
         }
 
         .highlight {
             color: red;
             font-weight: bold;
         }
+
+        .modal {
+            font-color: black;
+            font-weight: normal;
+        }
+
+        .modal:hover {
+            font-color: black;
+            font-weight: normal;
+        }
+
+        #myTable td {
+            width: 250px;
+            overflow: visible;
+        }
+
+        #deletedisplay th {
+            width: 30%;
+            overflow: visible;
+        }
+
+        #deletedisplay td {
+            width: 70%;
+            overflow: visible;
+            font-weight: normal;
+        }
+
     </style>
 {% endblock %}
 
@@ -88,7 +114,7 @@
                                             </button>
                                             <!-- Vertically centered modal -->
                                             <div class="modal" id="myModal_{{ transaction.count_id }}">
-                                                <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-xl modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title">Delete Confirmation</h5>
@@ -99,16 +125,36 @@
                                                             <p>Are you sure you want to
                                                                 delete {{ transaction.account_name }}?</p>
                                                             <p>Transaction Details:</p>
-                                                            <ul>
-                                                                <li>Account name: {{ transaction.account_name }}</li>
-                                                                <li>Option: {{ transaction.get_option() }}</li>
-                                                                <li>Transaction
-                                                                    Amount: {{ '%0.2f'% transaction.get_price()|float }}</li>
-                                                                <li>Used
-                                                                    coupons: {{ transaction.get_used_coupons() }}</li>
-                                                                <li>Transaction
-                                                                    Rating: {{ transaction.get_ratings() }}</li>
-                                                            </ul>
+                                                            <table class="table" id="deletedisplay">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th scope="col">Transaction Details</th>
+                                                                    <th scope="col"></th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                <tr>
+                                                                    <th scope="row">Name</th>
+                                                                    <td>{{ transaction.account_name }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Option</th>
+                                                                    <td>{{ transaction.get_option() }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Transaction Amount</th>
+                                                                    <td>{{ '%0.2f'% transaction.get_price()|float }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Coupons Used</th>
+                                                                    <td>{{ transaction.get_used_coupons() }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Transaction Rating</th>
+                                                                    <td>{{ transaction.get_ratings() }}</td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
@@ -155,14 +201,36 @@
                                                 <p>Are you sure you want to
                                                     delete {{ transaction.account_name }}?</p>
                                                 <p>Transaction Details:</p>
-                                                <ul>
-                                                    <li>Account name: {{ transaction.account_name }}</li>
-                                                    <li>Option: {{ transaction.get_option() }}</li>
-                                                    <li>Transaction
-                                                        Amount: {{ '%0.2f'% transaction.get_price()|float }}</li>
-                                                    <li>Used coupons: {{ transaction.get_used_coupons() }}</li>
-                                                    <li>Transaction Rating: {{ transaction.get_ratings() }}</li>
-                                                </ul>
+                                                <table class="table" id="deletedisplay">
+                                                    <thead>
+                                                    <tr>
+                                                        <th scope="col">Transaction Details</th>
+                                                        <th scope="col"></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <th scope="row">Name</th>
+                                                        <td>{{ transaction.account_name }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Option</th>
+                                                        <td>{{ transaction.get_option() }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Transaction Amount</th>
+                                                        <td>{{ '%0.2f'% transaction.get_price()|float }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Coupons Used</th>
+                                                        <td>{{ transaction.get_used_coupons() }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Transaction Rating</th>
+                                                        <td>{{ transaction.get_ratings() }}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
