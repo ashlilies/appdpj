@@ -14,6 +14,12 @@
           height: 70%;
       }
 
+      #logo-pane {
+          margin: 2rem;
+          margin-left: 0.1rem;
+          margin-right: auto;
+      }
+
       #login-pane > form {
           text-align: center;
       }
@@ -67,6 +73,11 @@
 
 {% endblock %}
 {% block content %}
+  <div id="mainContent" class="d-flex">
+  <div id="logo-pane">
+    <img src="{{ url_for("static", filename="account/accountpage_logo.jpg") }}" alt="FoodyPulse Logo"
+         style="">
+  </div>
   <div id="login-pane">
     <h2>Log In</h2>
     <form action="" method="post" class="login-form">
@@ -80,5 +91,6 @@
 
       <input type="submit" value="Log In" id="submitButton"><br>
     </form>
+  </div>
   </div>
 {% endblock %}
