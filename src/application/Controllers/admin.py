@@ -4,10 +4,12 @@
 # New routes go here, not in __init__.
 
 from flask import render_template, request, redirect, url_for, session, flash
+from flask_login import logout_user
+
 from application.Models.Admin import *
 from application.Models.Food import Food
 from application.Models.Restaurant import Restaurant
-from application import app, DB_NAME
+from application import app, DB_NAME, login_manager
 from application.Models.Transaction import Transaction
 from application.adminAddFoodForm import CreateFoodForm
 from werkzeug.utils import secure_filename
@@ -18,6 +20,12 @@ from application.rest_details_form import RestaurantDetailsForm
 
 
 # <------------------------- ASHLEE ------------------------------>
+# Our Login Manager
+@login_manager.user_loader
+def load_user(user_id):
+    return Account.get_account_by_id(user_id)  # Fetch user from the database
+
+
 @app.route("/admin")
 @app.route("/admin/home")
 def admin_home():  # ashlee
@@ -79,13 +87,14 @@ def admin_register():  # ashlee
         # TODO: Link dashboard or something
         # TODO: Set flask session
         session["account_id"] = account.account_id
-        return redirect(url_for("create"))
+        return redirect(url_for("admin_home"))
 
     return render_template("admin/register.html")
 
 
 @app.route("/admin/logout")
 def admin_logout():
+    # TODO: Replace with flask-login
     if "account_id" in session:
         logging.info("admin_logout(): Admin %s logged out"
                      % gabi(session["account_id"]).get_email())
@@ -93,6 +102,7 @@ def admin_logout():
     else:
         logging.info("admin_logout(): Failed logout - lag or click twice")
 
+    logout_user()
     return redirect(url_for("admin_home"))
 
 
@@ -185,19 +195,36 @@ app.jinja_env.globals.update(
     get_restaurant_name_by_id=get_restaurant_name_by_id)
 app.jinja_env.globals.update(get_account_email=get_account_email)
 
-
 # <------------------------- CLARA ------------------------------>
 # APP ROUTE TO FOOD MANAGEMENT clara
 @app.route("/admin/foodManagement")
 def food_management():
-    with shelve.open(DB_NAME, 'c') as db:
-        if "food" in db:
-            food_list = db['food']
-        else:
-            food_list = []
-            db["food"] = food_list
+    create_food_form = CreateFoodForm(request.form)
+
+    # For the add food form
+    MAX_SPECIFICATION_ID = 5  # for adding food
+    MAX_TOPPING_ID = 8
+
+    food_dict = {}
+    with shelve.open("foodypulse", "c") as db:
+        try:
+            if 'food' in db:
+                food_dict = db['food']
+            else:
+                db['food'] = food_dict
+        except Exception as e:
+            logging.error("create_food: error opening db (%s)" % e)
+
+    # storing the food keys in food_dict into a new list for displaying and deleting
+    food_list = []
+    for key in food_dict:
+        food = food_dict.get(key)
+        food_list.append(food)
 
     return render_template('admin/foodManagement.html',
+                           create_food_form=create_food_form,
+                           MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
+                           MAX_TOPPING_ID=MAX_TOPPING_ID,
                            food_list=food_list)
 
 
@@ -241,35 +268,158 @@ def create_food():
 
     # using the WTForms way to get the data
     if request.method == 'POST' and create_food_form.validate():
-        food_list = []
+        food_dict = {}
         with shelve.open("foodypulse", "c") as db:
             try:
                 if 'food' in db:
-                    food_list = db['food']
+                    food_dict = db['food']
                 else:
-                    db['food'] = food_list
+                    db['food'] = food_dict
             except Exception as e:
                 logging.error("create_food: error opening db (%s)" % e)
 
-        # Create a new food object
-        food = Food(request.form["image"], create_food_form.item_name.data,
-                    create_food_form.description.data,
-                    create_food_form.price.data, create_food_form.allergy.data)
+            # Create a new food object
+            food = Food(request.form["image"], create_food_form.item_name.data,
+                        create_food_form.description.data,
+                        create_food_form.price.data, create_food_form.allergy.data)
 
-        food.specification = get_specs()  # set specifications as a List
-        food.topping = get_top()  # set topping as a List
-        food_list.append(food)
+            food.specification = get_specs()  # set specifications as a List
+            food.topping = get_top()  # set topping as a List
+            food_dict[food.get_food_id()] = food  # set the food_id as key to store the food object
+            db['food'] = food_dict
 
         # writeback
         with shelve.open("foodypulse", 'c') as db:
-            db['food'] = food_list
+            db['food'] = food_dict
 
-        return redirect(url_for('admin_home'))
+        return redirect(url_for('food_management'))
 
     return render_template('admin/addFoodForm.html', form=create_food_form,
                            MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
                            MAX_TOPPING_ID=MAX_TOPPING_ID, )
 
+
+@app.route('/deleteFood/<int:id>', methods=['POST'])
+def delete_food(id):
+    food_dict = {}
+    with shelve.open("foodypulse", 'c') as db:
+        food_dict = db['food']
+        food_dict.pop(id)
+        db['food'] = food_dict
+
+    return redirect(url_for('food_management'))
+
+
+
+@app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
+#save new specification and list
+def update_food(id):
+    update_food_form = CreateFoodForm(request.form)
+    if request.method == 'POST' and update_food_form.validate():
+        food_dict = {}
+        try:
+            with shelve.open("foodypulse", 'w') as db:
+                food_dict = db['food']
+                food = food_dict.get(id)
+                food.set_image(request.form["image"])
+                food.set_name(update_food_form.item_name.data)
+                food.set_description(update_food_form.description.data)
+                food.set_price(update_food_form.price.data)
+                food.set_allergy(update_food_form.allergy.data)
+                db["food"] = food_dict
+        except Exception as e:
+            logging.error("update_customer: %s" % e)
+            print("an error has occured in update customer")
+
+        return redirect("/admin/foodManagement")
+    else:
+        food_dict = {}
+        try:
+            with shelve.open("foodypulse", 'r') as db:
+                food_dict = db['food']
+
+                food = food_dict.get(id)
+                update_food_form.item_name.data = food.get_name()
+                update_food_form.description.data = food.get_description()
+                update_food_form.price.data = food.get_price()
+                update_food_form.allergy.data = food.get_allergy()
+        except:
+            print("Error occured when update food")
+
+        return render_template('admin/updateFood.html',
+                               form=update_food_form,
+                               MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
+                               MAX_TOPPING_ID=MAX_TOPPING_ID)
+
+
+# @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
+#
+# #save new specification and list
+#
+# def update_food(id):
+#     update_food_form = CreateFoodForm(request.form)
+#
+#     # get specifications as a List, no WTForms
+#     def get_specs() -> list:
+#         specs = []
+#
+#         # do specifications exist in first place?
+#         for i in range(MAX_SPECIFICATION_ID + 1):
+#             if "specification%d" % i in request.form:
+#                 specs.append(request.form["specification%d" % i])
+#             else:
+#                 break
+#
+#         logging.info("create_food: specs is %s" % specs)
+#         return specs
+#
+#         # get toppings as a List, no WTForms
+#
+#     def get_top() -> list:
+#         top = []
+#
+#         # do toppings exist in first place?
+#         for i in range(MAX_TOPPING_ID + 1):
+#             if "topping%d" % i in request.form:
+#                 top.append(request.form["topping%d" % i])
+#             else:
+#                 break
+#
+#         logging.info("create_food: top is %s" % top)
+#         return top
+#
+#
+#     if request.method == 'POST' and update_food_form.validate():
+#         food_dict = {}
+#         with shelve.open("foodypulse", 'w') as db:
+#             food_dict = db['food']
+#
+#             food = food_dict.get(id)
+#             food.set_image(request.form["image"])
+#             food.set_name(update_food_form.item_name.data)
+#             food.set_description(update_food_form.description.data)
+#             food.set_price(update_food_form.price.data)
+#             food.set_allergy(update_food_form.allergy.data)
+#             food.specification = get_specs()  # set specifications as a List
+#             food.topping = get_top()  # set topping as a List
+#
+#             db['food'] = food_dict
+#
+#         return redirect(url_for('food_management'))
+#     else:
+#         food_dict = {}
+#         with shelve.open("foodypulse", 'r') as db:
+#             food_dict = db['food']
+#
+#         food = food_dict.get(id)
+#         update_food_form.item_name.data = food.get_name()
+#         update_food_form.description.data = food.get_description()
+#         update_food_form.price.data = food.get_price()
+#         update_food_form.allergy.data = food.get_allergy()
+#         food.specification = get_specs()  # set specifications as a List
+#         food.topping = get_top()  # set topping as a List
+#
+#         return render_template('admin/updateFood.html', form=update_food_form)
 
 # <------------------------- YONG LIN ------------------------------>
 @app.route("/admin/transaction/createExampleTransactions")
@@ -345,6 +495,55 @@ def create_example_transactions():
     return redirect(url_for("admin_transaction"))
 
 
+=========
+# @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
+# def update_food(id):
+#     update_food_form = CreateFoodForm(request.form)
+#     if request.method == 'POST' and update_food_form.validate():
+#
+#         with shelve.open(DB_NAME, 'c') as db:
+#             food_dict = db['food']
+#
+#             user = food_dict.get(id)
+#             user.set_image(request.form["image"])
+#             user.set_name(update_food_form.item_name.data)
+#             user.set_description(update_food_form.description.data)
+#             user.set_price(update_food_form.price.data)
+#             user.set_allergy(update_food_form.allergy.data)
+#             user.set_topping(update_food_form.topping.data)
+#
+#             db['food'] = food_dict
+#         db.close()
+#
+#         return redirect(url_for('retrieve_users'))
+#     else:
+#
+#         db = shelve.open('user.db', 'r')
+#         users_dict = db['Users']
+#         db.close()
+#
+#         user = users_dict.get(id)
+#         update_user_form.first_name.data = user.get_first_name()
+#         update_user_form.last_name.data = user.get_last_name()
+#         update_user_form.gender.data = user.get_gender()
+#         update_user_form.membership.data = user.get_membership()
+#         update_user_form.remarks.data = user.get_remarks()
+#
+#         return render_template('updateUser.html', form=update_user_form)
+#
+
+
+@app.route('/deleteUser/<int:id>', methods=['POST'])
+def delete_user_lls(id):
+    food_list = []
+    with shelve.open('foodypulse', 'c') as db:
+        food_list = db['food']
+        food_list.pop(id)
+        db['food'] = food_list
+    return "Deleted!!!!!!"
+
+
+# <------------------------- YONGLIN ------------------------------>
 @app.route("/admin/transaction")
 def admin_transaction():
     # read transactions from db
@@ -459,7 +658,22 @@ def admin_myrestaurant():  # ruri
             logging.error("Error in retrieving Restaurants from "
                           "restaurants.db (%s)" % e)
 
-        restaurant = Restaurant(restaurant_details_form.rest_name.data)
+        restaurant = Restaurant(request.form["rest_logo"],
+                                # request.form["alltasks"],
+                                restaurant_details_form.rest_name.data,
+                                restaurant_details_form.rest_contact.data,
+                                restaurant_details_form.rest_hour_open.data,
+                                restaurant_details_form.rest_hour_close.data,
+                                restaurant_details_form.rest_address1.data,
+                                restaurant_details_form.rest_address2.data,
+                                restaurant_details_form.rest_postcode.data,
+                                restaurant_details_form.rest_desc.data,
+                                restaurant_details_form.rest_bank.data,
+                                restaurant_details_form.rest_del1.data,
+                                restaurant_details_form.rest_del2.data,
+                                restaurant_details_form.rest_del3.data,
+                                restaurant_details_form.rest_del4.data,
+                                restaurant_details_form.rest_del5.data)
         restaurants_dict[restaurant.name] = restaurant
         db['Restaurants'] = restaurants_dict
 
@@ -498,4 +712,3 @@ def admin_myrestaurant():  # ruri
 @app.route("/admin/dashboard")
 def dashboard():  # ruri
     return render_template("admin/dashboard.html")
-

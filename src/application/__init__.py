@@ -1,12 +1,17 @@
 # IF YOU'RE HERE: New routes go in Controllers > admin or consumer!
 
 from flask import Flask, render_template, request, redirect, url_for
+from flask_login import LoginManager
 
 app = Flask(__name__)
 app.secret_key = "doofypulseEngineers"  # used for stuff e.g. Flask sessions
 
 # The name of our db file. Syntax: with shelve.open(DB_NAME, 'c') as db:
 DB_NAME = "foodypulse"
+
+# Initialize our login manager.
+login_manager = LoginManager()
+login_manager.init_app(app)  # app is a Flask object
 
 from application.Forms import CreateUserForm, CreateCustomerForm
 import shelve

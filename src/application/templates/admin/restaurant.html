@@ -126,8 +126,7 @@
             <h6 style="margin-top: -13px; margin-left: 12px;">TO</h6>
           </div>
           <div class="form-group col-md-3">
-            <!-- <label class="closehour" for="closehour">DUMMY TEXT</label> -->
-            {{ render_field(form.rest_hour_close, class="form-control") }}
+            {{ render_field(form.rest_hour_close, class="form-control", style="margin-top: 9px") }}
 
           </div>
         </div>
@@ -163,16 +162,10 @@
           <div class="form-group col-md-5">
             <label style="margin-left: 285px ;" for="rest_logo">Logo</label>
 <!--            <input type="file" id="rest_logo" name="logo">-->
-            <input class="form-control" type="file" name="rest_logo" id="rest_logo" accept="image/*" placeholder="Upload your logo" required/>
+            <input class="form-control" type="file" name="rest_logo" id="rest_logo" accept="image/*" placeholder="Upload your logo"/>
           </div>
         </div>
 
-
-        <div class="form-row">
-          <div class="form-group col-md-5">
-
-          </div>
-        </div>
 
         <h4 style="margin-top: 30px">Delivery charges over distance ($):</h4>
 
