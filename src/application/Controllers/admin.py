@@ -495,7 +495,6 @@ def create_example_transactions():
     return redirect(url_for("admin_transaction"))
 
 
-=========
 # @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
 # def update_food(id):
 #     update_food_form = CreateFoodForm(request.form)
