@@ -43,7 +43,7 @@ logging.info("Logger configured!")
 # after the app quits, we save all databases -ashlee
 def exit_handler():
     logging.info("Exit Handler: Stopping Flask! Saving db...")
-    save_db()
+    save_account_db()
 
 
 atexit.register(exit_handler)

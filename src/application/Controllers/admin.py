@@ -2,6 +2,7 @@
 # Do NOT run directly. Run main.py in the appdpj/src/ directory instead.
 
 # New routes go here, not in __init__.
+import traceback
 
 from flask import render_template, request, redirect, url_for, session, flash
 from flask_login import logout_user
@@ -80,6 +81,7 @@ def admin_register():  # ashlee
                                 request.form["password"])
             except Exception as e:
                 logging.info("admin_register: error %s" % e)
+                traceback.print_exc()
                 return reg_error(e)  # handle errors here
         else:
             return reg_error()
@@ -88,7 +90,7 @@ def admin_register():  # ashlee
         # TODO: Link dashboard or something
         # TODO: Set flask session
         session["account_id"] = account.account_id
-        return redirect(url_for("admin_home"))
+        return redirect(url_for("admin_myrestaurant"))
 
     return render_template("admin/register.html")
 
@@ -114,39 +116,47 @@ def admin_update_account():
     #       and update restaurant name
 
     if request.method == "GET":
-        return "fail"
+        flash("fail")
+        return redirect(url_for("admin_home"))
     if not is_account_id_in_session():
-        return "fail"
+        flash("fail")
+        return redirect(url_for("admin_home"))
 
     # Check if current password entered was correct
     if not is_account_id_in_session() \
             .check_password_hash(request.form["updateSettingsPw"]):
-        return "Current Password is Wrong"
+        flash("Current Password is Wrong")
+        return redirect(url_for("admin_home"))
 
     response = ""
+    if "changeName" in request.form:
+        if request.form["changeName"] != "":
+            flash("Successfully updated account name from %s to %s"
+                  % (getattr(is_account_id_in_session(), "name"),
+                     request.form["changeName"]))
+            is_account_id_in_session().restaurant_name = request.form["changeName"]
+
     if "changeEmail" in request.form:
         if request.form["changeEmail"] != "":
             result = (is_account_id_in_session()
                       .set_email(request.form["changeEmail"]))
             if result == Account.EMAIL_CHANGE_SUCCESS:
-                response = ("%sSuccessfully updated email<br>" % response)
+                flash("Successfully updated email")
             elif result == Account.EMAIL_CHANGE_ALREADY_EXISTS:
-                response = ("%sFailed updating email, Email already Exists<br>"
-                            % response)
+                flash("Failed updating email, Email already Exists")
             elif result == Account.EMAIL_CHANGE_INVALID:
-                response = ("%sFailed updating email, email is Invalid<br>"
-                            % response)
+                flash("Failed updating email, email is Invalid")
 
     if "changePw" in request.form:
         if request.form["changePw"] != request.form["changePwConfirm"]:
-            response = ("%sConfirm Password does not match Password<br>"
-                        % response)
+            flash("Confirm Password does not match Password")
         elif request.form["changePw"] != "":
             is_account_id_in_session() \
                 .set_password_hash(request.form["changePw"])
-            response = "%sSuccessfully updated Password<br>" % response
+            flash("Successfully updated password")
 
-    return response
+    save_account_db()
+    return redirect(url_for("admin_home"))
 
 
 # IAIIS - is logged in?
@@ -195,6 +205,7 @@ app.jinja_env.globals.update(is_account_id_in_session=is_account_id_in_session)
 app.jinja_env.globals.update(
     get_restaurant_name_by_id=get_restaurant_name_by_id)
 app.jinja_env.globals.update(get_account_email=get_account_email)
+
 
 # <------------------------- CLARA ------------------------------>
 # APP ROUTE TO FOOD MANAGEMENT clara
@@ -311,9 +322,8 @@ def delete_food(id):
     return redirect(url_for('food_management'))
 
 
-
 @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
-#save new specification and list
+# save new specification and list
 def update_food(id):
     update_food_form = CreateFoodForm(request.form)
     if request.method == 'POST' and update_food_form.validate():
@@ -496,6 +506,54 @@ def create_example_transactions():
     return redirect(url_for("admin_transaction"))
 
 
+# @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
+# def update_food(id):
+#     update_food_form = CreateFoodForm(request.form)
+#     if request.method == 'POST' and update_food_form.validate():
+#
+#         with shelve.open(DB_NAME, 'c') as db:
+#             food_dict = db['food']
+#
+#             user = food_dict.get(id)
+#             user.set_image(request.form["image"])
+#             user.set_name(update_food_form.item_name.data)
+#             user.set_description(update_food_form.description.data)
+#             user.set_price(update_food_form.price.data)
+#             user.set_allergy(update_food_form.allergy.data)
+#             user.set_topping(update_food_form.topping.data)
+#
+#             db['food'] = food_dict
+#         db.close()
+#
+#         return redirect(url_for('retrieve_users'))
+#     else:
+#
+#         db = shelve.open('user.db', 'r')
+#         users_dict = db['Users']
+#         db.close()
+#
+#         user = users_dict.get(id)
+#         update_user_form.first_name.data = user.get_first_name()
+#         update_user_form.last_name.data = user.get_last_name()
+#         update_user_form.gender.data = user.get_gender()
+#         update_user_form.membership.data = user.get_membership()
+#         update_user_form.remarks.data = user.get_remarks()
+#
+#         return render_template('updateUser.html', form=update_user_form)
+#
+
+
+@app.route('/deleteUser/<int:id>', methods=['POST'])
+def delete_user_lls(id):
+    food_list = []
+    with shelve.open('foodypulse', 'c') as db:
+        food_list = db['food']
+        food_list.pop(id)
+        db['food'] = food_list
+    return "Deleted!!!!!!"
+
+
+# <------------------------- YONGLIN ------------------------------>
 @app.route("/admin/transaction")
 def admin_transaction():
     # read transactions from db
