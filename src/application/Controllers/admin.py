@@ -823,3 +823,5 @@ def retrieve_restaurant():
 #         update_user_form.remarks.data = user.get_remarks()
 #
 #         return render_template('updateUser.html', form=update_user_form)
+
+# Temporarily removed code here due to breaking the program-ashlee
