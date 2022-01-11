@@ -27,6 +27,9 @@ class Admin(Account):
                         self.account_id))
         save_account_db()  # ALWAYS REMEMBER THIS!!!!!!!!
 
+    def set_name(self, new_name):
+        Admin.get_account_by_id(self.account_id).name = new_name
+
     # For backward-compatility after the latest merging of Restaurant class
     @property
     def restaurant_name(self) -> str:
@@ -35,7 +38,8 @@ class Admin(Account):
 
     @restaurant_name.setter
     def restaurant_name(self, new_name):
-        self.restaurant.name = new_name
+        self.name = new_name
+        # self.restaurant.name = new_name
         save_account_db()
 
     # Add a transaction to a shop's list

@@ -133,7 +133,7 @@ def admin_update_account():
             flash("Successfully updated account name from %s to %s"
                   % (getattr(is_account_id_in_session(), "name"),
                      request.form["changeName"]))
-            is_account_id_in_session().name = request.form["changeName"]
+            is_account_id_in_session().set_name(request.form["changeName"])
 
     if "changeEmail" in request.form:
         if request.form["changeEmail"] != "":
@@ -152,7 +152,7 @@ def admin_update_account():
         elif request.form["changePw"] != "":
             is_account_id_in_session() \
                 .set_password_hash(request.form["changePw"])
-            flash("Successfully updated Password")
+            flash("Successfully updated password")
 
     save_account_db()
     return redirect(url_for("admin_home"))
