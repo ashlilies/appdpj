@@ -620,7 +620,7 @@ def update_restaurant(id):
 # U (Update)
 @app.route('/updateRestaurantConfirm/<id>', methods=['GET', 'POST'])
 def update_restaurant_confirm(id):
-    edit_restaurant = EditRestaurantDetailsForm(request.form)
+    edit_restaurant = RestaurantDetailsForm(request.form)
     editing_restaurant = Restaurant_controller()
     if request.method == 'POST' and edit_restaurant.validate():
         editing_restaurant.edit_restaurant(
