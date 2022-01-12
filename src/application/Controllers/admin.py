@@ -79,7 +79,9 @@ def admin_register():  # ashlee
                 and request.form["email"] != ""  # not blank email
                 and request.form["name"] != ""  # not blank restaurant name
                 and request.form["password"] != ""  # not blank pw
-                and request.form["password"] == request.form["passwordAgain"]):
+                and request.form["password"] == request.form["passwordAgain"]
+                and len(request.form["password"]) >= 4
+                and len(request.form["password"]) <= 20):
             try:
                 account = Admin(request.form["name"], request.form["email"],
                                 request.form["password"])
