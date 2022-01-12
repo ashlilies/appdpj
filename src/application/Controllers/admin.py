@@ -2,12 +2,15 @@
 # Do NOT run directly. Run main.py in the appdpj/src/ directory instead.
 
 # New routes go here, not in __init__.
+import datetime
 import traceback
 
 from flask import render_template, request, redirect, url_for, session, flash, Flask
 from flask_login import logout_user
 
+from application.CouponForms import CreateCouponForm
 from application.Models.Admin import *
+from application.Models.CouponSystem import CouponSystem
 from application.Models.Food import Food
 from application.Models.Restaurant import Restaurant
 from application import app, DB_NAME, login_manager
@@ -218,6 +221,150 @@ app.jinja_env.globals.update(is_account_id_in_session=is_account_id_in_session)
 app.jinja_env.globals.update(
     get_restaurant_name_by_id=get_restaurant_name_by_id)
 app.jinja_env.globals.update(get_account_email=get_account_email)
+
+
+# for testing only - to remove on final!
+@app.route("/admin/coupon/createExamples")
+def admin_coupon_add_examples():
+    coupon_systems_list = []
+
+    with shelve.open("coupon", 'c') as db:
+        if "coupon_systems" in db:
+            coupon_systems_list = db["coupon_systems"]
+        else:
+            coupon_systems_list.append(CouponSystem())
+
+    # TEMPORARY FOR WEEK 13 ONLY
+    session["coupon_systems_active_idx"] = 0
+    active_coupon_system_idx = session["coupon_systems_active_idx"]
+
+    coupon_systems_list[active_coupon_system_idx].new_coupon("FoodyPulse3",
+                                                             ["All: Spaghetti"],
+                                                             CouponSystem.Discount.PERCENTAGE_OFF,
+                                                             10,
+                                                             (datetime.datetime.datetime(2022, 3, 1)))
+
+    coupon_systems_list[active_coupon_system_idx].new_coupon("Meowbie9",
+                                                             ["All: Drinks"],
+                                                             CouponSystem.Discount.PERCENTAGE_OFF,
+                                                             20,
+                                                             (datetime.datetime.datetime(2022, 1, 21)))
+
+    coupon_systems_list[active_coupon_system_idx].new_coupon("CnySpecial",
+                                                             ["All: Drinks"],
+                                                             CouponSystem.Discount.FIXED_PRICE,
+                                                             3.5,
+                                                             (datetime.datetime.datetime(2022, 2, 14)))
+
+    with shelve.open("coupon", 'c') as db:
+        db["coupon_systems"] = coupon_systems_list
+
+    return redirect(url_for("admin_coupon_management"))
+
+
+@app.route("/admin/coupon")
+def admin_coupon_management():
+    # TODO: Replace with flask-login
+    # if not logged in, need to login first
+    if not is_account_id_in_session():
+        return redirect(url_for("admin_login"))
+
+    coupon_systems_list = []
+
+    with shelve.open("coupon", 'c') as db:
+        if "coupon_systems" in db:
+            coupon_systems_list = db["coupon_systems"]
+        else:
+            coupon_systems_list.append(CouponSystem())
+
+    # TEMPORARY FOR WEEK 13 ONLY
+    session["coupon_systems_active_idx"] = 0
+    active_coupon_system_idx = session["coupon_systems_active_idx"]
+    selected_system = coupon_systems_list[active_coupon_system_idx]
+
+    with shelve.open("coupon", 'c') as db:
+        db["coupon_systems"] = coupon_systems_list
+
+    return render_template("admin/retrieveCoupons.html",
+                           len=len,
+                           coupon_list=selected_system.list_of_coupons)
+
+
+@app.route("/admin/addCoupon", methods=["GET", "POST"])
+def admin_coupon_add():  # todo
+    # TODO: Replace with flask-login
+    # if not logged in, need to login first
+    if not is_account_id_in_session():
+        return redirect(url_for("admin_login"))
+
+    create_coupon_form = CreateCouponForm()
+    if request.method == "POST" and create_coupon_form.validate():
+        coupon_systems_list = []
+
+        with shelve.open("coupon", 'c') as db:
+            if "coupon_systems" in db:
+                coupon_systems_list = db["coupon_systems"]
+            else:
+                coupon_systems_list.append(CouponSystem())
+
+        active_coupon_system_idx = session["coupon_systems_active_idx"]
+        cs = coupon_systems_list[active_coupon_system_idx]
+
+        discount_type = (CouponSystem.Discount.FIXED_PRICE if
+                         create_coupon_form.discount_type.data == "fp" else
+                         CouponSystem.Discount.PERCENTAGE_OFF)
+
+        cs.new_coupon(create_coupon_form.coupon_code.data,
+                      create_coupon_form.food_items.data,
+                      discount_type,
+                      create_coupon_form.discount_amount.data,
+                      create_coupon_form.expiry.data)
+
+        with shelve.open("coupon", 'c') as db:
+            db["coupon_systems"] = coupon_systems_list
+
+        return redirect(url_for("admin_coupon_management"))
+    else:
+        return render_template("admin/createCoupon.html", form=create_coupon_form)
+
+
+@app.route("/admin/updateCoupon/<int:idx>")  # index of in coupon systems
+def admin_coupon_update(idx):  # todo: handle active systems
+    # TODO: Replace with flask-login
+    # if not logged in, need to login first
+    if not is_account_id_in_session():
+        return redirect(url_for("admin_login"))
+
+    flash("Under Construction")
+    return redirect(url_for("admin_coupon_management"))
+
+
+@app.route("/admin/deleteCoupon/<int:id>", methods=["GET", "POST"])
+def admin_coupon_delete(id):  # todo: handle active systems
+    # TODO: Replace with flask-login
+    # if not logged in, need to login first
+    if not is_account_id_in_session():
+        return redirect(url_for("admin_login"))
+
+    coupon_systems_list = []
+
+    with shelve.open("coupon", 'c') as db:
+        if "coupon_systems" in db:
+            coupon_systems_list = db["coupon_systems"]
+        else:
+            coupon_systems_list.append(CouponSystem())
+
+    active_coupon_system_idx = session["coupon_systems_active_idx"]
+    cs = coupon_systems_list[active_coupon_system_idx]
+
+    for coupon in cs.list_of_coupons:
+        if coupon.id == id:
+            cs.list_of_coupons.remove(coupon)
+
+    with shelve.open("coupon", 'c') as db:
+        db["coupon_systems"] = coupon_systems_list
+
+    return redirect(url_for("admin_coupon_management"))
 
 
 # <------------------------- CLARA ------------------------------>
@@ -761,30 +908,30 @@ def update_restaurant(id):
 
 
 
-# U (Update)
-@app.route('/updateRestaurantConfirm/<id>', methods=['GET', 'POST'])
-def update_restaurant_confirm(id):
-    edit_restaurant = EditRestaurantDetailsForm(request.form)
-    editing_restaurant = Restaurant_controller()
-    if request.method == 'POST' and edit_restaurant.validate():
-        editing_restaurant.edit_restaurant(
-            id,
-            edit_restaurant.rest_name.data,
-            request.form["rest_logo"],
-            edit_restaurant.rest_contact.data,
-            edit_restaurant.rest_hour_open.data,
-            edit_restaurant.rest_hour_close.data,
-            edit_restaurant.rest_address1.data,
-            edit_restaurant.rest_address2.data,
-            edit_restaurant.rest_postcode.data,
-            edit_restaurant.rest_desc.data,
-            edit_restaurant.rest_bank.data,
-            edit_restaurant.rest_del1.data,
-            edit_restaurant.rest_del2.data,
-            edit_restaurant.rest_del3.data,
-            edit_restaurant.rest_del4.data,
-            edit_restaurant.rest_del5.data
-        )
+# # U (Update)
+# @app.route('/updateRestaurantConfirm/<id>', methods=['GET', 'POST'])
+# def update_restaurant_confirm(id):
+#     # edit_restaurant = EditRestaurantDetailsForm(request.form)
+#     editing_restaurant = Restaurant_controller()
+#     if request.method == 'POST' and edit_restaurant.validate():
+#         editing_restaurant.edit_restaurant(
+#             id,
+#             edit_restaurant.rest_name.data,
+#             request.form["rest_logo"],
+#             edit_restaurant.rest_contact.data,
+#             edit_restaurant.rest_hour_open.data,
+#             edit_restaurant.rest_hour_close.data,
+#             edit_restaurant.rest_address1.data,
+#             edit_restaurant.rest_address2.data,
+#             edit_restaurant.rest_postcode.data,
+#             edit_restaurant.rest_desc.data,
+#             edit_restaurant.rest_bank.data,
+#             edit_restaurant.rest_del1.data,
+#             edit_restaurant.rest_del2.data,
+#             edit_restaurant.rest_del3.data,
+#             edit_restaurant.rest_del4.data,
+#             edit_restaurant.rest_del5.data
+#         )
     return redirect(url_for('view_restaurant'))
 
 

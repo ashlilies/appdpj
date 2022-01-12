@@ -1,0 +1,27 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Create Coupon{% endblock %}
+
+{% block content %}
+  {% from "includes/_formHelper.html" import render_field %}
+
+  <h1 class="display-6">Create Coupon</h1>
+
+  <form method="POST" action="{{ url_for('admin_coupon_add') }}">
+    <div class="form-group">
+      {{ render_field(form.coupon_code, class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ render_field(form.food_items, class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ render_field(form.discount_type, class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ render_field(form.discount_amount, class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ render_field(form.expiry, class="form-control datepicker") }}
+    </div>
+    <input type="submit" value="Submit" class="btn btn-primary"/>
+  </form>
+{% endblock %}

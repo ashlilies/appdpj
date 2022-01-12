@@ -4,6 +4,8 @@
 # Recommended use: Create one (1) CouponSystem object per Restaurant class,
 #                  then attach it to a Restaurant class attribute.
 import datetime
+import logging
+import shelve
 
 from application.Models.Food import Food
 
@@ -30,18 +32,31 @@ class CouponSystem:
                 return original_price * self.multiplier
 
     class Coupon:
+        count_id = 0
+
         def __init__(self,
                      coupon_code: str,
                      food_items: list,
                      discount_type,
                      discount_amount: float,
                      expiry: datetime.datetime):
+            with shelve.open("coupon", 'c') as db:
+                if "coupon_count_id" in db:
+                    CouponSystem.Coupon.count_id = db["coupon_count_id"]
+
+            logging.info("CouponSystem.Coupon: current count id: %d"
+                         % CouponSystem.Coupon.count_id)
+            self.id = CouponSystem.Coupon.count_id
             self.coupon_code = coupon_code
             self.food_items = food_items
             self.discount = CouponSystem.Discount(discount_type,
                                                   discount_amount)
             self.expiry = expiry
             self.enabled = True
+
+            CouponSystem.Coupon.count_id += 1
+            with shelve.open("coupon", 'c') as db:
+                db["coupon_count_id"] = CouponSystem.Coupon.count_id
 
         def discounted_price(self, food: Food, coupon_code: str):
             if not self.enabled:  # artifically cancelled coupon

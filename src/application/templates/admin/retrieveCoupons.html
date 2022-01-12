@@ -1,0 +1,104 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Coupon Management{% endblock %}
+
+{% block head %}
+  <style>
+      table#couponTable {
+          width: 90%;
+          margin-left: auto;
+          margin-right: auto;
+
+          background-color: white;
+          border-radius: 12px;
+      }
+      .btn:hover {
+          background-color: #af61cb;
+          color: white;
+      }
+  </style>
+{% endblock %}
+{% block content %}
+  <h1 class="display-6">Coupon Management</h1>
+  <div>
+    {% if len(coupon_list) == 0 %}
+      <p>There are no coupons.
+    {% elif len(coupon_list) == 1 %}
+      <p>There is 1 coupon.
+    {% else %}
+      <p>There are {{ len(coupon_list) }} coupons.
+    {% endif %}
+    <a href="{{ url_for("admin_coupon_add") }}">Add a new coupon</a>
+    or <a href="{{ url_for("admin_coupon_add_examples") }}">add examples</a>
+    </p>
+  </div>
+  <div>
+    <table class="table table-striped" id="couponTable">
+      <thead>
+      <tr>
+        <th>Coupon Code</th>
+        <th>Food Items</th>
+        <th>Discount Type</th>
+        <th>Discount Amount</th>
+        <th>Expiry</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for coupon in coupon_list %}
+        <tr>
+          <td>{{ coupon.coupon_code }}</td>
+          {% for food_item in coupon.food_items %}
+            <td>{{ food_item }}</td>
+          {% endfor %}
+          <td>{{ coupon.discount.discount_type }}</td>
+          <td>{{ coupon.discount.discount_amount }}</td>
+          <td>{{ coupon.expiry }}</td>
+          <td><a href="/admin/updateCoupon/{{ coupon.id }}"
+                 class="btn btn-warning">Update</a></td>
+          <td>
+            <form action="{{ url_for('admin_coupon_delete', id=coupon.id) }}"
+                  method="POST">
+              <!--        <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {#user.get_first_name()#} {#user.get_last_name()#}?');">-->
+              <!-- Button to Open the Modal -->
+              <button type="button" class="btn btn-danger"
+                      data-bs-toggle="modal"
+                      data-bs-target="#myModal_{{ coupon.id }}">
+                Delete
+              </button>
+
+              <!-- The Modal -->
+              <div class="modal" id="myModal_{{ coupon.id }}">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                      <h4 class="modal-title">Delete Confirmation</h4>
+                      <button type="button" class="btn-close"
+                              data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                      Are you sure you want to delete {{ coupon.coupon_code }}?
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                      <input type="submit" value="Delete"
+                             class="btn btn-danger">
+                      <button type="button" class="btn btn-secondary"
+                              data-bs-dismiss="modal">Cancel</button>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
