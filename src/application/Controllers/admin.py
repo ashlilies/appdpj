@@ -578,8 +578,8 @@ def upload_cert():
             for i in certchecks:
                 if 'NoBeef' in certchecks:
                     nb = 'YES'
-                elif 'No Pork No Lard' in certchecks:
-                    npnl = 'YES'
+                elif 'NoPorkNoLard' in certchecks:
+                    npnl = 'Yes'
                 else:
                     print('something is wrong ')
             print(npnl)
@@ -628,6 +628,7 @@ def read_cert():
 def update_cert(id):
     nb = 'NIL'
     npnl = 'NIL'
+
     if request.method == 'POST':
         certification_dict = {}
         try:
@@ -661,8 +662,9 @@ def update_cert(id):
 
         return redirect(url_for('read_cert'))
     else:
-        print('I am reading from shelve')
         certification_dict = {}
+        id_list = []
+        print('I am reading from shelve')
         try:
             # reading to display the pre-existing inputs
             with shelve.open(DB_NAME, "c") as db:
@@ -671,8 +673,9 @@ def update_cert(id):
             logging.error("Error in retrieving certificate from ""certification.db (%s)" % e)
 
         c = certification_dict.get(id)
-
-    return render_template('admin/updateCertification.html')
+        id_list.append(c)
+        print(c.hygiene_cert)
+        return render_template('admin/updateCertification.html', id_list=id_list)
 
 
 # YL: for certification -- Delete (D in CRUD)
