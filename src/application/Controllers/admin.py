@@ -54,6 +54,7 @@ def admin_login():  # ashlee
             # user entered correct credentials
             # TODO Link dashboard or something from here
             session["account_id"] = login.account_id
+            session["coupon_systems_active_idx"] = login.account_id - 1
             return redirect(url_for("admin_home"))
         return login_error()
     return render_template("admin/login.html")
@@ -93,6 +94,22 @@ def admin_register():  # ashlee
         # TODO: Link dashboard or something
         # TODO: Set flask session
         session["account_id"] = account.account_id
+
+        # TEMPORARY FOR WEEK 13
+        coupon_systems_list = []
+
+        with shelve.open("coupon", 'c') as db:
+            if "coupon_systems" in db:
+                coupon_systems_list = db["coupon_systems"]
+            else:
+                coupon_systems_list.append(CouponSystem())
+
+        coupon_systems_list.append(CouponSystem())
+        session["coupon_systems_active_idx"] = account.account_id-1
+
+        with shelve.open("coupon", 'c') as db:
+            db["coupon_systems"] = coupon_systems_list
+
         return redirect(url_for("admin_myrestaurant"))
 
     return render_template("admin/register.html")
@@ -235,7 +252,7 @@ def admin_coupon_add_examples():
             coupon_systems_list.append(CouponSystem())
 
     # TEMPORARY FOR WEEK 13 ONLY
-    session["coupon_systems_active_idx"] = 0
+    # session["coupon_systems_active_idx"] = 0
     active_coupon_system_idx = session["coupon_systems_active_idx"]
 
     coupon_systems_list[active_coupon_system_idx].new_coupon("FoodyPulse3",
@@ -278,7 +295,7 @@ def admin_coupon_management():
             coupon_systems_list.append(CouponSystem())
 
     # TEMPORARY FOR WEEK 13 ONLY
-    session["coupon_systems_active_idx"] = 0
+    # session["coupon_systems_active_idx"] = 0
     active_coupon_system_idx = session["coupon_systems_active_idx"]
     selected_system = coupon_systems_list[active_coupon_system_idx]
 
