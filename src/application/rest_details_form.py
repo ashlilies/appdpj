@@ -3,7 +3,7 @@ from wtforms.fields import *
 # from wtforms_components import TimeField
 
 class RestaurantDetailsForm(Form):
-    rest_name = StringField('Restaurant Name', [validators.Optional()])
+    rest_name = StringField('Restaurant Name', [validators.Length(min=1, max=150), validators.DataRequired()])
     rest_contact = IntegerField('Contact Number',  [validators.Optional()])
     rest_hour_open = TimeField('Opening Hours:', [validators.Optional()])
     rest_hour_close = TimeField(' ', [validators.Optional()])

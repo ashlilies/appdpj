@@ -1,3 +1,5 @@
+<!-- ruri flora newman -->
+
 {% extends "admin/admin_base.html" %}
 {% block title %}Restaurant Details{% endblock %}
 
@@ -70,10 +72,24 @@
           cursor: pointer;
       }
 
-      #edit-box {
-          display: none;
-          max-width: 80%;
-          margin-top: 10px;
+      /*#edit-box {*/
+      /*    display: none;*/
+      /*    max-width: 80%;*/
+      /*    margin-top: 10px;*/
+      /*}*/
+
+      input{
+        width: 100%;
+        padding: 1em;
+        line-height: 1.4;
+        background-color: #f9f9f9;
+        border: 1px solid #e5e5e5;
+        border-radius: 3px;
+        -webkit-transition: 0.35s ease-in-out;
+        -moz-transition: 0.35s ease-in-out;
+        -o-transition: 0.35s ease-in-out;
+        transition: 0.35s ease-in-out;
+        transition: all 0.35s ease-in-out;
       }
 
       td {
@@ -96,13 +112,13 @@
       </button>
     </div>
   </nav>
-{% for restaurant_object in restaurant %}
-  <!-- start of division row-->
-  <h3 style="margin-top: 50px; margin-left: 5px"><u>Update {{ restaurant_object.get_name() }}!: </u></h3>
 
-<form class="edit-restaurant-confirm" method="POST" action='/updateRestaurantConfirm/{{ restaurant_object.get_id() }}'>
+  <!-- start of division row-->
+  <h2 style="margin-top: 50px; margin-left: 10px"><u>Your Restaurant's details: </u></h2>
+
+  <form method="POST" action="">
     <div class="row">
-      <div class="column" style="background-color:#DCDCDC;"> <!--start of column one content-->
+      <div class="column"> <!--start of column one content-->
         <div class="form-row">
           <div class="form-group col-md-6">
             {{ render_field(form.rest_name, class="form-control", placeholder="The Saffron Boutique") }}
@@ -141,6 +157,18 @@
             {{ render_field(form.rest_postcode, class="form-control", placeholder="123456") }}
           </div>
         </div>
+      </div> <!--end of column one content-->
+
+      <div class="column" style="margin-left: 80px;">
+        <div class="form-row">
+          <div class="form-group col-md-5">
+            <label for="rest_logo">Logo</label>
+<!--            <input type="file" id="rest_logo" name="logo">-->
+            <input style="margin-left: 0px;" class="form-control" type="file" name="rest_logo" id="rest_logo" accept="image/*" placeholder="Upload your logo"/>
+          </div>
+        </div>
+
+
         <div class="form-row">
           <div class="form-group col-md-8">
             {{ render_field(form.rest_bank, class="form-control", placeholder="123456") }}
@@ -149,18 +177,6 @@
         <div class="form-row">
           <div class="form-group col-md-12">
             {{ render_field(form.rest_desc, class="form-control", placeholder="A little something about your restaurant...") }}
-          </div>
-        </div>
-
-
-      </div> <!--end of column one content-->
-
-      <div class="column" style="background-color:#dcdcdc;margin-left: 50px;">
-        <div class="form-row">
-          <div class="form-group col-md-5">
-            <label style="margin-left: 285px ;" for="rest_logo">Logo</label>
-<!--            <input type="file" id="rest_logo" name="logo">-->
-            <input class="form-control" type="file" name="rest_logo" id="rest_logo" accept="image/*" placeholder="Upload your logo"/>
           </div>
         </div>
 
@@ -182,18 +198,21 @@
           </div>
           <div class="form-group col-md-2">
             {{ render_field(form.rest_del5, class="form-control", placeholder="6.00") }}
-
           </div>
+<!--          <div class="form-group col-md-2">-->
+<!--            <button type="submit" class="btn btn-primary" style="margin-top: 33px">Update</button>-->
+<!--          </div>-->
+
         </div>
 
         <div class="form-group row">
           <div class="col-sm-2">
-    <button type="submit" class="btn btn-border-underline">Edit Restaurant Details</button>
-</td>         </div>
+            <button type="submit" class="btn btn-primary" style="margin-left: 420px">Update</button>
+          </div>
         </div>
       </div>
     </div>
 
   </form>
-{% endfor %}
+
 {% endblock %}
