@@ -1,0 +1,188 @@
+<!--xu yong lin-->
+{% extends "admin/admin_base.html" %}
+{% block title %}Admin Display Certification{% endblock %}
+
+{% block head %}
+    <style>
+        .btn {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .certdisplay {
+            width: 25%;
+        }
+
+        .modal {
+            font-color: black;
+            font-weight: normal;
+        }
+
+        #deletedisplay th {
+            width: 30%;
+            overflow: visible;
+        }
+
+        #deletedisplay td {
+            width: 70%;
+            overflow: visible;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="">
+        <h1>EXTENSION TO RESTAURANT DETAILS</h1>
+        <div>
+            {# hygiene cert #}
+            <table class="table" id="infodisplay"
+                   style="background-color: white">
+                <thead>
+                {% for cert in certificate_list %}
+                    <tr style="background-color: rgba(175, 97, 203,0.4)">
+                        <th scope="col" colspan="2">
+                            {{ cert.id }}'s Certificates
+                        </th>
+                        <th style="width:300px; display: flex; float:right;">
+                            <a href="/admin/updateCertification/{{ cert.id }}" class="btn btn-danger">Update</a>
+                            <form action="{{ url_for('delete_cert', id=cert.id) }}"
+                                  method="POST">
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                        data-bs-target="#myModal_{{ cert.id }}">
+                                    Delete
+                                </button>
+                                <!-- The Modal -->
+                                <div class="modal" id="myModal_{{ cert.id }}">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <!-- Modal Header -->
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Delete Confirmation</h4>
+                                                <button type="button" class="btn-close"
+                                                        data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <!-- Modal body -->
+                                            <div class="modal-body">
+                                                Are you sure you want to
+                                                delete
+                                                <bold>ALL</bold>
+                                                the certification of {{ cert.id }}?
+                                                <hr>
+                                                <p>Overview of {{ cert.id }}'s Certifications:
+                                                <table class="table" id="deletedisplay">
+                                                    <thead>
+                                                    <tr>
+                                                        <th scope="col">Certificate Name</th>
+                                                        <th scope="col">File name</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <th scope="row">Hygiene Certificate</th>
+                                                        <td>{{ cert.hygiene_cert }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Halal Certificate</th>
+                                                        {% if not cert.halal_cert %}
+                                                            <td>NIL</td>
+                                                        {% else %}
+                                                            <td>{{ cert.halal_cert }}</td>
+                                                        {% endif %}
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Vegetarian Certificate</th>
+                                                        {% if not cert.vegetarian_cert %}
+                                                            <td>NIL</td>
+                                                        {% else %}
+                                                            <td>{{ cert.vegetarian_cert }}</td>
+                                                        {% endif %}
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Vegan Certificate</th>
+                                                        {% if not cert.vegan_cert %}
+                                                            <td>NIL</td>
+                                                        {% else %}
+                                                            <td>{{ cert.vegan_cert }}</td>
+                                                        {% endif %}
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">No Pork No lard</th>
+                                                        <td>{{ cert.noPorknoLard }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">No Beef</th>
+                                                        <td>{{ cert.noBeef }}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                                </p>
+                                            </div>
+
+                                            <!-- Modal footer -->
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Cancel
+                                                </button>
+                                                <input type="submit" value="Delete" class="btn btn-danger" style="background-color: red !important;">
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td rowspan="6" style="background-color:rgba(56, 183, 78,0.4); width:20%;">{{ cert.id }}</td>
+                        <td class="certdisplay">Hygiene</td>
+                        <td>{{ cert.hygiene_cert }}</td>
+                    </tr>
+                    <tr>
+                        <td class="certdisplay">Halal</td>
+                        {% if not cert.halal_cert %}
+                            <td>NIL</td>
+                        {% else %}
+                            <td>{{ cert.halal_cert }}</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="certdisplay">Vegetarian</td>
+                        {# display vegetarian cert #}
+                        {% if not cert.vegetarian_cert %}
+                            <td>NIL</td>
+                        {% else %}
+                            <td>{{ cert.vegetarian_cert }}</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="certdisplay">Vegan</td>
+                        {# vegan cert #}
+                        {% if not cert.vegan_cert %}
+                            <td>NIL</td>
+                        {% else %}
+                            <td>{{ cert.vegan_cert }}</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="certdisplay">No Pork No Lard</td>
+                        <td>{{ cert.noPorknoLard }}</td>
+                    </tr>
+                    <tr>
+                        <td class="certdisplay">No Beef</td>
+                        <td>{{ cert.noBeef }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {# halal cert #}
+            {# vegetarian cert #}
+            {# no pork no lard indication #}
+            {# vegan cert #}
+            {# no beef indication #}
+        </div>
+    </div>
+
+{% endblock %}

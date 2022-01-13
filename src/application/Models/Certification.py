@@ -1,15 +1,15 @@
 # xu yong lin
 
 class Certification:
-    def __init__(self, hygiene_cert, halal, noPork_noLard, vegetarian, vegan, noBeef):
+    count_id = 1
+
+    def __init__(self, hygiene_cert=None, halal_cert=None, vegetarian_cert=None, vegan_cert=None, noPorknoLard=None,
+                 noBeef=None):
+        self.id = Certification.count_id
         self.hygiene_cert = hygiene_cert
-        self.halal = halal
-
-        self.noPork_noLard = noPork_noLard
-        self.vegetarian = vegetarian
-        self.vegan = vegan
+        self.halal_cert = halal_cert
+        self.vegetarian_cert = vegetarian_cert
+        self.vegan_cert = vegan_cert
+        self.noPorknoLard = noPorknoLard
         self.noBeef = noBeef
-
-    def set_halal_certified(self,halal):
-        self.halal = halal
-
+        Certification.count_id += 1

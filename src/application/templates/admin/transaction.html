@@ -3,175 +3,260 @@
 {% block title %}Admin Transaction History{% endblock %}
 
 {% block head %}
-  <style>
-      .settings {
-          display: inline;
-      }
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <!-- Bootstrap core JavaScript-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Page level plugin JavaScript-->
+    <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
+    <style>
+        h1 {
+            font-weight: bold;
+            position: relative;
+            left: 30px;
+            top: 20px;
+            text-decoration-line: underline;
+            font-size: 28px;
+            width: 150px;
+        }
 
-      #current {
-          text-decoration: underline;
-      }
+        .row {
+            margin: 0px;
+            width: 100%;
+        }
 
-      h1 {
-          font-weight: bold;
-          position: relative;
-          left: 30px;
-          top: 20px;
-          text-decoration-line: underline;
-          font-size: 28px;
-          width: 150px;
-      }
+        .display {
+            padding: 30px;
+        }
 
-      .display {
-          padding: 30px;
-      }
+        .table {
+            background-color: white;
+        }
 
-      .table {
-          background-color: white;
-      }
+        .highlight {
+            color: red;
+            font-weight: bold;
+        }
 
-      .highlight {
-          color: red;
-          font-weight: bold;
-      }
-  </style>
+        .modal {
+            font-color: black;
+            font-weight: normal;
+        }
+
+        .modal:hover {
+            font-color: black;
+            font-weight: normal;
+        }
+
+        #myTable td {
+            width: 250px;
+            overflow: visible;
+        }
+
+        #deletedisplay th {
+            width: 30%;
+            overflow: visible;
+        }
+
+        #deletedisplay td {
+            width: 70%;
+            overflow: visible;
+            font-weight: normal;
+        }
+
+    </style>
 {% endblock %}
 
 {% block content %}
-<div class="bodydiv">
-  <div id="settings">
-    <div class="settingsrow">
-      <h1>Dashboard</h1>
-      <!--      choosing of month to display(dropdown button)-->
-    </div>
-  </div>
-  <br>
-  <!--table-->
-  <div class="display">
-    <!--    table form to go back to dashboard? (might change to standardise with dashboard)-->
-    <div>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div class="navbar-nav">
-            <a class="nav-item nav-link" href="#">Dashboard</a>
-            <a class="nav-item nav-link active" href="#">Transaction <span
-                class="sr-only">(current)</span></a>
-          </div>
-        </div>
-      </nav>
-    </div>
-    <div class="table">
-      <table class="table table-hover">
-        <thead>
-        <tr>
-          <th scope="col">Transaction ID</th>
-          <th scope="col">Username</th>
-          <th scope="col">Option</th>
-          <th scope="col">Price</th>
-          <th scope="col">Coupons</th>
-          <th scope="col">Rating</th>
-          <th></th>
-          {# for delete button #}
-        </tr>
-        </thead>
-        <tbody>
-        {% for transaction in transaction_list %}
-        {% if not transaction.deleted %}
-          {# reading attributes from Transaction.py in each Class obj in transaction_list #}
-          {% if transaction.get_ratings() <= 2 %}
-            <tr class="highlight">
-              <td>{{ transaction.count_id }}</td>
-              <td>{{ transaction.account_name }}</td>
-              <td>{{ transaction.get_option() }}</td>
-              <td>{{ transaction.get_price() }}</td>
-              <td>{{ transaction.get_used_coupons() }}</td>
-              <td>{{ transaction.get_ratings() }}</td>
-              <td>
-                {#                                        <form action="{{ url_for('delete_transaction', id=transaction.count_id) }}"#}
-                {#                                              method="POST">#}
-                <form action="#" method="get">
-                  <!-- Button to Open the Modal -->
-                  <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                          data-bs-target="#myModal_{{ transaction.count_id }}">
-                    Delete
-                  </button>
-                  <!-- Vertically centered modal -->
-                  <div class="modal" id="myModal_{{ transaction.count_id }}">
-                    <div class="modal-dialog modal-dialog-centered">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title">Delete Confirmation</h5>
-                          <button type="button" class="btn-close"
-                                  data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                          <p>Are you sure you want to
-                            delete {{ transaction.account_name }}?</p>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary"
-                                  data-bs-dismiss="modal">Close
-                          </button>
-                          <a href="/admin/transaction/delete/{{ transaction.count_id }}">
-                            <input type="button" value="Delete" class="btn btn-danger">
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              </td>
-            </tr>
-          {% else %}
-            <tr class="trow">
-            <td>{{ transaction.count_id }}</td>
-            <td>{{ transaction.account_name }}</td>
-            <td>{{ transaction.get_option() }}</td>
-            <td>{{ transaction.get_price() }}</td>
-            <td>{{ transaction.get_used_coupons() }}</td>
-            <td>{{ transaction.get_ratings() }}</td>
-            <td>
-            <form action="" method="POST">
-            <!-- Button to Open the Modal -->
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                    data-bs-target="#myModal_{{ transaction.count_id }}">
-              Delete
-            </button>
-            <!-- Vertically centered modal -->
-            <div class="modal" id="myModal_{{ transaction.count_id }}">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title">Delete Confirmation</h5>
-                    <button type="button" class="btn-close"
-                            data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <p>Are you sure you want to
-                      delete {{ transaction.account_name }}?</p>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">Close
-                    </button>
-                    <a href="/admin/transaction/delete/{{ transaction.count_id }}">
-                      <input type="button" value="Delete" class="btn btn-danger">
-                    </a>
-                  </div>
-
-                </div>
-              </div>
+    <div class="bodydiv">
+        <div id="settings">
+            <div class="settingsrow">
+                <h1>Dashboard</h1>
             </div>
-          {% endif %}
-        </form>
-        </td>
-        </tr>
-        {% endif %}
-        {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
+        </div>
+        <br>
+        <!--table-->
+        <div class="display">
+            <!--    table form to go back to dashboard? (might change to standardise with dashboard)-->
+            <div class="table">
+                <table class="table table-hover" id="myTable">
+                    <thead>
+                    <tr>
+                        <th scope="col">Transaction ID</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Option</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Coupons</th>
+                        <th scope="col">Rating</th>
+                        <th></th>
+                        {# for delete button #}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for transaction in transaction_list %}
+                        {% if not transaction.deleted %}
+                            {# reading attributes from Transaction.py in each Class obj in transaction_list #}
+                            {% if transaction.get_ratings() <= 2 %}
+                                <tr class="highlight">
+                                    <td>{{ transaction.count_id }}</td>
+                                    <td>{{ transaction.account_name }}</td>
+                                    <td>{{ transaction.get_option() }}</td>
+                                    <td>{{ '%0.2f'% transaction.get_price()|float }}</td>
+                                    <td>{{ transaction.get_used_coupons() }}</td>
+                                    <td>{{ transaction.get_ratings() }}</td>
+                                    <td>
+                                        <form action="#" method="get">
+                                            <!-- Button to Open the Modal -->
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                                    data-bs-target="#myModal_{{ transaction.count_id }}">
+                                                Delete
+                                            </button>
+                                            <!-- Vertically centered modal -->
+                                            <div class="modal" id="myModal_{{ transaction.count_id }}">
+                                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Delete Confirmation</h5>
+                                                            <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Are you sure you want to
+                                                                delete {{ transaction.account_name }}?</p>
+                                                            <p>Transaction Details:</p>
+                                                            <table class="table" id="deletedisplay">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th scope="col">Transaction Details</th>
+                                                                    <th scope="col"></th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                <tr>
+                                                                    <th scope="row">Name</th>
+                                                                    <td>{{ transaction.account_name }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Option</th>
+                                                                    <td>{{ transaction.get_option() }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Transaction Amount</th>
+                                                                    <td>{{ '%0.2f'% transaction.get_price()|float }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Coupons Used</th>
+                                                                    <td>{{ transaction.get_used_coupons() }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th scope="row">Transaction Rating</th>
+                                                                    <td>{{ transaction.get_ratings() }}</td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Close
+                                                            </button>
 
-</div>
+                                                            {# soft delete transactions #}
+                                                            <a href="/admin/transaction/delete/{{ transaction.count_id }}">
+                                                                <input type="button" value="Delete"
+                                                                       class="btn btn-danger">
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                <td>{{ transaction.count_id }}</td>
+                                <td>{{ transaction.account_name }}</td>
+                                <td>{{ transaction.get_option() }}</td>
+                                <td>{{ '%0.2f'% transaction.get_price()|float }}</td>
+                                <td>{{ transaction.get_used_coupons() }}</td>
+                                <td>{{ transaction.get_ratings() }}</td>
+                                <td>
+                                <form action="" method="POST">
+                                <!-- Button to Open the Modal -->
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                        data-bs-target="#myModal_{{ transaction.count_id }}">
+                                    Delete
+                                </button>
+                                <!-- Vertically centered modal -->
+                                <div class="modal" id="myModal_{{ transaction.count_id }}">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Delete Confirmation</h5>
+                                                <button type="button" class="btn-close"
+                                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Are you sure you want to
+                                                    delete {{ transaction.account_name }}?</p>
+                                                <table class="table" id="deletedisplay">
+                                                    <thead>
+                                                    <tr>
+                                                        <th scope="col">Transaction Details</th>
+                                                        <th scope="col"></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr>
+                                                        <th scope="row">Name</th>
+                                                        <td>{{ transaction.account_name }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Option</th>
+                                                        <td>{{ transaction.get_option() }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Transaction Amount</th>
+                                                        <td>{{ '%0.2f'% transaction.get_price()|float }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Coupons Used</th>
+                                                        <td>{{ transaction.get_used_coupons() }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">Transaction Rating</th>
+                                                        <td>{{ transaction.get_ratings() }}</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Close
+                                                </button>
+                                                <a href="/admin/transaction/delete/{{ transaction.count_id }}">
+                                                    <input type="button" value="Delete" class="btn btn-danger">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </form>
+                        </td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#myTable').dataTable();
+        });
+    </script>
 {% endblock %}
