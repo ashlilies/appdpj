@@ -23,6 +23,13 @@ from application.Controllers.admin import *
 from application.Controllers.consumer import *
 
 
+# Handling Flask uploads.
+UPLOAD_FOLDER = 'static/uploads/'
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'pdf'])
 
 # CONSTANTS USED BY OUR PAGES
 # For stuff like colour schemes.

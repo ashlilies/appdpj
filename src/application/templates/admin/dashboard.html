@@ -22,13 +22,17 @@
 
 <script>
 const ctx = document.getElementById('income_vs_expense').getContext('2d');
+const yValues = "";
 const myChart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'], //x values (to input shelve)
+        labels: ['January', 'February', 'March', 'April', 'May', 'June','July','August','September', 'October', 'November','December'], //x values (to input shelve)
         datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],  //y values (to input from shelve)
+            label: '# of transactions',
+            // data: [12, 19, 3, 5, 2, 3],  //y values (to input from shelve)
+            data: [{
+              data: yValues
+            }],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',

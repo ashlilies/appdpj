@@ -32,7 +32,7 @@
     <tbody>
     {% for restaurant_object in restaurant %}
       <tr>
-        <td>{{ restaurant_object.get_id }}</td>
+        <td>{{ restaurant_object.get_logo() }}</td>
         <td>{{ restaurant_object.get_name() }}</td>
         <td>{{ restaurant_object.get_contact() }}</td>
         <td>{{ restaurant_object.get_open() }} TO {{ restaurant_object.get_close() }}</td>
