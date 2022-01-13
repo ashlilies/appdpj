@@ -8,7 +8,7 @@
   <style>
       div.scroll {
           background-color: #fed9ff;
-          width: 900px;
+      {#background-color: #ebddf1;#} width: 900px;
           height: 400px;
           overflow-x: hidden;
           overflow-y: auto;
@@ -19,6 +19,152 @@
           left: 150px;
 
       }
+
+      h1 {
+          color: red;
+      }
+
+      .model-header {
+          margin: 10px;
+
+      }
+
+      .modal-content {
+          background-color: #ffd1d1;
+          padding: 10px;
+      {#background-color: #ebddf1;#}
+      }
+
+
+      #uploadImage {
+          position: relative;
+          left: 50px;
+          width: 300px;
+          height: 300px;
+      }
+
+      #upload {
+          position: relative;
+          left: 70px;
+          bottom: 270px;
+          width: 300px;
+          height: 280px;
+      }
+
+      #foodNameLabel {
+          position: relative;
+          right: 25%;
+          top: 28px;
+      }
+
+      #name {
+          position: relative;
+          left: 550px;
+          width: 400px;
+          bottom: 290px;
+          height: 45px;
+      }
+
+      #priceLabel {
+          position: relative;
+          left: 180px;
+          bottom: 95px;
+      }
+
+      #price {
+          width: 400px;
+          height: 45px;
+          position: relative;
+          left: 277px;
+          bottom: 128px;
+      }
+
+      #allergyLabel {
+          position: relative;
+          left: 192px;
+          bottom: 75px;
+      }
+
+      #allergy {
+          width: 400px;
+          height: 45px;
+          position: relative;
+          left: 277px;
+          bottom: 108px;
+      }
+
+      /*specification label*/
+      #specificationLabel {
+          position: relative;
+          bottom: 100px;
+          left: 40px;
+      }
+
+      /*Original textbox*/
+      #newSpecification {
+          position: relative;
+          bottom: 90px;
+          left: 53px;
+          width: 190px;
+      }
+
+      /*additional textboxes*/
+      #specificationDiv {
+          position: relative;
+          bottom: 100px;
+          left: 50px;
+      }
+
+      /*plus button*/
+      #plus {
+          position: relative;
+          bottom: 94px;
+          left: 55px;
+      }
+
+      #descriptionLabel {
+          position: relative;
+          bottom: 60px;
+          left: 15px;
+      }
+
+      #description {
+          position: relative;
+          width: 800px;
+          left: 23px;
+          bottom: 53px;
+      }
+
+      #toppingLabel {
+          position: relative;
+          left: 450px;
+          bottom: 180px;
+      }
+
+      #newTopping {
+          position: relative;
+          left: 543px;
+          width: 190px;
+          bottom: 173px;
+      }
+
+      #plusTopping {
+          position: relative;
+          left: 540px;
+          bottom: 175px;
+      }
+
+      #toppingDiv {
+          position: relative;
+          left: 540px;
+          bottom: 185px;
+      }
+
+      #createFoodButton {
+          position: relative;
+          right: 380px;
+          top: 0px;
+      }
   </style>
 {% endblock %}
 
@@ -27,17 +173,18 @@
   <div class="scroll">
 
     <div>
-      <a class="btn btn-primary" data-bs-toggle="modal"
+      <a class="btn btn-primary" id="createFoodButton" data-bs-toggle="modal"
          href="#createFoodModalToggle" role="button">Add Food</a>
       <table class="table table-striped">
         <thead>
         <tr>
+          <th>Image</th>
           <th>Name</th>
           <th>Description</th>
-          <th>price</th>
+          <th>Price</th>
           <th>Allergy</th>
           <th>Specification</th>
-          <th>Remarks</th>
+          <th>Toppings</th>
           <th></th>
           <th></th>
         </tr>
@@ -45,15 +192,19 @@
         <tbody>
         {% for food in food_list %}
           <tr>
+            <td>{{ food.image }}</td>
             <td>{{ food.name }}</td>
             <td>{{ food.description }}</td>
             <td>{{ food.price }}</td>
             <td>{{ food.allergy }}</td>
-            <td>{{ food.specfication }}</td>
-
+            <td>{{ food.specification }}</td>
             <td>{{ food.topping }}</td>
-            <td><button onclick="location='/updateFood/{{ food.get_food_id() }}'"
-                   class="btn btn-warning">Update</button></td>
+
+            <td>
+              <button onclick="location='/updateFood/{{ food.get_food_id() }}'"
+                      class="btn btn-warning">Update
+              </button>
+            </td>
             <td>
               <form action="{{ url_for('delete_food', id=food.get_food_id()) }}"
                     method="POST">
@@ -75,8 +226,7 @@
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="createFoodModalToggleLabel">Create
-            User</h5>
+          <h5 class="modal-title" id="createFoodModalToggleLabel">Create Food Item</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"
                   aria-label="Close"></button>
         </div>
@@ -150,188 +300,6 @@
       </div>
 
     </div>
-    {# Script is for the adding new specifications and toppign to work #}
-    <script>
-
-
-        /* Global variables */
-        var specDiv;
-        var specificationId;
-        var maxSpecificationId;
-
-        function main() {
-            console.log("running main()");
-            /* Logic to generate new rows of text fields with unique IDs */
-            specDiv = document.getElementById("specificationDiv");
-            specificationId = 0;  /* defines the starting specification ID */
-            maxSpecificationId = {{ MAX_SPECIFICATION_ID }};  /* max. no of specifications */
-
-            addNewSpecificationRow();  /* generate the first row */
-        }
-
-        function addNewSpecificationRow() {
-            /* are there too many specifications already? */
-            if (specificationId > maxSpecificationId) {
-                console.log("Too many specifications - can't add more");
-                alert("Too many specifications (" + parseInt(maxSpecificationId + 1) + ")");
-                return;
-            }
-
-            /* get data from new specification text field */
-            spec = document.getElementById("newSpecification").value;
-
-            /* with the minus button */
-            var newWholeInputRow = document.createElement("div");
-
-            var newInputRow = document.createElement("input");
-            newInputRow.type = "text";
-            newInputRow.id = "specification" + specificationId;
-            newInputRow.name = "specification" + specificationId++;
-            newInputRow.style.margin = "4px";
-            newInputRow.style.borderRadius = "3px";
-            newInputRow.style.borderColor = "grey";
-            newInputRow.style.borderWidth = "thin";
-            newInputRow.value = spec;
-            newWholeInputRow.appendChild(newInputRow);
-
-            var minusButton = document.createElement("img");
-            minusButton.src = "{{ url_for("static",
-                               filename="foodManagement/minus-button.png") }}";
-            minusButton.style = "width: 20px; height: 20px; margin-left: 5px;"
-            minusButton.width = 20;
-            minusButton.height = 20;
-            minusButton.style.marginLeft = "5px";
-            minusButton.onclick = function () {
-                removeSpecificationRow(this);
-            };
-            newWholeInputRow.appendChild(minusButton);
-
-            /* finally we append the whole row to our div */
-            document.getElementById("specificationDiv")
-                .appendChild(newWholeInputRow);
-        }
-
-        /*
-         * Removes a specification row.
-         * But we have to re-set all the specification IDs in order,
-         * or it wouldn't work again :(
-         */
-        function removeSpecificationRow(thisMinusButton) {
-            let textBox = thisMinusButton.previousElementSibling;
-            console.log(thisMinusButton.previousElementSibling);
-
-            /* remove this whole input field */
-            thisMinusButton.parentElement.remove();
-
-            /*
-             * Reorder the IDs and decrement global counter
-             */
-            --specificationId;
-            let specDiv = document.getElementById("specificationDiv");
-
-            /* dig through the DOM and set the IDs accordingly */
-            let i = 0;
-            /* count */
-            for (i = 0; i < specDiv.childElementCount; i++) {
-                specDiv.childNodes[i].childNodes[0].id = "specification" + i;
-                specDiv.childNodes[i].childNodes[0].name = "specification" + i;
-            }
-        }
-
-
-        /*FOR ADDING TOPPINGS*/
-        /* Global variables */
-        var topDiv;
-        var toppingId;
-        var maxToppingId;
-
-
-        function mains() {
-            console.log("running mains()");
-            /* Logic to generate new rows of text fields with unique IDs */
-            topDiv = document.getElementById("toppingDiv");
-            toppingId = 0;  /* defines the starting topping ID */
-            maxToppingId = {{ MAX_TOPPING_ID }};  /* max. no of toppings */
-
-            addNewToppingRow();  /* generate the first row */
-        }
-
-        function addNewToppingRow() {
-            /* are there too many toppings already? */
-            if (toppingId > maxToppingId) {
-                console.log("Too many toppings - can't add more");
-                alert("Too many toppings (" + parseInt(maxToppingId + 1) + ")");
-                return;
-            }
-
-            /* get data from new topping text field */
-            tops = document.getElementById("newTopping").value;
-
-
-            /* with the minus button */
-            var wholeNewInputRow = document.createElement("div");
-
-            var newInputs = document.createElement("input");
-            newInputs.type = "text";
-            newInputs.id = "topping" + toppingId;
-            newInputs.name = "topping" + toppingId++;
-            newInputs.style.margin = "4px";
-            newInputs.style.borderRadius = "3px";
-            newInputs.style.borderColor = "grey";
-            newInputs.style.borderWidth = "thin";
-            newInputs.value = tops;
-            wholeNewInputRow.appendChild(newInputs);
-
-            var buttonMinus = document.createElement("img");
-            buttonMinus.src = "{{ url_for("static",
-                               filename="foodManagement/minus-button.png") }}";
-            buttonMinus.style = "width: 20px; height: 20px; margin-left: 5px;"
-            buttonMinus.width = 20;
-            buttonMinus.height = 20;
-            buttonMinus.style.marginLeft = "5px";
-            buttonMinus.onclick = function () {
-                removeToppingRow(this);
-            };
-            wholeNewInputRow.appendChild(buttonMinus);
-
-            /* finally we append the whole row to our div */
-            document.getElementById("toppingDiv")
-                .appendChild(wholeNewInputRow);
-
-        }
-
-        /*
-         * Removes a topping row.
-         * But we have to re-set all the topping IDs in order,
-         * or it wouldn't work again :(
-         */
-        function removeToppingRow(thisButtonMinus) {
-            let textBox = thisButtonMinus.previousElementSibling;
-            console.log(thisButtonMinus.previousElementSibling);
-
-            /* remove this whole input field */
-            thisButtonMinus.parentElement.remove();
-
-            /*
-             * Reorder the IDs and decrement global counter
-             */
-            --toppingId;
-            let topDiv = document.getElementById("toppingDiv");
-
-            /* dig through the DOM and set the IDs accordingly */
-            let i = 0;
-            /* count */
-            for (i = 0; i < topDiv.childElementCount; i++) {
-                topDiv.childNodes[i].childNodes[0].id = "topping" + i;
-                topDiv.childNodes[i].childNodes[0].name = "topping" + i;
-            }
-        }
-
-
-        document.addEventListener("DOMContentLoaded", mains);
-        document.addEventListener("DOMContentLoaded", main);
-
-    </script>
   </div>
 
 
@@ -341,8 +309,7 @@
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="updateFoodModalToggleLabel">Create
-            User</h5>
+          <h5 class="modal-title" id="updateFoodModalToggleLabel">Update Food Item</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"
                   aria-label="Close"></button>
         </div>
@@ -425,14 +392,14 @@
         var specificationId;
         var maxSpecificationId;
 
-        function main() {
-            console.log("running main()");
+        function spec_init() {
+            console.log("running spec_init()");
             /* Logic to generate new rows of text fields with unique IDs */
             specDiv = document.getElementById("specificationDiv");
             specificationId = 0;  /* defines the starting specification ID */
             maxSpecificationId = {{ MAX_SPECIFICATION_ID }};  /* max. no of specifications */
 
-            addNewSpecificationRow();  /* generate the first row */
+            {#addNewSpecificationRow();  /* generate the first row */#}
         }
 
         function addNewSpecificationRow() {
@@ -458,6 +425,7 @@
             newInputRow.style.borderColor = "grey";
             newInputRow.style.borderWidth = "thin";
             newInputRow.value = spec;
+            newInputRow.readonly = true
             newWholeInputRow.appendChild(newInputRow);
 
             var minusButton = document.createElement("img");
@@ -512,14 +480,14 @@
         var maxToppingId;
 
 
-        function mains() {
-            console.log("running mains()");
+        function topping_init() {
+            console.log("running topping_init()");
             /* Logic to generate new rows of text fields with unique IDs */
             topDiv = document.getElementById("toppingDiv");
             toppingId = 0;  /* defines the starting topping ID */
             maxToppingId = {{ MAX_TOPPING_ID }};  /* max. no of toppings */
 
-            addNewToppingRow();  /* generate the first row */
+            {#addNewToppingRow();  /* generate the first row */#}
         }
 
         function addNewToppingRow() {
@@ -531,7 +499,7 @@
             }
 
             /* get data from new topping text field */
-            tops = document.getElementById("newTopping").value;
+            var tops = document.getElementById("newTopping").value;
 
 
             /* with the minus button */
@@ -546,6 +514,7 @@
             newInputs.style.borderColor = "grey";
             newInputs.style.borderWidth = "thin";
             newInputs.value = tops;
+            newInputs.readonly = true
             wholeNewInputRow.appendChild(newInputs);
 
             var buttonMinus = document.createElement("img");
@@ -594,8 +563,8 @@
         }
 
 
-        document.addEventListener("DOMContentLoaded", mains);
-        document.addEventListener("DOMContentLoaded", main);
+        document.addEventListener("DOMContentLoaded", topping_init);
+        document.addEventListener("DOMContentLoaded", spec_init);
 
     </script>
   </div>
