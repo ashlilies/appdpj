@@ -12,7 +12,11 @@ class Admin(Account):
         # self.restaurant = Restaurant(restaurant_name)
         # TODO: Remove the temporary None ones once Ruri removes the others
         #       from Restaurant class.
-        self.restaurant = Restaurant(restaurant_name)
+        # self.restaurant = Restaurant(restaurant_name)
+        self.restaurant_id = None  # set later
+
+        # TODO: Remove temporary, until integration of Restaurant class
+        self.name = restaurant_name
 
         # todo:
         self.list_of_transactions = []
@@ -21,19 +25,24 @@ class Admin(Account):
                       "account_id=%s")
                      % (self.get_email(), self.restaurant_name,
                         self.account_id))
-        save_db()  # ALWAYS REMEMBER THIS!!!!!!!!
+        save_account_db()  # ALWAYS REMEMBER THIS!!!!!!!!
+
+    def set_name(self, new_name):
+        self.name = new_name
 
     # For backward-compatility after the latest merging of Restaurant class
     @property
     def restaurant_name(self) -> str:
-        return self.restaurant.name
+        # return self.restaurant.name  # TODO: uncomment after integration
+        return self.name
 
     @restaurant_name.setter
     def restaurant_name(self, new_name):
-        self.restaurant.name = new_name
-        save_db()
+        self.name = new_name
+        # self.restaurant.name = new_name
+        save_account_db()
 
     # Add a transaction to a shop's list
     def add_transaction(self, transaction):
         self.list_of_transactions.append(transaction)
-        save_db()
+        save_account_db()

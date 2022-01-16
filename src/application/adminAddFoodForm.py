@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, TextAreaField, validators
+from wtforms import Form, StringField, TextAreaField, DecimalField ,validators
 
 
 class CreateFoodForm(Form):
@@ -8,7 +8,7 @@ class CreateFoodForm(Form):
 
     description = TextAreaField('', [validators.Optional()])
 
-    price = TextAreaField('', [validators.Optional()])
+    price = DecimalField('', [validators.Optional()])
 
     allergy = TextAreaField('', [validators.Optional()])
     

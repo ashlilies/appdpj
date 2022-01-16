@@ -3,420 +3,492 @@
 
 
 {% block head %}
-<style>
-      h1{
-        color:red;
-      }
+    <style>
+        div.scroll {
+            background-color: #fed9ff;
+            width: 900px;
+            height: 400px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            top: 70px;
+            left: 150px;
 
-      .model-header{
-        margin:10px;
+        }
 
-      }
-      .modal-content{
-        background-color:#ffd1d1;
-        padding:10px;
-      }
+        h1 {
+            color: red;
+        }
 
+        .model-header {
+            margin: 10px;
 
-      #uploadImage{
-        position:relative;
-        left:50px;
-        width:300px;
-        height:300px;
-      }
+        }
 
-      #upload{
-        position:relative;
-        left:70px;
-        bottom:270px;
-        width:300px;
-        height:280px;
-      }
-      #foodNameLabel{
-        position:relative;
-        right:25%;
-        top:28px;
-      }
-      #name{
-        position:relative;
-        left:550px;
-        width:400px;
-        bottom: 290px;
-        height:45px;
-      }
-
-      #priceLabel{
-        position:relative;
-        left:180px;
-        bottom: 95px;
-      }
-      #price{
-        width:400px;
-        height:45px;
-        position:relative;
-        left:277px;
-        bottom: 128px;
-      }
-
-      #allergyLabel{
-        position:relative;
-        left:192px;
-        bottom: 75px;
-      }
-
-      #allergy{
-        width:400px;
-        height:45px;
-        position:relative;
-        left:277px;
-        bottom:108px;
-      }
-
-/*specification label*/
-      #specificationLabel{
-        position:relative;
-        bottom:100px;
-        left:40px;
-      }
-
-/*Original textbox*/
-      #newSpecification{
-        position:relative;
-        bottom:90px;
-        left:53px;
-        width:190px;
-      }
-
-/*additional textboxes*/
-      #specificationDiv{
-        position:relative;
-        bottom:100px;
-        left:50px;
-      }
-
-/*plus button*/
-    #plus{
-        position:relative;
-        bottom:94px;
-        left:55px;
-    }
-
-    #descriptionLabel{
-        position:relative;
-        bottom:60px;
-        left:15px;
-    }
-    #description{
-        position:relative;
-        width:800px;
-        left:23px;
-        bottom:53px;
-    }
-    #toppingLabel{
-        position:relative;
-        left:450px;
-        bottom:180px;
-    }
-    #newTopping{
-        position:relative;
-        left:530px;
-        width:190px;
-        bottom:173px;
-    }
-
-    #plusTopping{
-        position:relative;
-        left:540px;
-        bottom:175px;
-    }
-
-    #toppingDiv{
-        position:relative;
-        left:540px;
-        bottom:185px;
-    }
-
-</style>
+        .modal-content {
+            background-color: #ffd1d1;
+            padding: 10px;
+        }
 
 
+        #uploadImage {
+            position: relative;
+            left: 50px;
+            width: 300px;
+            height: 300px;
+        }
+
+        #upload {
+            position: relative;
+            left: 70px;
+            bottom: 270px;
+            width: 300px;
+            height: 280px;
+        }
+
+        #foodNameLabel {
+            position: relative;
+            right: 25%;
+            top: 28px;
+        }
+
+        #name {
+            position: relative;
+            left: 550px;
+            width: 400px;
+            bottom: 290px;
+            height: 45px;
+        }
+
+        #priceLabel {
+            position: relative;
+            left: 180px;
+            bottom: 95px;
+        }
+
+        #price {
+            width: 400px;
+            height: 45px;
+            position: relative;
+            left: 277px;
+            bottom: 128px;
+        }
+
+        #allergyLabel {
+            position: relative;
+            left: 192px;
+            bottom: 75px;
+        }
+
+        #allergy {
+            width: 400px;
+            height: 45px;
+            position: relative;
+            left: 277px;
+            bottom: 108px;
+        }
+
+        /*
+        specification label
+
+        */
+        #specificationLabel {
+            position: relative;
+            bottom: 100px;
+            left: 40px;
+        }
+
+        /*
+        Original textbox
+
+        */
+        #newSpecification {
+            position: relative;
+            bottom: 90px;
+            left: 53px;
+            width: 190px;
+        }
+
+        /*
+        additional textboxes
+
+        */
+        #specificationDiv {
+            position: relative;
+            bottom: 100px;
+            left: 50px;
+        }
+
+        /*
+        plus button
+
+        */
+        #plus {
+            position: relative;
+            bottom: 94px;
+            left: 55px;
+        }
+
+        #descriptionLabel {
+            position: relative;
+            bottom: 60px;
+            left: 15px;
+        }
+
+        #description {
+            position: relative;
+            width: 800px;
+            left: 23px;
+            bottom: 53px;
+        }
+
+        #toppingLabel {
+            position: relative;
+            left: 450px;
+            bottom: 180px;
+        }
+
+        #newTopping {
+            position: relative;
+            left: 543px;
+            width: 190px;
+            bottom: 173px;
+        }
+
+        #plusTopping {
+            position: relative;
+            left: 540px;
+            bottom: 175px;
+        }
+
+        #toppingDiv {
+            position: relative;
+            left: 540px;
+            bottom: 185px;
+        }
+
+    </style>
 
 
-<script>
 
 
-      /* Global variables */
-      var specDiv;
-      var specificationId;
-      var maxSpecificationId;
+    <script>
 
-      function main() {
-          console.log("running main()");
-          /* Logic to generate new rows of text fields with unique IDs */
-          specDiv = document.getElementById("specificationDiv");
-          specificationId = 0;  /* defines the starting specification ID */
-          maxSpecificationId = {{ MAX_SPECIFICATION_ID }};  /* max. no of specifications */
 
-          {#addNewSpecificationRow();  /* generate the first row */#}
-      }
+        /* Global variables */
+        var specDiv;
+        var specificationId;
+        var maxSpecificationId;
 
-      function addNewSpecificationRow() {
-          /* are there too many specifications already? */
-          if (specificationId > maxSpecificationId) {
-              console.log("Too many specifications - can't add more");
-              alert("Too many specifications (" + parseInt(maxSpecificationId+1) + ")");
-              return;
-          }
+        function main() {
+            console.log("running main()");
+            /* Logic to generate new rows of text fields with unique IDs */
+            specDiv = document.getElementById("specificationDiv");
+            specificationId = 0;  /* defines the starting specification ID */
+            maxSpecificationId = {{ MAX_SPECIFICATION_ID }};  /* max. no of specifications */
 
-          /* get data from new specification text field */
-          spec = document.getElementById("newSpecification").value;
+            addNewSpecificationRow();  /* generate the first row */
+            document.getElementById("showModalButton").click();
+        }
 
-          /* with the minus button */
-          var newWholeInputRow = document.createElement("div");
+        function addNewSpecificationRow() {
+            /* are there too many specifications already? */
+            if (specificationId > maxSpecificationId) {
+                console.log("Too many specifications - can't add more");
+                alert("Too many specifications (" + parseInt(maxSpecificationId + 1) + ")");
+                return;
+            }
 
-          var newInputRow = document.createElement("input");
-          newInputRow.type = "text";
-          newInputRow.id = "specification" + specificationId;
-          newInputRow.name = "specification" + specificationId++;
-          newInputRow.style.margin = "4px";
-          newInputRow.style.borderRadius = "3px";
-          newInputRow.style.borderColor = "grey";
-          newInputRow.style.borderWidth = "thin";
-          newInputRow.value = spec;
-          newWholeInputRow.appendChild(newInputRow);
+            /* get data from new specification text field */
+            spec = document.getElementById("newSpecification").value;
 
-          var minusButton = document.createElement("img");
-          minusButton.src = "{{ url_for("static",
+            /* with the minus button */
+            var newWholeInputRow = document.createElement("div");
+
+            var newInputRow = document.createElement("input");
+            newInputRow.type = "text";
+            newInputRow.id = "specification" + specificationId;
+            newInputRow.name = "specification" + specificationId++;
+            newInputRow.style.margin = "4px";
+            newInputRow.style.borderRadius = "3px";
+            newInputRow.style.borderColor = "grey";
+            newInputRow.style.borderWidth = "thin";
+            newInputRow.value = spec;
+            newWholeInputRow.appendChild(newInputRow);
+
+            var minusButton = document.createElement("img");
+            minusButton.src = "{{ url_for("static",
                                filename="foodManagement/minus-button.png") }}";
-          {#minusButton.style = "width: 20px; height: 20px; margin-left: 5px;"#}
-          minusButton.width = 20;
-          minusButton.height = 20;
-          minusButton.style.marginLeft = "5px";
-          minusButton.onclick = function() {
-              removeSpecificationRow(this);
-          };
-          newWholeInputRow.appendChild(minusButton);
+            minusButton.style = "width: 20px; height: 20px; margin-left: 5px;"
+            minusButton.width = 20;
+            minusButton.height = 20;
+            minusButton.style.marginLeft = "5px";
+            minusButton.onclick = function () {
+                removeSpecificationRow(this);
+            };
+            newWholeInputRow.appendChild(minusButton);
 
-          /* finally we append the whole row to our div */
-          document.getElementById("specificationDiv")
-              .appendChild(newWholeInputRow);
-      }
+            /* finally we append the whole row to our div */
+            document.getElementById("specificationDiv")
+                .appendChild(newWholeInputRow);
+        }
 
-      /*
-       * Removes a specification row.
-       * But we have to re-set all the specification IDs in order,
-       * or it wouldn't work again :(
-       */
-      function removeSpecificationRow(thisMinusButton) {
-          {#let textBox = thisMinusButton.previousElementSibling;#}
-          {#console.log(thisMinusButton.previousElementSibling);#}
+        /*
+         * Removes a specification row.
+         * But we have to re-set all the specification IDs in order,
+         * or it wouldn't work again :(
+         */
+        function removeSpecificationRow(thisMinusButton) {
+            let textBox = thisMinusButton.previousElementSibling;
+            console.log(thisMinusButton.previousElementSibling);
 
-          /* remove this whole input field */
-          thisMinusButton.parentElement.remove();
+            /* remove this whole input field */
+            thisMinusButton.parentElement.remove();
 
-          /*
-           * Reorder the IDs and decrement global counter
-           */
-          --specificationId;
-          let specDiv = document.getElementById("specificationDiv");
+            /*
+             * Reorder the IDs and decrement global counter
+             */
+            --specificationId;
+            let specDiv = document.getElementById("specificationDiv");
 
-          /* dig through the DOM and set the IDs accordingly */
-          let i = 0;
-          /* count */
-          for (i = 0; i < specDiv.childElementCount; i++) {
-              specDiv.childNodes[i].childNodes[0].id = "specification" + i;
-              specDiv.childNodes[i].childNodes[0].name = "specification" + i;
-          }
-      }
-
-
+            /* dig through the DOM and set the IDs accordingly */
+            let i = 0;
+            /* count */
+            for (i = 0; i < specDiv.childElementCount; i++) {
+                specDiv.childNodes[i].childNodes[0].id = "specification" + i;
+                specDiv.childNodes[i].childNodes[0].name = "specification" + i;
+            }
+        }
 
 
-/*FOR ADDING TOPPINGS*/
- /* Global variables */
-      var topDiv;
-      var toppingId;
-      var maxToppingId;
+        /*FOR ADDING TOPPINGS*/
+        /* Global variables */
+        var topDiv;
+        var toppingId;
+        var maxToppingId;
 
 
-      function mains() {
-          console.log("running mains()");
-          /* Logic to generate new rows of text fields with unique IDs */
-          topDiv = document.getElementById("toppingDiv");
-          toppingId = 0;  /* defines the starting topping ID */
-          maxToppingId = {{ MAX_TOPPING_ID }};  /* max. no of toppings */
+        function mains() {
+            console.log("running mains()");
+            /* Logic to generate new rows of text fields with unique IDs */
+            topDiv = document.getElementById("toppingDiv");
+            toppingId = 0;  /* defines the starting topping ID */
+            maxToppingId = {{ MAX_TOPPING_ID }};  /* max. no of toppings */
 
-          {#addNewToppingRow();  /* generate the first row */#}
-      }
+            addNewToppingRow();  /* generate the first row */
+        }
 
-      function addNewToppingRow() {
-          /* are there too many toppings already? */
-          if (toppingId > maxToppingId) {
-              console.log("Too many toppings - can't add more");
-              alert("Too many toppings (" + parseInt(maxToppingId+1) + ")");
-              return;
-          }
+        function addNewToppingRow() {
+            /* are there too many toppings already? */
+            if (toppingId > maxToppingId) {
+                console.log("Too many toppings - can't add more");
+                alert("Too many toppings (" + parseInt(maxToppingId + 1) + ")");
+                return;
+            }
 
-          /* get data from new topping text field */
-          tops = document.getElementById("newTopping").value;
+            /* get data from new topping text field */
+            tops = document.getElementById("newTopping").value;
 
 
-          /* with the minus button */
-          var wholeNewInputRow = document.createElement("div");
+            /* with the minus button */
+            var wholeNewInputRow = document.createElement("div");
 
-          var newInputs = document.createElement("input");
-          newInputs.type = "text";
-          newInputs.id = "topping" + toppingId;
-          newInputs.name = "topping" + toppingId++;
-          newInputs.style.margin = "4px";
-          newInputs.style.borderRadius = "3px";
-          newInputs.style.borderColor = "grey";
-          newInputs.style.borderWidth = "thin";
-          newInputs.value = tops;
-          wholeNewInputRow.appendChild(newInputs);
+            var newInputs = document.createElement("input");
+            newInputs.type = "text";
+            newInputs.id = "topping" + toppingId;
+            newInputs.name = "topping" + toppingId++;
+            newInputs.style.margin = "4px";
+            newInputs.style.borderRadius = "3px";
+            newInputs.style.borderColor = "grey";
+            newInputs.style.borderWidth = "thin";
+            newInputs.value = tops;
+            wholeNewInputRow.appendChild(newInputs);
 
-          var buttonMinus = document.createElement("img");
-          buttonMinus.src = "{{ url_for("static",
+            var buttonMinus = document.createElement("img");
+            buttonMinus.src = "{{ url_for("static",
                                filename="foodManagement/minus-button.png") }}";
-          {#buttonMinus.style = "width: 20px; height: 20px; margin-left: 5px;"#}
-          buttonMinus.width = 20;
-          buttonMinus.height = 20;
-          buttonMinus.style.marginLeft = "5px";
-          buttonMinus.onclick = function() {
-              removeToppingRow(this);
-          };
-          wholeNewInputRow.appendChild(buttonMinus);
+            buttonMinus.style = "width: 20px; height: 20px; margin-left: 5px;"
+            buttonMinus.width = 20;
+            buttonMinus.height = 20;
+            buttonMinus.style.marginLeft = "5px";
+            buttonMinus.onclick = function () {
+                removeToppingRow(this);
+            };
+            wholeNewInputRow.appendChild(buttonMinus);
 
-          /* finally we append the whole row to our div */
-          document.getElementById("toppingDiv")
-              .appendChild(wholeNewInputRow);
+            /* finally we append the whole row to our div */
+            document.getElementById("toppingDiv")
+                .appendChild(wholeNewInputRow);
 
-      }
+        }
 
-      /*
-       * Removes a topping row.
-       * But we have to re-set all the topping IDs in order,
-       * or it wouldn't work again :(
-       */
-      function removeToppingRow(thisButtonMinus) {
-          {#let textBox = thisButtonMinus.previousElementSibling;#}
-          {#console.log(thisButtonMinus.previousElementSibling);#}
+        /*
+         * Removes a topping row.
+         * But we have to re-set all the topping IDs in order,
+         * or it wouldn't work again :(
+         */
+        function removeToppingRow(thisButtonMinus) {
+            let textBox = thisButtonMinus.previousElementSibling;
+            console.log(thisButtonMinus.previousElementSibling);
 
-          /* remove this whole input field */
-          thisButtonMinus.parentElement.remove();
+            /* remove this whole input field */
+            thisButtonMinus.parentElement.remove();
 
-          /*
-           * Reorder the IDs and decrement global counter
-           */
-          --toppingId;
-          let topDiv = document.getElementById("toppingDiv");
+            /*
+             * Reorder the IDs and decrement global counter
+             */
+            --toppingId;
+            let topDiv = document.getElementById("toppingDiv");
 
-          /* dig through the DOM and set the IDs accordingly */
-          let i = 0;
-          /* count */
-          for (i = 0; i < topDiv.childElementCount; i++) {
-              topDiv.childNodes[i].childNodes[0].id = "topping" + i;
-              topDiv.childNodes[i].childNodes[0].name = "topping" + i;
-          }
-      }
+            /* dig through the DOM and set the IDs accordingly */
+            let i = 0;
+            /* count */
+            for (i = 0; i < topDiv.childElementCount; i++) {
+                topDiv.childNodes[i].childNodes[0].id = "topping" + i;
+                topDiv.childNodes[i].childNodes[0].name = "topping" + i;
+            }
+        }
 
 
-      document.addEventListener("DOMContentLoaded", mains);
-      document.addEventListener("DOMContentLoaded", main);
+        document.addEventListener("DOMContentLoaded", mains);
+        document.addEventListener("DOMContentLoaded", main);
 
-</script>
+    </script>
 {% endblock %}
 
 
 {% block content %}
-{% from "includes/_formHelper.html" import render_field %}
+    {% from "includes/_formHelper.html" import render_field %}
 
-<h1>HELO I AM CLARA NG KHAI EHAARN FREAK U</h1>
-<!--POP UP MODEL-->
+    {#    <div class="scroll">#}
+    {##}
+    {#        <div>#}
+    {#            <table class="table table-striped">#}
+    {#                <thead>#}
+    {#                <tr>#}
+    {#                    <th>Name</th>#}
+    {#                    <th>Description</th>#}
+    {#                    <th>price</th>#}
+    {#                    <th>Allergy</th>#}
+    {#                    <th>Specification</th>#}
+    {#                    <th>Remarks</th>#}
+    {#                    <th></th>#}
+    {#                    <th></th>#}
+    {#                </tr>#}
+    {#                </thead>#}
+    {#                <tbody>#}
+    {#                {% for food in food_list %}#}
+    {#                    <tr>#}
+    {#                        <td>{{ food.name }}</td>#}
+    {#                        <td>{{ food.description }}</td>#}
+    {#                        <td>{{ food.price }}</td>#}
+    {#                        <td>{{ food.allergy }}</td>#}
+    {#                        <td>{{ food.specfication }}</td>#}
+    {##}
+    {#                        <td>{{ food.topping }}</td>#}
+    {#                        <td><a href="/updateFood/{{food.get_food_id()}}" class="btn btn-warning">Update</a>#}
+    {#                        <td>#}
+    {#                                   <form action="{{url_for('delete_food', id=food.get_food_id())}}" method="POST">#}
+    {#                                <input type="submit" value="Delete" class="btn btn-danger">#}
+    {#                            </form>#}
+    {#                        </td>#}
+    {#                    </tr>#}
+    {#                {% endfor %}#}
+    {#                </tbody>#}
+    {#            </table>#}
+    {#        </div>#}
+    {##}
+    {#    </div>#}
+    <!--POP UP MODEL-->
 
 
-<div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
-     tabindex="-1">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalToggleLabel">Create User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-                <form method="POST" action="">
-
-                <div class="mb-3">
-                  <input class="form-control" type="file" name="image" id="uploadImage" accept="image/*" placeholder="Upload Image Here" required/>
+    <div class="modal fade" id="exampleModalToggle" aria-hidden="false" aria-labelledby="exampleModalToggleLabel"
+         data-backdrop="static" data-keyboard="false"
+         tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalToggleLabel">Create Food</h5>
                 </div>
-                    <div class="form-group" id="name">
-                        <label id="foodNameLabel">Food name:</label>{{ render_field(form.item_name,
-                        class="form-control") }}
-                    </div>
+                <div class="modal-body">
 
-                    <div class="form-group" id="price">
-                        <label id="priceLabel">Price(SGD):</label>{{ render_field(form.price, class="form-check",
-                        style="list-style-type:none") }}
-                    </div>
+                    <form method="POST" action="">
 
-
-                    <div id="prof">
-                        <div class="form-group" id="allergy">
-                            <label id="allergyLabel">Allergies:</label>{{ render_field(form.allergy,
-                            class="form-control") }}
+                        <div class="mb-3">
+                            <input class="form-control" type="file" name="image" id="uploadImage" accept="image/*"
+                                   placeholder="Upload Image Here" required/>
                         </div>
-                    </div>
-
-
-
-                    <div class="mb-3">
-                        <label id="specificationLabel" class="form-label">Specification:</label>
-                        <div id="specificationDiv"></div>
-                        <!-- Only to be used for JS. Not to be sent to our server! -->
-                        <input type="text" id="newSpecification"
-                               placeholder="Type specification here...">
-                        <label for="newSpecification">
-                            <img id="plus" src={{ url_for("static",
-                            filename="foodManagement/plus-button.png") }}
-                            onclick="addNewSpecificationRow()"
-                            style="width: 20px; height: 20px;"/>
-                        </label>
-                    </div>
-                    <div class="mb-3">
-                        <label id="toppingLabel" class="form-label">Add/Remove Topping:</label>
-                        <div id="toppingDiv"></div>
-                        <!-- Only to be used for JS. Not to be sent to our server! -->
-                        <input type="text" id="newTopping"
-                               placeholder="Type toppings here...">
-                        <label for="newTopping">
-                            <img id="plusTopping" src={{ url_for("static",
-                            filename="foodManagement/plus-button.png") }}
-                            onclick="addNewToppingRow()"
-                            style="width: 20px; height: 20px;"/>
-                        </label>
-                    </div>
-
-
-
-
-                    <div class="form-group" id="description">
-                        <label id="descriptionLabel">Description:</label>{{ render_field(form.description,
+                        <div class="form-group" id="name">
+                            <label id="foodNameLabel">Food name:</label>{{ render_field(form.item_name,
                         class="form-control") }}
-                    </div>
+                        </div>
+
+                        <div class="form-group" id="price">
+                            <label id="priceLabel">Price(SGD):</label>{{ render_field(form.price, class="form-check",
+                        style="list-style-type:none") }}
+                        </div>
 
 
+                        <div id="prof">
+                            <div class="form-group" id="allergy">
+                                <label id="allergyLabel">Allergies:</label>{{ render_field(form.allergy,
+                            class="form-control") }}
+                            </div>
+                        </div>
 
-                    <input type="submit" value="Submit" class="btn btn-primary"/>
-                </form>
+
+                        <div class="mb-3">
+                            <label id="specificationLabel" class="form-label">Specification:</label>
+                            <div id="specificationDiv"></div>
+                            <!-- Only to be used for JS. Not to be sent to our server! -->
+                            <input type="text" id="newSpecification"
+                                   placeholder="Type specification here...">
+                            <label for="newSpecification">
+                                <img id="plus" src={{ url_for("static",
+                            filename="foodManagement/plus-button.png") }}
+                                        onclick="addNewSpecificationRow()"
+                                     style="width: 20px; height: 20px;"/>
+                            </label>
+                        </div>
+                        <div class="mb-3">
+                            <label id="toppingLabel" class="form-label">Add/Remove Topping:</label>
+                            <div id="toppingDiv"></div>
+                            <!-- Only to be used for JS. Not to be sent to our server! -->
+                            <input type="text" id="newTopping"
+                                   placeholder="Type toppings here...">
+                            <label for="newTopping">
+                                <img id="plusTopping" src={{ url_for("static",
+                            filename="foodManagement/plus-button.png") }}
+                                        onclick="addNewToppingRow()"
+                                     style="width: 20px; height: 20px;"/>
+                            </label>
+                        </div>
+
+
+                        <div class="form-group" id="description">
+                            <label id="descriptionLabel">Description:</label>{{ render_field(form.description,
+                        class="form-control") }}
+                        </div>
+
+
+                        <input type="submit" value="Submit" class="btn btn-primary"/>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal"
+                            data-bs-dismiss="modal">Open second modal
+                    </button>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal"
-                        data-bs-dismiss="modal">Open second modal
-                </button>
-            </div>
+
         </div>
-
     </div>
-</div>
-<a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Open first modal</a>
+    {#<a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Open first modal</a>#}
+    <button id="showModalButton" hidden type="button" class="btn btn-primary" data-bs-toggle="modal"
+            data-bs-target="#exampleModalToggle">
+        Launch demo modal
+    </button>
+    {# Load the modal now #}
 {% endblock %}

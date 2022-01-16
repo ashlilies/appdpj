@@ -31,7 +31,7 @@
           document.getElementById("tosAgree").style.boxShadow = "0 2px #77777777";
           document.getElementById("tosLabel").style.color = "var(--bs-body-color)";
 
-          if ((pw1.value !== pw2.value) || pw1.value === "" || pw2.value === ""){
+          if ((pw1.value !== pw2.value) || pw1.value === "" || pw2.value === "") {
               err = 1;
               pw1.style.boxShadow = "0 2px #ff000077";
               pw2.style.boxShadow = "0 2px #ff000077";
@@ -62,10 +62,17 @@
           margin-left: auto;
           margin-right: 0;
           padding: 2rem;
+          flex-direction: row-reverse;
           width: 50%;
           background-color: rgba(200, 112, 231, 0.6);
 
           height: 70%;
+      }
+
+      #logo-pane {
+          margin: 2rem;
+          margin-left: 0.1rem;
+          margin-right: auto;
       }
 
       #login-pane > form {
@@ -104,6 +111,10 @@
 
 {% endblock %}
 {% block content %}
+  <div id="mainContent" class="d-flex">
+  <div id="logo-pane">
+    <img src="{{ url_for("static", filename="account/accountpage_logo.jpg") }}" alt="FoodyPulse Logo">
+  </div>
   <div id="login-pane">
     <h2>Sign Up</h2>
     <form action="" method="post" class="login-form" id="registerForm">
@@ -121,7 +132,7 @@
       <label for="password"><img
           src={{ url_for("static", filename="account/padlock.png") }}/></label>
       <input type="password" name="password" id="password"
-             placeholder="Password" required><br>
+             placeholder="Password (4-20 chars)" required><br>
       <label for="passwordAgain"><img
           src={{ url_for("static", filename="account/padlock.png") }}/></label>
       <input type="password" name="passwordAgain" id="passwordAgain"
@@ -133,5 +144,6 @@
       </label><br>
       <input type="button" value="Sign Up" id="submitButton" onclick="validateRegistrationInput()"><br>
     </form>
+  </div>
   </div>
 {% endblock %}

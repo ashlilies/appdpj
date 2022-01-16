@@ -2,22 +2,43 @@
 # Do NOT run directly. Run main.py in the appdpj/src/ directory instead.
 
 # New routes go here, not in __init__.
-import flask
-from flask import render_template, request, redirect, url_for, session, flash
+import datetime
+import traceback
+
+from flask import render_template, request, redirect, url_for, session, flash, Flask
+from flask_login import logout_user
+
+from application.CouponForms import CreateCouponForm
 from application.Models.Admin import *
+from application.Models.CouponSystem import CouponSystem
 from application.Models.Certification import Certification
 from application.Models.Food import Food
 from application.Models.Restaurant import Restaurant
-from application import app, DB_NAME
+from application import app, DB_NAME, login_manager
 from application.Models.Transaction import Transaction
 from application.adminAddFoodForm import CreateFoodForm
-
+from werkzeug.utils import secure_filename
+from application.Controllers.restaurant_controller import *
 # from application.restaurantCertification import DocumentUploadForm
 import shelve, os
-from application.rest_details_form import RestaurantDetailsForm
+import uuid
+from application.rest_details_form import *
+
+# Ruri's imported libraries
+import urllib.request
+import os
+from werkzeug.utils import secure_filename
+
+
 
 
 # <------------------------- ASHLEE ------------------------------>
+# Our Login Manager
+@login_manager.user_loader
+def load_user(user_id):
+    return Account.get_account_by_id(user_id)  # Fetch user from the database
+
+
 @app.route("/admin")
 @app.route("/admin/home")
 def admin_home():  # ashlee
@@ -41,6 +62,7 @@ def admin_login():  # ashlee
             # user entered correct credentials
             # TODO Link dashboard or something from here
             session["account_id"] = login.account_id
+            session["coupon_systems_active_idx"] = login.account_id - 1
             return redirect(url_for("admin_home"))
         return login_error()
     return render_template("admin/login.html")
@@ -65,12 +87,15 @@ def admin_register():  # ashlee
                 and request.form["email"] != ""  # not blank email
                 and request.form["name"] != ""  # not blank restaurant name
                 and request.form["password"] != ""  # not blank pw
-                and request.form["password"] == request.form["passwordAgain"]):
+                and request.form["password"] == request.form["passwordAgain"]
+                and len(request.form["password"]) >= 4
+                and len(request.form["password"]) <= 20):
             try:
                 account = Admin(request.form["name"], request.form["email"],
                                 request.form["password"])
             except Exception as e:
                 logging.info("admin_register: error %s" % e)
+                traceback.print_exc()
                 return reg_error(e)  # handle errors here
         else:
             return reg_error()
@@ -79,20 +104,41 @@ def admin_register():  # ashlee
         # TODO: Link dashboard or something
         # TODO: Set flask session
         session["account_id"] = account.account_id
-        return redirect(url_for("admin_home"))
+
+        # TEMPORARY FOR WEEK 13
+        coupon_systems_list = []
+
+        with shelve.open("coupon", 'c') as db:
+            if "coupon_systems" in db:
+                coupon_systems_list = db["coupon_systems"]
+            else:
+                coupon_systems_list.append(CouponSystem())
+
+        coupon_systems_list.append(CouponSystem())
+        session["coupon_systems_active_idx"] = account.account_id-1
+
+        with shelve.open("coupon", 'c') as db:
+            db["coupon_systems"] = coupon_systems_list
+
+        return redirect(url_for("admin_myrestaurant"))
 
     return render_template("admin/register.html")
 
 
 @app.route("/admin/logout")
 def admin_logout():
-    if "account_id" in session:
-        logging.info("admin_logout(): Admin %s logged out"
-                     % gabi(session["account_id"]).get_email())
-        del session["account_id"]
-    else:
-        logging.info("admin_logout(): Failed logout - lag or click twice")
+    # TODO: Replace with flask-login
+    try:
+        if "account_id" in session:
+            logging.info("admin_logout(): Admin %s logged out"
+                         % gabi(session["account_id"]).get_email())
+            del session["account_id"]
+        else:
+            raise Exception("account_id not valid in session")
+    except Exception as e:
+        logging.info("admin_logout(): Failed logout - lag or click twice (%s)" % e)
 
+    logout_user()
     return redirect(url_for("admin_home"))
 
 
@@ -103,39 +149,47 @@ def admin_update_account():
     #       and update restaurant name
 
     if request.method == "GET":
-        return "fail"
+        flash("fail")
+        return redirect(url_for("admin_home"))
     if not is_account_id_in_session():
-        return "fail"
+        flash("fail")
+        return redirect(url_for("admin_home"))
 
     # Check if current password entered was correct
     if not is_account_id_in_session() \
             .check_password_hash(request.form["updateSettingsPw"]):
-        return "Current Password is Wrong"
+        flash("Current Password is Wrong")
+        return redirect(url_for("admin_home"))
 
     response = ""
+    if "changeName" in request.form:
+        if request.form["changeName"] != "":
+            flash("Successfully updated account name from %s to %s"
+                  % (getattr(is_account_id_in_session(), "name"),
+                     request.form["changeName"]))
+            is_account_id_in_session().restaurant_name = request.form["changeName"]
+
     if "changeEmail" in request.form:
         if request.form["changeEmail"] != "":
             result = (is_account_id_in_session()
                       .set_email(request.form["changeEmail"]))
             if result == Account.EMAIL_CHANGE_SUCCESS:
-                response = ("%sSuccessfully updated email<br>" % response)
+                flash("Successfully updated email")
             elif result == Account.EMAIL_CHANGE_ALREADY_EXISTS:
-                response = ("%sFailed updating email, Email already Exists<br>"
-                            % response)
+                flash("Failed updating email, Email already Exists")
             elif result == Account.EMAIL_CHANGE_INVALID:
-                response = ("%sFailed updating email, email is Invalid<br>"
-                            % response)
+                flash("Failed updating email, email is Invalid")
 
     if "changePw" in request.form:
         if request.form["changePw"] != request.form["changePwConfirm"]:
-            response = ("%sConfirm Password does not match Password<br>"
-                        % response)
+            flash("Confirm Password does not match Password")
         elif request.form["changePw"] != "":
             is_account_id_in_session() \
                 .set_password_hash(request.form["changePw"])
-            response = "%sSuccessfully updated Password<br>" % response
+            flash("Successfully updated password")
 
-    return response
+    save_account_db()
+    return redirect(url_for("admin_home"))
 
 
 # IAIIS - is logged in?
@@ -156,6 +210,16 @@ def is_account_id_in_session() -> Account or None:  # for flask
 def gabi(account_id) -> Account:  # for flask
     return Account.get_account_by_id(account_id)
 
+
+@app.route("/admin/deleteAccount")
+def delete_admin_account():
+    if is_account_id_in_session():
+        is_account_id_in_session().hard_delete_account()
+        flash("Successfully deleted your account")
+    else:
+        flash("Failed to delete your account!")
+
+    return redirect(url_for("admin_logout"))
 
 # Get ADMIN account by ID
 # def gaabi(account_id):  # for our internal use to make other Flask functions
@@ -186,10 +250,160 @@ app.jinja_env.globals.update(
 app.jinja_env.globals.update(get_account_email=get_account_email)
 
 
+# for testing only - to remove on final!
+@app.route("/admin/coupon/createExamples")
+def admin_coupon_add_examples():
+    coupon_systems_list = []
+
+    with shelve.open("coupon", 'c') as db:
+        if "coupon_systems" in db:
+            coupon_systems_list = db["coupon_systems"]
+        else:
+            coupon_systems_list.append(CouponSystem())
+
+    # TEMPORARY FOR WEEK 13 ONLY
+    # session["coupon_systems_active_idx"] = 0
+    active_coupon_system_idx = session["coupon_systems_active_idx"]
+
+    coupon_systems_list[active_coupon_system_idx].new_coupon("FoodyPulse3",
+                                                             ["All: Spaghetti"],
+                                                             CouponSystem.Discount.PERCENTAGE_OFF,
+                                                             10,
+                                                             (datetime.datetime.datetime(2022, 3, 1)))
+
+    coupon_systems_list[active_coupon_system_idx].new_coupon("Meowbie9",
+                                                             ["All: Drinks"],
+                                                             CouponSystem.Discount.PERCENTAGE_OFF,
+                                                             20,
+                                                             (datetime.datetime.datetime(2022, 1, 21)))
+
+    coupon_systems_list[active_coupon_system_idx].new_coupon("CnySpecial",
+                                                             ["All: Drinks"],
+                                                             CouponSystem.Discount.FIXED_PRICE,
+                                                             3.5,
+                                                             (datetime.datetime.datetime(2022, 2, 14)))
+
+    with shelve.open("coupon", 'c') as db:
+        db["coupon_systems"] = coupon_systems_list
+
+    return redirect(url_for("admin_coupon_management"))
+
+
+@app.route("/admin/coupon")
+def admin_coupon_management():
+    # TODO: Replace with flask-login
+    # if not logged in, need to login first
+    if not is_account_id_in_session():
+        return redirect(url_for("admin_login"))
+
+    coupon_systems_list = []
+
+    with shelve.open("coupon", 'c') as db:
+        if "coupon_systems" in db:
+            coupon_systems_list = db["coupon_systems"]
+        else:
+            coupon_systems_list.append(CouponSystem())
+
+    # TEMPORARY FOR WEEK 13 ONLY
+    # session["coupon_systems_active_idx"] = 0
+    active_coupon_system_idx = session["coupon_systems_active_idx"]
+    selected_system = coupon_systems_list[active_coupon_system_idx]
+
+    with shelve.open("coupon", 'c') as db:
+        db["coupon_systems"] = coupon_systems_list
+
+    return render_template("admin/retrieveCoupons.html",
+                           len=len,
+                           coupon_list=selected_system.list_of_coupons)
+
+
+@app.route("/admin/addCoupon", methods=["GET", "POST"])
+def admin_coupon_add():  # todo
+    # TODO: Replace with flask-login
+    # if not logged in, need to login first
+    if not is_account_id_in_session():
+        return redirect(url_for("admin_login"))
+
+    create_coupon_form = CreateCouponForm()
+    if request.method == "POST" and create_coupon_form.validate():
+        coupon_systems_list = []
+
+        with shelve.open("coupon", 'c') as db:
+            if "coupon_systems" in db:
+                coupon_systems_list = db["coupon_systems"]
+            else:
+                coupon_systems_list.append(CouponSystem())
+
+        active_coupon_system_idx = session["coupon_systems_active_idx"]
+        cs = coupon_systems_list[active_coupon_system_idx]
+
+        discount_type = (CouponSystem.Discount.FIXED_PRICE if
+                         create_coupon_form.discount_type.data == "fp" else
+                         CouponSystem.Discount.PERCENTAGE_OFF)
+
+        cs.new_coupon(create_coupon_form.coupon_code.data,
+                      create_coupon_form.food_items.data,
+                      discount_type,
+                      create_coupon_form.discount_amount.data,
+                      create_coupon_form.expiry.data)
+
+        with shelve.open("coupon", 'c') as db:
+            db["coupon_systems"] = coupon_systems_list
+
+        return redirect(url_for("admin_coupon_management"))
+    else:
+        return render_template("admin/createCoupon.html", form=create_coupon_form)
+
+
+@app.route("/admin/updateCoupon/<int:idx>")  # index of in coupon systems
+def admin_coupon_update(idx):  # todo: handle active systems
+    # TODO: Replace with flask-login
+    # if not logged in, need to login first
+    if not is_account_id_in_session():
+        return redirect(url_for("admin_login"))
+
+    flash("Under Construction")
+    return redirect(url_for("admin_coupon_management"))
+
+
+@app.route("/admin/deleteCoupon/<int:id>", methods=["GET", "POST"])
+def admin_coupon_delete(id):  # todo: handle active systems
+    # TODO: Replace with flask-login
+    # if not logged in, need to login first
+    if not is_account_id_in_session():
+        return redirect(url_for("admin_login"))
+
+    coupon_systems_list = []
+
+    with shelve.open("coupon", 'c') as db:
+        if "coupon_systems" in db:
+            coupon_systems_list = db["coupon_systems"]
+        else:
+            coupon_systems_list.append(CouponSystem())
+
+    active_coupon_system_idx = session["coupon_systems_active_idx"]
+    cs = coupon_systems_list[active_coupon_system_idx]
+
+    for coupon in cs.list_of_coupons:
+        if coupon.id == id:
+            cs.list_of_coupons.remove(coupon)
+
+    with shelve.open("coupon", 'c') as db:
+        db["coupon_systems"] = coupon_systems_list
+
+    return redirect(url_for("admin_coupon_management"))
+
+
 # <------------------------- CLARA ------------------------------>
 # APP ROUTE TO FOOD MANAGEMENT clara
 @app.route("/admin/foodManagement")
 def food_management():
+    create_food_form = CreateFoodForm(request.form)
+
+    # For the add food form
+    MAX_SPECIFICATION_ID = 2  # for adding food
+    MAX_TOPPING_ID = 3
+
     food_dict = {}
     with shelve.open("foodypulse", "c") as db:
         try:
@@ -200,18 +414,22 @@ def food_management():
         except Exception as e:
             logging.error("create_food: error opening db (%s)" % e)
 
-    # storing the food keys in food_dict into a new list for displaying and deleting
+    # storing the food keys in food_dict into a new list for displaying and
+    # deleting
     food_list = []
     for key in food_dict:
         food = food_dict.get(key)
         food_list.append(food)
 
     return render_template('admin/foodManagement.html',
+                           create_food_form=create_food_form,
+                           MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
+                           MAX_TOPPING_ID=MAX_TOPPING_ID,
                            food_list=food_list)
 
 
-MAX_SPECIFICATION_ID = 5  # for adding food
-MAX_TOPPING_ID = 8
+MAX_SPECIFICATION_ID = 2  # for adding food
+MAX_TOPPING_ID = 3
 
 
 # ADMIN FOOD FORM clara
@@ -263,24 +481,27 @@ def create_food():
             # Create a new food object
             food = Food(request.form["image"], create_food_form.item_name.data,
                         create_food_form.description.data,
-                        create_food_form.price.data, create_food_form.allergy.data)
+                        create_food_form.price.data,
+                        create_food_form.allergy.data)
 
             food.specification = get_specs()  # set specifications as a List
             food.topping = get_top()  # set topping as a List
-            food_dict[food.get_food_id()] = food  # set the food_id as key to store the food object
+            food_dict[food.get_food_id()] = food  # set the food_id as key to store
+            # the food object
             db['food'] = food_dict
 
         # writeback
         with shelve.open("foodypulse", 'c') as db:
             db['food'] = food_dict
 
-        return redirect(url_for('admin_home'))
+        return redirect(url_for('food_management'))
 
     return render_template('admin/addFoodForm.html', form=create_food_form,
                            MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
                            MAX_TOPPING_ID=MAX_TOPPING_ID, )
 
 
+# Note from Ashlee: when doing integration, please prefix all URLs with /admin/
 @app.route('/deleteFood/<int:id>', methods=['POST'])
 def delete_food(id):
     food_dict = {}
@@ -292,39 +513,122 @@ def delete_food(id):
     return redirect(url_for('food_management'))
 
 
-@app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
+# Note from Ashlee: when doing integration, please prefix all URLs with /admin/
 # save new specification and list
-
+@app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
 def update_food(id):
     update_food_form = CreateFoodForm(request.form)
-
     if request.method == 'POST' and update_food_form.validate():
         food_dict = {}
-        with shelve.open("foodypulse", 'w') as db:
-            food_dict = db['food']
+        try:
+            with shelve.open("foodypulse", 'w') as db:
+                food_dict = db['food']
+                food = food_dict.get(id)
+                # food.set_image(request.form["image"])
+                food.set_name(update_food_form.item_name.data)
+                food.set_description(update_food_form.description.data)
+                food.set_price(update_food_form.price.data)
+                food.set_allergy(update_food_form.allergy.data)
+                db["food"] = food_dict
+        except Exception as e:
+            logging.error("update_customer: %s" % e)
+            print("an error has occured in update customer")
 
-            food = food_dict.get(id)
-            food.set_name(update_food_form.item_name.data)
-            food.set_description(update_food_form.description.data)
-            food.set_price(update_food_form.price.data)
-            food.set_allergy(update_food_form.allergy.data)
-
-            db['food'] = food_dict
-
-        return redirect(url_for('food_management'))
+        return redirect("/admin/foodManagement")
     else:
         food_dict = {}
-        with shelve.open("foodypulse", 'r') as db:
-            food_dict = db['food']
+        try:
+            with shelve.open("foodypulse", 'r') as db:
+                food_dict = db['food']
 
-        food = food_dict.get(id)
-        update_food_form.item_name.data = food.get_item_name()
-        update_food_form.description.data = food.get_description()
-        update_food_form.price.data = food.get_price()
-        update_food_form.allergy.data = food.get_allergy()
+                food = food_dict.get(id)
+                # food.uploadImage = request.form.get("image")
+                update_food_form.item_name.data = food.get_name()
+                update_food_form.description.data = food.get_description()
+                update_food_form.price.data = food.get_price()
+                update_food_form.allergy.data = food.get_allergy()
 
-        return render_template('updateFood.html', form=update_food_form)
+                # for food in food_dict:
+                #     food.get_specification()
+                #     food.get_topping()
+                #
+        except:
+            print("Error occured when update food")
 
+        return render_template('admin/updateFood.html',
+                               form=update_food_form,
+                               MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
+                               MAX_TOPPING_ID=MAX_TOPPING_ID)
+
+
+# @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
+#
+# #save new specification and list
+#
+# def update_food(id):
+#     update_food_form = CreateFoodForm(request.form)
+#
+#     # get specifications as a List, no WTForms
+#     def get_specs() -> list:
+#         specs = []
+#
+#         # do specifications exist in first place?
+#         for i in range(MAX_SPECIFICATION_ID + 1):
+#             if "specification%d" % i in request.form:
+#                 specs.append(request.form["specification%d" % i])
+#             else:
+#                 break
+#
+#         logging.info("create_food: specs is %s" % specs)
+#         return specs
+#
+#         # get toppings as a List, no WTForms
+#
+#     def get_top() -> list:
+#         top = []
+#
+#         # do toppings exist in first place?
+#         for i in range(MAX_TOPPING_ID + 1):
+#             if "topping%d" % i in request.form:
+#                 top.append(request.form["topping%d" % i])
+#             else:
+#                 break
+#
+#         logging.info("create_food: top is %s" % top)
+#         return top
+#
+#
+#     if request.method == 'POST' and update_food_form.validate():
+#         food_dict = {}
+#         with shelve.open("foodypulse", 'w') as db:
+#             food_dict = db['food']
+#
+#             food = food_dict.get(id)
+#             food.set_image(request.form["image"])
+#             food.set_name(update_food_form.item_name.data)
+#             food.set_description(update_food_form.description.data)
+#             food.set_price(update_food_form.price.data)
+#             food.set_allergy(update_food_form.allergy.data)
+#             food.specification = get_specs()  # set specifications as a List
+#             food.topping = get_top()  # set topping as a List
+#
+#             db['food'] = food_dict
+#
+#         return redirect(url_for('food_management'))
+#     else:
+#         food_dict = {}
+#         with shelve.open("foodypulse", 'r') as db:
+#             food_dict = db['food']
+#
+#         food = food_dict.get(id)
+#         update_food_form.item_name.data = food.get_name()
+#         update_food_form.description.data = food.get_description()
+#         update_food_form.price.data = food.get_price()
+#         update_food_form.allergy.data = food.get_allergy()
+#         food.specification = get_specs()  # set specifications as a List
+#         food.topping = get_top()  # set topping as a List
+#
+#         return render_template('admin/updateFood.html', form=update_food_form)
 
 # <------------------------- YONG LIN ------------------------------>
 # YL: for transactions -- creating of dummy data
@@ -338,7 +642,7 @@ def create_example_transactions():
     t1 = Transaction()
     t1.account_name = 'Yong Lin'
     t1.set_option('Delivery')
-    t1.set_price('absae')
+    t1.set_price(50.30)
     t1.set_used_coupons('SPAGETIT')
     t1.set_ratings(2)
     transaction_list.append(t1)
@@ -348,14 +652,14 @@ def create_example_transactions():
     t2.set_option('Dine-in')
     t2.set_price(80.90)
     t2.set_used_coupons('50PASTA')
-    t2.set_ratings('yooo')
+    t2.set_ratings(5)
     transaction_list.append(t2)
 
     t3 = Transaction()  # t3
     t3.account_name = 'Hosea'
     t3.set_option('Delivery')
     t3.set_price(20.10)
-    t3.set_used_coupons('')
+    t3.set_used_coupons('50PASTA')
     t3.set_ratings(1)
     transaction_list.append(t3)
 
@@ -524,7 +828,8 @@ def admin_transaction():
             if transaction_id == transaction.count_id:
                 return transaction
 
-    return render_template("admin/transaction.html", count=len(transaction_list),
+    return render_template("admin/transaction.html",
+                           count=len(transaction_list),
                            transaction_list=transaction_list)
 
 
@@ -763,69 +1068,221 @@ def delete_cert(id):
 
 
 # <------------------------- RURI ------------------------------>
-@app.route('/admin/myRestaurant', methods=['GET', 'POST'])
+# C (Create)
+@app.route('/admin/create-restaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
-    restaurant_details_form = RestaurantDetailsForm(request.form)
-    restaurants_dict = {}
+    restaurant_details_form = RestaurantDetailsForm(
+        request.form)  # Using the Create Restaurant Form
+    create_restaurant = Restaurant_controller()  # Creating a controller /
+    # The controller will be the place where we do all the interaction
     if request.method == 'POST' and restaurant_details_form.validate():
-        db = shelve.open(DB_NAME, 'c')
-        try:
-            restaurants_dict = db['Restaurants']
-        except Exception as e:
-            logging.error("Error in retrieving Restaurants from "
-                          "restaurants.db (%s)" % e)
+        #  The Below code is using one of the controller's method
+        #  "Create_restaurant"
+        # It's passing in the form argument to instantiate the restaurant object
+        restaurant_id = uuid.uuid4().hex
+        create_restaurant.create_restaurant(
+            restaurant_id,
+            restaurant_details_form.rest_name.data,
+            request.form["rest_logo"],
+            restaurant_details_form.rest_contact.data,
+            restaurant_details_form.rest_hour_open.data,
+            restaurant_details_form.rest_hour_close.data,
+            restaurant_details_form.rest_address1.data,
+            restaurant_details_form.rest_address2.data,
+            restaurant_details_form.rest_postcode.data,
+            restaurant_details_form.rest_desc.data,
+            restaurant_details_form.rest_bank.data,
+            restaurant_details_form.rest_del1.data,
+            restaurant_details_form.rest_del2.data,
+            restaurant_details_form.rest_del3.data,
+            restaurant_details_form.rest_del4.data,
+            restaurant_details_form.rest_del5.data
+        )
+        # flask_login.current_user.restaurant = restaurant_id
+        # Once done, it'll redirect to the home page
+        return redirect(url_for('admin_home'))
+    restaurants_dict = {}
+    # if request.method == 'POST' and restaurant_details_form.validate():
+    #     db = shelve.open(DB_NAME, 'c')
+    #     try:
+    #         restaurants_dict = db['Restaurants']
+    #     except Exception as e:
+    #         logging.error("Error in retriedb file doesn't existving
+    #         Restaurants from "
+    #                       "restaurants.db (%s)" % e)
 
-        restaurant = Restaurant(request.form["rest_logo"],
-                                # request.form["alltasks"],
-                                restaurant_details_form.rest_name.data,
-                                restaurant_details_form.rest_contact.data,
-                                restaurant_details_form.rest_hour_open.data,
-                                restaurant_details_form.rest_hour_close.data,
-                                restaurant_details_form.rest_address1.data,
-                                restaurant_details_form.rest_address2.data,
-                                restaurant_details_form.rest_postcode.data,
-                                restaurant_details_form.rest_desc.data,
-                                restaurant_details_form.rest_bank.data,
-                                restaurant_details_form.rest_del1.data,
-                                restaurant_details_form.rest_del2.data,
-                                restaurant_details_form.rest_del3.data,
-                                restaurant_details_form.rest_del4.data,
-                                restaurant_details_form.rest_del5.data)
-        restaurants_dict[restaurant.name] = restaurant
-        db['Restaurants'] = restaurants_dict
+    # user_id = session["account_id"]
+    # user_object = Restaurant_controller()
+    # get_user_object = user_object.find_user_by_id(user_id)
 
-        db.close()
+    # restaurant = Restaurant(uuid.uuid4().hex,
+    #                         # request.form["alltasks"],
+    #                         restaurant_details_form.rest_name.data,
+    #                         request.form["rest_logo"],
+    #                         restaurant_details_form.rest_contact.data,
+    #                         restaurant_details_form.rest_hour_open.data,
+    #                         restaurant_details_form.rest_hour_close.data,
+    #                         restaurant_details_form.rest_address1.data,
+    #                         restaurant_details_form.rest_address2.data,
+    #                         restaurant_details_form.rest_postcode.data,
+    #                         restaurant_details_form.rest_desc.data,
+    #                         restaurant_details_form.rest_bank.data,
+    #                         restaurant_details_form.rest_del1.data,
+    #                         restaurant_details_form.rest_del2.data,
+    #                         restaurant_details_form.rest_del3.data,
+    #                         restaurant_details_form.rest_del4.data,
+    #                         restaurant_details_form.rest_del5.data)
+    #
+    # # print(uuid.uuid4().hex())
+    # restaurants_dict[restaurant.get_id()] = restaurant
+    # db['Restaurants'] = restaurants_dict
+    # db.close()
+    # return redirect(url_for('admin_home'))
 
-    return render_template("admin/restaurant.html", form=restaurant_details_form)
+    return render_template("admin/restaurant.html",
+                           form=restaurant_details_form,
+                           restaurant=all_restaurant())
 
 
-# #
-# @app.route('admin/myrestaurant', methods=['GET', 'POST'])
-# def create_customer():
-#     create_customer_form: CreateCustomerForm = CreateCustomerForm(request.form)
-#     if request.method == 'POST' and create_customer_form.validate():
-#         customers_dict = {}
-#         db = shelve.open('customer.db', 'c')
+# R (Read)
+# This is the route that displays all the relevant restaurant details
+@app.route('/admin/my-restaurantV2')
+def view_restaurant():
+    return render_template('admin/myrestaurantv2.html',
+                           restaurant=all_restaurant())
+
+
+# U (Update Form) # This route is to showcase the update route
+# This route contains the form that allows us to update the restaurant details
+@app.route('/updateRestaurant/<id>', methods=['GET', 'POST'])
+def update_restaurant(id):
+    edit_restaurant = RestaurantDetailsForm(request.form)
+    restaurant = filter(lambda r: r.get_id() == id,
+                        all_restaurant())  # Array Filtering that allows me
+    # to track which restaurant the restaurant belongs to for example (ID 1
+    # == ID 1)
+    # This lambda is a callback function, it's pretty much comparing if the
+    # ID of the restaurant is equal to our id argument
+    if request.method == 'POST' and edit_restaurant.validate():
+        return render_template('updateuserv2.html', form=edit_restaurant,
+                               restaurant=restaurant)
+    return render_template('updateuserv2.html', form=edit_restaurant,
+                           restaurant=all_restaurant())
+
+
+# U (Update)
+@app.route('/updateRestaurantConfirm/<id>', methods=['GET', 'POST'])
+def update_restaurant_confirm(id):
+    edit_restaurant = RestaurantDetailsForm(request.form)
+    editing_restaurant = Restaurant_controller()
+    if request.method == 'POST' and edit_restaurant.validate():
+        editing_restaurant.edit_restaurant(
+            id,
+            edit_restaurant.rest_name.data,
+            request.form["rest_logo"],
+            edit_restaurant.rest_contact.data,
+            edit_restaurant.rest_hour_open.data,
+            edit_restaurant.rest_hour_close.data,
+            edit_restaurant.rest_address1.data,
+            edit_restaurant.rest_address2.data,
+            edit_restaurant.rest_postcode.data,
+            edit_restaurant.rest_desc.data,
+            edit_restaurant.rest_bank.data,
+            edit_restaurant.rest_del1.data,
+            edit_restaurant.rest_del2.data,
+            edit_restaurant.rest_del3.data,
+            edit_restaurant.rest_del4.data,
+            edit_restaurant.rest_del5.data
+        )
+    return redirect(url_for('view_restaurant'))
+
+
+@app.route('/admin/my-restaurant')
+def retrieve_restaurant():
+    restaurants_dict = {}
+    db = shelve.open(DB_NAME, 'r')
+    restaurants_dict = db['Restaurants']
+    db.close()
+    restaurants_list = []
+    for key in restaurants_dict:
+        restaurant = restaurants_dict.get(key)
+        restaurants_list.append(restaurant)
+
+    return render_template('admin/myrestaurant.html',
+                           count=len(restaurants_list),
+                           restaurants_list=restaurants_list)
+
+
+# @app.route('/updateRestaurant/<int:id>/', methods=['GET', 'POST'])
+# def update_restaurant(id):
+#     update_restaurant_form = RestaurantDetailsForm(request.form)
+#     if request.method == 'POST' and update_restaurant_form.validate():
+#         users_dict = {}
+#         db = shelve.open('restaurant.db', 'w')
+#         restaurants_dict = db['Users']
 #
-#         try:
-#             customers_dict = db['Customers']
-#         except:
-#             print("Error in retrieving Customers from customer.db.")
+#         user = users_dict.get(id)
+#         user.set_first_name(update_restaurant_form.first_name.data)
+#         user.set_last_name(update_restaurant_form.last_name.data)
+#         user.set_gender(update_restaurant_form.gender.data)
+#         user.set_membership(update_restaurant_form.membership.data)
+#         user.set_remarks(update_restaurant_form.remarks.data)
 #
-#         customer = Customer.Customer(create_customer_form.first_name.data, create_customer_form.last_name.data,
-#                                      create_customer_form.gender.data, create_customer_form.membership.data,
-#                                      create_customer_form.remarks.data, create_customer_form.email.data,
-#                                      create_customer_form.date_joined.data,
-#                                      create_customer_form.address.data, )
-#         customers_dict[customer.get_customer_id()] = customer
-#         db['Customers'] = customers_dict
-#
+#         db['Restaurants'] = restaurants_dict
 #         db.close()
 #
-#         return redirect(url_for('home'))
-#     return render_template('includes/createCustomer.html', form=create_customer_form)
-
+#         return redirect(url_for('retrieve_users'))
+#     else:
+#         users_dict = {}
+#         db = shelve.open('user.db', 'r')
+#         users_dict = db['Users']
+#         db.close()
+#
+#         user = users_dict.get(id)
+#         update_user_form.first_name.data = user.get_first_name()
+#         update_user_form.last_name.data = user.get_last_name()
+#         update_user_form.gender.data = user.get_gender()
+#         update_user_form.membership.data = user.get_membership()
+#         update_user_form.remarks.data = user.get_remarks()
+#
+#         return render_template('updateUser.html', form=update_user_form)
 
 @app.route("/admin/dashboard")
 def dashboard():  # ruri
     return render_template("admin/dashboard.html")
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[
+        1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route('/', methods=['POST'])
+def upload_image():
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect(request.url)
+    file = request.files['file']
+    if file.filename == '':
+        flash('No image selected for uploading')
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        # print('upload_image filename: ' + filename)
+        flash('Image successfully uploaded and displayed below')
+        return render_template('index.html', filename=filename)
+    else:
+        flash('Allowed image types are - png, jpg, jpeg, gif')
+        return redirect(request.url)
+
+
+@app.route('/display/<filename>')
+def display_image(filename):
+    # print('display_image filename: ' + filename)
+    return redirect(url_for('static', filename='uploads/' + filename), code=301)
+
+
+if __name__ == "__main__":
+    app.run()
+

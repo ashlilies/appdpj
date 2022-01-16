@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Library Loan System - Retrieve Users{% endblock %}
+
+{% block content %}
+<h1 class="display-4">Retrieve Users</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no users.</p>
+  {% elif count == 1 %}
+  <p>There is 1 user.</p>
+  {% else %}
+  <p>There are {{ count }} users.</p>
+  {% endif %}
+</div>
+
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Gender</th>
+        <th>Membership</th>
+        <th>Remarks</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for restaurant in restaurants_list %}
+      <tr>
+        <td>{{ restaurant.get_name() }}</td>
+        <td>{{ restaurant.get_contact() }}</td>
+        <td>{{ restaurant.get_logo() }}</td>
+        <td>{{ restaurant.get_open() }}</td>
+        <td>{{ restaurant.get_close() }}</td>
+
+<!--        {% if restaurant.get_membership() == 'F' %}-->
+<!--        <td>Fellow</td>-->
+<!--        {% elif restaurant.get_membership() == 'S' %}-->
+<!--        <td>Senior</td>-->
+<!--        {% elif user.get_membership() == 'P' %}-->
+<!--        <td>Professional</td>-->
+<!--        {% endif %}-->
+
+    {% endfor %}
+</div>
+{% endblock %}

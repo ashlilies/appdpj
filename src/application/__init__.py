@@ -1,12 +1,17 @@
 # IF YOU'RE HERE: New routes go in Controllers > admin or consumer!
 
 from flask import Flask, render_template, request, redirect, url_for
+from flask_login import LoginManager
 
 app = Flask(__name__)
 app.secret_key = "doofypulseEngineers"  # used for stuff e.g. Flask sessions
 
 # The name of our db file. Syntax: with shelve.open(DB_NAME, 'c') as db:
 DB_NAME = "foodypulse"
+
+# Initialize our login manager.
+login_manager = LoginManager()
+login_manager.init_app(app)  # app is a Flask object
 
 from application.Forms import CreateUserForm, CreateCustomerForm
 import shelve
@@ -18,6 +23,13 @@ from application.Controllers.admin import *
 from application.Controllers.consumer import *
 
 
+# Handling Flask uploads.
+UPLOAD_FOLDER = 'static/uploads/'
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'pdf'])
 
 # CONSTANTS USED BY OUR PAGES
 # For stuff like colour schemes.
@@ -38,7 +50,7 @@ logging.info("Logger configured!")
 # after the app quits, we save all databases -ashlee
 def exit_handler():
     logging.info("Exit Handler: Stopping Flask! Saving db...")
-    save_db()
+    save_account_db()
 
 
 atexit.register(exit_handler)

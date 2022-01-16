@@ -58,7 +58,7 @@
 
 
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('contact_us') }}">Coupons</a>
+              <a class="nav-link" href="{{ url_for('admin_coupon_management') }}">Coupons</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('contact_us') }}">Menu</a>
@@ -161,6 +161,12 @@
                       <input type="password" name="updateSettingsPw" id="updateSettingsPw"><br>
                       <hr>
                       <div class="form-group row">
+                        <label for="changeName">Current Name: <b>{{ is_account_id_in_session().name }}</b></label>
+                        <label for="changeName" class="col-form-label">New Name: </label>
+                        <input type="text" name="changeName" id="changeName"><br>
+                      </div>
+                      <hr>
+                      <div class="form-group row">
                         <label for="changeEmail">Current Email: <b>{{ get_account_email(is_account_id_in_session()) }}</b></label>
                         <label for="changeEmail" class="col-form-label">New Email: </label>
                         <input type="text" name="changeEmail" id="changeEmail"><br>
@@ -173,9 +179,16 @@
                       <label for="changePwConfirm" class="col-form-label">Confirm Password: </label>
                       <input type="password" name="changePwConfirm" id="changePwConfirm"><br>
                       </div>
+
+                      {# TODO: FOR Deletion only! Hidden! #}
+                      <label hidden for="deleteAccountField"></label>
+                      <input hidden type="text" name="deleteAccountField" id="deleteAccountField">
                     </form>
                   </div>
                   <div class="modal-footer">
+                    <div class="d-flex align-items-start">
+                      <button type="button" class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
+                    </div>
                     <button type="button" class="btn btn-primary" onclick="updateAccount()">Save changes</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                   </div>
@@ -187,6 +200,10 @@
             <script>
               function updateAccount() {
                 document.getElementById("accountSettingsForm").submit();
+              }
+              function deleteAccount() {
+                  if (confirm("Are you REALLY SURE you want to delete your account? This cannot be undone!"))
+                      window.location.href = "{{ url_for("delete_admin_account") }}";
               }
             </script>
           {% endif %}

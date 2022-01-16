@@ -4,7 +4,7 @@
 import logging
 import re   # regex
 
-
+from flask_login import login_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import shelve
 
@@ -51,7 +51,8 @@ class Account:
 
         logging.info("BaseAccount: Successfully created account, email=%s"
                      % email)
-        save_db()
+        save_account_db()
+        # login_user(self)   TODO: Install flask-login
 
     # Str: returns email of any account easily.
     def __str__(self):
@@ -69,7 +70,10 @@ class Account:
                              "checking pw...")
                 if check_password_hash(account.__password_hash, password):
                     logging.info("BaseAccount: Correct email and pw!")
+                    # TODO: Support flask-login everywhere.
+                    # login_user(account, remember=False)
                     return account  # return account obj if correct pw
+
                 logging.warning("BaseAccount: Email exists, wrong pw")
 
         logging.warning("BaseAccount: No email-pw match found in db")
@@ -118,14 +122,14 @@ class Account:
             return self.__class__.EMAIL_CHANGE_ALREADY_EXISTS
 
         account.__email = email
-        save_db()
+        save_account_db()
         return self.__class__.EMAIL_CHANGE_SUCCESS
 
     def set_password_hash(self, password):  # update the password
         logging.info("BaseAccount: Updating pw hash for %s" % self.__email)
         self.__password_hash = generate_password_hash(password=password,
                                                       method='sha256')
-        save_db()
+        save_account_db()
 
     def check_password_hash(self, password) -> bool:
         logging.info("BaseAccount: Checking pw hash for %s" % self.__email)
@@ -134,10 +138,24 @@ class Account:
     # Returns a pointer to an account, or None if not found
     @classmethod
     def get_account_by_id(cls, account_id):
+        load_db()
         for account in cls.list_of_accounts:
             if account.account_id == account_id:
                 return account
         return None
+
+    def hard_delete_account(self):
+        for account in Account.list_of_accounts:
+            if self.account_id == account.account_id:
+                Account.list_of_accounts.remove(account)
+                del account
+                save_account_db()
+                return
+
+    # # why do i even need this...
+    # @property
+    # def is_active(self):
+    #     return True if not self.disabled else False
 
 
 # TODO: Please change to foodypulse .db?
@@ -153,7 +171,7 @@ def load_db():
                         % (db["count_id"], len(db["list_of_accounts"])))
 
 
-def save_db():
+def save_account_db():
     Account.log("Attempting to save db (count_id=%s, len(list_of_accs)=%s)..."
                 % (Account.count_id, len(Account.list_of_accounts)))
     with shelve.open(DB_NAME, 'c') as db:
