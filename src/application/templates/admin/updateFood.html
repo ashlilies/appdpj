@@ -1,5 +1,5 @@
 {% extends "admin/admin_base.html" %}
-{% block title %}Food Mnagement {% endblock %}
+{% block title %}Food Management {% endblock %}
 
 
 {% block head %}
@@ -182,14 +182,14 @@
         var specificationId;
         var maxSpecificationId;
 
-        function main() {
-            console.log("running main()");
+        function spec_init() {
+            console.log("running spec_init()");
             /* Logic to generate new rows of text fields with unique IDs */
             specDiv = document.getElementById("specificationDiv");
             specificationId = 0;  /* defines the starting specification ID */
             maxSpecificationId = {{ MAX_SPECIFICATION_ID }};  /* max. no of specifications */
 
-            addNewSpecificationRow();  /* generate the first row */
+            {#addNewSpecificationRow();  /* generate the first row */#}
             document.getElementById("showModalButton").click();
         }
 
@@ -270,14 +270,14 @@
         var maxToppingId;
 
 
-        function mains() {
-            console.log("running mains()");
+        function topping_init() {
+            console.log("running topping_init()");
             /* Logic to generate new rows of text fields with unique IDs */
             topDiv = document.getElementById("toppingDiv");
             toppingId = 0;  /* defines the starting topping ID */
             maxToppingId = {{ MAX_TOPPING_ID }};  /* max. no of toppings */
 
-            addNewToppingRow();  /* generate the first row */
+            {#addNewToppingRow();  /* generate the first row */#}
         }
 
         function addNewToppingRow() {
@@ -351,9 +351,29 @@
             }
         }
 
+        function load_specs() {
+            let spec_id = 0;  /* current specification id */
 
-        document.addEventListener("DOMContentLoaded", mains);
-        document.addEventListener("DOMContentLoaded", main);
+            {% for spec in food.specification %}
+                addNewSpecificationRow();
+                document.getElementById("specification" + spec_id++).value = "{{ spec }}";
+                console.log("loading specification {{ spec }}")
+            {% endfor %}
+        }
+
+        function load_top() {
+            let topping_id = 0;  /* current topping id */
+            {% for topping in food.topping %}
+                addNewToppingRow();
+                document.getElementById("topping" + topping_id++).value = "{{ topping }}";
+            {% endfor %}
+        }
+
+
+        document.addEventListener("DOMContentLoaded", topping_init);
+        document.addEventListener("DOMContentLoaded", spec_init);
+        document.addEventListener("DOMContentLoaded", load_specs)
+        document.addEventListener("DOMContentLoaded", load_top)
 
     </script>
 {% endblock %}

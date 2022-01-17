@@ -1,17 +1,17 @@
-from wtforms import Form, StringField, TextAreaField, DecimalField ,validators
+from wtforms import Form, StringField, TextAreaField, DecimalField, validators
+from wtforms.validators import DataRequired
+from decimal import ROUND_HALF_UP
 
 
 class CreateFoodForm(Form):
+    item_name = StringField('', [validators.Length(min=1, max=50),
+                                 validators.DataRequired(message='Please enter the name of food!')])
 
-    item_name = StringField('', [validators.Length(min=1, max=10),
-                                           validators.DataRequired()])
+    description = TextAreaField('', [validators.DataRequired(message='Description of food is required!')])
 
-    description = TextAreaField('', [validators.Optional()])
+    price = DecimalField('', places=2, rounding=ROUND_HALF_UP,
+                         validators=[DataRequired(message='Price of food is required!')])
 
-    price = DecimalField('', [validators.Optional()])
+    # allergy = TextAreaField('', [validators.DataRequired()])
 
-    allergy = TextAreaField('', [validators.Optional()])
-    
-    
-    
-    
+    allergy = TextAreaField('', [DataRequired(message="Enter Your Name Please")])
