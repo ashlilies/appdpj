@@ -44,7 +44,7 @@
                         <th scope="col" colspan="2">
                             {{ cert.id }}'s Certificates
                         </th>
-                        <th style="width:300px; display: flex; float:right;">
+                        <th style="width:300px; display: flex; float:right; margin-right: -80px;">
                             <a href="/admin/updateCertification/{{ cert.id }}" class="btn btn-danger">Update</a>
                             <form action="{{ url_for('delete_cert', id=cert.id) }}"
                                   method="POST">

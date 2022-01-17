@@ -5,6 +5,7 @@
 import datetime
 import traceback
 
+import flask
 from flask import render_template, request, redirect, url_for, session, flash, Flask
 from flask_login import logout_user
 
@@ -28,8 +29,6 @@ from application.rest_details_form import *
 import urllib.request
 import os
 from werkzeug.utils import secure_filename
-
-
 
 
 # <------------------------- ASHLEE ------------------------------>
@@ -115,7 +114,7 @@ def admin_register():  # ashlee
                 coupon_systems_list.append(CouponSystem())
 
         coupon_systems_list.append(CouponSystem())
-        session["coupon_systems_active_idx"] = account.account_id-1
+        session["coupon_systems_active_idx"] = account.account_id - 1
 
         with shelve.open("coupon", 'c') as db:
             db["coupon_systems"] = coupon_systems_list
@@ -220,6 +219,7 @@ def delete_admin_account():
         flash("Failed to delete your account!")
 
     return redirect(url_for("admin_logout"))
+
 
 # Get ADMIN account by ID
 # def gaabi(account_id):  # for our internal use to make other Flask functions
@@ -900,45 +900,94 @@ def delete_transaction(transaction_id):
 
 # certification -- xu yong lin
 # YL: for certification -- form (C in CRUD)
-# TODO: FILE UPLOAD, FILE SAVING, SHELVE UPDATE
-@app.route("/admin/uploadCertification", methods=['GET', 'POST'])
-def upload_cert():
+@app.route("/admin/uploadCertification")
+def test_upload():
+    return render_template("admin/certification.html")
+
+
+# def upload_cert():
+#     certification_dict = {}
+#     nb = 'NIL'
+#     npnl = 'NIL'
+#     if request.method == 'POST':
+#
+#         with shelve.open(DB_NAME, 'c') as db:
+#             try:
+#                 certification_dict = db['certification']
+#                 print(certification_dict)
+#             except Exception as e:
+#                 logging.error("Error in retrieving certificate from ""certification.db (%s)" % e)
+#             # create a new Certification Object
+#             certchecks = request.form.getlist('certCheck')
+#             print(certchecks)
+#             for i in certchecks:
+#                 if 'NoBeef' in certchecks:
+#                     nb = 'YES'
+#                 elif 'NoPorkNoLard' in certchecks:
+#                     npnl = 'Yes'
+#                 else:
+#                     print('something is wrong ')
+#             print(npnl)
+#             print(nb)
+#
+#             certification = Certification(request.form["hygieneDocument"], request.form["halalDocument"],
+#                                           request.form["vegetarianDocument"], request.form["veganDocument"],
+#                                           npnl, nb)
+#             certification_dict[certification.id] = certification
+#             db['certification'] = certification_dict
+#
+#             return redirect(url_for('read_cert'))
+#         # update: cert dict => get the correct cert by id
+#
+#     return render_template("admin/certification.html")
+
+
+# YL: for certification -- reading of data and displaying it to myRestaurant (C in CRUD)
+
+@app.route('/admin/uploader', methods=['GET', 'POST'])
+def uploader():
     certification_dict = {}
     nb = 'NIL'
     npnl = 'NIL'
     if request.method == 'POST':
+        app.config['UPLOADED_PDF'] = 'application/static/restaurantCertification/'
+
         with shelve.open(DB_NAME, 'c') as db:
             try:
                 certification_dict = db['certification']
                 print(certification_dict)
             except Exception as e:
-                logging.error("Error in retrieving certificate from ""certification.db (%s)" % e)
-            # create a new Certification Object
-            certchecks = request.form.getlist('certCheck')
-            print(certchecks)
-            for i in certchecks:
-                if 'NoBeef' in certchecks:
-                    nb = 'YES'
-                elif 'No Pork No Lard' in certchecks:
-                    npnl = 'YES'
-                else:
-                    print('something is wrong ')
-            print(npnl)
-            print(nb)
+                logging.error("uploader: ""certification.db (%s)" % e)
 
-            certification = Certification(request.form["hygieneDocument"], request.form["halalDocument"],
-                                          request.form["vegetarianDocument"], request.form["veganDocument"],
-                                          npnl, nb)
-            certification_dict[certification.id] = certification
+            # create a new certification object
+            # certchecks = request.form.getlist('certCheck')
+            # print(certchecks)
+            # for i in certchecks:
+            #     if 'NoBeef' in certchecks:
+            #         nb = 'YES'
+            #     elif 'NoPorkNoLard' in certchecks:
+            #         npnl = 'Yes'
+            #     else:
+            #         print('something is wrong ')
+            # print(npnl)
+            # print(nb)
+            f = request.files['hygieneDocument']
+            filename = secure_filename(f.filename)
+
+            import os
+            import os.path
+            os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_PDF'])), exist_ok=True)
+            f.save(os.path.join(os.getcwd(), app.config['UPLOADED_PDF']) + filename)
+
+            logging.info('file uploaded successfully')
+            cert = Certification(f)
+
+            certification_dict['cert.id'] = cert
             db['certification'] = certification_dict
 
             return redirect(url_for('read_cert'))
-        # update: cert dict => get the correct cert by id
-
-    return render_template("admin/certification.html")
 
 
-# YL: for certification -- reading of data and displaying it to myRestaurant (C in CRUD)
 @app.route("/admin/certification")
 def read_cert():
     certification_dict = {}
@@ -946,7 +995,7 @@ def read_cert():
         try:
             if 'certification' in db:
                 certification_dict = db['certification']
-                print(certification_dict)
+
             else:
                 db['certification'] = certification_dict
                 print(certification_dict)
@@ -965,10 +1014,11 @@ def read_cert():
 # YL: for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)
 # TODO: REDIRECT BACK TO FORM IN 'C IN CRUD'
 # TODO: CHECK IF THE FILES ARE THE SAME AND UPDATE THE DETAILS
-@app.route('/admin/updateCertification/<int:id>', methods=['GET','POST'])
+@app.route('/admin/updateCertification/<int:id>', methods=['GET', 'POST'])
 def update_cert(id):
     nb = 'NIL'
     npnl = 'NIL'
+
     if request.method == 'POST':
         certification_dict = {}
         try:
@@ -1002,8 +1052,9 @@ def update_cert(id):
 
         return redirect(url_for('read_cert'))
     else:
-        print('I am reading from shelve')
         certification_dict = {}
+        id_list = []
+        print('I am reading from shelve')
         try:
             # reading to display the pre-existing inputs
             with shelve.open(DB_NAME, "c") as db:
@@ -1012,8 +1063,9 @@ def update_cert(id):
             logging.error("Error in retrieving certificate from ""certification.db (%s)" % e)
 
         c = certification_dict.get(id)
-
-    return render_template('admin/updateCertification.html')
+        id_list.append(c)
+        print(c.hygiene_cert)
+        return render_template('admin/updateCertification.html', id_list=id_list)
 
 
 # YL: for certification -- Delete (D in CRUD)
@@ -1318,4 +1370,3 @@ def display_image(filename):
 
 if __name__ == "__main__":
     app.run()
-

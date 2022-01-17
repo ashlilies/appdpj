@@ -7,7 +7,7 @@ from application import DB_NAME
 
 class Transaction:
     transaction_id = 1
-
+    food_coupons = ['SPAGETIT','50PASTA']
     def __init__(self, account_name=None, option=None, price=0, used_coupons=None,
                  ratings=0):
 
@@ -46,7 +46,7 @@ class Transaction:
         return self.__price
 
     def set_used_coupons(self, used_coupons):
-        if used_coupons != '':
+        if used_coupons in Transaction.food_coupons:
             self.__used_coupons = used_coupons
         else:
             self.__used_coupons = 'NIL'
