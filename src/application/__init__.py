@@ -7,7 +7,8 @@ app = Flask(__name__)
 app.secret_key = "doofypulseEngineers"  # used for stuff e.g. Flask sessions
 
 # The name of our db file. Syntax: with shelve.open(DB_NAME, 'c') as db:
-DB_NAME = "foodypulse"
+# DB_NAME = "foodypulse"
+# Don't use anymore - use separate database for each thing
 
 # Initialize our login manager.
 login_manager = LoginManager()
