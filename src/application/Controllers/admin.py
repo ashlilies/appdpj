@@ -15,7 +15,7 @@ from application.Models.CouponSystem import CouponSystem
 from application.Models.Certification import Certification
 from application.Models.Food import Food
 from application.Models.Restaurant import Restaurant
-from application import app, DB_NAME, login_manager
+from application import app, DB_NAME, login_manager, ALLOWED_EXTENSIONS
 from application.Models.Transaction import Transaction
 from application.adminAddFoodForm import CreateFoodForm
 from werkzeug.utils import secure_filename
