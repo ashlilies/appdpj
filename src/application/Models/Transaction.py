@@ -2,8 +2,6 @@
 import logging
 import shelve
 
-from application import DB_NAME
-
 
 class Transaction:
     transaction_id = 1

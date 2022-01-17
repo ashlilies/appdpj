@@ -2,7 +2,6 @@
 import logging
 import shelve
 
-from application import DB_NAME
 from application.Models.Account import save_account_db
 
 

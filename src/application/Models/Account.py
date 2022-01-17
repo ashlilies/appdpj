@@ -8,8 +8,8 @@ from flask_login import login_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import shelve
 
-DB_NAME = "foodypulse"
-# from application import DB_NAME
+ACCOUNT_DB_NAME = "account_db"
+# from application import ACCOUNT_DB_NAME
 
 
 class Account:
@@ -162,7 +162,7 @@ class Account:
 #       Since is a generic db that caches everything, including cascading.
 def load_db():
     Account.log("Attempting to load DB")
-    with shelve.open(DB_NAME, 'c') as db:
+    with shelve.open(ACCOUNT_DB_NAME, 'c') as db:
         if "count_id" in db:  # has db been initialized?
             Account.log("Found count_id in db, hence db exists")
             Account.count_id = db["count_id"]
@@ -174,7 +174,7 @@ def load_db():
 def save_account_db():
     Account.log("Attempting to save db (count_id=%s, len(list_of_accs)=%s)..."
                 % (Account.count_id, len(Account.list_of_accounts)))
-    with shelve.open(DB_NAME, 'c') as db:
+    with shelve.open(ACCOUNT_DB_NAME, 'c') as db:
         db["count_id"] = Account.count_id
         db["list_of_accounts"] = Account.list_of_accounts
 
