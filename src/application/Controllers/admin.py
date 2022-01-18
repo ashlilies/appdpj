@@ -7,7 +7,7 @@ import traceback
 
 import flask
 from flask import render_template, request, redirect, url_for, session, flash, Flask
-from flask_login import logout_user, login_required, current_user
+from flask_login import logout_user, login_required, current_user, login_user
 
 from application.CouponForms import CreateCouponForm
 from application.Models.Admin import *
@@ -32,6 +32,7 @@ from werkzeug.utils import secure_filename
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'pdf'])
 
+
 # <------------------------- ASHLEE ------------------------------>
 
 @app.route("/admin")
@@ -53,16 +54,14 @@ def admin_login():  # ashlee
 
     if request.method == "POST":
         # That means user submitted login form. Check errors.
-        login = Account.login_user(request.form["email"],
-                                   request.form["password"])
+        login = Account.check_credentials(request.form["email"],
+                                          request.form["password"])
         if login is not None:
-            # user entered correct credentials
-            # TODO Link dashboard or something from here
-            session["account_id"] = login.account_id
-            session["coupon_systems_active_idx"] = login.account_id - 1
+            with shelve.open(ACCOUNT_DB, 'c') as db:
+                accounts = db["accounts"]
+                accounts[login.account_id].authenticated = True
+                db["accounts"] = accounts
 
-            Account.get_account_by_id(login.account_id).authenticated = True
-            save_account_db()
             login_user(login)
             return redirect(url_for("admin_home"))
         return login_error()
@@ -71,10 +70,6 @@ def admin_login():  # ashlee
 
 @app.route("/admin/register", methods=["GET", "POST"])
 def admin_register():  # ashlee
-    # if already logged in, what's the point?
-    if is_account_id_in_session():
-        return redirect(url_for("admin_home"))
-
     def reg_error(ex=None):
         if ex is not None:
             if Account.EMAIL_ALREADY_EXISTS in ex.args:
@@ -89,8 +84,7 @@ def admin_register():  # ashlee
                 and request.form["name"] != ""  # not blank restaurant name
                 and request.form["password"] != ""  # not blank pw
                 and request.form["password"] == request.form["passwordAgain"]
-                and len(request.form["password"]) >= 4
-                and len(request.form["password"]) <= 20):
+                and 4 <= len(request.form["password"]) <= 20):
             try:
                 account = Admin(request.form["name"], request.form["email"],
                                 request.form["password"])
@@ -101,26 +95,24 @@ def admin_register():  # ashlee
         else:
             return reg_error()
 
-        # Successfully registered
-        # TODO: Link dashboard or something
-        # TODO: Set flask session
-        session["account_id"] = account.account_id
+        # Successfully authenticated
+        with shelve.open("accounts", 'c') as db:
+            accounts = db["acocunts"]
+            # For Flask-login
+            accounts[account.account_id].authenticated = True
+            login_user(account)
 
-        # For Flask-login
-        Account.get_account_by_id(account.account_id).authenticated = True
-        login_user(account)
+            # TEMPORARY FOR WEEK 13
+            coupon_systems_list = []
 
-        # TEMPORARY FOR WEEK 13
-        coupon_systems_list = []
-
-        with shelve.open("coupon", 'c') as db:
-            if "coupon_systems" in db:
-                coupon_systems_list = db["coupon_systems"]
-            else:
-                coupon_systems_list.append(CouponSystem())
+            with shelve.open("coupon", 'c') as db:
+                if "coupon_systems" in db:
+                    coupon_systems_list = db["coupon_systems"]
+                else:
+                    coupon_systems_list.append(CouponSystem())
 
         coupon_systems_list.append(CouponSystem())
-        session["coupon_systems_active_idx"] = account.account_id - 1
+        # TODO: Refactor coupons
 
         with shelve.open("coupon", 'c') as db:
             db["coupon_systems"] = coupon_systems_list
@@ -134,21 +126,11 @@ def admin_register():  # ashlee
 @login_required
 def admin_logout():
     # TODO: Replace with flask-login
-    try:
-        if "account_id" in session:
-            logging.info("admin_logout(): Admin %s logged out"
-                         % gabi(session["account_id"]).get_email())
-            del session["account_id"]
-        else:
-            raise Exception("account_id not valid in session")
-    except Exception as e:
-        logging.info("admin_logout(): Failed logout - lag or click twice (%s)" % e)
-
     # Logout the current user
-    user = current_user
-    Account.get_account_by_id(user.account_id).authenticated = False
-
-    # TODO: Handle shelve writeback
+    current_user.authenticated = False
+    with shelve.open("accounts", 'c') as db:
+        accounts = db["accounts"]
+        accounts[current_user.account_id] = current_user
 
     logout_user()
     return redirect(url_for("admin_home"))
@@ -156,6 +138,7 @@ def admin_logout():
 
 # API for updating account, to be called by Account Settings
 @app.route("/admin/updateAccount", methods=["GET", "POST"])
+@login_required
 def admin_update_account():
     # TODO: Implement admin account soft-deletion
     #       and update restaurant name
@@ -163,104 +146,50 @@ def admin_update_account():
     if request.method == "GET":
         flash("fail")
         return redirect(url_for("admin_home"))
-    if not is_account_id_in_session():
-        flash("fail")
-        return redirect(url_for("admin_home"))
 
     # Check if current password entered was correct
-    if not is_account_id_in_session() \
-            .check_password_hash(request.form["updateSettingsPw"]):
+    if not current_user.check_password_hash(request.form["updateSettingsPw"]):
         flash("Current Password is Wrong")
         return redirect(url_for("admin_home"))
 
-    response = ""
-    if "changeName" in request.form:
-        if request.form["changeName"] != "":
-            flash("Successfully updated account name from %s to %s"
-                  % (getattr(is_account_id_in_session(), "name"),
-                     request.form["changeName"]))
-            is_account_id_in_session().restaurant_name = request.form["changeName"]
+    with shelve.open("accounts", 'c') as db:
+        accounts = db["accounts"]
 
-    if "changeEmail" in request.form:
-        if request.form["changeEmail"] != "":
-            result = (is_account_id_in_session()
-                      .set_email(request.form["changeEmail"]))
-            if result == Account.EMAIL_CHANGE_SUCCESS:
-                flash("Successfully updated email")
-            elif result == Account.EMAIL_CHANGE_ALREADY_EXISTS:
-                flash("Failed updating email, Email already Exists")
-            elif result == Account.EMAIL_CHANGE_INVALID:
-                flash("Failed updating email, email is Invalid")
+        response = ""
+        if "changeName" in request.form:
+            if request.form["changeName"] != "":
+                current_user.restaurant_name = request.form["changeName"]
 
-    if "changePw" in request.form:
-        if request.form["changePw"] != request.form["changePwConfirm"]:
-            flash("Confirm Password does not match Password")
-        elif request.form["changePw"] != "":
-            is_account_id_in_session() \
-                .set_password_hash(request.form["changePw"])
-            flash("Successfully updated password")
+        if "changeEmail" in request.form:
+            if request.form["changeEmail"] != "":
+                result = (current_user.set_email(request.form["changeEmail"]))
+                if result == Account.EMAIL_CHANGE_SUCCESS:
+                    flash("Successfully updated email")
+                elif result == Account.EMAIL_CHANGE_ALREADY_EXISTS:
+                    flash("Failed updating email, Email already Exists")
+                elif result == Account.EMAIL_CHANGE_INVALID:
+                    flash("Failed updating email, email is Invalid")
 
-    save_account_db()
+        if "changePw" in request.form:
+            if request.form["changePw"] != request.form["changePwConfirm"]:
+                flash("Confirm Password does not match Password")
+            elif request.form["changePw"] != "":
+                current_user.set_password_hash(request.form["changePw"])
+                flash("Successfully updated password")
+
+        accounts[current_user.account_id] = current_user  # save back
     return redirect(url_for("admin_home"))
-
-
-# IAIIS - is logged in?
-def is_account_id_in_session() -> Account or None:  # for flask
-    if "account_id" in session:
-        # account value exists in session, check if admin account active
-        if Admin.check_active(gabi(session["account_id"])) is not None:
-            logging.info(
-                "IAIIS: Account id of %s is active and inside session" %
-                session["account_id"])
-            return gabi(session["account_id"])
-    else:
-        logging.info("IAIIS: Account id is NOT inside session or disabled")
-    return None
-
-
-# Get account by ID
-def gabi(account_id) -> Account:  # for flask
-    return Account.get_account_by_id(account_id)
 
 
 @app.route("/admin/deleteAccount")
 def delete_admin_account():
-    if is_account_id_in_session():
-        is_account_id_in_session().hard_delete_account()
+    if current_user:
+        current_user.hard_delete_account()
         flash("Successfully deleted your account")
     else:
         flash("Failed to delete your account!")
 
     return redirect(url_for("admin_logout"))
-
-
-# Get ADMIN account by ID
-# def gaabi(account_id):  # for our internal use to make other Flask functions
-#     return Admin.get_account_by_id(account_id)
-
-
-def get_restaurant_name_by_id(restaurant_id):
-    restaurant_account = gabi(restaurant_id)
-    return getattr(restaurant_account, "restaurant_name", None)
-
-
-# Used for the Account Settings pane.
-def get_account_email(account: Account):
-    try:
-        return account.get_email()
-    except Exception as e:
-        logging.info(e)
-        return "ERROR"
-
-
-# TODO; store Flask session info in shelve db
-
-# Activate global function for jinja
-app.jinja_env.globals.update(is_account_id_in_session=is_account_id_in_session)
-# app.jinja_env.globals.update(gabi=gabi)
-app.jinja_env.globals.update(
-    get_restaurant_name_by_id=get_restaurant_name_by_id)
-app.jinja_env.globals.update(get_account_email=get_account_email)
 
 
 # for testing only - to remove on final!
@@ -505,7 +434,6 @@ def create_food():
             # the food object
             db['food'] = food_dict
 
-
         # writeback
         with shelve.open("foodypulse", 'c') as db:
             db['food'] = food_dict
@@ -534,7 +462,6 @@ def delete_food(id):
 @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
 def update_food(id):
     update_food_form = CreateFoodForm(request.form)
-
 
     # get specifications as a List, no WTForms
     def get_specs() -> list:

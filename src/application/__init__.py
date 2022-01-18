@@ -50,8 +50,7 @@ logging.info("Logger configured!")
 
 # after the app quits, we save all databases -ashlee
 def exit_handler():
-    logging.info("Exit Handler: Stopping Flask! Saving db...")
-    save_account_db()
+    logging.info("Exit Handler: Stopping Flask!")
 
 
 atexit.register(exit_handler)
@@ -62,12 +61,7 @@ def user_loader(user_id):
     """Given *user_id*, return the associated User object.
        or None if it doesn't exist
     """
-    if user_id is not None:
-        # print("user loader: user id is %s" % user_id)
-        logging.info("account authentication status: %s"
-                     % Account.get_account_by_id(int(user_id)).authenticated)
-        pass
-    return Account.get_account_by_id(int(user_id))
+    return Account.query(int(user_id))
 
 
 # TODO: We should have 1 common place for login.

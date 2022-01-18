@@ -2,8 +2,6 @@
 import logging
 import shelve
 
-from application.Models.Account import save_account_db
-
 
 class Food:
     count_id = 0
