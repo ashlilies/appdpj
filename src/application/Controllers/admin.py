@@ -97,7 +97,7 @@ def admin_register():  # ashlee
 
         # Successfully authenticated
         with shelve.open("accounts", 'c') as db:
-            accounts = db["acocunts"]
+            accounts = db["accounts"]
             # For Flask-login
             accounts[account.account_id].authenticated = True
             login_user(account)
@@ -153,12 +153,10 @@ def admin_update_account():
         return redirect(url_for("admin_home"))
 
     with shelve.open("accounts", 'c') as db:
-        accounts = db["accounts"]
-
-        response = ""
         if "changeName" in request.form:
             if request.form["changeName"] != "":
-                current_user.restaurant_name = request.form["changeName"]
+                current_user.set_name(request.form["changeName"])
+                flash("Successfully updated name to %s" % request.form["changeName"])
 
         if "changeEmail" in request.form:
             if request.form["changeEmail"] != "":
@@ -177,7 +175,7 @@ def admin_update_account():
                 current_user.set_password_hash(request.form["changePw"])
                 flash("Successfully updated password")
 
-        accounts[current_user.account_id] = current_user  # save back
+
     return redirect(url_for("admin_home"))
 
 

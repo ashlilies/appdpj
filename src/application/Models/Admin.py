@@ -4,25 +4,36 @@ from application.Models.Account import *
 from application.Models.Restaurant import Restaurant
 
 
-
 class Admin(Account):
     def __init__(self, restaurant_name, email, password):
         super().__init__(email, password)  # comes first, so we can abort error
         self.restaurant_id = None  # set later
-        self.name = restaurant_name
+        self.__name = None
+        self.set_name(restaurant_name)
 
         logging.info(("Admin Class: Created new Admin account with "
                       "email=%s, Restaurant obj with restaurant_name=%s, "
                       "account_id=%s")
-                     % (self.get_email(), self.name, self.account_id))
+                     % (self.get_email(), self.__name, self.account_id))
 
         with shelve.open("accounts", 'c') as db:
-            accounts_dict = db["accounts"]
-            accounts_dict[self.account_id] = self
+            # DO NOT SHORTCUT: db["accounts"][self.account_id] = self XXXXXXXX
+            # IT JUST DOESN'T WORK FOR SOME REASON :(
+            accounts = db["accounts"]
+            accounts[self.account_id] = self
+            db["accounts"] = accounts
+
+    def get_name(self):
+        with shelve.open("accounts", 'c') as db:
+            accounts = db["accounts"]
+            account = accounts[self.account_id]
+            return account.__name
+        return self.__name
 
     def set_name(self, new_name):
-        self.name = new_name
+        self.__name = new_name
 
         with shelve.open(ACCOUNT_DB, 'c') as db:
             accounts = db["accounts"]
             accounts[self.account_id] = self
+            db["accounts"] = accounts
