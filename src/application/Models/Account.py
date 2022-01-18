@@ -61,20 +61,14 @@ class Account:
     def __str__(self):
         return self.__email
 
-    # # NEW WAY
-    # @property
-    # def is_authenticated(self):
-    #     return self.authenticated
     def is_authenticated(self):
         return self.authenticated
 
     # This property should return True if active user - not suspended etc
-    @property
     def is_active(self):
         return not self.disabled
 
     # Anonymous users aren't supported by us. :)
-    @property
     def is_anonymous(self):
         return False
 
@@ -180,8 +174,6 @@ class Account:
                 return
 
 
-# TODO: Please change to foodypulse .db?
-#       Since is a generic db that caches everything, including cascading.
 def load_db():
     Account.log("Attempting to load DB")
     with shelve.open(ACCOUNT_DB_NAME, 'c') as db:
