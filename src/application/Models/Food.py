@@ -29,7 +29,7 @@ class Food:
         with shelve.open("food_count_db", 'c') as db:
             db["food_count_id"] = Food.count_id
 
-        save_account_db()
+
 
     def get_food_id(self):
         return self.__food_id

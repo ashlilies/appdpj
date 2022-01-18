@@ -32,6 +32,7 @@ from werkzeug.utils import secure_filename
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'pdf'])
 
+
 # <------------------------- ASHLEE ------------------------------>
 # Our Login Manager
 @login_manager.user_loader
@@ -491,7 +492,6 @@ def create_food():
             # the food object
             db['food'] = food_dict
 
-
         # writeback
         with shelve.open("foodypulse", 'c') as db:
             db['food'] = food_dict
@@ -520,7 +520,6 @@ def delete_food(id):
 @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
 def update_food(id):
     update_food_form = CreateFoodForm(request.form)
-
 
     # get specifications as a List, no WTForms
     def get_specs() -> list:
@@ -666,6 +665,10 @@ def update_food(id):
 #         food.topping = get_top()  # set topping as a List
 #
 #         return render_template('admin/updateFood.html', form=update_food_form)
+@app.route("/consumer/deliveryFoodMenu")
+def deliveryfoodMenu():
+    return render_template("consumer/deliveryFoodMenu.html")
+
 
 # <------------------------- YONG LIN ------------------------------>
 # YL: for transactions -- creating of dummy data

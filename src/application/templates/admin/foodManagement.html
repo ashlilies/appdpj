@@ -9,13 +9,13 @@
         div.scroll {
             background-color: #fed9ff;
         {#background-color: #ebddf1;#} width: 900px;
-            height: 400px;
+            height: 450px;
             overflow-x: hidden;
             overflow-y: auto;
             text-align: center;
             padding: 20px;
             position: relative;
-            top: 70px;
+            top: 50px;
             left: 150px;
 
         }
@@ -249,6 +249,11 @@
                         class="form-control") }}
                         </div>
 
+{#                        <div class="mb-3">#}
+{#                            <input name="price" id="price" type="number" step="0.01" class="form-control"  />#}
+{#                        </div>#}
+
+
                         <div class="form-group" id="price">
                             <label id="priceLabel">Price(SGD):</label>{{ render_field(create_food_form.price,
                     class="form-control") }}
@@ -332,6 +337,11 @@
                         class="form-control") }}
                         </div>
 
+{#                          <div class="mb-3">#}
+{#                            <input name="price" id="price" type="number" step="0.01" class="form-control"  />#}
+{#                        </div>#}
+{##}
+
                         <div class="form-group" id="price">
                             <label id="priceLabel">Price(SGD):</label>{{ render_field(create_food_form.price, class="form-check",
                         style="list-style-type:none") }}
@@ -390,7 +400,6 @@
         </div>
         {# Script is for the adding new specifications and toppign to work #}
         <script>
-
 
             /* Global variables */
             var specDiv;
