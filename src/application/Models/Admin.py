@@ -28,7 +28,6 @@ class Admin(Account):
             accounts = db["accounts"]
             account = accounts[self.account_id]
             return account.__name
-        return self.__name
 
     def set_name(self, new_name):
         self.__name = new_name

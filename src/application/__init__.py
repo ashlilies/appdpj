@@ -60,6 +60,7 @@ atexit.register(exit_handler)
 def user_loader(user_id):
     """Given *user_id*, return the associated User object.
        or None if it doesn't exist
+       Runs every single time. Hence, it is safe to update account db directly.
     """
     return Account.query(int(user_id))
 

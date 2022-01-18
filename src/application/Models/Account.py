@@ -42,7 +42,7 @@ class Account:
             logging.info("BaseAccount: Successfully created account, email=%s"
                          % email)
 
-    # Str: returns email of any account easily.
+    # Str: returns email of any account easily. Useful for logging.
     def __str__(self):
         return self.__email
 
@@ -83,8 +83,9 @@ class Account:
     def email_exists(cls, email) -> bool:
         with shelve.open(ACCOUNT_DB, 'c') as db:
             if "accounts" in db:
-                for account in db["accounts"]:
-                    if db["accounts"][account].__email == email:
+                for account_id in db["accounts"]:
+                    account = db["accounts"][account_id]
+                    if account.__email == email and not account.disabled:
                         return True
         return False
 

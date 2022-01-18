@@ -141,7 +141,6 @@ def admin_logout():
 @login_required
 def admin_update_account():
     # TODO: Implement admin account soft-deletion
-    #       and update restaurant name
 
     if request.method == "GET":
         flash("fail")
@@ -181,8 +180,15 @@ def admin_update_account():
 
 @app.route("/admin/deleteAccount")
 def delete_admin_account():
-    if current_user:
-        current_user.hard_delete_account()
+    # TODO: Add account settings password confirmation before allowing delete
+    if current_user.is_authenticated:
+        # current_user.hard_delete_account()
+        with shelve.open(ACCOUNT_DB, 'c') as db:
+            accounts = db["accounts"]
+            account = accounts.get(current_user.account_id)
+            account.disabled = True
+            db["accounts"] = accounts
+
         flash("Successfully deleted your account")
     else:
         flash("Failed to delete your account!")
