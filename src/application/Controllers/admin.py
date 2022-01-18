@@ -7,7 +7,7 @@ import traceback
 
 import flask
 from flask import render_template, request, redirect, url_for, session, flash, Flask
-from flask_login import logout_user
+from flask_login import logout_user, login_required, current_user
 
 from application.CouponForms import CreateCouponForm
 from application.Models.Admin import *
@@ -33,23 +33,20 @@ from werkzeug.utils import secure_filename
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'pdf'])
 
 # <------------------------- ASHLEE ------------------------------>
-# Our Login Manager
-@login_manager.user_loader
-def load_user(user_id):
-    return Account.get_account_by_id(user_id)  # Fetch user from the database
-
 
 @app.route("/admin")
-@app.route("/admin/home")
+# @app.route("/admin/home")
+@login_required
 def admin_home():  # ashlee
     return render_template("admin/home.html")
 
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():  # ashlee
+    # TODO: Refactor with flask-login
     # if already logged in, what's the point?
-    if is_account_id_in_session():
-        return redirect(url_for("admin_home"))
+    # if is_account_id_in_session():
+    #     return redirect(url_for("admin_home"))
 
     def login_error():
         return redirect("%s?error=1" % url_for("admin_login"))
@@ -63,6 +60,10 @@ def admin_login():  # ashlee
             # TODO Link dashboard or something from here
             session["account_id"] = login.account_id
             session["coupon_systems_active_idx"] = login.account_id - 1
+
+            Account.get_account_by_id(login.account_id).authenticated = True
+            save_account_db()
+            login_user(login)
             return redirect(url_for("admin_home"))
         return login_error()
     return render_template("admin/login.html")
@@ -105,6 +106,10 @@ def admin_register():  # ashlee
         # TODO: Set flask session
         session["account_id"] = account.account_id
 
+        # For Flask-login
+        Account.get_account_by_id(account.account_id).authenticated = True
+        login_user(account)
+
         # TEMPORARY FOR WEEK 13
         coupon_systems_list = []
 
@@ -126,6 +131,7 @@ def admin_register():  # ashlee
 
 
 @app.route("/admin/logout")
+@login_required
 def admin_logout():
     # TODO: Replace with flask-login
     try:
@@ -137,6 +143,12 @@ def admin_logout():
             raise Exception("account_id not valid in session")
     except Exception as e:
         logging.info("admin_logout(): Failed logout - lag or click twice (%s)" % e)
+
+    # Logout the current user
+    user = current_user
+    Account.get_account_by_id(user.account_id).authenticated = False
+
+    # TODO: Handle shelve writeback
 
     logout_user()
     return redirect(url_for("admin_home"))
@@ -253,6 +265,7 @@ app.jinja_env.globals.update(get_account_email=get_account_email)
 
 # for testing only - to remove on final!
 @app.route("/admin/coupon/createExamples")
+@login_required
 def admin_coupon_add_examples():
     coupon_systems_list = []
 
@@ -291,11 +304,12 @@ def admin_coupon_add_examples():
 
 
 @app.route("/admin/coupon")
+@login_required
 def admin_coupon_management():
     # TODO: Replace with flask-login
     # if not logged in, need to login first
-    if not is_account_id_in_session():
-        return redirect(url_for("admin_login"))
+    # if not is_account_id_in_session():
+    #     return redirect(url_for("admin_login"))
 
     coupon_systems_list = []
 

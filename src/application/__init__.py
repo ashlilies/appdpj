@@ -28,7 +28,7 @@ from application.Controllers.consumer import *
 UPLOAD_FOLDER = 'static/uploads/'
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # MB
 
 # New allowed_extensions: configure per separate controller. Better security.
 # ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'pdf'])
@@ -37,7 +37,6 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 # For stuff like colour schemes.
 # Todo
 
-# todo: add a proper logging system
 import logging
 
 logging.basicConfig(level=logging.DEBUG,
@@ -56,6 +55,25 @@ def exit_handler():
 
 
 atexit.register(exit_handler)
+
+
+@login_manager.user_loader
+def user_loader(user_id):
+    """Given *user_id*, return the associated User object.
+       or None if it doesn't exist
+    """
+    if user_id is not None:
+        # print("user loader: user id is %s" % user_id)
+        logging.info("account authentication status: %s"
+                     % Account.get_account_by_id(int(user_id)).authenticated)
+        pass
+    return Account.get_account_by_id(int(user_id))
+
+
+# TODO: We should have 1 common place for login.
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return redirect(url_for("admin_login"))
 
 
 # ALL BELOW are for the Practical LLS.

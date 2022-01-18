@@ -2,13 +2,15 @@
 # By Ashlee
 # Fulfils: Create, Read, Update, Delete (?)
 import logging
-import re   # regex
+import re  # regex
 
 from flask_login import login_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import shelve
 
 ACCOUNT_DB_NAME = "account_db"
+
+
 # from application import ACCOUNT_DB_NAME
 
 
@@ -53,11 +55,34 @@ class Account:
                      % email)
         save_account_db()
         # login_user(self)   TODO: Install flask-login
+        self.authenticated = False
 
     # Str: returns email of any account easily.
     def __str__(self):
         return self.__email
 
+    # # NEW WAY
+    # @property
+    # def is_authenticated(self):
+    #     return self.authenticated
+    def is_authenticated(self):
+        return self.authenticated
+
+    # This property should return True if active user - not suspended etc
+    @property
+    def is_active(self):
+        return not self.disabled
+
+    # Anonymous users aren't supported by us. :)
+    @property
+    def is_anonymous(self):
+        return False
+
+    # Must return a unicode
+    def get_id(self):
+        return str(self.account_id)
+
+    # OLD WAY
     @classmethod
     def login_user(cls, email, password):
         logging.info("BaseAccount: Attempting to log in email=%s" % email)
@@ -93,8 +118,10 @@ class Account:
             if not account.disabled:
                 logging.info("BaseAccount: %s is active" % account.get_email())
                 return account
-            logging.info("BaseAccount: %s exists but disabled" % account.get_email())
-        logging.info("BaseAccount: %s does NOT exist in list of accounts" % account)
+            logging.info(
+                "BaseAccount: %s exists but disabled" % account.get_email())
+        logging.info(
+            "BaseAccount: %s does NOT exist in list of accounts" % account)
         return None
 
     def get_email(self):
@@ -151,11 +178,6 @@ class Account:
                 del account
                 save_account_db()
                 return
-
-    # # why do i even need this...
-    # @property
-    # def is_active(self):
-    #     return True if not self.disabled else False
 
 
 # TODO: Please change to foodypulse .db?
