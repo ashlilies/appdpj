@@ -33,7 +33,7 @@ class Account:
             self.__password_hash = None
             self.set_password_hash(password)
             self.disabled = False  # Suspended or soft-deleted accounts
-            self.authenticated = True  # autologin on creation
+            self.authenticated = False  # autologin on creation
             accounts_dict[self.account_id] = self
 
             db["count_id"] = Account.count_id
@@ -66,7 +66,7 @@ class Account:
         with shelve.open(ACCOUNT_DB, 'c') as db:
             for account_id in db["accounts"]:
                 account = db["accounts"][account_id]
-                if account.__email == email:
+                if account.__email == email and not account.disabled:
                     if account.check_password_hash(password):
                         return account
         return None

@@ -36,8 +36,7 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'pdf'])
 # <------------------------- ASHLEE ------------------------------>
 
 @app.route("/admin")
-# @app.route("/admin/home")
-@login_required
+@app.route("/admin/home", alias=True)
 def admin_home():  # ashlee
     return render_template("admin/home.html")
 
@@ -100,6 +99,7 @@ def admin_register():  # ashlee
             accounts = db["accounts"]
             # For Flask-login
             accounts[account.account_id].authenticated = True
+            db["accounts"] = accounts
             login_user(account)
 
             # TEMPORARY FOR WEEK 13
@@ -125,12 +125,12 @@ def admin_register():  # ashlee
 @app.route("/admin/logout")
 @login_required
 def admin_logout():
-    # TODO: Replace with flask-login
     # Logout the current user
     current_user.authenticated = False
     with shelve.open("accounts", 'c') as db:
         accounts = db["accounts"]
-        accounts[current_user.account_id] = current_user
+        accounts[current_user.account_id].authenticated = False
+        db["accounts"] = accounts
 
     logout_user()
     return redirect(url_for("admin_home"))
