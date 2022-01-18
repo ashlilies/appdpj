@@ -128,7 +128,7 @@ class Account:
         return check_password_hash(self.__password_hash, password)
 
     def hard_delete_account(self):
-        with shelve.open(ACCOUNT_DB, 'c') as db:
+        with shelve.open(ACCOUNT_DB, 'c', writeback=True) as db:
             db["accounts"].pop(self.account_id)
 
 
