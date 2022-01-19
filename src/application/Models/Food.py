@@ -27,6 +27,7 @@ class Food:
             db["food_count_id"] = Food.count_id
 
 
+
     def get_food_id(self):
         return self.__food_id
 

@@ -611,6 +611,10 @@ def update_food(id):
 #         food.topping = get_top()  # set topping as a List
 #
 #         return render_template('admin/updateFood.html', form=update_food_form)
+@app.route("/consumer/deliveryFoodMenu")
+def deliveryfoodMenu():
+    return render_template("consumer/deliveryFoodMenu.html")
+
 
 # <------------------------- YONG LIN ------------------------------>
 # YL: for transactions -- creating of dummy data
