@@ -1,33 +1,15 @@
 import datetime
+import shelve
 import traceback
 
-import flask
-from flask import render_template, request, redirect, url_for, session, flash, Flask
+from flask import render_template, request, redirect, url_for, session, flash
 from flask_login import logout_user, login_required, current_user, login_user
-import os
-import os.path
 
+from application import app
 from application.CouponForms import CreateCouponForm
 from application.Models.Admin import *
 from application.Models.CouponSystem import CouponSystem
-from application.Models.Certification import Certification
-from application.Models.Food import Food
-from application.Models.Restaurant import Restaurant
-from application import app, login_manager
-from application.Models.Transaction import Transaction
-from application.adminAddFoodForm import CreateFoodForm
-from werkzeug.utils import secure_filename
-import shelve, os
-import uuid
 from application.rest_details_form import *
-
-# Ruri's imported libraries
-import urllib.request
-import os
-from werkzeug.utils import secure_filename
-
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'pdf'])
-
 
 # <------------------------- ASHLEE ------------------------------>
 
