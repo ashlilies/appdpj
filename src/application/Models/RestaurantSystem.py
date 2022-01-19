@@ -6,7 +6,7 @@ import shelve
 import pickle
 RESTAURANT_DB = 'restaurant_db'
 
-class Restaurant_controller():
+class RestaurantSystem():
     def __init__(self):
         self.restaurant = all_restaurant()
 
@@ -53,10 +53,6 @@ class Restaurant_controller():
         else:
             print("Wrong")
             return False
-
-
-
-
 
 
 def all_restaurant():

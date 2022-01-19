@@ -17,7 +17,6 @@ from application import app, login_manager
 from application.Models.Transaction import Transaction
 from application.adminAddFoodForm import CreateFoodForm
 from werkzeug.utils import secure_filename
-from application.Controllers.restaurant_controller import *
 import shelve, os
 import uuid
 from application.rest_details_form import *
