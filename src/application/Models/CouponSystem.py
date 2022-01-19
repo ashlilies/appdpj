@@ -131,7 +131,6 @@ class CouponSystem:
             if not coupon.enabled:
                 return food.price
 
-            # after_discount = coupon.discount.discounted_price(food, coupon_code)
             after_discount = coupon.discount.discounted_price(food.price)
             if after_discount is not None:
                 return after_discount
