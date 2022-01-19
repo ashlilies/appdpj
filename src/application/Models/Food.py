@@ -18,7 +18,7 @@ class Food:
         self.__image = image
         self.name = name
         self.description = description
-        self.price = price
+        self.__price = price
         self.allergy = allergy
         self.specification = specification
         self.topping = topping
@@ -30,7 +30,7 @@ class Food:
             if "food" in db:
                 food_dict = db["food"]
 
-            food_dict[str(self.__food_id)] = self
+            food_dict[self.__food_id] = self
             db["food"] = food_dict
 
 
@@ -54,10 +54,14 @@ class Food:
         return self.description
 
     def set_price(self, price):
-        self.price = price
+        self.__price = price
+        with shelve.open("food", 'c') as db:
+            food_dict = db["food"]
+            food_dict[self.get_food_id()] = self
+            db["food"] = food_dict
 
     def get_price(self):
-        return self.price
+        return self.__price
 
     def set_allergy(self, allergy):
         self.allergy = allergy
@@ -85,7 +89,7 @@ class Food:
         try:
             with shelve.open("food", 'c') as db:
                 foods = db["food"]
-                return foods[str(id)]
+                return foods[id]
 
         except KeyError:
             logging.error("Food: tried to query id %s but not found" % id)

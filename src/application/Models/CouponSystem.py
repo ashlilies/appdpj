@@ -72,7 +72,7 @@ class CouponSystem:
 
             if coupon_code == self.coupon_code:  # coupon code match?
                 if food in self.food_items:  # does it apply to this item?
-                    return self.discount.discounted_price(food.price)
+                    return self.discount.discounted_price(food.get_price())
             return None  # if doesn't apply, return None
 
     def __init__(self):
@@ -86,15 +86,27 @@ class CouponSystem:
 
         with shelve.open("coupons", 'c') as db:
             db["count_id"] = CouponSystem.count_id
-            db[str(self.id)] = self
+            coupon_dict = {}
+            if "coupon_dict" in db:
+                coupon_dict = db["coupon_dict"]
+
+            # shelve databases don't accept int keys - only python dicts
+            coupon_dict[self.id] = self
+            db["coupon_dict"] = coupon_dict
 
     def new_coupon(self, coupon_code: str, food_ids: list, discount_type,
                    discount_amount: float, expiry: datetime.datetime):
         self.coupons[coupon_code] = CouponSystem.Coupon(coupon_code, food_ids,
                                                         discount_type,
                                                         discount_amount, expiry)
+
         with shelve.open("coupons", 'c') as db:  # save back coupon system
-            db[str(self.id)] = self
+            coupon_dict = {}
+            if "coupon_dict" in db:
+                coupon_dict = db["coupon_dict"]
+
+            coupon_dict[self.id] = self
+            db["coupon_dict"] = coupon_dict
 
     def edit_coupon(self, coupon_code: str, food_items: list, discount_type,
                     discount_amount: float, expiry: datetime.datetime,
@@ -110,15 +122,25 @@ class CouponSystem:
         coupon.enabled = enabled_status
 
         with shelve.open("coupons", 'c') as db:  # save back coupon system
-            db[str(self.id)] = self
+            coupon_dict = {}
+            if "coupon_dict" in db:
+                coupon_dict = db["coupon_dict"]
+
+            coupon_dict[self.id] = self
+            db["coupon_dict"] = coupon_dict
 
     def delete_coupon(self, coupon_code: str):
         if coupon_code in self.coupons:
             coupon = self.coupons[coupon_code]
             coupon.enabled = False
 
-        with shelve.open("coupons", 'c') as db:
-            db[str(self.id)] = self
+        with shelve.open("coupons", 'c') as db:  # save back coupon system
+            coupon_dict = {}
+            if "coupon_dict" in db:
+                coupon_dict = db["coupon_dict"]
+
+            coupon_dict[self.id] = self
+            db["coupon_dict"] = coupon_dict
 
     def discounted_price(self, food_id: int, coupon_code: str):
         food = Food.query(food_id)
@@ -129,9 +151,9 @@ class CouponSystem:
         if coupon_code in self.coupons:
             coupon = self.coupons[coupon_code]
             if not coupon.enabled:
-                return food.price
+                return food.get_price()
 
-            after_discount = coupon.discount.discounted_price(food.price)
+            after_discount = coupon.discount.discounted_price(food.get_price())
             if after_discount is not None:
                 return after_discount
-        return food.price  # can't find matching discount return original price
+        return food.get_price()  # can't find matching discount return original price
