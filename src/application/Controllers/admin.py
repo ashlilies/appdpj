@@ -926,7 +926,7 @@ def uploader():
 
             cert = Certification()
             app.config['UPLOADED_PDF'] = f'application/static/restaurantCertification/hygiene/{cert.id}/'
-            print("931: %s" % halal)
+            # print("931: %s" % halal)
             f = request.files['hygieneDocument'] # getting the file from the form
             filename = secure_filename(f.filename)
 
