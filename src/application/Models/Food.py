@@ -8,7 +8,7 @@ class Food:
 
     def __init__(self, image, name, description, price, allergy,
                  specification=None, topping=None):
-        with shelve.open("food_count_db", 'c') as db:
+        with shelve.open("food", 'c') as db:
             if "food_count_id" in db:
                 Food.count_id = db["food_count_id"]
         logging.info("Food: food count id loaded: %d" % Food.count_id)
@@ -23,8 +23,15 @@ class Food:
         self.specification = specification
         self.topping = topping
 
-        with shelve.open("food_count_db", 'c') as db:
+        # Done by Ashlee - database access in Models not Controller
+        with shelve.open("food", 'c') as db:
             db["food_count_id"] = Food.count_id
+            food_dict = {}
+            if "food" in db:
+                food_dict = db["food"]
+
+            food_dict[str(self.__food_id)] = self
+            db["food"] = food_dict
 
 
 
@@ -76,7 +83,7 @@ class Food:
     @staticmethod
     def query(id: int) -> "Food" or None:
         try:
-            with shelve.open("food.db", 'c') as db:
+            with shelve.open("food", 'c') as db:
                 foods = db["food"]
                 return foods[str(id)]
 
