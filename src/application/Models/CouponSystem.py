@@ -62,7 +62,7 @@ class CouponSystem:
 
         def discounted_price(self, food_id: int, coupon_code: str):
             # Get food item
-
+            food = Food.query(food_id)
 
             if not self.enabled:  # artifically cancelled coupon
                 return None
@@ -88,9 +88,9 @@ class CouponSystem:
             db["count_id"] = CouponSystem.count_id
             db[str(self.id)] = self
 
-    def new_coupon(self, coupon_code: str, food_items: list, discount_type,
+    def new_coupon(self, coupon_code: str, food_ids: list, discount_type,
                    discount_amount: float, expiry: datetime.datetime):
-        self.coupons[coupon_code] = CouponSystem.Coupon(coupon_code, food_items,
+        self.coupons[coupon_code] = CouponSystem.Coupon(coupon_code, food_ids,
                                                         discount_type,
                                                         discount_amount, expiry)
         with shelve.open("coupons", 'c') as db:  # save back coupon system

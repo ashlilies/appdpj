@@ -1,3 +1,5 @@
+# This isn't a controller :( this is a Model
+
 from application.Models.Restaurant import *
 import uuid
 import shelve

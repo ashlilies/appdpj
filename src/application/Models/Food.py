@@ -72,7 +72,14 @@ class Food:
     def set_image(self, image):
         self.__image = image
 
-    # added by ashlee - get a food item by passing in the id
+    # query db for a food item by passing in the id - added by ashlee
     @staticmethod
-    def query(id: int):
-        with shelve.open("")
+    def query(id: int) -> "Food" or None:
+        try:
+            with shelve.open("food.db", 'c') as db:
+                foods = db["food"]
+                return foods[str(id)]
+
+        except KeyError:
+            logging.error("Food: tried to query id %s but not found" % id)
+            return None

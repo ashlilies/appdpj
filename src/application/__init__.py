@@ -20,8 +20,8 @@ from application.Models.User import User
 from application.Models.Customer import Customer
 import atexit
 # Includes
-from application.Controllers.admin import *
-from application.Controllers.consumer import *
+from application.Controllers.admin_loader import *
+from application.Controllers.consumer_loader import *
 
 
 # Handling Flask uploads.
