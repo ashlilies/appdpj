@@ -32,7 +32,7 @@ from werkzeug.utils import secure_filename
 @app.route('/admin/create-restaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
     restaurant_details_form = RestaurantDetailsForm(request.form)  # Using the Create Restaurant Form
-    create_restaurant = Restaurant_controller()  # Creating a controller /
+    create_restaurant = RestaurantSystem()  # Creating a controller
     # The controller will be the place where we do all the interaction
     if request.method == 'POST' and restaurant_details_form.validate():
         #  The Below code is using one of the controller's method
@@ -57,6 +57,10 @@ def admin_myrestaurant():  # ruri
             restaurant_details_form.rest_del4.data,
             restaurant_details_form.rest_del5.data
         )
+
+        # ashlee - attach restaurant_id to our current user
+        current_user.restaurant_id = restaurant_id
+
         # flask_login.current_user.restaurant = restaurant_id
         # Once done, it'll redirect to the home page
         return redirect(url_for('admin_home'))
