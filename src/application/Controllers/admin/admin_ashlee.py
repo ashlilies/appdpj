@@ -337,5 +337,3 @@ def admin_coupon_delete(id):  # todo: handle active systems
         db["coupon_systems"] = coupon_systems_list
 
     return redirect(url_for("admin_coupon_management"))
-
-
