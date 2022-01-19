@@ -19,8 +19,6 @@ class Restaurant:
         self.del5 = del5
         self.tags = tags
 
-        save_account_db()
-
     # def get_name(self):
     #     return self.name
     # 
