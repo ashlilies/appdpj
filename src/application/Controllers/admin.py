@@ -1039,8 +1039,7 @@ def delete_cert(id):
 # C (Create)
 @app.route('/admin/create-restaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
-    restaurant_details_form = RestaurantDetailsForm(
-        request.form)  # Using the Create Restaurant Form
+    restaurant_details_form = RestaurantDetailsForm(request.form)  # Using the Create Restaurant Form
     create_restaurant = Restaurant_controller()  # Creating a controller /
     # The controller will be the place where we do all the interaction
     if request.method == 'POST' and restaurant_details_form.validate():
