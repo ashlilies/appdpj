@@ -156,89 +156,9 @@ def update_restaurant_confirm(id):
     return redirect(url_for('view_restaurant'))
 
 
-@app.route('/admin/my-restaurant')
-def retrieve_restaurant():
-    restaurants_dict = {}
-    db = shelve.open(DB_NAME, 'r')
-    restaurants_dict = db['Restaurants']
-    db.close()
-    restaurants_list = []
-    for key in restaurants_dict:
-        restaurant = restaurants_dict.get(key)
-        restaurants_list.append(restaurant)
-
-    return render_template('admin/myrestaurant.html',
-                           count=len(restaurants_list),
-                           restaurants_list=restaurants_list)
-
-
-# @app.route('/updateRestaurant/<int:id>/', methods=['GET', 'POST'])
-# def update_restaurant(id):
-#     update_restaurant_form = RestaurantDetailsForm(request.form)
-#     if request.method == 'POST' and update_restaurant_form.validate():
-#         users_dict = {}
-#         db = shelve.open('restaurant.db', 'w')
-#         restaurants_dict = db['Users']
-#
-#         user = users_dict.get(id)
-#         user.set_first_name(update_restaurant_form.first_name.data)
-#         user.set_last_name(update_restaurant_form.last_name.data)
-#         user.set_gender(update_restaurant_form.gender.data)
-#         user.set_membership(update_restaurant_form.membership.data)
-#         user.set_remarks(update_restaurant_form.remarks.data)
-#
-#         db['Restaurants'] = restaurants_dict
-#         db.close()
-#
-#         return redirect(url_for('retrieve_users'))
-#     else:
-#         users_dict = {}
-#         db = shelve.open('user.db', 'r')
-#         users_dict = db['Users']
-#         db.close()
-#
-#         user = users_dict.get(id)
-#         update_user_form.first_name.data = user.get_first_name()
-#         update_user_form.last_name.data = user.get_last_name()
-#         update_user_form.gender.data = user.get_gender()
-#         update_user_form.membership.data = user.get_membership()
-#         update_user_form.remarks.data = user.get_remarks()
-#
-#         return render_template('updateUser.html', form=update_user_form)
 
 @app.route("/admin/dashboard")
 def dashboard():  # ruri
     return render_template("admin/dashboard.html")
-
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[
-        1].lower() in ALLOWED_EXTENSIONS
-
-
-@app.route('/', methods=['POST'])
-def upload_image():
-    if 'file' not in request.files:
-        flash('No file part')
-        return redirect(request.url)
-    file = request.files['file']
-    if file.filename == '':
-        flash('No image selected for uploading')
-        return redirect(request.url)
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        # print('upload_image filename: ' + filename)
-        flash('Image successfully uploaded and displayed below')
-        return render_template('index.html', filename=filename)
-    else:
-        flash('Allowed image types are - png, jpg, jpeg, gif')
-        return redirect(request.url)
-
-
-@app.route('/display/<filename>')
-def display_image(filename):
-    # print('display_image filename: ' + filename)
-    return redirect(url_for('static', filename='uploads/' + filename), code=301)
 
 
