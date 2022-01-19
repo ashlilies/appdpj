@@ -5,11 +5,12 @@ import shelve
 
 class Transaction:
     transaction_id = 1
-    food_coupons = ['SPAGETIT','50PASTA']
+    food_coupons = ['SPAGETIT', '50PASTA']
+
     def __init__(self, account_name=None, option=None, price=0, used_coupons=None,
                  ratings=0):
 
-        with shelve.open(DB_NAME, 'c') as db:
+        with shelve.open('transaction', 'c') as db:
             try:
                 Transaction.transaction_id = db['transaction_id_count']
             except Exception as e:
@@ -23,7 +24,7 @@ class Transaction:
         self.deleted = False
         Transaction.transaction_id += 1
         # writeback
-        with shelve.open(DB_NAME, 'c') as db:
+        with shelve.open('transaction', 'c') as db:
             db['transaction_id_count'] = Transaction.transaction_id
 
     def set_option(self, option):
