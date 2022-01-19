@@ -320,5 +320,4 @@ def delete_customer(id):
 #     app.run()
 
 if __name__ == '__main__':
-    load_db()  # load and cache db before app runs
     app.run(host="0.0.0.0")
