@@ -20,12 +20,12 @@
 {% block content %}
   <h1 class="display-6">Coupon Management</h1>
   <div>
-    {% if len(coupon_list) == 0 %}
+    {% if count == 0 %}
       <p>There are no coupons.
-    {% elif len(coupon_list) == 1 %}
+    {% elif count == 1 %}
       <p>There is 1 coupon.
     {% else %}
-      <p>There are {{ len(coupon_list) }} coupons.
+      <p>There are {{ count }} coupons.
     {% endif %}
     <a href="{{ url_for("admin_coupon_add") }}">Add a new coupon</a>
     or <a href="{{ url_for("admin_coupon_add_examples") }}">add examples</a>

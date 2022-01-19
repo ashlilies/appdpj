@@ -86,13 +86,13 @@ class CouponSystem:
 
         with shelve.open("coupons", 'c') as db:
             db["count_id"] = CouponSystem.count_id
-            coupon_dict = {}
-            if "coupon_dict" in db:
-                coupon_dict = db["coupon_dict"]
+            coupon_systems_dict = {}
+            if "coupon_systems_dict" in db:
+                coupon_systems_dict = db["coupon_systems_dict"]
 
             # shelve databases don't accept int keys - only python dicts
-            coupon_dict[self.id] = self
-            db["coupon_dict"] = coupon_dict
+            coupon_systems_dict[self.id] = self
+            db["coupon_systems_dict"] = coupon_systems_dict
 
     def new_coupon(self, coupon_code: str, food_ids: list, discount_type,
                    discount_amount: float, expiry: datetime.datetime):
@@ -101,12 +101,22 @@ class CouponSystem:
                                                         discount_amount, expiry)
 
         with shelve.open("coupons", 'c') as db:  # save back coupon system
-            coupon_dict = {}
-            if "coupon_dict" in db:
-                coupon_dict = db["coupon_dict"]
+            coupon_systems_dict = {}
+            if "coupon_systems_dict" in db:
+                coupon_systems_dict = db["coupon_systems_dict"]
 
-            coupon_dict[self.id] = self
-            db["coupon_dict"] = coupon_dict
+            coupon_systems_dict[self.id] = self
+            db["coupon_systems_dict"] = coupon_systems_dict
+
+    # Get all applicable coupons for a food_id.
+    # If food_id not supplied, get all coupons for this system.
+    def get_coupons(self, food_id: int=None) -> list:
+        coupon_list = []
+        for coupon_code in self.coupons:
+            coupon = self.coupons[coupon_code]
+            if food_id is None or food_id in coupon.food_items:
+                coupon_list.append(coupon)
+        return coupon_list
 
     def edit_coupon(self, coupon_code: str, food_items: list, discount_type,
                     discount_amount: float, expiry: datetime.datetime,
@@ -122,12 +132,12 @@ class CouponSystem:
         coupon.enabled = enabled_status
 
         with shelve.open("coupons", 'c') as db:  # save back coupon system
-            coupon_dict = {}
-            if "coupon_dict" in db:
-                coupon_dict = db["coupon_dict"]
+            coupon_systems_dict = {}
+            if "coupon_systems_dict" in db:
+                coupon_systems_dict = db["coupon_systems_dict"]
 
-            coupon_dict[self.id] = self
-            db["coupon_dict"] = coupon_dict
+            coupon_systems_dict[self.id] = self
+            db["coupon_systems_dict"] = coupon_systems_dict
 
     def delete_coupon(self, coupon_code: str):
         if coupon_code in self.coupons:
@@ -135,12 +145,12 @@ class CouponSystem:
             coupon.enabled = False
 
         with shelve.open("coupons", 'c') as db:  # save back coupon system
-            coupon_dict = {}
-            if "coupon_dict" in db:
-                coupon_dict = db["coupon_dict"]
+            coupon_systems_dict = {}
+            if "coupon_systems_dict" in db:
+                coupon_systems_dict = db["coupon_systems_dict"]
 
-            coupon_dict[self.id] = self
-            db["coupon_dict"] = coupon_dict
+            coupon_systems_dict[self.id] = self
+            db["coupon_systems_dict"] = coupon_systems_dict
 
     def discounted_price(self, food_id: int, coupon_code: str):
         food = Food.query(food_id)
@@ -153,7 +163,19 @@ class CouponSystem:
             if not coupon.enabled:
                 return food.get_price()
 
+            if not food_id in coupon.food_items:
+                return food.get_price()
+
             after_discount = coupon.discount.discounted_price(food.get_price())
             if after_discount is not None:
                 return after_discount
         return food.get_price()  # can't find matching discount return original price
+
+    # Query database and return a CouponSystem, or None if not found
+    @staticmethod
+    def query(coupon_system_id: int) -> "CouponSystem" or None:
+        with shelve.open("coupons", 'c') as db:
+            if "coupon_systems_dict" in db:
+                coupon_systems_dict = db["coupon_systems_dict"]
+                return coupon_systems_dict.get(coupon_system_id, None)
+        return None

@@ -1,6 +1,7 @@
 # Denotes a single restaurant's account
 
 from application.Models.Account import *
+from application.Models.CouponSystem import CouponSystem
 from application.Models.Restaurant import Restaurant
 
 
@@ -9,6 +10,7 @@ class Admin(Account):
         super().__init__(email, password)  # comes first, so we can abort error
         self.__restaurant_id = None  # set later
         self.__name = None
+        self.coupon_system_id = CouponSystem().id
         self.set_name(restaurant_name)
 
         logging.info(("Admin Class: Created new Admin account with "

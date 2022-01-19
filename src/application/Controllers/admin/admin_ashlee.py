@@ -176,7 +176,7 @@ def delete_admin_account():
     return redirect(url_for("admin_logout"))
 
 
-# for testing only - to remove on final!
+# todo: for testing only - to remove on final!
 @app.route("/admin/coupon/createExamples")
 @login_required
 def admin_coupon_add_examples():
@@ -228,30 +228,15 @@ def admin_coupon_add_examples():
 @app.route("/admin/coupon")
 @login_required
 def admin_coupon_management():
-    # TODO: Replace with flask-login
-    # Get current Restaurant object from current_user.
-    restaurant_id = current_user.restaurant_id
-    restaurant = RestaurantSystem.find_restaurant_by_id(restaurant_id)
-
-    coupon_systems_list = []
-
-    with shelve.open("coupon", 'c') as db:
-        if "coupon_systems" in db:
-            coupon_systems_list = db["coupon_systems"]
-        else:
-            coupon_systems_list.append(CouponSystem())
-
-    # TEMPORARY FOR WEEK 13 ONLY
-    # session["coupon_systems_active_idx"] = 0
-    active_coupon_system_idx = session["coupon_systems_active_idx"]
-    selected_system = coupon_systems_list[active_coupon_system_idx]
-
-    with shelve.open("coupon", 'c') as db:
-        db["coupon_systems"] = coupon_systems_list
+    # Get current CouponSystem from current_user (admin).
+    coupon_system_id = current_user.coupon_system_id
+    coupon_system = CouponSystem.query(coupon_system_id)
+    coupon_list = coupon_system.get_coupons()
+    count = len(coupon_list)
 
     return render_template("admin/retrieveCoupons.html",
-                           len=len,
-                           coupon_list=selected_system.list_of_coupons)
+                           coupon_list=coupon_list,
+                           count=count)
 
 
 @app.route("/admin/addCoupon", methods=["GET", "POST"])
@@ -259,7 +244,6 @@ def admin_coupon_management():
 def admin_coupon_add():  # todo
     # TODO: Replace with flask-login
     # Get current Restaurant object from current_user.
-
 
     create_coupon_form = CreateCouponForm()
     if request.method == "POST" and create_coupon_form.validate():
