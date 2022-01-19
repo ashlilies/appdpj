@@ -11,6 +11,8 @@ from application.Models.Food import Food
 
 
 class CouponSystem:
+    count_id = 0
+
     class Discount:
         FIXED_PRICE = 0
         PERCENTAGE_OFF = 1
@@ -36,11 +38,11 @@ class CouponSystem:
 
         def __init__(self,
                      coupon_code: str,
-                     food_items: list,
+                     food_items_ids: list,
                      discount_type,
                      discount_amount: float,
                      expiry: datetime.datetime):
-            with shelve.open("coupon", 'c') as db:
+            with shelve.open("coupons", 'c') as db:
                 if "coupon_count_id" in db:
                     CouponSystem.Coupon.count_id = db["coupon_count_id"]
 
@@ -48,20 +50,24 @@ class CouponSystem:
                          % CouponSystem.Coupon.count_id)
             self.id = CouponSystem.Coupon.count_id
             self.coupon_code = coupon_code
-            self.food_items = food_items
+            self.food_items = food_items_ids
             self.discount = CouponSystem.Discount(discount_type,
                                                   discount_amount)
             self.expiry = expiry
             self.enabled = True
 
             CouponSystem.Coupon.count_id += 1
-            with shelve.open("coupon", 'c') as db:
+            with shelve.open("coupons", 'c') as db:
                 db["coupon_count_id"] = CouponSystem.Coupon.count_id
 
-        def discounted_price(self, food: Food, coupon_code: str):
+        def discounted_price(self, food_id: int, coupon_code: str):
+            # Get food item
+
+
             if not self.enabled:  # artifically cancelled coupon
                 return None
             if datetime.datetime.now() > self.expiry:  # expired already
+                self.enabled = False  # disable it for convenience's sake
                 return None
 
             if coupon_code == self.coupon_code:  # coupon code match?
@@ -70,22 +76,56 @@ class CouponSystem:
             return None  # if doesn't apply, return None
 
     def __init__(self):
-        self.list_of_coupons = []
+        with shelve.open("coupons", 'c') as db:
+            if "count_id" in db:
+                CouponSystem.count_id = db["count_id"]
 
-    def new_coupon(self,
-                   coupon_code: str,
-                   food_items: list,
-                   discount_type,
-                   discount_amount: float,
-                   expiry: datetime.datetime):
-        self.list_of_coupons.append(CouponSystem.Coupon(coupon_code,
-                                                        food_items,
+        CouponSystem.count_id += 1
+        self.id = CouponSystem.count_id
+        self.coupons = {}
+
+        with shelve.open("coupons", 'c') as db:
+            db["count_id"] = CouponSystem.count_id
+            db[str(self.id)] = self
+
+    def new_coupon(self, coupon_code: str, food_items: list, discount_type,
+                   discount_amount: float, expiry: datetime.datetime):
+        self.coupons[coupon_code] = CouponSystem.Coupon(coupon_code, food_items,
                                                         discount_type,
-                                                        discount_amount,
-                                                        expiry))
+                                                        discount_amount, expiry)
+        with shelve.open("coupons", 'c') as db:  # save back coupon system
+            db[str(self.id)] = self
+
+    def edit_coupon(self, coupon_code: str, food_items: list, discount_type,
+                    discount_amount: float, expiry: datetime.datetime,
+                    enabled_status: bool):
+        coupon = self.coupons[coupon_code]
+        self.coupons[coupon_code] = CouponSystem.Coupon(coupon_code, food_items,
+                                                        discount_type,
+                                                        discount_amount, expiry)
+        coupon.coupon_code = coupon_code
+        coupon.food_items = food_items
+        coupon.discount = CouponSystem.Discount(discount_type, discount_amount)
+        coupon.expiry = expiry
+        coupon.enabled = enabled_status
+
+        with shelve.open("coupons", 'c') as db:  # save back coupon system
+            db[str(self.id)] = self
+
+    def delete_coupon(self, coupon_code: str):
+        if coupon_code in self.coupons:
+            coupon = self.coupons[coupon_code]
+            coupon.enabled = False
+
+        with shelve.open("coupons", 'c') as db:
+            db[str(self.id)] = self
 
     def discounted_price(self, food: Food, coupon_code: str):
-        for coupon in self.list_of_coupons:
+        if coupon_code in self.coupons:
+            coupon = self.coupons[coupon_code]
+            if not coupon.enabled:
+                return food.price
+
             after_discount = coupon.discount.discounted_price(food, coupon_code)
             if after_discount is not None:
                 return after_discount

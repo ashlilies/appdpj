@@ -26,7 +26,6 @@ class Food:
         with shelve.open("food_count_db", 'c') as db:
             db["food_count_id"] = Food.count_id
 
-        save_account_db()
 
     def get_food_id(self):
         return self.__food_id
@@ -71,3 +70,8 @@ class Food:
     # Set the image as a file?
     def set_image(self, image):
         self.__image = image
+
+    # added by ashlee - get a food item by passing in the id
+    @staticmethod
+    def query(id: int):
+        with shelve.open("")
