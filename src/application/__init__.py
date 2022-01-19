@@ -53,7 +53,5 @@ def unauthorized_callback():
 
 # Includes
 from application.Forms import CreateUserForm, CreateCustomerForm
-from application.Models.User import User
-from application.Models.Customer import Customer
 from application.Controllers.admin_loader import *
 from application.Controllers.consumer_loader import *
