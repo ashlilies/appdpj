@@ -4,7 +4,6 @@
 # New routes go here, not in __init__.
 from application import app, login_manager
 
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'pdf'])
 
 # Initialize all our separated controllers
 from application.Controllers.admin.admin_ashlee import *

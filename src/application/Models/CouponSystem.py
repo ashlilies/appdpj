@@ -120,13 +120,19 @@ class CouponSystem:
         with shelve.open("coupons", 'c') as db:
             db[str(self.id)] = self
 
-    def discounted_price(self, food: Food, coupon_code: str):
+    def discounted_price(self, food_id: int, coupon_code: str):
+        food = Food.query(food_id)
+        if food is None:
+            logging.error("CS: Failed to get discounted price for food-id %s" % food_id)
+            return -1
+
         if coupon_code in self.coupons:
             coupon = self.coupons[coupon_code]
             if not coupon.enabled:
                 return food.price
 
-            after_discount = coupon.discount.discounted_price(food, coupon_code)
+            # after_discount = coupon.discount.discounted_price(food, coupon_code)
+            after_discount = coupon.discount.discounted_price(food.price)
             if after_discount is not None:
                 return after_discount
         return food.price  # can't find matching discount return original price

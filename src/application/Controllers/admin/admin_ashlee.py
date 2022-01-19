@@ -1,32 +1,15 @@
 import datetime
+import shelve
 import traceback
 
-import flask
-from flask import render_template, request, redirect, url_for, session, flash, Flask
+from flask import render_template, request, redirect, url_for, session, flash
 from flask_login import logout_user, login_required, current_user, login_user
-import os
-import os.path
 
+from application import app
 from application.CouponForms import CreateCouponForm
 from application.Models.Admin import *
 from application.Models.CouponSystem import CouponSystem
-from application.Models.Certification import Certification
-from application.Models.Food import Food
-from application.Models.Restaurant import Restaurant
-from application import app, login_manager
-from application.Models.Transaction import Transaction
-from application.adminAddFoodForm import CreateFoodForm
-from werkzeug.utils import secure_filename
-import shelve, os
-import uuid
 from application.rest_details_form import *
-
-# Ruri's imported libraries
-import urllib.request
-import os
-from werkzeug.utils import secure_filename
-
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif', 'pdf'])
 
 
 # <------------------------- ASHLEE ------------------------------>
@@ -151,7 +134,8 @@ def admin_update_account():
         if "changeName" in request.form:
             if request.form["changeName"] != "":
                 current_user.set_name(request.form["changeName"])
-                flash("Successfully updated name to %s" % request.form["changeName"])
+                flash("Successfully updated name to %s" % request.form[
+                    "changeName"])
 
         if "changeEmail" in request.form:
             if request.form["changeEmail"] != "":
@@ -169,7 +153,6 @@ def admin_update_account():
             elif request.form["changePw"] != "":
                 current_user.set_password_hash(request.form["changePw"])
                 flash("Successfully updated password")
-
 
     return redirect(url_for("admin_home"))
 
@@ -212,19 +195,28 @@ def admin_coupon_add_examples():
                                                              ["All: Spaghetti"],
                                                              CouponSystem.Discount.PERCENTAGE_OFF,
                                                              10,
-                                                             (datetime.datetime.datetime(2022, 3, 1)))
+                                                             (
+                                                                 datetime.datetime.datetime(
+                                                                     2022, 3,
+                                                                     1)))
 
     coupon_systems_list[active_coupon_system_idx].new_coupon("Meowbie9",
                                                              ["All: Drinks"],
                                                              CouponSystem.Discount.PERCENTAGE_OFF,
                                                              20,
-                                                             (datetime.datetime.datetime(2022, 1, 21)))
+                                                             (
+                                                                 datetime.datetime.datetime(
+                                                                     2022, 1,
+                                                                     21)))
 
     coupon_systems_list[active_coupon_system_idx].new_coupon("CnySpecial",
                                                              ["All: Drinks"],
                                                              CouponSystem.Discount.FIXED_PRICE,
                                                              3.5,
-                                                             (datetime.datetime.datetime(2022, 2, 14)))
+                                                             (
+                                                                 datetime.datetime.datetime(
+                                                                     2022, 2,
+                                                                     14)))
 
     with shelve.open("coupon", 'c') as db:
         db["coupon_systems"] = coupon_systems_list
@@ -236,9 +228,6 @@ def admin_coupon_add_examples():
 @login_required
 def admin_coupon_management():
     # TODO: Replace with flask-login
-    # if not logged in, need to login first
-    # if not is_account_id_in_session():
-    #     return redirect(url_for("admin_login"))
 
     coupon_systems_list = []
 
@@ -296,7 +285,8 @@ def admin_coupon_add():  # todo
 
         return redirect(url_for("admin_coupon_management"))
     else:
-        return render_template("admin/createCoupon.html", form=create_coupon_form)
+        return render_template("admin/createCoupon.html",
+                               form=create_coupon_form)
 
 
 @app.route("/admin/updateCoupon/<int:idx>")  # index of in coupon systems
