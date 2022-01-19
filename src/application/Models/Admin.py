@@ -7,7 +7,7 @@ from application.Models.Restaurant import Restaurant
 class Admin(Account):
     def __init__(self, restaurant_name, email, password):
         super().__init__(email, password)  # comes first, so we can abort error
-        self.restaurant_id = None  # set later
+        self.__restaurant_id = None  # set later
         self.__name = None
         self.set_name(restaurant_name)
 
@@ -36,3 +36,17 @@ class Admin(Account):
             accounts = db["accounts"]
             accounts[self.account_id] = self
             db["accounts"] = accounts
+
+    @property
+    def restaurant_id(self):
+        return self.__restaurant_id
+
+    @restaurant_id.setter
+    def restaurant_id(self, new_id):
+        self.__restaurant_id = new_id
+
+        with shelve.open(ACCOUNT_DB, 'c') as db:
+            accounts = db["accounts"]
+            accounts[self.account_id] = self
+            db["accounts"] = accounts
+

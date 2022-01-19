@@ -9,6 +9,7 @@ from application import app
 from application.CouponForms import CreateCouponForm
 from application.Models.Admin import *
 from application.Models.CouponSystem import CouponSystem
+from application.Models.RestaurantSystem import RestaurantSystem
 from application.rest_details_form import *
 
 
@@ -228,6 +229,9 @@ def admin_coupon_add_examples():
 @login_required
 def admin_coupon_management():
     # TODO: Replace with flask-login
+    # Get current Restaurant object from current_user.
+    restaurant_id = current_user.restaurant_id
+    restaurant = RestaurantSystem.find_restaurant_by_id(restaurant_id)
 
     coupon_systems_list = []
 
@@ -251,11 +255,11 @@ def admin_coupon_management():
 
 
 @app.route("/admin/addCoupon", methods=["GET", "POST"])
+@login_required
 def admin_coupon_add():  # todo
     # TODO: Replace with flask-login
-    # if not logged in, need to login first
-    if not is_account_id_in_session():
-        return redirect(url_for("admin_login"))
+    # Get current Restaurant object from current_user.
+
 
     create_coupon_form = CreateCouponForm()
     if request.method == "POST" and create_coupon_form.validate():
@@ -290,22 +294,18 @@ def admin_coupon_add():  # todo
 
 
 @app.route("/admin/updateCoupon/<int:idx>")  # index of in coupon systems
+@login_required
 def admin_coupon_update(idx):  # todo: handle active systems
     # TODO: Replace with flask-login
-    # if not logged in, need to login first
-    if not is_account_id_in_session():
-        return redirect(url_for("admin_login"))
 
     flash("Under Construction")
     return redirect(url_for("admin_coupon_management"))
 
 
 @app.route("/admin/deleteCoupon/<int:id>", methods=["GET", "POST"])
+@login_required
 def admin_coupon_delete(id):  # todo: handle active systems
     # TODO: Replace with flask-login
-    # if not logged in, need to login first
-    if not is_account_id_in_session():
-        return redirect(url_for("admin_login"))
 
     coupon_systems_list = []
 
