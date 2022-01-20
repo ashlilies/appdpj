@@ -11,6 +11,7 @@
           background-color: white;
           border-radius: 12px;
       }
+
       .btn:hover {
           background-color: #af61cb;
           color: white;
@@ -22,13 +23,12 @@
   <div>
     {% if count == 0 %}
       <p>There are no coupons.
-    {% elif count == 1 %}
+        {% elif count == 1 %}
       <p>There is 1 coupon.
-    {% else %}
+        {% else %}
       <p>There are {{ count }} coupons.
     {% endif %}
     <a href="{{ url_for("admin_coupon_add") }}">Add a new coupon</a>
-    or <a href="{{ url_for("admin_coupon_add_examples") }}">add examples</a>
     </p>
   </div>
   <div>
@@ -47,16 +47,27 @@
       {% for coupon in coupon_list %}
         <tr>
           <td>{{ coupon.coupon_code }}</td>
-          {% for food_item in coupon.food_items %}
-            <td>{{ food_item }}</td>
-          {% endfor %}
-          <td>{{ coupon.discount.discount_type }}</td>
-          <td>{{ coupon.discount.discount_amount }}</td>
+          <td>
+            {% for food_item_id in coupon.food_items %}
+              {{ food_item_id }}&nbsp;
+            {% endfor %}
+          </td>
+          {% if coupon.discount.discount_type == coupon.discount.FIXED_PRICE %}
+            <td>Fixed Price</td>
+            <td>{{ coupon.discount.discount_amount }}</td>
+          {% elif coupon.discount.discount_type == coupon.discount.PERCENTAGE_OFF %}
+            <td>Percentage Off</td>
+            <td>{{ coupon.discount.discount_amount * 100 }}%</td>
+          {% else %}
+            <td>ERROR</td>
+            <td>{{ coupon.discount.discount_amount }}</td>
+          {% endif %}
+
           <td>{{ coupon.expiry }}</td>
-          <td><a href="/admin/updateCoupon/{{ coupon.id }}"
+          <td><a href="{{ url_for("admin_coupon_update", coupon_code=coupon.coupon_code) }}"
                  class="btn btn-warning">Update</a></td>
           <td>
-            <form action="{{ url_for('admin_coupon_delete', id=coupon.id) }}"
+            <form action="{{ url_for('admin_coupon_delete', coupon_code=coupon.coupon_code) }}"
                   method="POST">
               <!--        <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete {#user.get_first_name()#} {#user.get_last_name()#}?');">-->
               <!-- Button to Open the Modal -->
@@ -88,7 +99,8 @@
                       <input type="submit" value="Delete"
                              class="btn btn-danger">
                       <button type="button" class="btn btn-secondary"
-                              data-bs-dismiss="modal">Cancel</button>
+                              data-bs-dismiss="modal">Cancel
+                      </button>
                     </div>
 
                   </div>

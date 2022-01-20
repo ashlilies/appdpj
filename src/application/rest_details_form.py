@@ -1,7 +1,7 @@
 # who did this? put your name here
 
 from wtforms import Form, StringField, RadioField, SelectField, TextAreaField, validators
-from wtforms.fields import *
+from wtforms.fields import IntegerField, StringField, TimeField, DecimalField
 # from wtforms_components import TimeField
 
 class RestaurantDetailsForm(Form):

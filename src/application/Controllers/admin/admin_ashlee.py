@@ -1,9 +1,11 @@
 import datetime
+from datetime import date, timedelta, datetime
 import shelve
 import traceback
 
 from flask import render_template, request, redirect, url_for, session, flash
 from flask_login import logout_user, login_required, current_user, login_user
+from wtforms import ValidationError
 
 from application import app
 from application.CouponForms import CreateCouponForm
@@ -176,55 +178,6 @@ def delete_admin_account():
     return redirect(url_for("admin_logout"))
 
 
-# todo: for testing only - to remove on final!
-@app.route("/admin/coupon/createExamples")
-@login_required
-def admin_coupon_add_examples():
-    coupon_systems_list = []
-
-    with shelve.open("coupon", 'c') as db:
-        if "coupon_systems" in db:
-            coupon_systems_list = db["coupon_systems"]
-        else:
-            coupon_systems_list.append(CouponSystem())
-
-    # TEMPORARY FOR WEEK 13 ONLY
-    # session["coupon_systems_active_idx"] = 0
-    active_coupon_system_idx = session["coupon_systems_active_idx"]
-
-    coupon_systems_list[active_coupon_system_idx].new_coupon("FoodyPulse3",
-                                                             ["All: Spaghetti"],
-                                                             CouponSystem.Discount.PERCENTAGE_OFF,
-                                                             10,
-                                                             (
-                                                                 datetime.datetime.datetime(
-                                                                     2022, 3,
-                                                                     1)))
-
-    coupon_systems_list[active_coupon_system_idx].new_coupon("Meowbie9",
-                                                             ["All: Drinks"],
-                                                             CouponSystem.Discount.PERCENTAGE_OFF,
-                                                             20,
-                                                             (
-                                                                 datetime.datetime.datetime(
-                                                                     2022, 1,
-                                                                     21)))
-
-    coupon_systems_list[active_coupon_system_idx].new_coupon("CnySpecial",
-                                                             ["All: Drinks"],
-                                                             CouponSystem.Discount.FIXED_PRICE,
-                                                             3.5,
-                                                             (
-                                                                 datetime.datetime.datetime(
-                                                                     2022, 2,
-                                                                     14)))
-
-    with shelve.open("coupon", 'c') as db:
-        db["coupon_systems"] = coupon_systems_list
-
-    return redirect(url_for("admin_coupon_management"))
-
-
 @app.route("/admin/coupon")
 @login_required
 def admin_coupon_management():
@@ -241,72 +194,104 @@ def admin_coupon_management():
 
 @app.route("/admin/addCoupon", methods=["GET", "POST"])
 @login_required
-def admin_coupon_add():  # todo
-    # TODO: Replace with flask-login
-    # Get current Restaurant object from current_user.
+def admin_coupon_add():
+    create_coupon_form = CreateCouponForm(request.form)
 
-    create_coupon_form = CreateCouponForm()
     if request.method == "POST" and create_coupon_form.validate():
-        coupon_systems_list = []
+        if create_coupon_form.expiry.data < date.today():
+            flash("Date entered cannot be in the past!")
+            return redirect(url_for("admin_coupon_add"))
 
-        with shelve.open("coupon", 'c') as db:
-            if "coupon_systems" in db:
-                coupon_systems_list = db["coupon_systems"]
-            else:
-                coupon_systems_list.append(CouponSystem())
+        cs = CouponSystem.query(current_user.coupon_system_id)
 
-        active_coupon_system_idx = session["coupon_systems_active_idx"]
-        cs = coupon_systems_list[active_coupon_system_idx]
+        if create_coupon_form.discount_type.data == "fp":
+            discount_type = CouponSystem.DISCOUNT_FIXED_PRICE
+            discount_amount = float(create_coupon_form.discount_amount.data),
+            discount_amount = discount_amount[0]  # for some reason we get a tuple here
+        elif create_coupon_form.discount_type.data == "pct":
+            discount_type = CouponSystem.DISCOUNT_PERCENTAGE_OFF
+            discount_amount = float(create_coupon_form.discount_amount.data) / 100
+        else:
+            flash("Invalid discount type!")
+            return redirect(url_for("admin_coupon_add"))
 
-        discount_type = (CouponSystem.Discount.FIXED_PRICE if
-                         create_coupon_form.discount_type.data == "fp" else
-                         CouponSystem.Discount.PERCENTAGE_OFF)
+        food_item_ids = create_coupon_form.food_item_ids.data.split()
+        # TODO: Check if food item ids belong to the current restaurant.
 
         cs.new_coupon(create_coupon_form.coupon_code.data,
-                      create_coupon_form.food_items.data,
+                      food_item_ids,
                       discount_type,
-                      create_coupon_form.discount_amount.data,
+                      discount_amount,
                       create_coupon_form.expiry.data)
-
-        with shelve.open("coupon", 'c') as db:
-            db["coupon_systems"] = coupon_systems_list
 
         return redirect(url_for("admin_coupon_management"))
     else:
-        return render_template("admin/createCoupon.html",
-                               form=create_coupon_form)
+        return render_template("admin/createCoupon.html", form=create_coupon_form)
 
 
-@app.route("/admin/updateCoupon/<int:idx>")  # index of in coupon systems
+@app.route("/admin/updateCoupon/<string:coupon_code>", methods=["GET", "POST"])
 @login_required
-def admin_coupon_update(idx):  # todo: handle active systems
-    # TODO: Replace with flask-login
+def admin_coupon_update(coupon_code):
+    cs = CouponSystem.query(current_user.coupon_system_id)
+    coupon = cs.get_coupon(coupon_code)
 
-    flash("Under Construction")
-    return redirect(url_for("admin_coupon_management"))
+    if not coupon:
+        flash("Can't edit non-existent coupon with code %s" % coupon_code)
+        return redirect(url_for("admin_coupon_management"))
 
+    update_coupon_form = CreateCouponForm(request.form)
 
-@app.route("/admin/deleteCoupon/<int:id>", methods=["GET", "POST"])
-@login_required
-def admin_coupon_delete(id):  # todo: handle active systems
-    # TODO: Replace with flask-login
+    if request.method == "POST" and update_coupon_form.validate():
+        if update_coupon_form.expiry.data < date.today():
+            flash("Date entered cannot be in the past!")
+            return redirect(url_for("admin_coupon_management"))
 
-    coupon_systems_list = []
-
-    with shelve.open("coupon", 'c') as db:
-        if "coupon_systems" in db:
-            coupon_systems_list = db["coupon_systems"]
+        if update_coupon_form.discount_type.data == "fp":
+            discount_type = CouponSystem.DISCOUNT_FIXED_PRICE
+            discount_amount = float(update_coupon_form.discount_amount.data),
+            discount_amount = discount_amount[0]  # for some reason we get a tuple here
+        elif update_coupon_form.discount_type.data == "pct":
+            discount_type = CouponSystem.DISCOUNT_PERCENTAGE_OFF
+            discount_amount = float(update_coupon_form.discount_amount.data) / 100
         else:
-            coupon_systems_list.append(CouponSystem())
+            flash("Invalid discount type!")
+            return redirect(url_for("admin_coupon_add"))
 
-    active_coupon_system_idx = session["coupon_systems_active_idx"]
-    cs = coupon_systems_list[active_coupon_system_idx]
+        food_item_ids = update_coupon_form.food_item_ids.data.split()
+        # TODO: Check if food item ids belong to the current restaurant.
 
-    for coupon in cs.list_of_coupons:
-        if coupon.id == id:
-            cs.list_of_coupons.remove(coupon)
+        cs.edit_coupon(coupon_code,
+                       update_coupon_form.coupon_code.data,
+                       food_item_ids,
+                       discount_type,
+                       discount_amount,
+                       update_coupon_form.expiry.data)
 
-    with shelve.open("coupon", 'c') as db:
-        db["coupon_systems"] = coupon_systems_list
+        return redirect(url_for("admin_coupon_management"))
+
+    discount_type = ""
+    discount_amount = 0.0
+    if coupon.discount.discount_type == CouponSystem.DISCOUNT_FIXED_PRICE:
+        discount_type = "fp"
+        discount_amount = coupon.discount.discount_amount
+    elif coupon.discount.discount_type == CouponSystem.DISCOUNT_PERCENTAGE_OFF:
+        discount_type = "pct"
+        discount_amount = coupon.discount.discount_amount * 100
+
+    food_items_str = ' '.join(str(i) for i in coupon.food_items)
+
+    update_coupon_form.coupon_code.data = coupon.coupon_code
+    update_coupon_form.food_item_ids.data = food_items_str
+    update_coupon_form.discount_type.data = discount_type
+    update_coupon_form.discount_amount.data = discount_amount
+    update_coupon_form.expiry.data = coupon.expiry
+    return render_template("admin/updateCoupon.html", form=update_coupon_form, coupon_code=coupon_code)
+
+
+@app.route("/admin/deleteCoupon/<string:coupon_code>", methods=["GET", "POST"])
+@login_required
+def admin_coupon_delete(coupon_code):
+    cs = CouponSystem.query(current_user.coupon_system_id)
+    cs.delete_coupon(coupon_code)
 
     return redirect(url_for("admin_coupon_management"))

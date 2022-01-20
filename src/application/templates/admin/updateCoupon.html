@@ -1,12 +1,12 @@
 {% extends "admin/admin_base.html" %}
-{% block title %}Create Coupon{% endblock %}
+{% block title %}Update Coupon{% endblock %}
 
 {% block content %}
   {% from "includes/_formHelper.html" import render_field %}
 
-  <h1 class="display-6">Create Coupon</h1>
+  <h1 class="display-6">Update Coupon</h1>
 
-  <form method="POST" action="{{ url_for('admin_coupon_add') }}">
+  <form method="POST" action="{{ url_for('admin_coupon_update', coupon_code=coupon_code) }}">
     <div class="form-group">
       {{ render_field(form.coupon_code, class="form-control") }}
     </div>
