@@ -6,7 +6,7 @@ import shelve
 class Certification:
     count_id = 1
 
-    def __init__(self, hygiene_cert=None):
+    def __init__(self, hygiene_cert=None, halal_cert=None, vegetarian_cert=None, vegan_cert=None, noPorknoLard=None, noBeef=None):
         with shelve.open('certification', 'c') as db:
             try:
                 Certification.count_id = db['certification_id_count']
@@ -15,11 +15,11 @@ class Certification:
 
         self.id = Certification.count_id
         self.hygiene_cert = hygiene_cert
-        # self.halal_cert = halal_cert
-        # self.vegetarian_cert = vegetarian_cert
-        # self.vegan_cert = vegan_cert
-        # self.noPorknoLard = noPorknoLard
-        # self.noBeef = noBeef
+        self.halal_cert = halal_cert
+        self.vegetarian_cert = vegetarian_cert
+        self.vegan_cert = vegan_cert
+        self.noPorknoLard = noPorknoLard
+        self.noBeef = noBeef
 
         Certification.count_id += 1
         with shelve.open('certification', 'c') as db:

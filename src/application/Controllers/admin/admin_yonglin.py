@@ -277,53 +277,56 @@ def uploader():
             certchecks = request.form.getlist('certCheck')
             print(certchecks)
             for i in certchecks:
-                if 'NoBeef' in certchecks:
+                if 'NoPorkNoLard' in certchecks:
                     nb = 'YES'
-                elif 'NoPorkNoLard' in certchecks:
+                elif 'NoBeef' in certchecks:
                     npnl = 'YES'
                 else:
                     print('something is wrong')
             print(nb)
             print(npnl)
+            cert.noPorknoLard = npnl
+            cert.noBeef = nb
 
             # HYGIENE CERTIFICATE
             hygiene = request.files['hygieneDocument']  # getting the file from the form
             # dont need to check if there is input as this file input is compulsory
-            hygieneFile = secure_filename(hygiene.hygieneFile)
+            hygieneFile = secure_filename(hygiene.filename)
             app.config['UPLOADED_HYGIENE'] = f'application/static/restaurantCertification/hygiene/{cert.id}/'
             os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HYGIENE'])), exist_ok=True)
             # save document in app.config['UPLOAD_HYGIENE']
-            hygiene.save(os.path.join(os.getcwd(), app.config['UPLOADED_PDF']) + hygieneFile)
+            hygiene.save(os.path.join(os.getcwd(), app.config['UPLOADED_HYGIENE']) + hygieneFile)
             logging.info('Hygiene -- file uploaded successfully')
-            cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/{hygieneFile}"
+            cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/{hygiene}"
 
             # HALAL CERTIFICATE
             halal = request.files['halalDocument']
-            halalFile = secure_filename(halal.halalFile)
-            if halal.halalFile != "":
+            halalFile = secure_filename(halal.filename)
+            if halal.filename != "":
                 app.config['UPLOADED_HALAL'] = f'application/static/restaurantCertification/halal/{cert.id}/'
                 os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HALAL'])), exist_ok=True)
                 # save document in app.config['UPLOADED_HALAL']
                 halal.save(os.path.join(os.getcwd(), app.config['UPLOADED_HALAL']) + halalFile)
                 logging.info('Halal -- file uploaded successfully')
-                cert.halal_cert = f"application/static/restaurantCertification/halal/{cert.id}/{halalFile}"
+                cert.halal_cert = f"application/static/restaurantCertification/halal/{cert.id}/{halal}"
 
             # VEGETARIAN CERTIFICATE
             vegetarian = request.files['vegetarianDocument']
-            vegetarianFile = secure_filename(vegetarian.vegetarianFile)
-            if vegetarian.vegetarianFile != "":
+            vegetarianFile = secure_filename(vegetarian.filename)
+            if vegetarian.filename != "":
                 app.config['UPLOADED_VEGETARIAN'] = f'application/static/restaurantCertification/vegetarian/{cert.id}/'
                 os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGETARIAN'])),
                             exist_ok=True)
                 # save document in app.config['UPLOADED_HALAL']
                 vegetarian.save(os.path.join(os.getcwd(), app.config['UPLOADED_VEGETARIAN']) + vegetarianFile)
                 logging.info('Vegetarian -- file uploaded successfully')
-                cert.vegetarian_cert = f"application/static/restaurantCertification/vegetarian/{cert.id}/{vegetarianFile}"
+                cert.vegetarian_cert = f"application/static/restaurantCertification/vegetarian/{cert.id}/{vegetarian}"
 
             # VEGAN CERTIFICATE
             vegan = request.files['veganDocument']
-            veganFile = secure_filename(vegan.veganFile)
-            if vegan.veganFile != "":
+            veganFile = secure_filename(vegan.filename)
+            print(vegan.filename)
+            if vegan.filename != "":
                 # TODO: Add logic to save the file to filesystem and the Certification object here
                 app.config['UPLOADED_VEGAN'] = f'application/static/restaurantCertification/vegan/{cert.id}/'
                 os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGAN'])),
@@ -331,11 +334,18 @@ def uploader():
                 # save document in app.config['UPLOADED_HALAL']
                 vegan.save(os.path.join(os.getcwd(), app.config['UPLOADED_VEGAN']) + veganFile)
                 logging.info('Vegan -- file uploaded successfully')
-                cert.vegan_cert = f"application/static/restaurantCertification/vegetarian/{cert.id}/{veganFile}"
-
+                cert.vegan_cert = f"application/static/restaurantCertification/vegetarian/{cert.id}/{vegan}"
 
             certification_dict[cert.id] = cert
             handle['certification'] = certification_dict
+
+            for key in certification_dict:
+                food = certification_dict.get(key)
+                print(food)
+                print(food.id)
+                print(food.halal_cert)
+                print(food.vegetarian_cert)
+                print(food.vegan_cert)
 
         return redirect(url_for('read_cert'))
 
@@ -349,14 +359,13 @@ def read_cert():
             if 'certification' in handle:
                 certification_dict = handle['certification']
                 print('existing ', certification_dict)
-                error = 'line 976 nothing wrong here'
-                print(error)
                 for key in certification_dict:
                     cert = certification_dict.get(key)
                     print('cert: ', cert)
-                error2 = 'line 980 nothing wrong here'
-                print(error2)
-                # cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/"
+                    print('halal', cert.halal_cert)
+                    print('vegetarian', cert.vegetarian_cert_cert)
+                    print('vegan', cert.vegan_cert)
+
             else:
                 handle['certification'] = certification_dict
                 print(certification_dict)
