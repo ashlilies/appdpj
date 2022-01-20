@@ -104,23 +104,8 @@
           </li>
 
         </ul>
-
-
         <ul class="navbar-nav" id="adminSideRight" hidden>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button"
-               data-bs-toggle="dropdown">
-              Admin/Consumer</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item"
-                     href={{ url_for("admin_home") }}>Admin</a></li>
-              <li><a class="dropdown-item"
-                     href={{ url_for("consumer_home") }}>Consumer</a>
-              </li>
-            </ul>
-          </li>
-
-
+          {# Only show switcher if not logged in #}
 
           {% if current_user.is_authenticated %} {# Account is logged in #}
           <li class="nav-item dropdown loggedInMenu">
@@ -199,6 +184,18 @@
 
 
           {% else %} {# Account is NOT logged in #}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button"
+                 data-bs-toggle="dropdown">
+                Admin/Consumer</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item"
+                       href={{ url_for("admin_home") }}>Admin</a></li>
+                <li><a class="dropdown-item"
+                       href={{ url_for("consumer_home") }}>Consumer</a>
+                </li>
+              </ul>
+            </li>
             <li class="nav-item dropdown notLoggedInMenu">
               <a class="nav-link dropdown-toggle" href="#" role="button"
                  data-bs-toggle="dropdown">My Account</a>

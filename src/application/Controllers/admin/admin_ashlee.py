@@ -25,6 +25,7 @@ def admin_side(view):
         if isinstance(current_user, Admin) or not current_user.is_authenticated:
             print(current_user)
             return view(*args, **kwargs)
+        flash("You need to log out first to access the Admin side.")
         return redirect('/')
     return wrapper
 
@@ -131,6 +132,7 @@ def admin_logout():
         db["accounts"] = accounts
 
     logout_user()
+    flash("You have logged out.")
     return redirect(url_for("admin_home"))
 
 
