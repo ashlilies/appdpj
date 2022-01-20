@@ -1,4 +1,5 @@
 import datetime
+import functools
 from datetime import date, timedelta, datetime
 import shelve
 import traceback
@@ -17,13 +18,26 @@ from application.rest_details_form import *
 
 # <------------------------- ASHLEE ------------------------------>
 
+# Decorator to only allow admin accounts or guests
+def admin_side(view):
+    @functools.wraps(view)
+    def wrapper(*args, **kwargs):
+        if isinstance(current_user, Admin) or not current_user.is_authenticated:
+            print(current_user)
+            return view(*args, **kwargs)
+        return redirect('/')
+    return wrapper
+
+
 @app.route("/admin")
 @app.route("/admin/home", alias=True)
+@admin_side
 def admin_home():  # ashlee
     return render_template("admin/home.html")
 
 
 @app.route("/admin/login", methods=["GET", "POST"])
+@admin_side
 def admin_login():  # ashlee
     # TODO: Refactor with flask-login
     # if already logged in, what's the point?
@@ -50,6 +64,7 @@ def admin_login():  # ashlee
 
 
 @app.route("/admin/register", methods=["GET", "POST"])
+@admin_side
 def admin_register():  # ashlee
     def reg_error(ex=None):
         if ex is not None:
@@ -106,6 +121,7 @@ def admin_register():  # ashlee
 
 @app.route("/admin/logout")
 @login_required
+@admin_side
 def admin_logout():
     # Logout the current user
     current_user.authenticated = False
@@ -121,6 +137,7 @@ def admin_logout():
 # API for updating account, to be called by Account Settings
 @app.route("/admin/updateAccount", methods=["GET", "POST"])
 @login_required
+@admin_side
 def admin_update_account():
     # TODO: Implement admin account soft-deletion
 
@@ -161,6 +178,7 @@ def admin_update_account():
 
 
 @app.route("/admin/deleteAccount")
+@admin_side
 def delete_admin_account():
     # TODO: Add account settings password confirmation before allowing delete
     if current_user.is_authenticated:
@@ -180,6 +198,7 @@ def delete_admin_account():
 
 @app.route("/admin/coupon")
 @login_required
+@admin_side
 def admin_coupon_management():
     # Get current CouponSystem from current_user (admin).
     coupon_system_id = current_user.coupon_system_id
@@ -194,6 +213,7 @@ def admin_coupon_management():
 
 @app.route("/admin/addCoupon", methods=["GET", "POST"])
 @login_required
+@admin_side
 def admin_coupon_add():
     create_coupon_form = CreateCouponForm(request.form)
 
@@ -231,6 +251,7 @@ def admin_coupon_add():
 
 @app.route("/admin/updateCoupon/<string:coupon_code>", methods=["GET", "POST"])
 @login_required
+@admin_side
 def admin_coupon_update(coupon_code):
     cs = CouponSystem.query(current_user.coupon_system_id)
     coupon = cs.get_coupon(coupon_code)
@@ -290,6 +311,7 @@ def admin_coupon_update(coupon_code):
 
 @app.route("/admin/deleteCoupon/<string:coupon_code>", methods=["GET", "POST"])
 @login_required
+@admin_side
 def admin_coupon_delete(coupon_code):
     cs = CouponSystem.query(current_user.coupon_system_id)
     cs.delete_coupon(coupon_code)

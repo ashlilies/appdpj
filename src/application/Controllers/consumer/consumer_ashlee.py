@@ -3,20 +3,15 @@ from werkzeug.utils import redirect
 
 from application import app
 
+
 # <------------------------- ASHLEE ------------------------------>
-# Old one - redirect to the new /consumer
-
-
 @app.route('/')
-@app.route('/home')
-def home():
-    # render a template
-    # return render_template('home.html')
-    return redirect(url_for("consumer_home"))
-
-
-@app.route("/consumer")
+@app.route("/consumer", alias=True)
 def consumer_home():
     return render_template("consumer/home.html")
 
+
+@app.route('/cart')
+def consumer_cart():
+    return render_template("consumer/cart.html")
 
