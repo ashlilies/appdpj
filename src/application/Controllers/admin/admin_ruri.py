@@ -3,7 +3,8 @@ import traceback
 
 import flask
 from flask import render_template, request, redirect, url_for, session, flash, Flask
-from flask_login import logout_user, login_required, current_user
+from flask_login import logout_user, login_required, current_user, login_user
+
 import os
 import os.path
 
@@ -32,17 +33,19 @@ from werkzeug.utils import secure_filename
 @app.route('/admin/create-restaurant', methods=['GET', 'POST'])
 def admin_myrestaurant():  # ruri
     restaurant_details_form = RestaurantDetailsForm(request.form)  # Using the Create Restaurant Form
-    create_restaurant = Restaurant_controller()  # Creating a controller /
+    create_restaurant = RestaurantSystem()  # Creating a controller /
     # The controller will be the place where we do all the interaction
     if request.method == 'POST' and restaurant_details_form.validate():
         #  The Below code is using one of the controller's method
         #  "Create_restaurant"
         # It's passing in the form argument to instantiate the restaurant object
         restaurant_id = uuid.uuid4().hex
+        current_user.restaurant_id = restaurant_id
+        # print(current_user.restaurant_id)
         create_restaurant.create_restaurant(
             restaurant_id,
             restaurant_details_form.rest_name.data,
-            request.form["rest_logo"],
+            request.form.get("rest_logo"),
             restaurant_details_form.rest_contact.data,
             restaurant_details_form.rest_hour_open.data,
             restaurant_details_form.rest_hour_close.data,
@@ -55,8 +58,24 @@ def admin_myrestaurant():  # ruri
             restaurant_details_form.rest_del2.data,
             restaurant_details_form.rest_del3.data,
             restaurant_details_form.rest_del4.data,
-            restaurant_details_form.rest_del5.data
+            restaurant_details_form.rest_del5.data,
         )
+        session["rest_name"] = restaurant_details_form.rest_name.data
+        session["rest_contact"] = restaurant_details_form.rest_name.data
+        session["rest_hour_open"] = restaurant_details_form.rest_name.data
+        session["rest_hour_close"] = restaurant_details_form.rest_name.data
+        session["rest_address1"] = restaurant_details_form.rest_name.data
+        session["rest_address2"] = restaurant_details_form.rest_name.data
+        session["rest_postcode"] = restaurant_details_form.rest_name.data
+        session["rest_desc"] = restaurant_details_form.rest_name.data
+        session["rest_bank"] = restaurant_details_form.rest_name.data
+        session["rest_del1"] = restaurant_details_form.rest_name.data
+        session["rest_del2"] = restaurant_details_form.rest_name.data
+        session["rest_del3"] = restaurant_details_form.rest_name.data
+        session["rest_del4"] = restaurant_details_form.rest_name.data
+        session["rest_del5"] = restaurant_details_form.rest_name.data
+        # print(session["rest_name"])
+        # print(restaurant_id)
         # flask_login.current_user.restaurant = restaurant_id
         # Once done, it'll redirect to the home page
         return redirect(url_for('admin_home'))
@@ -105,7 +124,7 @@ def admin_myrestaurant():  # ruri
 
 # R (Read)
 # This is the route that displays all the relevant restaurant details
-@app.route('/admin/my-restaurantV2')
+@app.route('/admin/my-restaurant')
 def view_restaurant():
     return render_template('admin/myrestaurantv2.html',
                            restaurant=all_restaurant())
@@ -123,9 +142,9 @@ def update_restaurant(id):
     # This lambda is a callback function, it's pretty much comparing if the
     # ID of the restaurant is equal to our id argument
     if request.method == 'POST' and edit_restaurant.validate():
-        return render_template('updateuserv2.html', form=edit_restaurant,
+        return render_template('admin/updateuserv2.html', form=edit_restaurant,
                                restaurant=restaurant)
-    return render_template('updateuserv2.html', form=edit_restaurant,
+    return render_template('admin/updateuserv2.html', form=edit_restaurant,
                            restaurant=all_restaurant())
 
 
@@ -133,12 +152,12 @@ def update_restaurant(id):
 @app.route('/updateRestaurantConfirm/<id>', methods=['GET', 'POST'])
 def update_restaurant_confirm(id):
     edit_restaurant = RestaurantDetailsForm(request.form)
-    editing_restaurant = Restaurant_controller()
+    editing_restaurant = RestaurantSystem()
     if request.method == 'POST' and edit_restaurant.validate():
         editing_restaurant.edit_restaurant(
             id,
             edit_restaurant.rest_name.data,
-            request.form["rest_logo"],
+            request.form.get("rest_logo"),
             edit_restaurant.rest_contact.data,
             edit_restaurant.rest_hour_open.data,
             edit_restaurant.rest_hour_close.data,

@@ -1,5 +1,3 @@
-# This isn't a controller :( this is a Model
-
 from application.Models.Restaurant import *
 import uuid
 import shelve
@@ -17,8 +15,8 @@ class RestaurantSystem():
     #             return i
 
     def find_restaurant_by_id(self,id):
-        for restaurant in self.restaurant:
-            if restaurant.get_id() == id:
+        for restaurant in self.restaurant: #for all restaurant objects in array
+            if restaurant.get_id() == id: #using id as an identifier
                 return restaurant
 
     def create_restaurant(self,id, name, logo, contact, open, close, add1, add2, postc, desc, bank, del1, del2, del3, del4, del5):
