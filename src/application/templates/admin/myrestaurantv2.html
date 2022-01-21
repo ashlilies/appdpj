@@ -2,7 +2,7 @@
 {% block title %}Library Loan System - Retrieve Users{% endblock %}
 
 {% block content %}
-<h1 class="display-4">Retrieve Restaurants</h1>
+<h1 class="display-4">Retrieve Users</h1>
 <div>
   {% if count == 0 %}
   <p>There are no users.</p>
@@ -20,11 +20,9 @@
           <th>Logo</th>
         <th>Restaurant Name</th>
         <th>Contact Number</th>
-        <th>Opening Hours</th>
-        <th>Address</th>
-        <th>Description</th>
-        <th>Bank Account</th>
-        <th>Delivery fees</th>
+        <th>Opening Hours:</th>
+        <th>Close</th>
+
         <th></th>
         <th></th>
       </tr>
@@ -32,16 +30,11 @@
     <tbody>
     {% for restaurant_object in restaurant %}
       <tr>
-        <td>{{ restaurant_object.get_logo() }}</td>
+        <td>{{ restaurant_object.logo }}</td>
         <td>{{ restaurant_object.get_name() }}</td>
         <td>{{ restaurant_object.get_contact() }}</td>
-        <td>{{ restaurant_object.get_open() }} TO {{ restaurant_object.get_close() }}</td>
-        <td>{{ restaurant_object.get_add1() }} {{ restaurant_object.get_add2() }}, S{{ restaurant_object.get_postc() }}</td>
-        <td>{{ restaurant_object.get_desc() }}</td>
-        <td>{{ restaurant_object.get_bank() }}</td>
-        <td>{{ restaurant_object.get_del1() }},{{ restaurant_object.get_del2() }},{{ restaurant_object.get_del3() }},{{ restaurant_object.get_del4() }},{{ restaurant_object.get_del5() }}</td>
-
-
+        <td>{{ restaurant_object.get_open() }}</td>
+        <td>{{ restaurant_object.get_close() }}</td>
         <td>
 <form class="edit-restaurant" method="POST" action='/updateRestaurant/{{ restaurant_object.get_id() }}'>
     <button type="submit" class="btn btn-border-underline">Edit Restaurant Details</button>
