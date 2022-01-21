@@ -27,7 +27,6 @@ from application.rest_details_form import *
 @app.route("/admin/foodManagement")
 def food_management():
     create_food_form = CreateFoodForm(request.form)
-
     # For the add food form
     MAX_SPECIFICATION_ID = 2  # for adding food
     MAX_TOPPING_ID = 3
