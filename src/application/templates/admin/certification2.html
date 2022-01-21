@@ -8,7 +8,10 @@
             margin-left: 10px;
             margin-right: 10px;
         }
-
+        #infodisplay{
+            width: 90%;
+            margin: auto;
+        }
         .certdisplay {
             width: 25%;
         }
@@ -39,7 +42,7 @@
             <table class="table" id="infodisplay"
                    style="background-color: white">
                 <thead>
-                {% for cert in certificate_list %}
+                {% for cert in cert_array %}
                     <tr style="background-color: rgba(175, 97, 203,0.4)">
                         <th scope="col" colspan="2">
                             {{ cert.id }}'s Certificates
@@ -141,44 +144,47 @@
                         <td class="certdisplay">Hygiene</td>
                         <td>
 {#                            <iframe src="application/static/restaurantCertification/hygiene/1/{{ cert.hygiene_cert }}">Hygiene cert</iframe>#}
-                            <a href="{{ url_for("static", filename=cert.hygiene_cert[19:]) }}" target="_blank">Click me</a>
+                            <a href="{{ url_for("static", filename=cert.hygiene_cert[19:]) }}" target="_blank">{{ cert.hygiene_cert[53:] }}</a>
                         </td>
-
                     </tr>
-                    {#                    <tr>#}
-                    {#                        <td class="certdisplay">Halal</td>#}
-                    {#                        {% if not cert.halal_cert %}#}
-                    {#                            <td>NIL</td>#}
-                    {#                        {% else %}#}
-                    {#                            <td>{{ cert.halal_cert }}</td>#}
-                    {#                        {% endif %}#}
-                    {#                    </tr>#}
-                    {#                    <tr>#}
-                    {#                        <td class="certdisplay">Vegetarian</td>#}
-                    {# display vegetarian cert #}
-                    {#                        {% if not cert.vegetarian_cert %}#}
-                    {#                            <td>NIL</td>#}
-                    {#                        {% else %}#}
-                    {#                            <td>{{ cert.vegetarian_cert }}</td>#}
-                    {#                        {% endif %}#}
-                    {#                    </tr>#}
-                    {#                    <tr>#}
-                    {#                        <td class="certdisplay">Vegan</td>#}
-                    {# vegan cert #}
-                    {#                        {% if not cert.vegan_cert %}#}
-                    {#                            <td>NIL</td>#}
-                    {#                        {% else %}#}
-                    {#                            <td>{{ cert.vegan_cert }}</td>#}
-                    {#                        {% endif %}#}
-                    {#                    </tr>#}
-                    {#                    <tr>#}
-                    {#                        <td class="certdisplay">No Pork No Lard</td>#}
-                    {#                        <td>{{ cert.noPorknoLard }}</td>#}
-                    {#                    </tr>#}
-                    {#                    <tr>#}
-                    {#                        <td class="certdisplay">No Beef</td>#}
-                    {#                        <td>{{ cert.noBeef }}</td>#}
-                    {#                    </tr>#}
+                    <tr>
+                        <td class="certdisplay">Halal</td>
+                        {% if cert.halal_cert == '' %}
+                            <td>NIL</td>
+                        {% else %}
+                            <td>
+                                <a href="{{ url_for("static", filename=cert.halal_cert[19:]) }}" target="_blank">{{ cert.halal_cert[51:] }}</a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="certdisplay">Vegetarian</td>
+                        {% if cert.vegetarian_cert == '' %}
+                            <td>NIL</td>
+                        {% else %}
+                            <td>
+                                <a href="{{ url_for("static", filename=cert.vegetarian_cert[19:]) }}" target="_blank">{{ cert.vegetarian_cert[51:] }}</a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="certdisplay">No Pork No Lard</td>
+                        <td>{{ cert.noPorknoLard }}</td>
+                    </tr>
+                    <tr>
+                        <td class="certdisplay">Vegan</td>
+                        {% if cert.vegan_cert == '' %}
+                            <td>NIL</td>
+                        {% else %}
+                            <td>
+                                <a href="{{ url_for("static", filename=cert.vegan_cert[19:]) }}" target="_blank">{{ cert.vegan_cert[51:] }}</a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="certdisplay">No Beef</td>
+                        <td>{{ cert.noBeef }}</td>
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>

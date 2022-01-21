@@ -3,31 +3,23 @@ import traceback
 
 import flask
 from flask import render_template, request, redirect, url_for, session, flash, Flask
-from flask_login import logout_user, login_required, current_user
 import os
 import os.path
 
-from application.CouponForms import CreateCouponForm
+from werkzeug.utils import secure_filename
+
+from application import app
 from application.Models.Admin import *
-from application.Models.CouponSystem import CouponSystem
-from application.Models.Certification import Certification
-from application.Models.Food import Food
-from application.Models.Restaurant import Restaurant
-from application import app, login_manager
-from application.Models.Transaction import Transaction
-from application.adminAddFoodForm import CreateFoodForm
+from application.Models.Certification import *
+from application.Models.Transaction import *
 from werkzeug.utils import secure_filename
 import shelve, os
-import uuid
-from application.rest_details_form import *
 
-# Ruri's imported libraries
-import urllib.request
-import os
-from werkzeug.utils import secure_filename
 
 # <------------------------- YONG LIN ------------------------------>
 # YL: for transactions -- creating of dummy data
+
+# old creating of transaction
 @app.route("/admin/transaction/createExampleTransactions")
 def create_example_transactions():
     # WARNING - Overrides ALL transactions in the db!
@@ -209,10 +201,9 @@ def create_example_transactions():
 @app.route("/admin/transaction")
 def admin_transaction():
     # read transactions from db
-    with shelve.open('transaction', 'c') as db:
+    with shelve.open('transaction_db', 'c') as db:
         if 'shop_transactions' in db:
             transaction_list = db['shop_transactions']
-            print(db['shop_transactions'])
             logging.info("admin_transaction: reading from db['shop_transactions']"
                          ", %d elems" % len(db["shop_transactions"]))
         else:
@@ -233,27 +224,30 @@ def admin_transaction():
 # soft delete -> restaurant can soft delete transactions jic if the transaction is cancelled
 @app.route('/admin/transaction/delete/<transaction_id>')
 def delete_transaction(transaction_id):
+    # todo: replace with flask-login
+    # if not logged in, nd to log in first
     transaction_id = int(transaction_id)
 
-    transaction_list = []
-    with shelve.open('transaction', 'c') as db:
-        for transaction in db['shop_transactions']:
-            transaction_list.append(transaction)
-
-    def get_transaction_by_id(t_id):  # debug
-        for t in transaction_list:
-            if t_id == t.count_id:
-                return t
-
-    logging.info("delete_transaction: deleted transaction with id %d"
-                 % transaction_id)
-
-    # set instance attribute 'deleted' of Transaction.py = False
-    get_transaction_by_id(transaction_id).deleted = True
-
-    # writeback to shelve
-    with shelve.open('transaction', 'c') as db:
-        db["shop_transactions"] = transaction_list
+    #
+    # transaction_list = []
+    # with shelve.open('transaction', 'c') as db:
+    #     for transaction in db['shop_transactions']:
+    #         transaction_list.append(transaction)
+    #
+    # def get_transaction_by_id(t_id):  # debug
+    #     for t in transaction_list:
+    #         if t_id == t.count_id:
+    #             return t
+    #
+    # logging.info("delete_transaction: deleted transaction with id %d"
+    #              % transaction_id)
+    #
+    # # set instance attribute 'deleted' of Transaction.py = False
+    # get_transaction_by_id(transaction_id).deleted = True
+    #
+    # # writeback to shelve
+    # with shelve.open('transaction', 'c') as db:
+    #     db["shop_transactions"] = transaction_list
 
     return redirect(url_for('admin_transaction'))
 
@@ -264,133 +258,91 @@ def delete_transaction(transaction_id):
 def test_upload():
     return render_template("admin/certification.html")
 
-# def upload_cert():
-#     certification_dict = {}
-#     nb = 'NIL'
-#     npnl = 'NIL'
-#     if request.method == 'POST':
-#
-#         with shelve.open(DB_NAME, 'c') as db:
-#             try:
-#                 certification_dict = db['certification']
-#                 print(certification_dict)
-#             except Exception as e:
-#                 logging.error("Error in retrieving certificate from ""certification.db (%s)" % e)
-#             # create a new Certification Object
-#             certchecks = request.form.getlist('certCheck')
-#             print(certchecks)
-#             for i in certchecks:
-#                 if 'NoBeef' in certchecks:
-#                     nb = 'YES'
-#                 elif 'NoPorkNoLard' in certchecks:
-#                     npnl = 'Yes'
-#                 else:
-#                     print('something is wrong ')
-#             print(npnl)
-#             print(nb)
-#
-#             certification = Certification(request.form["hygieneDocument"], request.form["halalDocument"],
-#                                           request.form["vegetarianDocument"], request.form["veganDocument"],
-#                                           npnl, nb)
-#             certification_dict[certification.id] = certification
-#             db['certification'] = certification_dict
-#
-#             return redirect(url_for('read_cert'))
-#         # update: cert dict => get the correct cert by id
-#
-#     return render_template("admin/certification.html")
-
-
-# YL: for certification -- reading of data and displaying it to myRestaurant (C in CRUD)
 
 @app.route('/admin/uploader', methods=['GET', 'POST'])
 def uploader():
-    certification_dict = {}
-    # nb = 'NIL'
-    # npnl = 'NIL'
+    nb = 'NIL'
+    npnl = 'NIL'
     if request.method == 'POST':
-        # todo: add different routes for hygiene, halal, vegetarian, vegan
-        # todo: add other file's file saving
-        with shelve.open('certification', 'c') as handle:
-            try:
-                certification_dict = handle['certification']
-                print(certification_dict)
-            except Exception as e:
-                logging.error("uploader: ""certification.db (%s)" % e)
+        # todo: implement file saving logic here
+        restaurant_id = str(uuid.uuid4())
 
-            cert = Certification()
-            app.config['UPLOADED_PDF'] = f'application/static/restaurantCertification/hygiene/{cert.id}/'
-            # print("931: %s" % halal)
-            f = request.files['hygieneDocument'] # getting the file from the form
-            filename = secure_filename(f.filename)
+        certchecks = request.form.getlist('certCheck')
+        for i in certchecks:
+            if i == 'NoPorkNoLard':
+                npnl = 'YES'
+            elif i == 'NoBeef':
+                nb = 'YES'
+        print('line 296; nb', nb)
+        print('line 297; npnl', npnl)
 
+        app.config['UPLOADED_PDF'] = f'application/static/restaurantCertification/{restaurant_id}/'
+
+        # file saving -- for hygiene, halal, vegetarian, vegan
+        hygiene = request.files['hygieneDocument']
+        hygieneFile = secure_filename(hygiene.filename)
+        os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_PDF'])), exist_ok=True)
+        hygiene.save(os.path.join(os.getcwd(), app.config[
+            'UPLOADED_PDF']) + hygieneFile)
+        logging.info('Hygiene -- file uploaded successfully')
+        save_hygiene = f"application/static/restaurantCertification/{restaurant_id}/{hygieneFile}"
+
+        halal = request.files['halalDocument']
+        halalFile = secure_filename(halal.filename)
+        if halal.filename != "":
             os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_PDF'])), exist_ok=True)
+            halal.save(os.path.join(os.getcwd(), app.config['UPLOADED_PDF']) + halalFile)
+            logging.info('Halal -- file uploaded successfully')
+            save_halal = f"application/static/restaurantCertification/{restaurant_id}/{halalFile}"
+        else:
+            save_halal = ''
 
-            # save document in app.config['UPLOAD_PDF']
-            f.save(os.path.join(os.getcwd(), app.config['UPLOADED_PDF']) + filename)
+        vegetarian = request.files['vegetarianDocument']
+        vegetarianFile = secure_filename(vegetarian.filename)
+        if vegetarian.filename != "":
+            os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_PDF'])),
+                        exist_ok=True)
+            vegetarian.save(os.path.join(os.getcwd(), app.config['UPLOADED_PDF']) + vegetarianFile)
+            logging.info('Vegetarian -- file uploaded successfully')
+            save_vegetarian = f"application/static/restaurantCertification/{restaurant_id}/{vegetarianFile}"
+        else:
+            save_vegetarian = ''
 
-            logging.info('file uploaded successfully')
+        vegan = request.files['veganDocument']
+        veganFile = secure_filename(vegan.filename)
+        if vegan.filename != "":
+            # TODO: Add logic to save the file to filesystem and the Certification object here
+            app.config['UPLOADED_VEGAN'] = f'application/static/restaurantCertification/{restaurant_id}/'
+            os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_PDF'])),
+                        exist_ok=True)
+            vegan.save(os.path.join(os.getcwd(), app.config['UPLOADED_PDF']) + veganFile)
+            logging.info('Vegan -- file uploaded successfully')
+            save_vegan = f"application/static/restaurantCertification/{restaurant_id}/{veganFile}"
+        else:
+            save_vegan = ''
 
-            # create new object
-            cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/{filename}"
-
-            # HALAL CERTIFICATE
-            halal = request.files['halalDocument']
-            if halal.filename != "":
-                # TODO: Add logic to save the file to filesystem and the Certification object here
-                pass
-
-            # cert = Certification(f)
-            certification_dict[cert.id] = cert
-            handle['certification'] = certification_dict
+        create_res_cert(restaurant_id, save_hygiene, save_halal, save_vegetarian, save_vegan, npnl, nb)
 
         return redirect(url_for('read_cert'))
 
+
 @app.route("/admin/certification")
 def read_cert():
-    # todo: include session id and insert the id in order to read the ind restaurant cert
-    certification_dict = {}
-    with shelve.open('certification', 'c') as handle:
-        try:
-            if 'certification' in handle:
-                certification_dict = handle['certification']
-                print('existing ',certification_dict)
-                error = 'line 976 nothing wrong here'
-                print(error)
-                for key in certification_dict:
-                    cert = certification_dict.get(key)
-                    print('cert: ',cert)
-                error2 = 'line 980 nothing wrong here'
-                print(error2)
-                # cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/"
-            else:
-                handle['certification'] = certification_dict
-                print(certification_dict)
-                logging.info("read_cert: nothing found in database, starting empty")
-        except Exception as e:
-            logging.error("read_cert: error opening db (%s)" % e)
-
-        certificate_list = []
-        for key in certification_dict:
-            food = certification_dict.get(key)
-            certificate_list.append(food)
-
-    return render_template('admin/certification2.html', id=id, certificate_list=certificate_list)
+    # todo: implement session logic
+    return render_template('admin/certification2.html', cert=read_res_cert())
 
 
-# @app.route("/admin/certification")
 # def read_cert():
-#     # todo: display the pdf file via url_for
+#     # todo: include session id and insert the id in order to read the ind restaurant cert
 #     certification_dict = {}
-#     with shelve.open('certification', "c") as db:
+#     with shelve.open('certification', 'c') as handle:
 #         try:
-#             if 'certification' in db:
-#                 certification_dict = db['certification']
-#
+#             if 'certification' in handle:
+#                 certification_dict = handle['certification']
+#                 print('existing ', certification_dict)
 #             else:
-#                 db['certification'] = certification_dict
-#                 print(certification_dict)
-#                 logging.info("read_cert: nothing found in db, starting empty")
+#                 handle['certification'] = certification_dict
+#                 logging.info("read_cert: nothing found in database, starting empty")
 #         except Exception as e:
 #             logging.error("read_cert: error opening db (%s)" % e)
 #
@@ -399,12 +351,10 @@ def read_cert():
 #             food = certification_dict.get(key)
 #             certificate_list.append(food)
 #
-#     return render_template("admin/certification2.html", certificate_list=certificate_list)
+#     return render_template('admin/certification2.html', id=id, certificate_list=certificate_list)
 
 
 # YL: for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)
-# TODO: REDIRECT BACK TO FORM IN 'C IN CRUD'
-# TODO: CHECK IF THE FILES ARE THE SAME AND UPDATE THE DETAILS
 @app.route('/admin/updateCertification/<int:id>', methods=['GET', 'POST'])
 def update_cert(id):
     nb = 'NIL'
@@ -416,25 +366,84 @@ def update_cert(id):
             with shelve.open('certification', "c") as db:
                 certification_dict = db['certification']
 
-                # updating the information
-                certchecks = request.form.getlist('certCheck')
+                # create new class object
+                cert = certification_dict.get(id)
+
+                # get values from checkboxes
+                certchecks = request.form.getlist('certChecks')
+                print(certchecks)
                 for i in certchecks:
+                    if 'NoPorkNoLard' in certchecks:
+                        npnl = 'YES'
                     if 'NoBeef' in certchecks:
                         nb = 'YES'
-                    elif 'No Pork No Lard' in certchecks:
-                        npnl = 'YES'
                     else:
-                        print('something is wrong ')
+                        print('update_cert(line401): something wrong with certchecks')
+                cert.noPorknoLard = npnl
+                cert.noBeef = nb
 
-                certification = certification_dict.get(id)
-                # inset values of the updated thing inside
-                certification.hygiene_cert = request.form["hygieneDocument"]
-                certification.halal_cert = request.form["halalDocument"]
-                certification.vegetarian_cert = request.form["vegetarianDocument"]
-                certification.vegan_cert = request.form["veganDocument"]
-                certification.noPorknoLard = npnl
-                certification.noBeef = nb
-                print(certification)
+                # HYGIENE DOCUMENT
+                hygiene = request.files.get('hygieneDocument')
+                # saving of new file
+                hygieneFile = secure_filename(hygiene.filename)
+                app.config['UPLOADED_HYGIENE'] = f'application/static/restaurantCertification/hygiene/{cert.id}/'
+                os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HYGIENE'])), exist_ok=True)
+                hygiene.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_HYGIENE']) + hygieneFile))
+                if cert.hygiene_cert is not None:
+                    # unlinking existing hygiene doc file
+                    if os.path.exists(
+                            f'application/static/restaurantCertification/hygiene/{cert.id}/{cert.hygiene_cert}'):
+                        os.remove(f'application/static/restaurantCertification/hygiene/{cert.id}/{cert.hygiene_cert}')
+                    logging.info('Successfully removed existing hygiene document')
+                cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/{hygieneFile}"
+
+                # HALAL DOCUMENT
+                halal = request.files.get('halalDocument')
+                # saving of new file
+                halalFile = secure_filename(halal.filename)
+                if halal.filename != '':
+                    # saving of new file
+                    app.config['UPLOADED_HALAL'] = f'application/static/restaurantCertification/halal/{cert.id}/'
+                    os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HALAL'])),
+                                exist_ok=True)
+                    halal.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_HALAL']) + halalFile))
+                    # deleting of existing file
+                    if os.path.exists(f'application/static/restaurantCertification/halal/{cert.id}/{cert.halal_cert}'):
+                        os.remove(f'application/static/restaurantCertification/halal/{cert.id}/{cert.halal_cert}')
+                        logging.info('Successfully removed existing halal document')
+                cert.halal_cert = f"application/static/restaurantCertification/halal/{cert.id}/{halalFile}"
+
+                # VEGETARIAN DOCUMENT
+                vegetarian = request.files.get('vegetarianDocument')
+                # saving of new file
+                vegetarianFile = secure_filename(vegetarian.filename)
+                if vegetarian.filename != '':
+                    # saving of new file
+                    app.config['UPLOADED_VEGETARIAN'] = f'application/static/restaurantCertification/vegetarian/{cert.id}/'
+                    os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGETARIAN'])),
+                                exist_ok=True)
+                    vegetarian.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_VEGETARIAN']) + vegetarianFile))
+                    # deleting of existing file
+                    if os.path.exists(f'application/static/restaurantCertification/vegetarian/{cert.id}/{cert.vegetarian_cert}'):
+                        os.remove(f'application/static/restaurantCertification/vegetarian/{cert.id}/{cert.vegetarian_cert}')
+                        logging.info('Successfully removed existing vegetarian document')
+                cert.vegetarian_cert = f"application/static/restaurantCertification/vegetarian/{cert.id}/{vegetarianFile}"
+
+                # VEGAN DOCUMENT
+                vegan = request.files.get('veganDocument')
+                # saving of new file
+                veganFile = secure_filename(vegan.filename)
+                if vegan.filename != '':
+                    # saving of new file
+                    app.config['UPLOADED_VEGAN'] = f'application/static/restaurantCertification/vegan/{cert.id}/'
+                    os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGAN'])),
+                                exist_ok=True)
+                    vegan.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_VEGAN']) + halalFile))
+                    # deleting of existing file
+                    if os.path.exists(f'application/static/restaurantCertification/vegan/{cert.id}//{cert.vegan_cert}'):
+                        os.remove(f'application/static/restaurantCertification/vegan/{cert.id}//{cert.vegan_cert}')
+                        logging.info('Successfully removed existing vegan document')
+                cert.vegan_cert = f"application/static/restaurantCertification/vegan/{cert.id}/{veganFile}"
 
                 # writeback
                 db['certification'] = certification_dict
@@ -472,7 +481,6 @@ def delete_cert(id):
             logging.error("delete_food: error opening db (%s)" % e)
 
     return redirect(url_for('read_cert'))
-
 
 # def upload_cert():
 #     i = 1
@@ -539,5 +547,3 @@ def delete_cert(id):
 #
 #     return render_template("admin/certification.html",
 #                            certification_form=certification_form)
-
-
