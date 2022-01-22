@@ -141,7 +141,7 @@ def create_food():
             test = 'line 142 nothing wrong here'
             print(test)
 
-            food.specification = get_specs()  # set specifications as a List
+            food.set_sepcification(get_specs())  # set specifications as a List
             food.topping = get_top()  # set topping as a List
             food_dict[food.get_food_id()] = food  # set the food_id as key to store
             # the food object
@@ -250,7 +250,7 @@ def update_food(id):
                 food.set_description(update_food_form.description.data)
                 food.set_price(update_food_form.price.data)
                 food.set_allergy(update_food_form.allergy.data)
-                food.specification = get_specs()  # set specifications as a List
+                food.set_specification(get_specs())  # set specifications as a List
                 food.topping = get_top()  # set topping as a List
                 db["food"] = food_dict
         except Exception as e:
