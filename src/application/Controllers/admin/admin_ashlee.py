@@ -180,6 +180,7 @@ def admin_update_account():
 
 
 @app.route("/admin/deleteAccount")
+@login_required
 @admin_side
 def delete_admin_account():
     # TODO: Add account settings password confirmation before allowing delete
