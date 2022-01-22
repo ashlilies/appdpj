@@ -97,7 +97,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for transaction in transaction_list %}
+                    {% for transaction in transaction_system_list %}
                         {% if not transaction.deleted %}
                             {# reading attributes from Transaction.py in each Class obj in transaction_list #}
                             {% if transaction.get_ratings() <= 2 %}
