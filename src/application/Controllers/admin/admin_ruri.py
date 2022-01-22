@@ -30,6 +30,7 @@ from werkzeug.utils import secure_filename
 # <------------------------- RURI ------------------------------>
 # C (Create)
 @app.route('/admin/create-restaurant', methods=['GET', 'POST'])
+@login_required
 def admin_myrestaurant():  # ruri
     restaurant_details_form = RestaurantDetailsForm(request.form)  # Using the Create Restaurant Form
     create_restaurant = RestaurantSystem()  # Creating a controller /
@@ -40,6 +41,8 @@ def admin_myrestaurant():  # ruri
         # It's passing in the form argument to instantiate the restaurant object
         restaurant_id = uuid.uuid4().hex
         current_user.restaurant_id = restaurant_id
+        # file = request.files["rest_logo"]
+        # file.save(os.path.join("application/static/restaurantlogos", file.filename))
         # print(current_user.restaurant_id)
         create_restaurant.create_restaurant(
             restaurant_id,
@@ -62,7 +65,14 @@ def admin_myrestaurant():  # ruri
 
         # ashlee - attach restaurant_id to our current user
         current_user.restaurant_id = restaurant_id
-        RestaurantSystem.get_restaurant_by_id(current_user.restaurant_id)
+        Certification.restaurant_id = restaurant_id
+        Food.restaurant_id = restaurant_id
+        print(Certification.restaurant_id)
+        print(restaurant_id)
+        print(Food.restaurant_id)
+        # RestaurantSystem.get_restaurant_by_id(current_user.restaurant_id)
+
+
 
         # flask_login.current_user.restaurant = restaurant_id
         # Once done, it'll redirect to the home page
