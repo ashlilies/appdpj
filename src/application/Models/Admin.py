@@ -1,6 +1,7 @@
 # Denotes a single restaurant's account
 
 from application.Models.Account import *
+from application.Models.Certification import Certification
 from application.Models.CouponSystem import CouponSystem
 from application.Models.Restaurant import Restaurant
 
@@ -11,6 +12,7 @@ class Admin(Account):
         self.__restaurant_id = None  # set later
         self.__name = None
         self.coupon_system_id = CouponSystem().id
+        self.__transaction_system_id = None
         self.set_name(restaurant_name)
 
         logging.info(("Admin Class: Created new Admin account with "
@@ -51,4 +53,8 @@ class Admin(Account):
             accounts = db["accounts"]
             accounts[self.account_id] = self
             db["accounts"] = accounts
+
+    @property
+    def certification_system_id(self):
+        return self.__restaurant_id
 
