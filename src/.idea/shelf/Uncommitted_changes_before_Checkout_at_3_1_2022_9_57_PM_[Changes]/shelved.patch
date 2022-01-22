@@ -1,0 +1,262 @@
+Index: application/Controllers/admin.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># Controller for the Admin side of things.\r\n# Do NOT run directly. Run main.py in the appdpj/src/ directory instead.\r\n\r\n# New routes go here, not in __init__.\r\n\r\nfrom flask import render_template, request, redirect, url_for, session, flash\r\nfrom application.Models.Admin import *\r\nfrom application.Models.Food import Food\r\nfrom application.Models.Restaurant import Restaurant\r\nfrom application import app\r\nfrom application.Models.Transaction import Transaction\r\nfrom application.adminAddFoodForm import CreateFoodForm\r\nfrom werkzeug.utils import secure_filename\r\n\r\nfrom application.restaurantCertification import RestaurantCertification\r\nimport shelve, os\r\nfrom application.rest_details_form import RestaurantDetailsForm\r\n\r\n\r\n# <------------------------- ASHLEE ------------------------------>\r\n@app.route(\"/admin\")\r\n@app.route(\"/admin/home\")\r\ndef admin_home():  # ashlee\r\n    return render_template(\"admin/home.html\")\r\n\r\n\r\n@app.route(\"/admin/login\", methods=[\"GET\", \"POST\"])\r\ndef admin_login():  # ashlee\r\n    # if already logged in, what's the point?\r\n    if is_account_id_in_session():\r\n        return redirect(url_for(\"admin_home\"))\r\n\r\n    def login_error():\r\n        return redirect(\"%s?error=1\" % url_for(\"admin_login\"))\r\n\r\n    if request.method == \"POST\":\r\n        # That means user submitted login form. Check errors.\r\n        login = Account.login_user(request.form[\"email\"],\r\n                                   request.form[\"password\"])\r\n        if login is not None:\r\n            # user entered correct credentials\r\n            # TODO Link dashboard or something from here\r\n            session[\"account_id\"] = login.account_id\r\n            return redirect(url_for(\"admin_home\"))\r\n        return login_error()\r\n    return render_template(\"admin/login.html\")\r\n\r\n\r\n@app.route(\"/admin/register\", methods=[\"GET\", \"POST\"])\r\ndef admin_register():  # ashlee\r\n    # if already logged in, what's the point?\r\n    if is_account_id_in_session():\r\n        return redirect(url_for(\"admin_home\"))\r\n\r\n    def reg_error(ex=None):\r\n        if ex is not None:\r\n            if Account.EMAIL_ALREADY_EXISTS in ex.args:\r\n                return redirect(\"%s?emailExists=1\" % url_for(\"admin_register\"))\r\n        # Given js validation, shouldn't reach here by a normal user.\r\n        return redirect(\"%s?error=1\" % url_for(\"admin_register\"))\r\n\r\n    if request.method == \"POST\":\r\n        # Check for errors in the form submitted\r\n        if (request.form[\"tosAgree\"] == \"agreed\"\r\n                and request.form[\"email\"] != \"\"  # not blank email\r\n                and request.form[\"name\"] != \"\"  # not blank restaurant name\r\n                and request.form[\"password\"] != \"\"  # not blank pw\r\n                and request.form[\"password\"] == request.form[\"passwordAgain\"]):\r\n            try:\r\n                account = Admin(request.form[\"name\"], request.form[\"email\"],\r\n                                request.form[\"password\"])\r\n            except Exception as e:\r\n                return reg_error(e)  # handle errors here\r\n        else:\r\n            return reg_error()\r\n\r\n        # Successfully registered\r\n        # TODO: Link dashboard or something\r\n        # TODO: Set flask session\r\n        session[\"account_id\"] = account.account_id\r\n        return redirect(url_for(\"admin_home\"))\r\n\r\n    return render_template(\"admin/register.html\")\r\n\r\n\r\n@app.route(\"/admin/logout\")\r\ndef admin_logout():\r\n    if \"account_id\" in session:\r\n        logging.info(\"admin_logout(): Admin %s logged out\"\r\n                     % gabi(session[\"account_id\"]).get_email())\r\n        del session[\"account_id\"]\r\n    else:\r\n        logging.info(\"admin_logout(): Failed logout - lag or click twice\")\r\n\r\n    return redirect(url_for(\"admin_home\"))\r\n\r\n\r\n# API for updating account, to be called by Account Settings\r\n@app.route(\"/admin/updateAccount\", methods=[\"GET\", \"POST\"])\r\ndef admin_update_account():\r\n    # TODO: Implement admin account soft-deletion\r\n    #       and update restaurant name\r\n\r\n    if request.method == \"GET\":\r\n        return \"fail\"\r\n    if not is_account_id_in_session():\r\n        return \"fail\"\r\n\r\n    # Check if current password entered was correct\r\n    if not is_account_id_in_session() \\\r\n            .check_password_hash(request.form[\"updateSettingsPw\"]):\r\n        return \"Current Password is Wrong\"\r\n\r\n    response = \"\"\r\n    if \"changeEmail\" in request.form:\r\n        if request.form[\"changeEmail\"] != \"\":\r\n            result = (is_account_id_in_session()\r\n                      .set_email(request.form[\"changeEmail\"]))\r\n            if result == Account.EMAIL_CHANGE_SUCCESS:\r\n                response = (\"%sSuccessfully updated email<br>\" % response)\r\n            elif result == Account.EMAIL_CHANGE_ALREADY_EXISTS:\r\n                response = (\"%sFailed updating email, Email already Exists<br>\"\r\n                            % response)\r\n            elif result == Account.EMAIL_CHANGE_INVALID:\r\n                response = (\"%sFailed updating email, email is Invalid<br>\"\r\n                            % response)\r\n\r\n    if \"changePw\" in request.form:\r\n        if request.form[\"changePw\"] != request.form[\"changePwConfirm\"]:\r\n            response = (\"%sConfirm Password does not match Password<br>\"\r\n                        % response)\r\n        elif request.form[\"changePw\"] != \"\":\r\n            is_account_id_in_session() \\\r\n                .set_password_hash(request.form[\"changePw\"])\r\n            response = \"%sSuccessfully updated Password<br>\" % response\r\n\r\n    return response\r\n\r\n\r\n# IAIIS - is logged in?\r\ndef is_account_id_in_session() -> Account or None:  # for flask\r\n    if \"account_id\" in session:\r\n        # account value exists in session, check if admin account active\r\n        if Admin.check_active(gabi(session[\"account_id\"])) is not None:\r\n            logging.info(\r\n                \"IAIIS: Account id of %s is active and inside session\" %\r\n                session[\"account_id\"])\r\n            return gabi(session[\"account_id\"])\r\n    else:\r\n        logging.info(\"IAIIS: Account id is NOT inside session or disabled\")\r\n    return None\r\n\r\n\r\n# Get account by ID\r\ndef gabi(account_id) -> Account:  # for flask\r\n    return Account.get_account_by_id(account_id)\r\n\r\n\r\n# Get ADMIN account by ID\r\n# def gaabi(account_id):  # for our internal use to make other Flask functions\r\n#     return Admin.get_account_by_id(account_id)\r\n\r\n\r\ndef get_restaurant_name_by_id(restaurant_id):\r\n    restaurant_account = gabi(restaurant_id)\r\n    return getattr(restaurant_account, \"restaurant_name\", None)\r\n\r\n\r\n# Used for the Account Settings pane.\r\ndef get_account_email(account: Account):\r\n    try:\r\n        return account.get_email()\r\n    except Exception as e:\r\n        logging.info(e)\r\n        return \"ERROR\"\r\n\r\n# TODO; store Flask session info in shelve db\r\n\r\n# Activate global function for jinja\r\napp.jinja_env.globals.update(is_account_id_in_session=is_account_id_in_session)\r\n# app.jinja_env.globals.update(gabi=gabi)\r\napp.jinja_env.globals.update(\r\n    get_restaurant_name_by_id=get_restaurant_name_by_id)\r\napp.jinja_env.globals.update(get_account_email=get_account_email)\r\n\r\n\r\n# <------------------------- CLARA ------------------------------>\r\n# APP ROUTE TO FOOD MANAGEMENT clara\r\n@app.route(\"/admin/foodManagement\")\r\ndef food_management():\r\n    with shelve.open(DB_NAME, 'c') as db:\r\n        food_list = db['food']\r\n\r\n    return render_template('admin/foodManagement.html',\r\n                           food_list=food_list)\r\n\r\n\r\nMAX_SPECIFICATION_ID = 5  # for adding food\r\nMAX_TOPPING_ID = 8\r\n\r\n\r\n# ADMIN FOOD FORM clara\r\n@app.route('/admin/addFoodForm', methods=['GET', 'POST'])\r\ndef create_food():\r\n    create_food_form = CreateFoodForm(request.form)\r\n\r\n    # get specifications as a List, no WTForms\r\n    def get_specs() -> list:\r\n        specs = []\r\n\r\n        # do specifications exist in first place?\r\n        for i in range(MAX_SPECIFICATION_ID + 1):\r\n            if \"specification%d\" % i in request.form:\r\n                specs.append(request.form[\"specification%d\" % i])\r\n            else:\r\n                break\r\n\r\n        logging.info(\"create_food: specs is %s\" % specs)\r\n        return specs\r\n\r\n        # get toppings as a List, no WTForms\r\n\r\n    def get_top() -> list:\r\n        top = []\r\n\r\n        # do toppings exist in first place?\r\n        for i in range(MAX_TOPPING_ID + 1):\r\n            if \"topping%d\" % i in request.form:\r\n                top.append(request.form[\"topping%d\" % i])\r\n            else:\r\n                break\r\n\r\n        logging.info(\"create_food: top is %s\" % top)\r\n        return top\r\n\r\n    # using the WTForms way to get the data\r\n    if request.method == 'POST' and create_food_form.validate():\r\n        food_list = []\r\n        with shelve.open(\"foodypulse\", \"c\") as db:\r\n            try:\r\n                if 'food' in db:\r\n                    food_list = db['food']\r\n                else:\r\n                    db['food'] = food_list\r\n            except Exception as e:\r\n                logging.error(\"create_food: error opening db (%s)\" % e)\r\n\r\n        # Create a new food object\r\n        food = Food(request.form[\"image\"], create_food_form.item_name.data,\r\n                    create_food_form.description.data,\r\n                    create_food_form.price.data, create_food_form.allergy.data)\r\n\r\n        food.specification = get_specs()  # set specifications as a List\r\n        food.topping = get_top()  # set topping as a List\r\n        food_list.append(food)\r\n\r\n        # writeback\r\n        with shelve.open(\"foodypulse\", 'c') as db:\r\n            db['food'] = food_list\r\n\r\n        return redirect(url_for('admin_home'))\r\n\r\n    return render_template('admin/addFoodForm.html', form=create_food_form,\r\n                           MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,\r\n                           MAX_TOPPING_ID=MAX_TOPPING_ID, )\r\n\r\n\r\n# <------------------------- YONGLIN ------------------------------>\r\n@app.route(\"/admin/transaction\")\r\ndef admin_transaction():\r\n    # creating a shelve file with dummy data\r\n    transaction_dict = {'1': ['Yong Lin', 'Delivery', '60.40', 'SPAGETIT', '1'],\r\n    '2': ['Yuen Loong', 'Dine-in', '40.35', 'SPAGETIT', '2']}\r\n\r\n    # 1: transaction no. ; <user_id> ; <option> ; <price> ; <coupons> , <rating>\r\n    # TODO: associate an transaction_id as transaction number as key\r\n    # TODO: input the details of the transactions (eg userid, price, option, etc)\r\n\r\n    # below code is only usable when we use nested dictionary\r\n    for key, value in transaction_dict.items(): # for every transaction\r\n        print(key, \":\", value, \"\\n\")\r\n    #     for i in value:\r\n    #         print(i +\":\", value[i])\r\n\r\n    with shelve.open(\"transactions\", \"c\") as db:\r\n        try:\r\n            if 'shop_transactions' in db:\r\n                transaction_dict = db['shop_transactions']\r\n            else:\r\n                db['shop_transactions'] = transaction_dict\r\n        except Exception as e:\r\n            logging.error(\"read_transaction: error opening db (%s)\" % e)\r\n\r\n    # reading the shelve\r\n    with shelve.open(\"transactions\", \"c\") as db:\r\n        try:\r\n            print(db['shop_transactions']) # debug\r\n            if 'shop_transactions' in db:\r\n                transaction_dict = db['shop_transactions']\r\n            else:\r\n                db['shop_transactions'] = transaction_dict\r\n        except Exception as e:\r\n            logging.error(\"read_transaction: error opening db (%s)\" % e)\r\n\r\n        transaction_list = []\r\n        for key in transaction_dict:\r\n            transaction = transaction_dict.get(key)\r\n            transaction_list.append(transaction)\r\n\r\n            print(transaction)\r\n        print(transaction_list)\r\n\r\n    return render_template(\"admin/transaction.html\", count=len(transaction_list),\r\n                           transaction_list=transaction_list)\r\n\r\n\r\n# certification -- xu yong lin\r\n# UPLOAD_FOLDER = 'application/static/restaurantCertification'  # where the\r\n# files are stored to\r\n# ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}\r\n#\r\n# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER\r\n#\r\n#\r\n# def allowed_file(filename):\r\n#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in\r\n#     ALLOWED_EXTENSIONS\r\npath = os.getcwd()\r\n\r\nUPLOAD_CERT = os.path.join(path, 'uploads')\r\n\r\napp.config['UPLOAD_CERT'] = UPLOAD_CERT\r\n\r\n\r\n@app.route(\"/admin/certification\", methods=['GET', 'POST'])\r\ndef admin_certification():\r\n    # set upload directory path\r\n    certification_form = RestaurantCertification()\r\n    if certification_form.validate_on_submit():\r\n        # assets_dir = os.path.join(\r\n        #     os.path.dirname(app.instance_path), 'assets'\r\n        # )\r\n        hygiene = certification_form.hygiene_cert.data\r\n        halal = certification_form.halal_cert.data\r\n        vegetarian = certification_form.vegetarian_cert.data\r\n        vegan = certification_form.vegan_cert.data\r\n\r\n        halaldoc_name = secure_filename(halal.filename)\r\n        vegetariandoc_name = secure_filename(vegetarian.filename)\r\n        vegandoc_name = secure_filename(vegan.filename)\r\n\r\n        # document save\r\n        # halal.save(os.path.join(app.config['UPLOAD_FOLDER'], halaldoc_name))\r\n        # TODO: SAVING OF FILE\r\n        # TODO: DISPLAYING OF AVAILABLE FILES UNDER myrestaurant\r\n        # todo: updating of cert under myrestaurant\r\n\r\n        # halal.save(os.path.join('/application/static/restaurantCertification', halaldoc_name))\r\n        # vegetarian.save(\r\n        #     os.path.join('/application/static/restaurantCertification', vegetariandoc_name))\r\n        # vegan.save(os.path.join('/application/static/restaurantCertification', vegandoc_name))\r\n\r\n        flash('Document uploaded successfully')\r\n\r\n        # return redirect(url_for('admin_myrestaurant'))\r\n\r\n    return render_template(\"admin/certification.html\",\r\n                           certification_form=certification_form)\r\n\r\n\r\n# <------------------------- RURI ------------------------------>\r\n@app.route('/admin/myRestaurant', methods=['GET', 'POST'])\r\ndef admin_myrestaurant():  # ruri\r\n    restaurant_details_form = RestaurantDetailsForm(request.form)\r\n    restaurants_dict = {}\r\n    if request.method == 'POST' and restaurant_details_form.validate():\r\n        db = shelve.open(DB_NAME, 'c')\r\n        try:\r\n            restaurants_dict = db['Restaurants']\r\n        except Exception as e:\r\n            logging.error(\"Error in retrieving Restaurants from \"\r\n                          \"restaurants.db (%s)\" % e)\r\n\r\n        restaurant = Restaurant(restaurant_details_form.rest_name.data)\r\n        restaurants_dict[restaurant.name] = restaurant\r\n        db['Restaurants'] = restaurants_dict\r\n\r\n        db.close()\r\n\r\n    return render_template(\"admin/restaurant.html\", form=restaurant_details_form)\r\n# #\r\n# @app.route('admin/myrestaurant', methods=['GET', 'POST'])\r\n# def create_customer():\r\n#     create_customer_form: CreateCustomerForm = CreateCustomerForm(request.form)\r\n#     if request.method == 'POST' and create_customer_form.validate():\r\n#         customers_dict = {}\r\n#         db = shelve.open('customer.db', 'c')\r\n#\r\n#         try:\r\n#             customers_dict = db['Customers']\r\n#         except:\r\n#             print(\"Error in retrieving Customers from customer.db.\")\r\n#\r\n#         customer = Customer.Customer(create_customer_form.first_name.data, create_customer_form.last_name.data,\r\n#                                      create_customer_form.gender.data, create_customer_form.membership.data,\r\n#                                      create_customer_form.remarks.data, create_customer_form.email.data,\r\n#                                      create_customer_form.date_joined.data,\r\n#                                      create_customer_form.address.data, )\r\n#         customers_dict[customer.get_customer_id()] = customer\r\n#         db['Customers'] = customers_dict\r\n#\r\n#         db.close()\r\n#\r\n#         return redirect(url_for('home'))\r\n#     return render_template('includes/createCustomer.html', form=create_customer_form)\r\n\r\n\r\n@app.route(\"/admin/dashboard\")\r\ndef dashboard():  # ruri\r\n    return render_template(\"admin/dashboard.html\")\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/application/Controllers/admin.py b/application/Controllers/admin.py
+--- a/application/Controllers/admin.py	
++++ b/application/Controllers/admin.py	
+@@ -268,47 +268,43 @@
+ # <------------------------- YONGLIN ------------------------------>
+ @app.route("/admin/transaction")
+ def admin_transaction():
+-    # creating a shelve file with dummy data
+-    transaction_dict = {'1': ['Yong Lin', 'Delivery', '60.40', 'SPAGETIT', '1'],
+-    '2': ['Yuen Loong', 'Dine-in', '40.35', 'SPAGETIT', '2']}
+-
+     # 1: transaction no. ; <user_id> ; <option> ; <price> ; <coupons> , <rating>
+     # TODO: associate an transaction_id as transaction number as key
+     # TODO: input the details of the transactions (eg userid, price, option, etc)
++    # create new transaction list w dummy data
++    transaction_list = []
++    t1 = Transaction()  # input 1
++    t1.set_account_id('Yong Lin')
++    t1.set_option('Delivery')
++    t1.set_price(30.50)
++    t1.set_used_coupons('SPAGETIT')
++    t1.set_rating(2)
++    transaction_list.append(t1)
++    t2 = Transaction() # input 2
++    t2.set_account_id('Ching Chong')
++    t2.set_option('Dine-in')
++    t2.set_price(50.30)
++    t2.set_used_coupons('50PASTA')
++    t1.set_rating(5)
++    print(t2)
++    transaction_list.append(t2)
+ 
+-    # below code is only usable when we use nested dictionary
+-    for key, value in transaction_dict.items(): # for every transaction
+-        print(key, ":", value, "\n")
+-    #     for i in value:
+-    #         print(i +":", value[i])
+-
+-    with shelve.open("transactions", "c") as db:
+-        try:
+-            if 'shop_transactions' in db:
+-                transaction_dict = db['shop_transactions']
+-            else:
+-                db['shop_transactions'] = transaction_dict
+-        except Exception as e:
+-            logging.error("read_transaction: error opening db (%s)" % e)
++    print("transaction_list: ",transaction_list)
+ 
+     # reading the shelve
+     with shelve.open("transactions", "c") as db:
+         try:
+             print(db['shop_transactions']) # debug
+             if 'shop_transactions' in db:
+-                transaction_dict = db['shop_transactions']
++                transaction_list = db['shop_transactions']
+             else:
+-                db['shop_transactions'] = transaction_dict
++                db['shop_transactions'] = transaction_list
+         except Exception as e:
+             logging.error("read_transaction: error opening db (%s)" % e)
+ 
+-        transaction_list = []
+-        for key in transaction_dict:
+-            transaction = transaction_dict.get(key)
+-            transaction_list.append(transaction)
+-
+-            print(transaction)
+-        print(transaction_list)
++    # soft delete of transactions --> display line-cross for that row to show that
++    # it is a soft delete !
++    # soft delete: setting the instance attribute (eg self.account_ordered = false)
+ 
+     return render_template("admin/transaction.html", count=len(transaction_list),
+                            transaction_list=transaction_list)
+Index: application/templates/admin/transaction.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!--xu yong lin-->\r\n{% extends \"admin/admin_base.html\" %}\r\n{% block title %}Admin Transaction History{% endblock %}\r\n\r\n{% block head %}\r\n<style>\r\n  .settings{\r\n    display: inline;\r\n  }\r\n  #current{\r\n    text-decoration: underline;\r\n  }\r\n  h1 {\r\n    font-weight: bold;\r\n    position:relative;\r\n    left: 30px;\r\n    top:20px;\r\n    text-decoration-line: underline;\r\n    font-size:28px;\r\n    width:150px;\r\n  }\r\n  .display{\r\n    padding: 30px;\r\n  }\r\n  .table{\r\n    background-color: white;\r\n  }\r\n  .highlight{\r\n    color: red;\r\n    font-weight: bold;\r\n  }\r\n  .highlight:hover{\r\n    color: red !important;\r\n    font-weight: bold;\r\n    background-color: yellow;\r\n  }\r\n  .redhighlight:hover{\r\n    color: yellow !important;\r\n    font-weight: bold;\r\n    background-color: red !important;\r\n  }\r\n\r\n</style>\r\n{% endblock %}\r\n\r\n{% block content %}\r\n<div class=\"bodydiv\">\r\n  <div id=\"settings\">\r\n    <div class=\"settingsrow\">\r\n      <h1>Dashboard</h1>\r\n  <!--      choosing of month to display(dropdown button)-->\r\n    </div>\r\n  </div>\r\n  <br>\r\n  <!--table-->\r\n  <div class=\"display\">\r\n    <!--    table form to go back to dashboard? (might change to standardise with dashboard)-->\r\n    <div>\r\n      <nav class=\"navbar navbar-expand-lg navbar-light bg-light\">\r\n        <div class=\"collapse navbar-collapse\" id=\"navbarNavAltMarkup\">\r\n          <div class=\"navbar-nav\">\r\n            <a class=\"nav-item nav-link\" href=\"#\">Dashboard</a>\r\n            <a class=\"nav-item nav-link active\" href=\"#\">Transaction <span class=\"sr-only\">(current)</span></a>\r\n          </div>\r\n        </div>\r\n      </nav>\r\n    </div>\r\n    <div class=\"table\">\r\n    <h5> first 2 rows are dummy data</h5>\r\n      <table class=\"table table-hover\">\r\n        <thead>\r\n          <tr>\r\n            <th scope=\"col\">#</th>\r\n            <th scope=\"col\">Username</th>\r\n            <th scope=\"col\">Option</th>\r\n            <th scope=\"col\">Price</th>\r\n            <th scope=\"col\">Coupons</th>\r\n            <th scope=\"col\">Rating</th>\r\n          </tr>\r\n        </thead>\r\n        <tbody>\r\n          <div class=\"redhighlight\">\r\n            <tr class=\"highlight\">\r\n            <th scope=\"row\">1</th>\r\n            <td>Yuen Loong</td>\r\n            <td>Delivery</td>\r\n            <td>20.25</td>\r\n            <td>SPAGETIT</td>\r\n            <td>2</td>\r\n            </tr>\r\n          </div>\r\n          <tr>\r\n            <th scope=\"row\">2</th>\r\n            <td>Yin Loong</td>\r\n            <td>Delivery</td>\r\n            <td>50.25</td>\r\n            <td>SPAGETIT</td>\r\n              <td>4</td>\r\n          </tr>\r\n          {% for transaction in transaction_list %}\r\n            {# without appending values to Transaction.py #}\r\n{#              {% for i in transaction %}#}\r\n{#                  {% if i == '2' %}#}\r\n{#                    <tr class=\"highlight\">#}\r\n{#                      <th scope=\"row\">{{ key }}</th>#}\r\n{#                      {% for i in transaction %}#}\r\n{#                        <td> {{ i }}</td>#}\r\n{#                      {% endfor %}#}\r\n{#                    </tr>#}\r\n{#                  {% else %}#}\r\n{#                      <tr>#}\r\n{#                        <th scope=\"row\">{{ key }}</th>#}\r\n{#                        {% for i in transaction %}#}\r\n{#                          <td> {{ i }}</td>#}\r\n{#                        {% endfor %}#}\r\n{#                      </tr>#}\r\n{#                  {% endif %}#}\r\n{#                    <td>{{ i }}</td>#}\r\n{#              {% endfor %}#}\r\n{#              </tr>#}\r\n\r\n              {% if transaction[4] == '2' or transaction[4] == \"1\" %}\r\n                  <tr class=\"highlight\">\r\n                    <th scope=\"row\">3</th>\r\n                    {% for i in transaction %}\r\n                        <td> {{ i }}</td>\r\n                    {% endfor %}\r\n                  </tr>\r\n              {% else %}\r\n                  <tr>\r\n                    <th scope=\"row\">3</th>\r\n                    {% for i in transaction %}\r\n                          <td> {{ i }}</td>\r\n                    {% endfor %}\r\n                  </tr>\r\n              {% endif %}\r\n\r\n\r\n\r\n\r\n\r\n\r\n{#              when we implement Transaction.py in#}\r\n{#              <tr>#}\r\n{#                  <th scope=\"row\">{{ key }}</th>#}\r\n{#                    <td>{{ transaction_list[transaction] }}#}\r\n{#                    <td>{{ transaction.get_account_id() }}</td>#}\r\n{#                    <td>{{ transaction.get_option() }}</td>#}\r\n{#                    <td>{{ transaction.get_price() }}</td>#}\r\n{#                    <td>{{ transaction.get_used_coupons() }}</td>#}\r\n{#                    <td>{{ transaction.get_rating() }}</td>#}\r\n{#              </tr>#}\r\n          {% endfor %}\r\n        </tbody>\r\n      </table>\r\n    </div>\r\n  </div>\r\n\r\n</div>\r\n{% endblock %}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/application/templates/admin/transaction.html b/application/templates/admin/transaction.html
+--- a/application/templates/admin/transaction.html	
++++ b/application/templates/admin/transaction.html	
+@@ -98,58 +98,41 @@
+               <td>4</td>
+           </tr>
+           {% for transaction in transaction_list %}
+-            {# without appending values to Transaction.py #}
+-{#              {% for i in transaction %}#}
+-{#                  {% if i == '2' %}#}
+-{#                    <tr class="highlight">#}
+-{#                      <th scope="row">{{ key }}</th>#}
+-{#                      {% for i in transaction %}#}
++{#              {% if transaction[4] == '2' or transaction[4] == "1" %}#}
++{#                  <tr class="highlight">#}
++{#                    <th scope="row">3</th>#}
++{#                    {% for i in transaction %}#}
+ {#                        <td> {{ i }}</td>#}
+-{#                      {% endfor %}#}
+-{#                    </tr>#}
+-{#                  {% else %}#}
+-{#                      <tr>#}
+-{#                        <th scope="row">{{ key }}</th>#}
+-{#                        {% for i in transaction %}#}
++{#                    {% endfor %}#}
++{#                  </tr>#}
++{#              {% else %}#}
++{#                  <tr>#}
++{#                    <th scope="row">3</th>#}
++{#                    {% for i in transaction %}#}
+ {#                          <td> {{ i }}</td>#}
+-{#                        {% endfor %}#}
+-{#                      </tr>#}
+-{#                  {% endif %}#}
+-{#                    <td>{{ i }}</td>#}
+-{#              {% endfor %}#}
++{#                    {% endfor %}#}
++{#                  </tr>#}
++{#              {% endif %}#}
++
++{#              when we implement Transaction.py in#}
++{#              {% if transaction.rating <= 2 %}#}
++{#              <tr class="highlight">#}
++{#                <td>{{ transaction.get_account_id() }}</td>#}
++{#                <td>{{ transaction.option }}</td>#}
++{#                <td>{{ transaction.get_price() }}</td>#}
++{#                <td>{{ transaction.used_coupons }}</td>#}
++{#                <td>{{ transaction.rating() }}</td>#}
+ {#              </tr>#}
+-
+-              {% if transaction[4] == '2' or transaction[4] == "1" %}
+-                  <tr class="highlight">
+-                    <th scope="row">3</th>
+-                    {% for i in transaction %}
+-                        <td> {{ i }}</td>
+-                    {% endfor %}
+-                  </tr>
+-              {% else %}
+-                  <tr>
+-                    <th scope="row">3</th>
+-                    {% for i in transaction %}
+-                          <td> {{ i }}</td>
+-                    {% endfor %}
+-                  </tr>
+-              {% endif %}
+-
+-
+-
+-
+-
+-
+-{#              when we implement Transaction.py in#}
+-{#              <tr>#}
+-{#                  <th scope="row">{{ key }}</th>#}
+-{#                    <td>{{ transaction_list[transaction] }}#}
+-{#                    <td>{{ transaction.get_account_id() }}</td>#}
+-{#                    <td>{{ transaction.get_option() }}</td>#}
+-{#                    <td>{{ transaction.get_price() }}</td>#}
+-{#                    <td>{{ transaction.get_used_coupons() }}</td>#}
+-{#                    <td>{{ transaction.get_rating() }}</td>#}
+-{#              </tr>#}
++{#              {% else %}#}
++              <tr>
++              <td>{{ transaction }}</td>
++{#                <td>{{ transaction.get_account_id() }}</td>#}
++{#                <td>{{ transaction.get_option() }}</td>#}
++{#                <td>{{ transaction.get_price() }}</td>#}
++{#                <td>{{ transaction.get_used_coupons() }}</td>#}
++{#                <td>{{ transaction.get_rating() }}</td>#}
++              </tr>
++{#              {% endif %}#}
+           {% endfor %}
+         </tbody>
+       </table>
+Index: application/Models/Transaction.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># xu yong lin\r\nimport logging\r\n\r\nfrom application.Models.Account import Account\r\n\r\n\r\n# yet to include this part in python\r\nclass Transaction:\r\n    transaction_no = 0  # counts the number of transactions in the restaurant per month\r\n\r\n    def __init__(self, transaction_no=0, option=None, price=0, used_coupons=None,\r\n                 ratings=0):\r\n        self.transaction_no = transaction_no\r\n        self.__account_id = Account.count_id\r\n        self.__option = option\r\n        self.__price = float(price)\r\n        self.__used_coupons = used_coupons\r\n        self.__ratings = int(ratings)\r\n\r\n    def set_account_id(self, accounts):\r\n        self.__account_id = str(accounts)\r\n\r\n    def get_account_id(self):\r\n        return self.__account_id\r\n\r\n    def set_option(self, option):\r\n        self.__option = option\r\n\r\n    def get_option(self):\r\n        return self.__option\r\n\r\n    def set_price(self, price):\r\n        self.__price = price\r\n\r\n    def get_price(self):\r\n        return self.__price\r\n\r\n    def set_used_coupons(self, used_coupons):\r\n        self.__used_coupons = used_coupons\r\n\r\n    def get_used_coupons(self):\r\n        return self.__used_coupons\r\n\r\n    def set_ratings(self, ratings):\r\n        if ratings >= 5:\r\n            print(\"rating is above 5! Please double check with customer\")\r\n        else:\r\n            self.__ratings = ratings\r\n\r\n    def get_ratings(self):\r\n        return self.__ratings\r\n\r\n
+===================================================================
+diff --git a/application/Models/Transaction.py b/application/Models/Transaction.py
+--- a/application/Models/Transaction.py	
++++ b/application/Models/Transaction.py	
+@@ -3,50 +3,49 @@
+ 
+ from application.Models.Account import Account
+ 
+-
+-# yet to include this part in python
+ class Transaction:
+     transaction_no = 0  # counts the number of transactions in the restaurant per month
+ 
+-    def __init__(self, transaction_no=0, option=None, price=0, used_coupons=None,
++    def __init__(self, account_id=None, option=None, price=0, used_coupons=None,
+                  ratings=0):
+-        self.transaction_no = transaction_no
+-        self.__account_id = Account.count_id
++        self.transaction_no = Account.count_id
++        self.__account_id = account_id
+         self.__option = option
+-        self.__price = float(price)
++        self.__price = price
+         self.__used_coupons = used_coupons
+-        self.__ratings = int(ratings)
++        self.__rating = ratings
+ 
++    # account id
+     def set_account_id(self, accounts):
+-        self.__account_id = str(accounts)
++        self.__account_id = accounts
+ 
+     def get_account_id(self):
+-        return self.__account_id
++        return f'{self.__account_id}'
+ 
++    # option
+     def set_option(self, option):
+         self.__option = option
+ 
+     def get_option(self):
+-        return self.__option
++        return f'{self.__option}'
+ 
++    # price
+     def set_price(self, price):
+         self.__price = price
+ 
+     def get_price(self):
+-        return self.__price
++        return f'{self.__price}'
+ 
+-    def set_used_coupons(self, used_coupons):
+-        self.__used_coupons = used_coupons
++    # coupons
++    def set_used_coupons(self, coupons):
++        self.__used_coupons = coupons
+ 
+     def get_used_coupons(self):
+-        return self.__used_coupons
++        return f'{self.__used_coupons}'
+ 
+-    def set_ratings(self, ratings):
+-        if ratings >= 5:
+-            print("rating is above 5! Please double check with customer")
+-        else:
+-            self.__ratings = ratings
++    # rating
++    def set_rating(self, rating):
++        self.__rating = rating
+ 
+-    def get_ratings(self):
+-        return self.__ratings
+-
++    def get_rating(self):
++        return f'{self.__rating}'
