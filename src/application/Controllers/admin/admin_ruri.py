@@ -45,9 +45,14 @@ def admin_myrestaurant():  # ruri
             #  "Create_restaurant"
             # It's passing in the form argument to instantiate the restaurant
             # object
-            # file = request.files["rest_logo"]
-            # file.save(os.path.join("application/static/restaurantlogos",
-            # file.filename))
+            # hygiene = request.files['hygieneDocument']
+            # hygieneFile = secure_filename(hygiene.filename)
+            # os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_PDF'])), exist_ok=True)
+            # hygiene.save(os.path.join(os.getcwd(), app.config[
+            #     'UPLOADED_PDF']) + hygieneFile)
+            # logging.info('Hygiene -- file uploaded successfully')
+            # save_hygiene = f"application/static/restaurantCertification/{restaurant_id}/{hygieneFile}"
+
             # print(current_user.restaurant_id)
             restaurant = RestaurantSystem.create_restaurant(
                 restaurant_details_form.rest_name.data,
