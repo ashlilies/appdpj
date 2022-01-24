@@ -100,21 +100,6 @@ def admin_register():  # ashlee
             db["accounts"] = accounts
             login_user(account)
 
-            # TEMPORARY FOR WEEK 13
-            coupon_systems_list = []
-
-            with shelve.open("coupon", 'c') as db:
-                if "coupon_systems" in db:
-                    coupon_systems_list = db["coupon_systems"]
-                else:
-                    coupon_systems_list.append(CouponSystem())
-
-        coupon_systems_list.append(CouponSystem())
-        # TODO: Refactor coupons
-
-        with shelve.open("coupon", 'c') as db:
-            db["coupon_systems"] = coupon_systems_list
-
         return redirect(url_for("admin_myrestaurant"))
 
     return render_template("admin/register.html")
