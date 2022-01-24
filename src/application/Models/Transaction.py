@@ -7,7 +7,7 @@ class Transaction:
     transaction_id = 1
     food_coupons = ['SPAGETIT', '50PASTA']
 
-    def init(self, account_name=None, option=None, price=0, used_coupons=None,
+    def __init__(self, account_name=None, option=None, price=0, used_coupons=None,
                  ratings=0):
 
         with shelve.open('transaction', 'c') as db:

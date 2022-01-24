@@ -6,7 +6,7 @@ import shelve
 class Certification:
     count_id = 1
 
-    def init(self, hygiene_cert=None, halal_cert=None, vegetarian_cert=None, vegan_cert=None, noPorknoLard=None,
+    def __init__(self, hygiene_cert=None, halal_cert=None, vegetarian_cert=None, vegan_cert=None, noPorknoLard=None,
              noBeef=None):
         with shelve.open('certification', 'c') as db:
             try:

@@ -140,7 +140,7 @@
                     </thead>
                     <tbody>
                     <tr>
-                        <td rowspan="5" style="background-color:rgba(56, 183, 78,0.4); width:20%;">{{ cert.id }}</td>
+                        <td rowspan="6" style="background-color:rgba(56, 183, 78,0.4); width:20%;">{{ cert.id }}</td>
                         <td class="certdisplay">Hygiene</td>
                         <td>
 {#                            <iframe src="application/static/restaurantCertification/hygiene/1/{{ cert.hygiene_cert }}">Hygiene cert</iframe>#}
@@ -153,7 +153,7 @@
                             <td>NIL</td>
                         {% else %}
                             <td>
-                                <a href="{{ url_for("static", filename=cert.halal_cert[filename]) }}" target="_blank">Click me</a>
+                                <a href="{{ url_for("static", filename=cert.halal_cert[filename]) }}" target="_blank">{{ cert.halal_cert }}</a>
                             </td>
                         {% endif %}
                     </tr>
