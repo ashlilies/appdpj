@@ -40,11 +40,6 @@ def admin_home():  # ashlee
 @app.route("/admin/login", methods=["GET", "POST"])
 @admin_side
 def admin_login():  # ashlee
-    # TODO: Refactor with flask-login
-    # if already logged in, what's the point?
-    # if is_account_id_in_session():
-    #     return redirect(url_for("admin_home"))
-
     def login_error():
         return redirect("%s?error=1" % url_for("admin_login"))
 
@@ -137,29 +132,28 @@ def admin_update_account():
         flash("Current Password is Wrong")
         return redirect(url_for("admin_home"))
 
-    with shelve.open("accounts", 'c') as db:
-        if "changeName" in request.form:
-            if request.form["changeName"] != "":
-                current_user.set_name(request.form["changeName"])
-                flash("Successfully updated name to %s" % request.form[
-                    "changeName"])
+    if "changeName" in request.form:
+        if request.form["changeName"] != "":
+            current_user.set_name(request.form["changeName"])
+            flash("Successfully updated name to %s" % request.form[
+                "changeName"])
 
-        if "changeEmail" in request.form:
-            if request.form["changeEmail"] != "":
-                result = (current_user.set_email(request.form["changeEmail"]))
-                if result == Account.EMAIL_CHANGE_SUCCESS:
-                    flash("Successfully updated email")
-                elif result == Account.EMAIL_CHANGE_ALREADY_EXISTS:
-                    flash("Failed updating email, Email already Exists")
-                elif result == Account.EMAIL_CHANGE_INVALID:
-                    flash("Failed updating email, email is Invalid")
+    if "changeEmail" in request.form:
+        if request.form["changeEmail"] != "":
+            result = (current_user.set_email(request.form["changeEmail"]))
+            if result == Account.EMAIL_CHANGE_SUCCESS:
+                flash("Successfully updated email")
+            elif result == Account.EMAIL_CHANGE_ALREADY_EXISTS:
+                flash("Failed updating email, Email already Exists")
+            elif result == Account.EMAIL_CHANGE_INVALID:
+                flash("Failed updating email, email is Invalid")
 
-        if "changePw" in request.form:
-            if request.form["changePw"] != request.form["changePwConfirm"]:
-                flash("Confirm Password does not match Password")
-            elif request.form["changePw"] != "":
-                current_user.set_password_hash(request.form["changePw"])
-                flash("Successfully updated password")
+    if "changePw" in request.form:
+        if request.form["changePw"] != request.form["changePwConfirm"]:
+            flash("Confirm Password does not match Password")
+        elif request.form["changePw"] != "":
+            current_user.set_password_hash(request.form["changePw"])
+            flash("Successfully updated password")
 
     return redirect(url_for("admin_home"))
 
@@ -216,9 +210,22 @@ def admin_coupon_add():
             discount_type = CouponSystem.DISCOUNT_FIXED_PRICE
             discount_amount = float(create_coupon_form.discount_amount.data),
             discount_amount = discount_amount[0]  # for some reason we get a tuple here
+
+            if discount_amount < 0:
+                flash("Discount pricing can't be negative")
+                return redirect(url_for("admin_coupon_add"))
+
         elif create_coupon_form.discount_type.data == "pct":
             discount_type = CouponSystem.DISCOUNT_PERCENTAGE_OFF
             discount_amount = float(create_coupon_form.discount_amount.data) / 100
+
+            if discount_amount > 1:
+                flash("Discount percentage can't be greater than 100%.")
+                return redirect(url_for("admin_coupon_add"))
+
+            if discount_amount < 0.01:
+                flash("Discount percentage can't be less than 1%.")
+                return redirect(url_for("admin_coupon_add"))
         else:
             flash("Invalid discount type!")
             return redirect(url_for("admin_coupon_add"))

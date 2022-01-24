@@ -13,7 +13,7 @@ class Admin(Account):
         self.__name = None
         self.coupon_system_id = CouponSystem().id
         self.__transaction_system_id = None
-        Certification(self.__restaurant_id)
+        # Certification(self.__restaurant_id)  # doesn't work
         self.set_name(restaurant_name)
 
         logging.info(("Admin Class: Created new Admin account with "
