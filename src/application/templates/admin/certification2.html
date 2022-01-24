@@ -42,7 +42,7 @@
             <table class="table" id="infodisplay"
                    style="background-color: white">
                 <thead>
-                {% for cert in cert_array %}
+                {% for cert in certificate_list %}
                     <tr style="background-color: rgba(175, 97, 203,0.4)">
                         <th scope="col" colspan="2">
                             {{ cert.id }}'s Certificates
@@ -140,7 +140,7 @@
                     </thead>
                     <tbody>
                     <tr>
-                        <td rowspan="6" style="background-color:rgba(56, 183, 78,0.4); width:20%;">{{ cert.id }}</td>
+                        <td rowspan="5" style="background-color:rgba(56, 183, 78,0.4); width:20%;">{{ cert.id }}</td>
                         <td class="certdisplay">Hygiene</td>
                         <td>
 {#                            <iframe src="application/static/restaurantCertification/hygiene/1/{{ cert.hygiene_cert }}">Hygiene cert</iframe>#}
@@ -153,7 +153,7 @@
                             <td>NIL</td>
                         {% else %}
                             <td>
-                                <a href="{{ url_for("static", filename=cert.halal_cert[19:]) }}" target="_blank">{{ cert.halal_cert[51:] }}</a>
+                                <a href="{{ url_for("static", filename=cert.halal_cert[filename]) }}" target="_blank">Click me</a>
                             </td>
                         {% endif %}
                     </tr>
@@ -163,7 +163,7 @@
                             <td>NIL</td>
                         {% else %}
                             <td>
-                                <a href="{{ url_for("static", filename=cert.vegetarian_cert[19:]) }}" target="_blank">{{ cert.vegetarian_cert[51:] }}</a>
+                                <a href="{{ url_for("static", filename=cert.vegetarian_cert['filename']) }}" target="_blank">Click me</a>
                             </td>
                         {% endif %}
                     </tr>
@@ -177,7 +177,7 @@
                             <td>NIL</td>
                         {% else %}
                             <td>
-                                <a href="{{ url_for("static", filename=cert.vegan_cert[19:]) }}" target="_blank">{{ cert.vegan_cert[51:] }}</a>
+                                <a href="{{ url_for("static", filename=cert.vegan_cert['filename']) }}" target="_blank">Click me</a>
                             </td>
                         {% endif %}
                     </tr>
