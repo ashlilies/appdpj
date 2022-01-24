@@ -14,6 +14,7 @@ class Food:
         logging.info("Food: food count food_id loaded: %d" % Food.count_id)
 
         Food.count_id += 1
+
         self.__food_id = Food.count_id
         self.__image = image
         self.__name = name
