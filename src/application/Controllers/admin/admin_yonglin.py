@@ -215,6 +215,8 @@ def admin_transaction():
     #         if transaction_id == transaction.count_id:
     #             return transaction
     transaction_system_id = current_user.transaction_system_id
+    # either current_user = None OR
+    # transaction_system _id  has some spelling error
     transaction_system = Transaction.query(transaction_system_id)
     transaction_list = transaction_system.get_all_transaction()
     count = len(transaction_list)
@@ -279,8 +281,11 @@ def uploader():
         # restaurant_id = str(current_user.restaurant_id)
         # print('restaurant_id: ',restaurant_id) # error: restaurant_id = None??
         # add_cert = Certification.query(restaurant_id) # just for the id only
+        cert = Restaurant()
+        # should be like this...
 
-        cert_id = current_user.restaurant_id
+
+        cert_id = cert.id
         # current_user.certification_system_id = cert_id
         print('current.cert_id: ', cert_id)
         # ERROR OCCURS HERE: WHY IS ADD_CERT RETURNING NONE
@@ -350,7 +355,9 @@ def uploader():
 def admin_certificate_management(restaurant_id, cert_list):
     # cert = Certification.query(restaurant_id)
     # print(cert)
+    # cert = Certification()
     cert_system_id = current_user.restaurant_id
+
     cert_system = Certification.query(cert_system_id)
     cert_list = cert_system.get_cert()
     count = len(cert_list)

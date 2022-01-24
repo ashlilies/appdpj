@@ -64,8 +64,8 @@ class Certification:
 
     def get_certs(self, restaurant_id):
         cert_list = []
-        for cert in self.certificate:
-            c = self.certificate[cert]
+        for cert in self.certificates:
+            c = self.certificates[cert]
             cert_list.append(c)
         return cert_list
 
