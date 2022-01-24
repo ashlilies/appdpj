@@ -27,19 +27,20 @@ from application.rest_details_form import *
 @app.route("/admin/foodManagement")
 def food_management():
     create_food_form = CreateFoodForm(request.form)
+
     # For the add food form
     MAX_SPECIFICATION_ID = 2  # for adding food
     MAX_TOPPING_ID = 3
 
-    # food_dict = {}
-    # with shelve.open("food.db", "c") as db:
-    #     try:
-    #         if 'food' in db:
-    #             food_dict = db['food']
-    #         else:
-    #             db['food'] = food_dict
-    #     except Exception as e:
-    #         logging.error("create_food: error opening db (%s)" % e)
+    food_dict = {}
+    with shelve.open("food.db", "c") as db:
+        try:
+            if 'food' in db:
+                food_dict = db['food']
+            else:
+                db['food'] = food_dict
+        except Exception as e:
+            logging.error("create_food: error opening db (%s)" % e)
 
     #--------------------------------------------------------------------
 
@@ -68,10 +69,9 @@ def food_management():
     # storing the food keys in food_dict into a new list for displaying and
     # deleting
     food_list = []
-    # for key in food_dict:
-    #     food = food_dict.get(key)
-    #     food_list.append(food)
-
+    for key in food_dict:
+        food = food_dict.get(key)
+        food_list.append(food)
 
     return render_template('admin/foodManagement.html',
                            create_food_form=create_food_form,
@@ -123,34 +123,34 @@ def create_food():
     # using the WTForms way to get the data
     if request.method == 'POST' and create_food_form.validate():
         food_dict = {}
-        # with shelve.open("food.db", "c") as db:
-        #     try:
-        #         if 'food' in db:
-        #             food_dict = db['food']
-        #
-        #         else:
-        #             db['food'] = food_dict
-        #     except Exception as e:
-        #         logging.error("create_food: error opening db (%s)" % e)
+        with shelve.open("food.db", "c") as db:
+            try:
+                if 'food' in db:
+                    food_dict = db['food']
 
-        # Create a new food object
-        food = Food(request.form["image"], create_food_form.item_name.data,
-                    create_food_form.description.data,
-                    create_food_form.price.data,
-                    create_food_form.allergy.data)
+                else:
+                    db['food'] = food_dict
+            except Exception as e:
+                logging.error("create_food: error opening db (%s)" % e)
 
-        test = 'line 142 nothing wrong here'
-        print(test)
+            # Create a new food object
+            food = Food(request.form["image"], create_food_form.item_name.data,
+                        create_food_form.description.data,
+                        create_food_form.price.data,
+                        create_food_form.allergy.data)
 
-        food.set_specification(get_specs())  # set specifications as a List
-        food.topping = get_top()  # set topping as a List
-        food_dict[food.get_food_id()] = food  # set the food_id as key to store
+            test = 'line 142 nothing wrong here'
+            print(test)
+
+            food.specification = get_specs()  # set specifications as a List
+            food.topping = get_top()  # set topping as a List
+            food_dict[food.get_food_id()] = food  # set the food_id as key to store
             # the food object
-            # db['food'] = food_dict
+            db['food'] = food_dict
 
-            # # writeback
-            # with shelve.open("food.db", 'c') as db:
-            #     db['food'] = food_dict
+            # writeback
+            with shelve.open("food.db", 'c') as db:
+                db['food'] = food_dict
 
             # ---------------------------------------------------------------------------------------
             #
@@ -184,7 +184,7 @@ def create_food():
             # food_dict[img.id] = img
             # handle['food.db'] = food_dict
 # ---------------------------------------------------------------------------------------
-        return redirect(url_for('food_management'))
+            return redirect(url_for('food_management'))
 
     return render_template('admin/addFoodForm.html', form=create_food_form,
                            MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
@@ -197,10 +197,10 @@ def create_food():
 @app.route('/deleteFood/<int:id>', methods=['POST'])
 def delete_food(id):
     food_dict = {}
-    # with shelve.open("food.db", 'c') as db:
-    #     food_dict = db['food']
-    #     food_dict.pop(id)
-    #     db['food'] = food_dict
+    with shelve.open("food.db", 'c') as db:
+        food_dict = db['food']
+        food_dict.pop(id)
+        db['food'] = food_dict
 
     return redirect(url_for('food_management'))
 
@@ -243,18 +243,17 @@ def update_food(id):
     if request.method == 'POST' and update_food_form.validate():
         food_dict = {}
         try:
-            # with shelve.open("food.db", 'w') as db:
-            #     food_dict = db['food']
-            #     food = food_dict.get(id)
-                food = Food.query(id)
+            with shelve.open("food.db", 'w') as db:
+                food_dict = db['food']
+                food = food_dict.get(id)
                 # food.set_image = request.form["image"]
                 food.set_name(update_food_form.item_name.data)
                 food.set_description(update_food_form.description.data)
                 food.set_price(update_food_form.price.data)
                 food.set_allergy(update_food_form.allergy.data)
-                food.set_specification(get_specs())  # set specifications as a List
+                food.specification = get_specs()  # set specifications as a List
                 food.topping = get_top()  # set topping as a List
-                # db["food"] = food_dict
+                db["food"] = food_dict
         except Exception as e:
             logging.error("update_customer: %s" % e)
             print("an error has occured in update customer")
@@ -263,11 +262,10 @@ def update_food(id):
     else:
         food_dict = {}
         try:
-            # with shelve.open("food.db", 'r') as db:
-            #     food_dict = db['food']
-            #
-            #     food = food_dict.get(id)
-                food = Food.query(id)
+            with shelve.open("food.db", 'r') as db:
+                food_dict = db['food']
+
+                food = food_dict.get(id)
 
                 # food.get_image(request.form["image"])
                 update_food_form.item_name.data = food.get_name()
