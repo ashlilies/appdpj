@@ -1,0 +1,177 @@
+Index: application/Controllers/admin/admin_yonglin.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import datetime\r\nimport traceback\r\n\r\nimport flask\r\nfrom flask import render_template, request, redirect, url_for, session, flash, Flask\r\nfrom flask_login import logout_user, login_required, current_user\r\nimport os\r\nimport os.path\r\n\r\nfrom application.CouponForms import CreateCouponForm\r\nfrom application.Models.Admin import *\r\nfrom application.Models.CouponSystem import CouponSystem\r\nfrom application.Models.Certification import Certification\r\nfrom application.Models.Food import Food\r\nfrom application.Models.Restaurant import Restaurant\r\nfrom application import app, login_manager\r\nfrom application.Models.Transaction import Transaction\r\nfrom application.adminAddFoodForm import CreateFoodForm\r\nfrom werkzeug.utils import secure_filename\r\nfrom application.Controllers.restaurant_controller import *\r\nimport shelve, os\r\nimport uuid\r\nfrom application.rest_details_form import *\r\n\r\n# Ruri's imported libraries\r\nimport urllib.request\r\nimport os\r\nfrom werkzeug.utils import secure_filename\r\n\r\n# <------------------------- YONG LIN ------------------------------>\r\n# YL: for transactions -- creating of dummy data\r\n@app.route(\"/admin/transaction/createExampleTransactions\")\r\ndef create_example_transactions():\r\n    # WARNING - Overrides ALL transactions in the db!\r\n    transaction_list = []\r\n\r\n    # creating a shelve file with dummy data\r\n    # 1: <account id> ; <user_id> ; <option> ; <price> ; <coupons> , <rating>\r\n    t1 = Transaction()\r\n    t1.account_name = 'Yong Lin'\r\n    t1.set_option('Delivery')\r\n    t1.set_price(50.30)\r\n    t1.set_used_coupons('SPAGETIT')\r\n    t1.set_ratings(2)\r\n    transaction_list.append(t1)\r\n\r\n    t2 = Transaction()  # t2\r\n    t2.account_name = 'Ching Chong'\r\n    t2.set_option('Dine-in')\r\n    t2.set_price(80.90)\r\n    t2.set_used_coupons('50PASTA')\r\n    t2.set_ratings(5)\r\n    transaction_list.append(t2)\r\n\r\n    t3 = Transaction()  # t3\r\n    t3.account_name = 'Hosea'\r\n    t3.set_option('Delivery')\r\n    t3.set_price(20.10)\r\n    t3.set_used_coupons('50PASTA')\r\n    t3.set_ratings(1)\r\n    transaction_list.append(t3)\r\n\r\n    t4 = Transaction()  # t4\r\n    t4.account_name = 'Clara'\r\n    t4.set_option('Delivery')\r\n    t4.set_price(58.30)\r\n    t4.set_used_coupons('SPAGETIT')\r\n    t4.set_ratings(2)\r\n    transaction_list.append(t4)\r\n\r\n    t5 = Transaction()  # t5\r\n    t5.account_name = 'Ruri'\r\n    t5.set_option('Dine-in')\r\n    t5.set_price(80.90)\r\n    t5.set_used_coupons('50PASTA')\r\n    t5.set_ratings(3)\r\n    transaction_list.append(t5)\r\n\r\n    t6 = Transaction()  # t6\r\n    t6.account_name = 'Ashlee'\r\n    t6.set_option('Delivery')\r\n    t6.set_price(100.10)\r\n    t6.set_used_coupons('50PASTA')\r\n    t6.set_ratings(2)\r\n    transaction_list.append(t6)\r\n\r\n    t7 = Transaction()\r\n    t7.account_name = 'Hello'\r\n    t7.set_option('Dine-in')\r\n    t7.set_price(10.90)\r\n    t7.set_used_coupons('50PASTA')\r\n    t7.set_ratings(4)\r\n    transaction_list.append(t7)\r\n\r\n    t8 = Transaction()\r\n    t8.account_name = 'Lolita'\r\n    t8.set_option('Delivery')\r\n    t8.set_price(50.30)\r\n    t8.set_used_coupons('SPAGETIT')\r\n    t8.set_ratings(2)\r\n    transaction_list.append(t8)\r\n\r\n    t9 = Transaction()  # t2\r\n    t9.account_name = 'Cheryln'\r\n    t9.set_option('Dine-in')\r\n    t9.set_price(80.90)\r\n    t9.set_used_coupons('50PASTA')\r\n    t9.set_ratings(5)\r\n    transaction_list.append(t9)\r\n\r\n    t10 = Transaction()  # t4\r\n    t10.account_name = 'Swee Koon'\r\n    t10.set_option('Delivery')\r\n    t10.set_price(58.30)\r\n    t10.set_used_coupons('SPAGETIT')\r\n    t10.set_ratings(2)\r\n    transaction_list.append(t10)\r\n\r\n    t11 = Transaction()  # t5\r\n    t11.account_name = 'Adrian'\r\n    t11.set_option('Dine-in')\r\n    t11.set_price(80.90)\r\n    t11.set_used_coupons('50PASTA')\r\n    t11.set_ratings(3)\r\n    transaction_list.append(t11)\r\n\r\n    t12 = Transaction()  # t6\r\n    t12.account_name = 'Ryan'\r\n    t12.set_option('Delivery')\r\n    t12.set_price(100.10)\r\n    t12.set_used_coupons('50PASTA')\r\n    t12.set_ratings(2)\r\n    transaction_list.append(t12)\r\n\r\n    t13 = Transaction()\r\n    t13.account_name = 'Sammi'\r\n    t13.set_option('Dine-in')\r\n    t13.set_price(10.90)\r\n    t13.set_used_coupons('50PASTA')\r\n    t13.set_ratings(4)\r\n    transaction_list.append(t13)\r\n\r\n    t14 = Transaction()  # t4\r\n    t14.account_name = 'Vianna'\r\n    t14.set_option('Delivery')\r\n    t14.set_price(58.30)\r\n    t14.set_used_coupons('SPAGETIT')\r\n    t14.set_ratings(2)\r\n    transaction_list.append(t14)\r\n\r\n    t15 = Transaction()  # t5\r\n    t15.account_name = 'Dylan'\r\n    t15.set_option('Dine-in')\r\n    t15.set_price(80.90)\r\n    t15.set_used_coupons('50PASTA')\r\n    t15.set_ratings(3)\r\n    transaction_list.append(t15)\r\n\r\n    t16 = Transaction()  # t6\r\n    t16.account_name = 'Chit Boon'\r\n    t16.set_option('Delivery')\r\n    t16.set_price(100.10)\r\n    t16.set_used_coupons('50PASTA')\r\n    t16.set_ratings(2)\r\n    transaction_list.append(t16)\r\n\r\n    t17 = Transaction()\r\n    t17.account_name = 'Kit Fan'\r\n    t17.set_option('Dine-in')\r\n    t17.set_price(10.90)\r\n    t17.set_used_coupons('50PASTA')\r\n    t17.set_ratings(4)\r\n    transaction_list.append(t17)\r\n\r\n    t18 = Transaction()\r\n    t18.account_name = 'Gabriel Choo'\r\n    t18.set_option('Delivery')\r\n    t18.set_price(50.30)\r\n    t18.set_used_coupons('SPAGETIT')\r\n    t18.set_ratings(2)\r\n    transaction_list.append(t18)\r\n\r\n    t19 = Transaction()  # t2\r\n    t19.account_name = 'Bryan Hoo'\r\n    t19.set_option('Dine-in')\r\n    t19.set_price(80.90)\r\n    t19.set_used_coupons('50PASTA')\r\n    t19.set_ratings(5)\r\n    transaction_list.append(t19)\r\n\r\n    t20 = Transaction()  # t3\r\n    t20.account_name = 'Yuen Loong'\r\n    t20.set_option('Delivery')\r\n    t20.set_price(20.10)\r\n    t20.set_used_coupons('50PASTA')\r\n    t20.set_ratings(1)\r\n    transaction_list.append(t20)\r\n\r\n    # writing to the database\r\n    with shelve.open('transaction', \"c\") as db:\r\n        try:\r\n            db['shop_transactions'] = transaction_list\r\n        except Exception as e:\r\n            logging.error(\"create_example_transactions: error writing to db (%s)\" % e)\r\n\r\n    return redirect(url_for(\"admin_transaction\"))\r\n\r\n\r\n# YL: for transactions -- reading of data and displaying (R in CRUD)\r\n@app.route(\"/admin/transaction\")\r\ndef admin_transaction():\r\n    # read transactions from db\r\n    with shelve.open('transaction', 'c') as db:\r\n        if 'shop_transactions' in db:\r\n            transaction_list = db['shop_transactions']\r\n            print(db['shop_transactions'])\r\n            logging.info(\"admin_transaction: reading from db['shop_transactions']\"\r\n                         \", %d elems\" % len(db[\"shop_transactions\"]))\r\n        else:\r\n            logging.info(\"admin_transaction: nothing found in db, starting empty\")\r\n            transaction_list = []\r\n\r\n    def get_transaction_by_id(transaction_id):  # debug\r\n        for transaction in transaction_list:\r\n            if transaction_id == transaction.count_id:\r\n                return transaction\r\n\r\n    return render_template(\"admin/transaction.html\",\r\n                           count=len(transaction_list),\r\n                           transaction_list=transaction_list)\r\n\r\n\r\n# YL: for transactions -- soft delete (D in CRUD)\r\n# soft delete -> restaurant can soft delete transactions jic if the transaction is cancelled\r\n@app.route('/admin/transaction/delete/<transaction_id>')\r\ndef delete_transaction(transaction_id):\r\n    transaction_id = int(transaction_id)\r\n\r\n    transaction_list = []\r\n    with shelve.open('transaction', 'c') as db:\r\n        for transaction in db['shop_transactions']:\r\n            transaction_list.append(transaction)\r\n\r\n    def get_transaction_by_id(t_id):  # debug\r\n        for t in transaction_list:\r\n            if t_id == t.count_id:\r\n                return t\r\n\r\n    logging.info(\"delete_transaction: deleted transaction with id %d\"\r\n                 % transaction_id)\r\n\r\n    # set instance attribute 'deleted' of Transaction.py = False\r\n    get_transaction_by_id(transaction_id).deleted = True\r\n\r\n    # writeback to shelve\r\n    with shelve.open('transaction', 'c') as db:\r\n        db[\"shop_transactions\"] = transaction_list\r\n\r\n    return redirect(url_for('admin_transaction'))\r\n\r\n\r\n# certification -- xu yong lin\r\n# YL: for certification -- form (C in CRUD)\r\n@app.route(\"/admin/uploadCertification\")\r\ndef test_upload():\r\n    return render_template(\"admin/certification.html\")\r\n\r\n# def upload_cert():\r\n#     certification_dict = {}\r\n#     nb = 'NIL'\r\n#     npnl = 'NIL'\r\n#     if request.method == 'POST':\r\n#\r\n#         with shelve.open(DB_NAME, 'c') as db:\r\n#             try:\r\n#                 certification_dict = db['certification']\r\n#                 print(certification_dict)\r\n#             except Exception as e:\r\n#                 logging.error(\"Error in retrieving certificate from \"\"certification.db (%s)\" % e)\r\n#             # create a new Certification Object\r\n#             certchecks = request.form.getlist('certCheck')\r\n#             print(certchecks)\r\n#             for i in certchecks:\r\n#                 if 'NoBeef' in certchecks:\r\n#                     nb = 'YES'\r\n#                 elif 'NoPorkNoLard' in certchecks:\r\n#                     npnl = 'Yes'\r\n#                 else:\r\n#                     print('something is wrong ')\r\n#             print(npnl)\r\n#             print(nb)\r\n#\r\n#             certification = Certification(request.form[\"hygieneDocument\"], request.form[\"halalDocument\"],\r\n#                                           request.form[\"vegetarianDocument\"], request.form[\"veganDocument\"],\r\n#                                           npnl, nb)\r\n#             certification_dict[certification.id] = certification\r\n#             db['certification'] = certification_dict\r\n#\r\n#             return redirect(url_for('read_cert'))\r\n#         # update: cert dict => get the correct cert by id\r\n#\r\n#     return render_template(\"admin/certification.html\")\r\n\r\n\r\n# YL: for certification -- reading of data and displaying it to myRestaurant (C in CRUD)\r\n\r\n@app.route('/admin/uploader', methods=['GET', 'POST'])\r\ndef uploader():\r\n    certification_dict = {}\r\n    # nb = 'NIL'\r\n    # npnl = 'NIL'\r\n    if request.method == 'POST':\r\n        # todo: add different routes for hygiene, halal, vegetarian, vegan\r\n        # todo: add other file's file saving\r\n        with shelve.open('certification', 'c') as handle:\r\n            try:\r\n                certification_dict = handle['certification']\r\n                print(certification_dict)\r\n            except Exception as e:\r\n                logging.error(\"uploader: \"\"certification.db (%s)\" % e)\r\n\r\n            cert = Certification()\r\n            app.config['UPLOADED_PDF'] = f'application/static/restaurantCertification/hygiene/{cert.id}/'\r\n            # print(\"931: %s\" % halal)\r\n            f = request.files['hygieneDocument'] # getting the file from the form\r\n            filename = secure_filename(f.filename)\r\n\r\n            os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_PDF'])), exist_ok=True)\r\n\r\n            # save document in app.config['UPLOAD_PDF']\r\n            f.save(os.path.join(os.getcwd(), app.config['UPLOADED_PDF']) + filename)\r\n\r\n            logging.info('file uploaded successfully')\r\n\r\n            # create new object\r\n            cert.hygiene_cert = f\"application/static/restaurantCertification/hygiene/{cert.id}/{filename}\"\r\n\r\n            # HALAL CERTIFICATE\r\n            halal = request.files['halalDocument']\r\n            if halal.filename != \"\":\r\n                # TODO: Add logic to save the file to filesystem and the Certification object here\r\n                pass\r\n\r\n            # cert = Certification(f)\r\n            certification_dict[cert.id] = cert\r\n            handle['certification'] = certification_dict\r\n\r\n        return redirect(url_for('read_cert'))\r\n\r\n@app.route(\"/admin/certification\")\r\ndef read_cert():\r\n    # todo: include session id and insert the id in order to read the ind restaurant cert\r\n    certification_dict = {}\r\n    with shelve.open('certification', 'c') as handle:\r\n        try:\r\n            if 'certification' in handle:\r\n                certification_dict = handle['certification']\r\n                print('existing ',certification_dict)\r\n                error = 'line 976 nothing wrong here'\r\n                print(error)\r\n                for key in certification_dict:\r\n                    cert = certification_dict.get(key)\r\n                    print('cert: ',cert)\r\n                error2 = 'line 980 nothing wrong here'\r\n                print(error2)\r\n                # cert.hygiene_cert = f\"application/static/restaurantCertification/hygiene/{cert.id}/\"\r\n            else:\r\n                handle['certification'] = certification_dict\r\n                print(certification_dict)\r\n                logging.info(\"read_cert: nothing found in database, starting empty\")\r\n        except Exception as e:\r\n            logging.error(\"read_cert: error opening db (%s)\" % e)\r\n\r\n        certificate_list = []\r\n        for key in certification_dict:\r\n            food = certification_dict.get(key)\r\n            certificate_list.append(food)\r\n\r\n    return render_template('admin/certification2.html', id=id, certificate_list=certificate_list)\r\n\r\n\r\n# @app.route(\"/admin/certification\")\r\n# def read_cert():\r\n#     # todo: display the pdf file via url_for\r\n#     certification_dict = {}\r\n#     with shelve.open('certification', \"c\") as db:\r\n#         try:\r\n#             if 'certification' in db:\r\n#                 certification_dict = db['certification']\r\n#\r\n#             else:\r\n#                 db['certification'] = certification_dict\r\n#                 print(certification_dict)\r\n#                 logging.info(\"read_cert: nothing found in db, starting empty\")\r\n#         except Exception as e:\r\n#             logging.error(\"read_cert: error opening db (%s)\" % e)\r\n#\r\n#         certificate_list = []\r\n#         for key in certification_dict:\r\n#             food = certification_dict.get(key)\r\n#             certificate_list.append(food)\r\n#\r\n#     return render_template(\"admin/certification2.html\", certificate_list=certificate_list)\r\n\r\n\r\n# YL: for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)\r\n# TODO: REDIRECT BACK TO FORM IN 'C IN CRUD'\r\n# TODO: CHECK IF THE FILES ARE THE SAME AND UPDATE THE DETAILS\r\n@app.route('/admin/updateCertification/<int:id>', methods=['GET', 'POST'])\r\ndef update_cert(id):\r\n    nb = 'NIL'\r\n    npnl = 'NIL'\r\n\r\n    if request.method == 'POST':\r\n        certification_dict = {}\r\n        try:\r\n            with shelve.open('certification', \"c\") as db:\r\n                certification_dict = db['certification']\r\n\r\n                # updating the information\r\n                certchecks = request.form.getlist('certCheck')\r\n                for i in certchecks:\r\n                    if 'NoBeef' in certchecks:\r\n                        nb = 'YES'\r\n                    elif 'No Pork No Lard' in certchecks:\r\n                        npnl = 'YES'\r\n                    else:\r\n                        print('something is wrong ')\r\n\r\n                certification = certification_dict.get(id)\r\n                # inset values of the updated thing inside\r\n                certification.hygiene_cert = request.form[\"hygieneDocument\"]\r\n                certification.halal_cert = request.form[\"halalDocument\"]\r\n                certification.vegetarian_cert = request.form[\"vegetarianDocument\"]\r\n                certification.vegan_cert = request.form[\"veganDocument\"]\r\n                certification.noPorknoLard = npnl\r\n                certification.noBeef = nb\r\n                print(certification)\r\n\r\n                # writeback\r\n                db['certification'] = certification_dict\r\n        except Exception as e:\r\n            logging.error(\"Error in retrieving certificate from \"\"certification.db (%s)\" % e)\r\n\r\n        return redirect(url_for('read_cert'))\r\n    else:\r\n        certification_dict = {}\r\n        id_list = []\r\n        print('I am reading from shelve')\r\n        try:\r\n            # reading to display the pre-existing inputs\r\n            with shelve.open('certification', \"c\") as db:\r\n                certification_dict = db['certification']\r\n        except Exception as e:\r\n            logging.error(\"Error in retrieving certificate from \"\"certification.db (%s)\" % e)\r\n\r\n        c = certification_dict.get(id)\r\n        id_list.append(c)\r\n        print(c.hygiene_cert)\r\n        return render_template('admin/updateCertification.html', id_list=id_list)\r\n\r\n\r\n# YL: for certification -- Delete (D in CRUD)\r\n@app.route('/deleteCertification/<int:id>', methods=['POST'])\r\ndef delete_cert(id):\r\n    with shelve.open('certification', 'w') as db:\r\n        try:\r\n            certification_dict = db['certification']\r\n            if id in certification_dict:\r\n                certification_dict.pop(id)\r\n            db['certification'] = certification_dict\r\n        except Exception as e:\r\n            logging.error(\"delete_food: error opening db (%s)\" % e)\r\n\r\n    return redirect(url_for('read_cert'))\r\n\r\n\r\n# def upload_cert():\r\n#     i = 1\r\n#     certification_form = DocumentUploadForm(request.form)\r\n#     certifications_dict = {}\r\n#     if request.method == 'POST' and certification_form.validate():\r\n#         db = shelve.open(DB_NAME, 'c')\r\n#         try:\r\n#             certifications_dict = db['certification']\r\n#         except Exception as e:\r\n#             logging.error(\"Error in retrieving Certification from \"\r\n#                           \"certification.db (%s)\" % e)\r\n#\r\n#         certifications_dict[i] = i\r\n#         db['certification'] = certifications_dict\r\n#\r\n#         db.close()\r\n#\r\n#     certification = Certification(request.form[\"hygieneDocument\"])\r\n#\r\n#     # if certification_form.validate_on_submit():\r\n#     #     # file path to save files to:\r\n#     #     assets_dir = os.path.join(os.path.dirname(app.instance_path), 'restaurantCertification')\r\n#     #     # assests_dir ==> C:\\Users\\yongl\\appdpj\\src\\restaurantCertification\r\n#     #     hygiene = certification_form.hygiene_doc.data\r\n#     #\r\n#     #     # saving\r\n#     #     hygiene.save(os.path.join(assets_dir, 'hygiene', hygiene.filename))\r\n#     #\r\n#     #     logging.info('Document uploaded successfully.')\r\n#     #     return redirect(url_for('admin_home'))\r\n#\r\n#     return render_template(\"admin/certification2.html\")\r\n\r\n\r\n# @app.route(\"/admin/certification\", methods=['GET', 'POST'])\r\n# def admin_certification():\r\n#     # TODO: FILE UPLOAD, FILE SAVING, SHELVE UPDATE\r\n#     # set upload directory path\r\n#     certification_form = RestaurantCertification()\r\n#     if certification_form.validate_on_submit():\r\n#         assets_dir = os.path.join(os.path.dirname('./static/restaurantCertification'))\r\n#\r\n#         hygiene = certification_form.hygiene_cert.data\r\n#         halal = certification_form.halal_cert.data\r\n#         vegetarian = certification_form.vegetarian_cert.data\r\n#         vegan = certification_form.vegan_cert.data\r\n#\r\n#         # document save\r\n#         # halal.save(os.path.join(app.config['UPLOAD_FOLDER'], halaldoc_name))\r\n#         hygiene.save(os.path.join(assets_dir, '<userid>', hygiene))\r\n#         halal.save(os.path.join(assets_dir, '<userid>', halal))\r\n#         vegetarian.save(os.path.join(assets_dir, '<userid>', vegetarian))\r\n#         vegan.save(os.path.join(assets_dir, '<userid>', vegan))\r\n#\r\n#         # halal.save(os.path.join('/application/static/restaurantCertification', halaldoc_name))\r\n#         # vegetarian.save(\r\n#         #     os.path.join('/application/static/restaurantCertification', vegetariandoc_name))\r\n#         # vegan.save(os.path.join('/application/static/restaurantCertification', vegandoc_name))\r\n#\r\n#         flash('Document uploaded successfully')\r\n#\r\n#         return redirect(url_for('admin_transaction'))\r\n#\r\n#     return render_template(\"admin/certification.html\",\r\n#                            certification_form=certification_form)\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/application/Controllers/admin/admin_yonglin.py b/application/Controllers/admin/admin_yonglin.py
+--- a/application/Controllers/admin/admin_yonglin.py	(revision d9dbd419d58cee33d8c4a1cb0e3d820a7aba4fbe)
++++ b/application/Controllers/admin/admin_yonglin.py	(date 1642572831542)
+@@ -3,29 +3,16 @@
+ 
+ import flask
+ from flask import render_template, request, redirect, url_for, session, flash, Flask
+-from flask_login import logout_user, login_required, current_user
+ import os
+ import os.path
+ 
+-from application.CouponForms import CreateCouponForm
++from werkzeug.utils import secure_filename
++
+ from application.Models.Admin import *
+-from application.Models.CouponSystem import CouponSystem
+ from application.Models.Certification import Certification
+-from application.Models.Food import Food
+-from application.Models.Restaurant import Restaurant
+ from application import app, login_manager
+ from application.Models.Transaction import Transaction
+-from application.adminAddFoodForm import CreateFoodForm
+-from werkzeug.utils import secure_filename
+-from application.Controllers.restaurant_controller import *
+ import shelve, os
+-import uuid
+-from application.rest_details_form import *
+-
+-# Ruri's imported libraries
+-import urllib.request
+-import os
+-from werkzeug.utils import secure_filename
+ 
+ # <------------------------- YONG LIN ------------------------------>
+ # YL: for transactions -- creating of dummy data
+@@ -265,44 +252,6 @@
+ def test_upload():
+     return render_template("admin/certification.html")
+ 
+-# def upload_cert():
+-#     certification_dict = {}
+-#     nb = 'NIL'
+-#     npnl = 'NIL'
+-#     if request.method == 'POST':
+-#
+-#         with shelve.open(DB_NAME, 'c') as db:
+-#             try:
+-#                 certification_dict = db['certification']
+-#                 print(certification_dict)
+-#             except Exception as e:
+-#                 logging.error("Error in retrieving certificate from ""certification.db (%s)" % e)
+-#             # create a new Certification Object
+-#             certchecks = request.form.getlist('certCheck')
+-#             print(certchecks)
+-#             for i in certchecks:
+-#                 if 'NoBeef' in certchecks:
+-#                     nb = 'YES'
+-#                 elif 'NoPorkNoLard' in certchecks:
+-#                     npnl = 'Yes'
+-#                 else:
+-#                     print('something is wrong ')
+-#             print(npnl)
+-#             print(nb)
+-#
+-#             certification = Certification(request.form["hygieneDocument"], request.form["halalDocument"],
+-#                                           request.form["vegetarianDocument"], request.form["veganDocument"],
+-#                                           npnl, nb)
+-#             certification_dict[certification.id] = certification
+-#             db['certification'] = certification_dict
+-#
+-#             return redirect(url_for('read_cert'))
+-#         # update: cert dict => get the correct cert by id
+-#
+-#     return render_template("admin/certification.html")
+-
+-
+-# YL: for certification -- reading of data and displaying it to myRestaurant (C in CRUD)
+ 
+ @app.route('/admin/uploader', methods=['GET', 'POST'])
+ def uploader():
+@@ -320,27 +269,61 @@
+                 logging.error("uploader: ""certification.db (%s)" % e)
+ 
+             cert = Certification()
++            # HYGIENE CERTIFICATE
++            hygiene = request.files['hygieneDocument'] # getting the file from the form
++            # dont need to check if there is input as this file input is compulsory
++            hygieneFile = secure_filename(hygiene.hygieneFile)
++            app.config['UPLOADED_HYGIENE'] = f'application/static/restaurantCertification/hygiene/{cert.id}/'
++            os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HYGIENE'])), exist_ok=True)
++            # save document in app.config['UPLOAD_HYGIENE']
++            hygiene.save(os.path.join(os.getcwd(), app.config['UPLOADED_PDF']) + hygieneFile)
++            logging.info('Hygiene -- file uploaded successfully')
++
++            # HALAL CERTIFICATE
++            halal = request.files['halalDocument']
++            halalFile = secure_filename(halal.halalFile)
++            if halal.halalFile != "":
++                # TODO: Add logic to save the file to filesystem and the Certification object here
++                app.config['UPLOADED_HALAL'] = f'application/static/restaurantCertification/halal/{cert.id}/'
++                os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HALAL'])), exist_ok=True)
++                # save document in app.config['UPLOADED_HALAL']
++                hygiene.save(os.path.join(os.getcwd(), app.config['UPLOADED_HALAL']) + halalFile)
++                logging.info('Halal -- file uploaded successfully')
++
++            # VEGETARIAN CERTIFICATE
++            vegetarian = request.files['vegetarianDocument']
++            vegetarianFile = secure_filename(vegetarian.vegetarianFile)
++            if vegetarian.vegetarianFile != "":
++                # TODO: Add logic to save the file to filesystem and the Certification object here
++                app.config['UPLOADED_VEGETARIAN'] = f'application/static/restaurantCertification/vegetarian/{cert.id}/'
++                os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGETARIAN'])), exist_ok=True)
++                # save document in app.config['UPLOADED_HALAL']
++                hygiene.save(os.path.join(os.getcwd(), app.config['UPLOADED_VEGETARIAN']) + vegetarianFile)
++                logging.info('Vegetarian -- file uploaded successfully')
++
++            # VEGAN CERTIFICATE
++            vegan = request.files['veganDocument']
++            vegetarianFile = secure_filename(vegetarian.vegetarianFile)
++            if vegetarian.vegetarianFile != "":
++                # TODO: Add logic to save the file to filesystem and the Certification object here
++                app.config['UPLOADED_VEGETARIAN'] = f'application/static/restaurantCertification/vegetarian/{cert.id}/'
++                os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGETARIAN'])), exist_ok=True)
++                # save document in app.config['UPLOADED_HALAL']
++                hygiene.save(os.path.join(os.getcwd(), app.config['UPLOADED_VEGETARIAN']) + vegetarianFile)
++                logging.info('Vegetarian -- file uploaded successfully')
++
++
++            # dummy -- for reference
+             app.config['UPLOADED_PDF'] = f'application/static/restaurantCertification/hygiene/{cert.id}/'
+-            # print("931: %s" % halal)
+             f = request.files['hygieneDocument'] # getting the file from the form
+             filename = secure_filename(f.filename)
+-
+-            os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_PDF'])), exist_ok=True)
+-
+             # save document in app.config['UPLOAD_PDF']
+             f.save(os.path.join(os.getcwd(), app.config['UPLOADED_PDF']) + filename)
+-
+             logging.info('file uploaded successfully')
+ 
+             # create new object
+             cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/{filename}"
+ 
+-            # HALAL CERTIFICATE
+-            halal = request.files['halalDocument']
+-            if halal.filename != "":
+-                # TODO: Add logic to save the file to filesystem and the Certification object here
+-                pass
+-
+             # cert = Certification(f)
+             certification_dict[cert.id] = cert
+             handle['certification'] = certification_dict
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"(appdpj) Python 3.9 (venv)\" project-jdk-type=\"Python SDK\" />\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision d9dbd419d58cee33d8c4a1cb0e3d820a7aba4fbe)
++++ b/.idea/misc.xml	(date 1642572495792)
+@@ -1,4 +1,4 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" project-jdk-name="(appdpj) Python 3.9 (venv)" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (src)" project-jdk-type="Python SDK" />
+ </project>
+\ No newline at end of file

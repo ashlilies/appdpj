@@ -2,7 +2,8 @@ import datetime
 import traceback
 
 import flask
-from flask import render_template, request, redirect, url_for, session, flash, Flask
+from flask import render_template, request, redirect, url_for, session, flash, \
+    Flask
 from flask_login import logout_user, login_required, current_user
 import os
 import os.path
@@ -27,83 +28,103 @@ import urllib.request
 import os
 from werkzeug.utils import secure_filename
 
+
 # <------------------------- RURI ------------------------------>
 # C (Create)
 @app.route('/admin/create-restaurant', methods=['GET', 'POST'])
+@login_required
 def admin_myrestaurant():  # ruri
-    restaurant_details_form = RestaurantDetailsForm(request.form)  # Using the Create Restaurant Form
-    create_restaurant = RestaurantSystem()  # Creating a controller /
+    restaurant_details_form = RestaurantDetailsForm(
+        request.form)  # Using the Create Restaurant Form
     # The controller will be the place where we do all the interaction
     if request.method == 'POST' and restaurant_details_form.validate():
-        #  The Below code is using one of the controller's method
-        #  "Create_restaurant"
-        # It's passing in the form argument to instantiate the restaurant object
-        restaurant_id = uuid.uuid4().hex
-        current_user.restaurant_id = restaurant_id
-        # print(current_user.restaurant_id)
-        create_restaurant.create_restaurant(
-            restaurant_id,
-            restaurant_details_form.rest_name.data,
-            request.form.get("rest_logo"),
-            restaurant_details_form.rest_contact.data,
-            restaurant_details_form.rest_hour_open.data,
-            restaurant_details_form.rest_hour_close.data,
-            restaurant_details_form.rest_address1.data,
-            restaurant_details_form.rest_address2.data,
-            restaurant_details_form.rest_postcode.data,
-            restaurant_details_form.rest_desc.data,
-            restaurant_details_form.rest_bank.data,
-            restaurant_details_form.rest_del1.data,
-            restaurant_details_form.rest_del2.data,
-            restaurant_details_form.rest_del3.data,
-            restaurant_details_form.rest_del4.data,
-            restaurant_details_form.rest_del5.data,
-        )
+        # Checks if a restaurant has already been created by the current admin
+        if not current_user.restaurant_id:
+
+            #  The Below code is using one of the controller's method
+            #  "Create_restaurant"
+            # It's passing in the form argument to instantiate the restaurant
+            # object
+            # hygiene = request.files['hygieneDocument']
+            # hygieneFile = secure_filename(hygiene.filename)
+            # os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_PDF'])), exist_ok=True)
+            # hygiene.save(os.path.join(os.getcwd(), app.config[
+            #     'UPLOADED_PDF']) + hygieneFile)
+            # logging.info('Hygiene -- file uploaded successfully')
+            # save_hygiene = f"application/static/restaurantCertification/{restaurant_id}/{hygieneFile}"
+
+            # print(current_user.restaurant_id)
+            restaurant = RestaurantSystem.create_restaurant(
+                restaurant_details_form.rest_name.data,
+                request.form.get("rest_logo"),
+                restaurant_details_form.rest_contact.data,
+                restaurant_details_form.rest_hour_open.data,
+                restaurant_details_form.rest_hour_close.data,
+                restaurant_details_form.rest_address1.data,
+                restaurant_details_form.rest_address2.data,
+                restaurant_details_form.rest_postcode.data,
+                restaurant_details_form.rest_desc.data,
+                restaurant_details_form.rest_bank.data,
+                restaurant_details_form.rest_del1.data,
+                restaurant_details_form.rest_del2.data,
+                restaurant_details_form.rest_del3.data,
+                restaurant_details_form.rest_del4.data,
+                restaurant_details_form.rest_del5.data,
+            )
+            current_user.restaurant_id = restaurant.id
+
+        else:
+            restaurant = RestaurantSystem.find_restaurant_by_id(current_user.restaurant_id)
+            RestaurantSystem.edit_restaurant(
+                restaurant,
+                restaurant_details_form.rest_name.data,
+                request.form.get("rest_logo"),
+                restaurant_details_form.rest_contact.data,
+                restaurant_details_form.rest_hour_open.data,
+                restaurant_details_form.rest_hour_close.data,
+                restaurant_details_form.rest_address1.data,
+                restaurant_details_form.rest_address2.data,
+                restaurant_details_form.rest_postcode.data,
+                restaurant_details_form.rest_desc.data,
+                restaurant_details_form.rest_bank.data,
+                restaurant_details_form.rest_del1.data,
+                restaurant_details_form.rest_del2.data,
+                restaurant_details_form.rest_del3.data,
+                restaurant_details_form.rest_del4.data,
+                restaurant_details_form.rest_del5.data,
+            )
 
         # ashlee - attach restaurant_id to our current user
-        current_user.restaurant_id = restaurant_id
-        RestaurantSystem.get_restaurant_by_id(current_user.restaurant_id)
+        # current_user.restaurant_id = restaurant_id
+        # print(current_user.restaurant_id)
+        # Certification.restaurant_id = restaurant_id
+        # Food.restaurant_id = restaurant_id
+        # print(Certification.restaurant_id)
+        # print(restaurant_id)
+        # print(Food.restaurant_id)
+        # RestaurantSystem.get_restaurant_by_id(current_user.restaurant_id)
 
         # flask_login.current_user.restaurant = restaurant_id
         # Once done, it'll redirect to the home page
-        return redirect(url_for('admin_home'))
-    restaurants_dict = {}
-    # if request.method == 'POST' and restaurant_details_form.validate():
-    #     db = shelve.open(DB_NAME, 'c')
-    #     try:
-    #         restaurants_dict = db['Restaurants']
-    #     except Exception as e:
-    #         logging.error("Error in retriedb file doesn't existving
-    #         Restaurants from "
-    #                       "restaurants.db (%s)" % e)
+        return redirect(url_for('test_upload'))
 
-    # user_id = session["account_id"]
-    # user_object = Restaurant_controller()
-    # get_user_object = user_object.find_user_by_id(user_id)
-
-    # restaurant = Restaurant(uuid.uuid4().hex,
-    #                         # request.form["alltasks"],
-    #                         restaurant_details_form.rest_name.data,
-    #                         request.form["rest_logo"],
-    #                         restaurant_details_form.rest_contact.data,
-    #                         restaurant_details_form.rest_hour_open.data,
-    #                         restaurant_details_form.rest_hour_close.data,
-    #                         restaurant_details_form.rest_address1.data,
-    #                         restaurant_details_form.rest_address2.data,
-    #                         restaurant_details_form.rest_postcode.data,
-    #                         restaurant_details_form.rest_desc.data,
-    #                         restaurant_details_form.rest_bank.data,
-    #                         restaurant_details_form.rest_del1.data,
-    #                         restaurant_details_form.rest_del2.data,
-    #                         restaurant_details_form.rest_del3.data,
-    #                         restaurant_details_form.rest_del4.data,
-    #                         restaurant_details_form.rest_del5.data)
-    #
-    # # print(uuid.uuid4().hex())
-    # restaurants_dict[restaurant.get_id()] = restaurant
-    # db['Restaurants'] = restaurants_dict
-    # db.close()
-    # return redirect(url_for('admin_home'))
+    # Load current restaurant's variables if the restaurant created before.
+    if current_user.restaurant_id is not None:
+        restaurant = RestaurantSystem.find_restaurant_by_id(current_user.restaurant_id)
+        restaurant_details_form.rest_name.data = restaurant.name
+        restaurant_details_form.rest_contact.data = restaurant.contact
+        restaurant_details_form.rest_hour_open.data = restaurant.open
+        restaurant_details_form.rest_hour_close.data = restaurant.close
+        restaurant_details_form.rest_address1.data = restaurant.add1
+        restaurant_details_form.rest_address2.data = restaurant.add2
+        restaurant_details_form.rest_postcode.data = restaurant.postc
+        restaurant_details_form.rest_desc.data = restaurant.desc
+        restaurant_details_form.rest_bank.data = restaurant.bank
+        restaurant_details_form.rest_del1.data = restaurant.del1
+        restaurant_details_form.rest_del2.data = restaurant.del2
+        restaurant_details_form.rest_del3.data = restaurant.del3
+        restaurant_details_form.rest_del4.data = restaurant.del4
+        restaurant_details_form.rest_del5.data = restaurant.del5
 
     return render_template("admin/restaurant.html",
                            form=restaurant_details_form,
@@ -163,9 +184,6 @@ def update_restaurant_confirm(id):
     return redirect(url_for('view_restaurant'))
 
 
-
 @app.route("/admin/dashboard")
 def dashboard():  # ruri
     return render_template("admin/dashboard.html")
-
-
