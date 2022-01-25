@@ -64,11 +64,12 @@ class Account:
     @classmethod
     def check_credentials(cls, email, password) -> "Account" or None:
         with shelve.open(ACCOUNT_DB, 'c') as db:
-            for account_id in db["accounts"]:
-                account = db["accounts"][account_id]
-                if account.__email == email and not account.disabled:
-                    if account.check_password_hash(password):
-                        return account
+            if "accounts" in db:
+                for account_id in db["accounts"]:
+                    account = db["accounts"][account_id]
+                    if account.__email == email and not account.disabled:
+                        if account.check_password_hash(password):
+                            return account
         return None
 
     # Queries db for account and returns an Account or None
@@ -130,7 +131,8 @@ class Account:
 
     def hard_delete_account(self):
         with shelve.open(ACCOUNT_DB, 'c', writeback=True) as db:
-            db["accounts"].pop(self.account_id)
+            if "accounts" in db:
+                db["accounts"].pop(self.account_id)
 
 
 # Some useful functions used here.
