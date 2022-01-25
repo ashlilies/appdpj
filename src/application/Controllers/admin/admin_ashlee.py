@@ -11,7 +11,7 @@ from wtforms import ValidationError
 from application import app
 from application.CouponForms import CreateCouponForm
 from application.Models.Admin import *
-from application.Models.CouponSystem import CouponSystem
+from application.Models.CouponSystem import CouponSystem, FoodIdNotExistsError
 from application.Models.RestaurantSystem import RestaurantSystem
 from application.rest_details_form import *
 
@@ -27,6 +27,7 @@ def admin_side(view):
             return view(*args, **kwargs)
         flash("You need to log out first to access the Admin side.")
         return redirect('/')
+
     return wrapper
 
 
@@ -310,5 +311,20 @@ def admin_coupon_update(coupon_code):
 def admin_coupon_delete(coupon_code):
     cs = CouponSystem.query(current_user.coupon_system_id)
     cs.delete_coupon(coupon_code)
+
+    return redirect(url_for("admin_coupon_management"))
+
+
+@app.route("/admin/testCoupon", methods=["POST"])
+@login_required
+@admin_side
+def coupon_tester():
+    cs = CouponSystem.query(current_user.coupon_system_id)
+    try:
+        dp = cs.discounted_price(request.form["foodID"], request.form["discountCode"])
+    except FoodIdNotExistsError:
+        flash("Food ID doesn't exist. You need to create it first.")
+    else:
+        flash("Discounted price is $%.2f" % dp)
 
     return redirect(url_for("admin_coupon_management"))

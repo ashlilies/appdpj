@@ -155,7 +155,7 @@ class CouponSystem:
         food = Food.query(food_id)
         if food is None:
             logging.error("CS: Failed to get discounted price for food-id %s" % food_id)
-            return -1
+            raise FoodIdNotExistsError
 
         if coupon_code in self.coupons:
             coupon = self.coupons[coupon_code]
@@ -178,3 +178,7 @@ class CouponSystem:
                 coupon_systems_dict = db["coupon_systems_dict"]
                 return coupon_systems_dict.get(coupon_system_id, None)
         return None
+
+
+class FoodIdNotExistsError(Exception):
+    pass

@@ -29,6 +29,8 @@
       <p>There are {{ count }} coupons.
     {% endif %}
     <a href="{{ url_for("admin_coupon_add") }}">Add a new coupon</a>
+    or
+    <a href="#" data-bs-toggle="modal" data-bs-target="#TestCouponModal">test coupons</a>.
     </p>
   </div>
   <div>
@@ -112,5 +114,35 @@
       {% endfor %}
       </tbody>
     </table>
+  </div>
+  <div id="modals">
+    <!-- Test Coupon Modal -->
+    <div class="modal fade" id="TestCouponModal" tabindex="-1" aria-labelledby="TestCouponModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="TestCouponModalLabel">Test Coupons</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="{{ url_for("coupon_tester") }}">
+              <label>Food ID
+                <input type="text" name="foodID" class="form-control">
+              </label>
+              <label>Discount Code
+                <input type="text" name="discountCode" class="form-control">
+              </label>
+              <br>
+              <br>
+              <button type="submit" class="btn btn-primary">Test!</button>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 {% endblock %}
