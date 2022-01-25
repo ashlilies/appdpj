@@ -277,9 +277,9 @@ def uploader():
             certchecks = request.form.getlist('certCheck')
             print(certchecks)
             for i in certchecks:
-                if 'NoPorkNoLard' in certchecks:
+                if i == 'NoPorkNoLard':
                     nb = 'YES'
-                elif 'NoBeef' in certchecks:
+                elif i == 'NoBeef':
                     npnl = 'YES'
                 else:
                     print('something is wrong')
@@ -297,7 +297,7 @@ def uploader():
             # save document in app.config['UPLOAD_HYGIENE']
             hygiene.save(os.path.join(os.getcwd(), app.config['UPLOADED_HYGIENE']) + hygieneFile)
             logging.info('Hygiene -- file uploaded successfully')
-            cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/{hygiene}"
+            cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/{hygieneFile}"
 
             # HALAL CERTIFICATE
             halal = request.files['halalDocument']
@@ -308,7 +308,9 @@ def uploader():
                 # save document in app.config['UPLOADED_HALAL']
                 halal.save(os.path.join(os.getcwd(), app.config['UPLOADED_HALAL']) + halalFile)
                 logging.info('Halal -- file uploaded successfully')
-                cert.halal_cert = f"application/static/restaurantCertification/halal/{cert.id}/{halal}"
+                cert.halal_cert = f"application/static/restaurantCertification/halal/{cert.id}/{halalFile}"
+            else:
+                cert.halal_cert = ''
 
             # VEGETARIAN CERTIFICATE
             vegetarian = request.files['vegetarianDocument']
@@ -320,7 +322,9 @@ def uploader():
                 # save document in app.config['UPLOADED_HALAL']
                 vegetarian.save(os.path.join(os.getcwd(), app.config['UPLOADED_VEGETARIAN']) + vegetarianFile)
                 logging.info('Vegetarian -- file uploaded successfully')
-                cert.vegetarian_cert = f"application/static/restaurantCertification/vegetarian/{cert.id}/{vegetarian}"
+                cert.vegetarian_cert = f"application/static/restaurantCertification/vegetarian/{cert.id}/{vegetarianFile}"
+            else:
+                cert.vegetarian_cert = ''
 
             # VEGAN CERTIFICATE
             vegan = request.files['veganDocument']
@@ -334,7 +338,9 @@ def uploader():
                 # save document in app.config['UPLOADED_HALAL']
                 vegan.save(os.path.join(os.getcwd(), app.config['UPLOADED_VEGAN']) + veganFile)
                 logging.info('Vegan -- file uploaded successfully')
-                cert.vegan_cert = f"application/static/restaurantCertification/vegetarian/{cert.id}/{vegan}"
+                cert.vegan_cert = f"application/static/restaurantCertification/vegan/{cert.id}/{veganFile}"
+            else:
+                cert.vegan_cert = ''
 
             certification_dict[cert.id] = cert
             handle['certification'] = certification_dict
@@ -363,7 +369,7 @@ def read_cert():
                     cert = certification_dict.get(key)
                     print('cert: ', cert)
                     print('halal', cert.halal_cert)
-                    print('vegetarian', cert.vegetarian_cert_cert)
+                    print('vegetarian', cert.vegetarian_cert)
                     print('vegan', cert.vegan_cert)
 
             else:
@@ -402,12 +408,12 @@ def update_cert(id):
                 certchecks = request.form.getlist('certChecks')
                 print(certchecks)
                 for i in certchecks:
-                    if 'NoPorkNoLard' in certchecks:
+                    if i == 'NoPorkNoLard':
                         npnl = 'YES'
-                    if 'NoBeef' in certchecks:
+                    if i == 'NoBeef':
                         nb = 'YES'
                     else:
-                        print('update_cert(line401): something wrong with certchecks')
+                        print('update_cert(line416): something wrong with certchecks')
                 cert.noPorknoLard = npnl
                 cert.noBeef = nb
 
@@ -418,13 +424,13 @@ def update_cert(id):
                 app.config['UPLOADED_HYGIENE'] = f'application/static/restaurantCertification/hygiene/{cert.id}/'
                 os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HYGIENE'])), exist_ok=True)
                 hygiene.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_HYGIENE']) + hygieneFile))
-                if cert.hygiene_cert is not None:
+                if cert.hygiene_cert != '':
                     # unlinking existing hygiene doc file
                     if os.path.exists(
                             f'application/static/restaurantCertification/hygiene/{cert.id}/{cert.hygiene_cert}'):
                         os.remove(f'application/static/restaurantCertification/hygiene/{cert.id}/{cert.hygiene_cert}')
-                    logging.info('Successfully removed existing hygiene document')
-                cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/{hygieneFile}"
+                        logging.info('Successfully removed existing hygiene document')
+                    cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/{hygieneFile}"
 
                 # HALAL DOCUMENT
                 halal = request.files.get('halalDocument')
@@ -436,11 +442,12 @@ def update_cert(id):
                     os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HALAL'])),
                                 exist_ok=True)
                     halal.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_HALAL']) + halalFile))
+                    logging
                     # deleting of existing file
                     if os.path.exists(f'application/static/restaurantCertification/halal/{cert.id}/{cert.halal_cert}'):
                         os.remove(f'application/static/restaurantCertification/halal/{cert.id}/{cert.halal_cert}')
                         logging.info('Successfully removed existing halal document')
-                cert.halal_cert = f"application/static/restaurantCertification/halal/{cert.id}/{halalFile}"
+                    cert.halal_cert = f"application/static/restaurantCertification/halal/{cert.id}/{halalFile}"
 
                 # VEGETARIAN DOCUMENT
                 vegetarian = request.files.get('vegetarianDocument')
@@ -460,7 +467,7 @@ def update_cert(id):
                         os.remove(
                             f'application/static/restaurantCertification/vegetarian/{cert.id}/{cert.vegetarian_cert}')
                         logging.info('Successfully removed existing vegetarian document')
-                cert.vegetarian_cert = f"application/static/restaurantCertification/vegetarian/{cert.id}/{vegetarianFile}"
+                    cert.vegetarian_cert = f"application/static/restaurantCertification/vegetarian/{cert.id}/{vegetarianFile}"
 
                 # VEGAN DOCUMENT
                 vegan = request.files.get('veganDocument')
@@ -476,7 +483,7 @@ def update_cert(id):
                     if os.path.exists(f'application/static/restaurantCertification/vegan/{cert.id}//{cert.vegan_cert}'):
                         os.remove(f'application/static/restaurantCertification/vegan/{cert.id}//{cert.vegan_cert}')
                         logging.info('Successfully removed existing vegan document')
-                cert.vegan_cert = f"application/static/restaurantCertification/vegan/{cert.id}/{veganFile}"
+                    cert.vegan_cert = f"application/static/restaurantCertification/vegan/{cert.id}/{veganFile}"
 
                 # writeback
                 db['certification'] = certification_dict
