@@ -1,6 +1,6 @@
 import decimal
 
-from wtforms import Form, StringField, TextAreaField, DecimalField, validators
+from wtforms import Form, StringField, TextAreaField, DecimalField, validators, FileField
 from wtforms.validators import DataRequired
 from decimal import ROUND_HALF_UP
 
@@ -19,3 +19,4 @@ class CreateFoodForm(Form):
     # allergy = TextAreaField('', [validators.DataRequired()])
 
     allergy = TextAreaField('', [DataRequired(message="Enter Your Name Please")])
+    image = FileField('')

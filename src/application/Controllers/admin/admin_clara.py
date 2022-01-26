@@ -11,6 +11,7 @@ from application.CouponForms import CreateCouponForm
 from application.Models.Admin import *
 from application.Models.CouponSystem import CouponSystem
 from application.Models.Certification import Certification
+from application.Models.FileUpload import save_file
 from application.Models.Food import Food
 from application.Models.Restaurant import Restaurant
 from application import app, login_manager
@@ -37,6 +38,8 @@ def food_management():
         except Exception as e:
             logging.error("create_food: error opening db (%s)" % e)
 
+
+
     # storing the food keys in food_dict into a new list for displaying and
     # deleting
     food_list = []
@@ -55,11 +58,17 @@ def food_management():
 MAX_SPECIFICATION_ID = 2  # for adding food
 MAX_TOPPING_ID = 3
 
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
+app.config['UPLOAD_PATH'] = 'uploads'
+
 
 # ADMIN FOOD FORM clara
 @app.route('/admin/foodManagement', methods=['GET', 'POST'])
+
 def create_food():
     create_food_form = CreateFoodForm(request.form)
+#--------------------------------------------------------------
+# --------------------------------------------------------------
 
     # get specifications as a List, no WTForms
     def get_specs() -> list:  # tells that the function will return a list, python ignores it
@@ -108,8 +117,9 @@ def create_food():
             except Exception as e:
                 logging.error("create_food: error opening db (%s)" % e)
 
+            stored_filename = save_file(request.files, "image_file")
             # Create a new food object (parse in the data inputted)
-            food = Food(request.form["image"], create_food_form.item_name.data,
+            food = Food(stored_filename, create_food_form.item_name.data,
                         create_food_form.description.data,
                         create_food_form.price.data,
                         create_food_form.allergy.data)
@@ -121,6 +131,8 @@ def create_food():
             # the food object
             food_dict[food.get_food_id()] = food
             db['food'] = food_dict
+
+
 
             # writeback so changes are "updated"
             with shelve.open("food.db", 'c') as db:
@@ -189,6 +201,8 @@ def update_food(id):
                 food_dict = db['food']
                 food = food_dict.get(id)
                 # food.set_image = request.form["image"]
+                stored_filename = save_file(request.files, "image_file")
+                food.set_image(stored_filename)
                 food.set_name(update_food_form.item_name.data)
                 food.set_description(update_food_form.description.data)
                 food.set_price(update_food_form.price.data)
@@ -209,11 +223,12 @@ def update_food(id):
             with shelve.open("food.db", 'r') as db:
                 food_dict = db['food']
                 food = food_dict.get(id)
-                # food.get_image(request.form["image"])
+                # request.files["image_file"] = food.get_image()
                 update_food_form.item_name.data = food.get_name()
                 update_food_form.description.data = food.get_description()
                 update_food_form.price.data = food.get_price()
                 update_food_form.allergy.data = food.get_allergy()
+
 
         except:
             print("Error occured when update food")

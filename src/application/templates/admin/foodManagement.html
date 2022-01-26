@@ -29,7 +29,7 @@
         }
 
         .modal-content {
-            background-color: white;
+            background-color: #ffd1d1;
             padding: 10px;
             margin: 10px;
         {#background-color: #ebddf1;#}
@@ -194,7 +194,7 @@
                 <tbody>
                 {% for food in food_list %}
                     <tr>
-                        <td>{{ food.get_image() }}</td>
+                        <td><img src="{{ url_for("static", filename=food.get_image()) }}" width=50></td>
                         <td>{{ food.get_name() }}</td>
                         <td>{{ food.get_description() }}</td>
                         <td>{{ food.get_price() }}</td>
@@ -236,12 +236,15 @@
                 </div>
                 <div class="modal-body">
 
-                    <form method="POST" action="{{ url_for("create_food") }}">
+                    <form method="POST" action="{{ url_for("create_food") }}"  enctype = "multipart/form-data">
 
                         <div class="mb-3">
-                            <input class="form-control" type="file" name="image"
+                            <input class="form-control" type="file" name="image_file"
                                    id="uploadImage" accept="image/*"
                                    placeholder="Upload Image Here" required/>
+{#                            {% for food in stored_filename %}#}
+{#                            <img src="{{ url_for("static", filename=food.get_image()) }}" width=100>#}
+{#                            {% endfor %}#}
                         </div>
                         <div class="form-group" id="name">
                             <label id="foodNameLabel">Food name:</label>{{ render_field(create_food_form.item_name,
@@ -319,10 +322,10 @@
                 </div>
                 <div class="modal-body">
 
-                    <form method="POST" action="{{ url_for("create_food") }}">
+                    <form method="POST" action="{{ url_for("create_food") }}" enctype="multipart/form-data">
 
                         <div class="mb-3">
-                            <input class="form-control" type="file" name="foodImage"
+                            <input class="form-control" type="file" name="image_file"
                                    id="uploadImage" accept="image/*"
                                    placeholder="Upload Image Here" required/>
                         </div>

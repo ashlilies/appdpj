@@ -28,7 +28,7 @@
         }
 
         .modal-content {
-            background-color: white;
+            background-color: #ffd1d1;
             padding: 10px;
         }
 
@@ -382,45 +382,6 @@
 {% block content %}
     {% from "includes/_formHelper.html" import render_field %}
 
-    {#    <div class="scroll">#}
-    {##}
-    {#        <div>#}
-    {#            <table class="table table-striped">#}
-    {#                <thead>#}
-    {#                <tr>#}
-    {#                    <th>Name</th>#}
-    {#                    <th>Description</th>#}
-    {#                    <th>price</th>#}
-    {#                    <th>Allergy</th>#}
-    {#                    <th>Specification</th>#}
-    {#                    <th>Remarks</th>#}
-    {#                    <th></th>#}
-    {#                    <th></th>#}
-    {#                </tr>#}
-    {#                </thead>#}
-    {#                <tbody>#}
-    {#                {% for food in food_list %}#}
-    {#                    <tr>#}
-    {#                        <td>{{ food.name }}</td>#}
-    {#                        <td>{{ food.description }}</td>#}
-    {#                        <td>{{ food.price }}</td>#}
-    {#                        <td>{{ food.allergy }}</td>#}
-    {#                        <td>{{ food.specfication }}</td>#}
-    {##}
-    {#                        <td>{{ food.topping }}</td>#}
-    {#                        <td><a href="/updateFood/{{food.get_food_id()}}" class="btn btn-warning">Update</a>#}
-    {#                        <td>#}
-    {#                                   <form action="{{url_for('delete_food', id=food.get_food_id())}}" method="POST">#}
-    {#                                <input type="submit" value="Delete" class="btn btn-danger">#}
-    {#                            </form>#}
-    {#                        </td>#}
-    {#                    </tr>#}
-    {#                {% endfor %}#}
-    {#                </tbody>#}
-    {#            </table>#}
-    {#        </div>#}
-    {##}
-    {#    </div>#}
     <!--POP UP MODEL-->
 
 
@@ -434,11 +395,11 @@
                 </div>
                 <div class="modal-body">
 
-                    <form method="POST" action="">
+                    <form method="POST" action="" enctype="multipart/form-data">
 
                         <div class="mb-3">
-                            <input class="form-control" type="file" name="image" id="uploadImage" accept="image/*"
-                                   placeholder="Upload Image Here" required/>
+                            <input class="form-control" type="file" name="image_file" id="uploadImage" accept="image/*"
+                                   placeholder="Upload Image Here" value="{{ request.files["image_file"] }}" required/>
                         </div>
                         <div class="form-group" id="name">
                             <label id="foodNameLabel">Food name:</label>{{ render_field(form.item_name,
