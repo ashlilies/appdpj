@@ -6,7 +6,7 @@ import shelve
 class Food:
     count_id = 0
 
-    def _init_(self, image, name, description, price, allergy,
+    def __init__(self, image, name, description, price, allergy,
                  specification=None, topping=None):
         with shelve.open("food", 'c') as db:
             if "food_count_id" in db:
