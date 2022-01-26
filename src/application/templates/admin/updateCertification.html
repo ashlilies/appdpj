@@ -40,7 +40,9 @@
 {% block content %}
     <h1>Restaurant Certification</h1>
     {#     form#}
-    <form method="POST" action="">
+    {% for cert in id_list %}
+
+    <form method="POST" action="" enctype="multipart/form-data">
         <h3 style="margin: 10px 30px; padding-top: 20px; display: inline-block">Upload your Hygiene Certification
             below</h3>
         {#         display existing inputs#}
@@ -64,7 +66,6 @@
                         {#                         hygiene cert#}
                         <table class="table" id="showdisplay"
                                style="background-color: white">
-                            {% for cert in id_list %}
                                 <thead>
                                 <tr>
                                     <th scope="col">Certificate Name</th>
