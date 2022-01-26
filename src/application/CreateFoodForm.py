@@ -1,5 +1,3 @@
-import decimal
-
 from wtforms import Form, StringField, TextAreaField, DecimalField, validators
 from wtforms.validators import DataRequired
 from decimal import ROUND_HALF_UP
@@ -8,7 +6,7 @@ from application.BetterDecimalField import BetterDecimalField
 
 
 class CreateFoodForm(Form):
-    item_name = StringField('', [validators.Length(min=1, max=50),
+    name = StringField('', [validators.Length(min=1, max=50),
                                  validators.DataRequired(message='Please enter the name of food!')])
 
     description = TextAreaField('', [validators.DataRequired(message='Description of food is required!')])
@@ -18,4 +16,4 @@ class CreateFoodForm(Form):
 
     # allergy = TextAreaField('', [validators.DataRequired()])
 
-    allergy = TextAreaField('', [DataRequired(message="Enter Your Name Please")])
+    allergy = TextAreaField('')

@@ -34,6 +34,18 @@
       .dropdown-item.active, .dropdown-item:active {
           background-color: #884d9d;
       }
+
+      div#content {
+          width: 90%;
+          margin-left: auto;
+          margin-right: auto;
+          margin-top: 1rem;  /* do not touch menubar */
+      }
+
+      table.retrieveTable {  /* for CRUD: R tables */
+          background-color: white;
+          border-radius: 12px;
+      }
   </style>
 
   <!-- Script to load current section of website name -->
@@ -81,6 +93,7 @@
   {% endif %}
 {% endwith %}
 
+<div id="content">
 {% block content %}
 {% endblock %}
 </div>

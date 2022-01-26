@@ -7,8 +7,7 @@ import datetime
 import logging
 import shelve
 
-from application.Models.Food import Food
-from application.Models.Food2 import FoodIdNotExistsError
+from application.Models.Food2 import FoodIdNotExistsError, FoodDao
 
 
 class CouponSystem:
@@ -50,7 +49,7 @@ class CouponSystem:
 
         def discounted_price(self, food_id: int, coupon_code: str):
             # Get food item
-            food = Food.query(food_id)
+            food = FoodDao.query(food_id)
 
             if not self.enabled:  # artifically cancelled coupon
                 return None
@@ -60,7 +59,7 @@ class CouponSystem:
 
             if coupon_code == self.coupon_code:  # coupon code match?
                 if food in self.food_items:  # does it apply to this item?
-                    return self.discount.discounted_price(food.get_price())
+                    return self.discount.discounted_price(food.price)
             return None  # if doesn't apply, return None
 
     DISCOUNT_FIXED_PRICE = Discount.FIXED_PRICE
@@ -153,7 +152,8 @@ class CouponSystem:
             db["coupon_systems_dict"] = coupon_systems_dict
 
     def discounted_price(self, food_id: int, coupon_code: str):
-        food = Food.query(food_id)
+        food = FoodDao.query(food_id)
+
         if food is None:
             logging.error("CS: Failed to get discounted price for food-id %s" % food_id)
             raise FoodIdNotExistsError
@@ -161,15 +161,15 @@ class CouponSystem:
         if coupon_code in self.coupons:
             coupon = self.coupons[coupon_code]
             if not coupon.enabled:
-                return food.get_price()
+                return food.price
 
-            if not food_id in coupon.food_items:
-                return food.get_price()
+            if food_id not in coupon.food_items:
+                return food.price
 
-            after_discount = coupon.discount.discounted_price(food.get_price())
+            after_discount = coupon.discount.discounted_price(food.price)
             if after_discount is not None:
                 return after_discount
-        return food.get_price()  # can't find matching discount return original price
+        return food.price  # can't find matching discount return original price
 
     # Query database and return a CouponSystem, or None if not found
     @staticmethod

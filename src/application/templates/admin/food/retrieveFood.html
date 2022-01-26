@@ -1,0 +1,61 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Food Management{% endblock %}
+
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+  <div class="ml-auto">
+    <h1 class="display-6 float-start align-items-center">Food Management</h1>
+    <a class="btn btn-primary align-items-center float-end"
+       href="{{ url_for("admin_create_food") }}" role="button">Add Food
+      Item</a>
+  </div>
+  <table class="table table-striped retrieveTable">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Image</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Price</th>
+      <th>Allergy</th>
+      <th>Specification</th>
+      <th>Toppings</th>
+      <th></th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for food in food_list %}
+      <tr>
+        <td>{{ food.id }}</td>
+        <td><img src="{{ url_for("static", filename=food.image) }}" width=100 alt="Food Image"></td>
+        <td>{{ food.name }}</td>
+        <td>{{ food.description }}</td>
+        <td>${{ food.price }}</td>
+        <td>{{ food.allergy }}</td>
+        <td>{% for spec in food.specifications %}{{ spec }}<br>{% endfor %}
+        </td>
+        <td>{% for topping in food.toppings %}{{ topping }}<br>{% endfor %}
+        </td>
+
+        <td>
+          <button
+              onclick="location='{{ url_for("admin_update_food", food_id=food.id) }}'"
+              class="btn btn-warning">Update
+          </button>
+        </td>
+        <td>
+          <form action="{{ url_for('admin_delete_food', food_id=food.id) }}"
+                method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -8,7 +8,7 @@ FOOD_DB = "food.db"
 class Food:
     count_id = 0
 
-    def __init__(self, restaurant_id, name, image_path, description, price, allergy,
+    def __init__(self, restaurant_id, name, image, description, price, allergy,
                  specification=None, topping=None):
         with shelve.open(FOOD_DB, 'c') as db:
             if "count_id" in db:
@@ -18,23 +18,23 @@ class Food:
         Food.count_id += 1
         self.id = Food.count_id
         self.name = name
-        self.image_path = image_path
+        self.image = image  # stores the static path
         self.description = description
         self.price = price
         self.allergy = allergy
-        self.specification = specification
-        self.topping = topping
+        self.specifications = specification
+        self.toppings = topping
         self.parent_restaurant_id = restaurant_id
 
-        with shelve.open("food", 'c') as db:
+        with shelve.open(FOOD_DB, 'c') as db:
             db["count_id"] = Food.count_id
 
 
 class FoodDao:
     @staticmethod
-    def create_food(restaurant_id, name, image_path, description, price, allergy,
-                    specification=None, topping=None):
-        food = Food(restaurant_id, name, image_path, description, price, allergy, specification, topping)
+    def create_food(restaurant_id: str, name: str, image: str, description: str, price: float, allergy: str,
+                    specifications: list, toppings: list):
+        food = Food(restaurant_id, name, image, description, price, allergy, specifications, toppings)
         FoodDao.save(food)
 
     @staticmethod
@@ -95,7 +95,7 @@ class FoodDao:
     @staticmethod
     def query(food_id: int) -> "Food" or None:
         try:
-            with shelve.open("food", 'c') as db:
+            with shelve.open(FOOD_DB, 'c') as db:
                 if "food" in db:
                     food_dict = db["food"]
                     return food_dict[food_id]

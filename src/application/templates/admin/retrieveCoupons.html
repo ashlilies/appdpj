@@ -2,22 +2,8 @@
 {% block title %}Coupon Management{% endblock %}
 
 {% block head %}
-  <style>
-      table#couponTable {
-          width: 90%;
-          margin-left: auto;
-          margin-right: auto;
-
-          background-color: white;
-          border-radius: 12px;
-      }
-
-      .btn:hover {
-          background-color: #af61cb;
-          color: white;
-      }
-  </style>
 {% endblock %}
+
 {% block content %}
   <h1 class="display-6">Coupon Management</h1>
   <div>
@@ -34,7 +20,7 @@
     </p>
   </div>
   <div>
-    <table class="table table-striped" id="couponTable">
+    <table class="table table-striped retrieveTable">
       <thead>
       <tr>
         <th>Coupon Code</th>

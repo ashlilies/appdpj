@@ -16,7 +16,7 @@ from application.Models.Food import Food
 from application.Models.Restaurant import Restaurant
 from application import app, login_manager
 from application.Models.Transaction import Transaction
-from application.adminAddFoodForm import CreateFoodForm
+from application.CreateFoodForm import CreateFoodForm
 from werkzeug.utils import secure_filename
 from application.Models.RestaurantSystem import *
 import shelve, os

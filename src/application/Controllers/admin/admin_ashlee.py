@@ -1,24 +1,25 @@
-import datetime
 import functools
-from datetime import date, timedelta, datetime
-import shelve
+import os
 import traceback
+import uuid
+from datetime import date
 
-from flask import render_template, request, redirect, url_for, session, flash
+from flask import render_template, request, redirect, url_for, flash
 from flask_login import logout_user, login_required, current_user, login_user
-from wtforms import ValidationError
+from werkzeug.utils import secure_filename
 
-from application import app, CreateFoodForm
+from application import app
 from application.CouponForms import CreateCouponForm
 from application.Models.Admin import *
 from application.Models.CouponSystem import CouponSystem, FoodIdNotExistsError
-from application.Models.RestaurantSystem import RestaurantSystem
-from application.rest_details_form import *
+from application.Models.Food2 import FoodDao
+from application.CreateFoodForm import CreateFoodForm
 
 
 # <------------------------- ASHLEE ------------------------------>
 
 # Decorator to only allow admin accounts or guests
+
 def admin_side(view):
     @functools.wraps(view)
     def wrapper(*args, **kwargs):
@@ -232,6 +233,9 @@ def admin_coupon_add():
             return redirect(url_for("admin_coupon_add"))
 
         food_item_ids = create_coupon_form.food_item_ids.data.split()
+        # Convert all item IDs entered to integers
+        food_item_ids = [int(i) for i in food_item_ids]
+
         # TODO: Check if food item ids belong to the current restaurant.
 
         cs.new_coupon(create_coupon_form.coupon_code.data,
@@ -275,6 +279,8 @@ def admin_coupon_update(coupon_code):
             return redirect(url_for("admin_coupon_add"))
 
         food_item_ids = update_coupon_form.food_item_ids.data.split()
+        food_item_ids = [int(i) for i in food_item_ids]
+
         # TODO: Check if food item ids belong to the current restaurant.
 
         cs.edit_coupon(coupon_code,
@@ -320,8 +326,11 @@ def admin_coupon_delete(coupon_code):
 @admin_side
 def coupon_tester():
     cs = CouponSystem.query(current_user.coupon_system_id)
+    food_id = int(request.form["foodID"])
+    discount_code = request.form["discountCode"]
+
     try:
-        dp = cs.discounted_price(request.form["foodID"], request.form["discountCode"])
+        dp = cs.discounted_price(food_id, discount_code)
     except FoodIdNotExistsError:
         flash("Food ID doesn't exist. You need to create it first.")
     else:
@@ -330,14 +339,108 @@ def coupon_tester():
     return redirect(url_for("admin_coupon_management"))
 
 
+# Generate a random file name
+def save_file(request_files, key: str):
+    file = request_files[key]
+    file_ext = os.path.splitext(file.filename)[1]
+    filename = str(uuid.uuid4()) + str(file_ext)
+    file_upload_path = os.path.join(os.getcwd(), "application/",
+                                    app.config['UPLOAD_FOLDER'])
+    os.makedirs(file_upload_path, exist_ok=True)
+    filepath = os.path.join(file_upload_path, filename)
+    file.save(filepath)
+    stored_filename = "uploads/%s" % filename
+    return stored_filename
+
 # <---------------- Fixing the food management system ----------------->
 MAX_SPECIFICATION_ID = 2  # for adding food
 MAX_TOPPING_ID = 3
 
-@app.route("/admin/foodManagement")
+
+@app.route("/admin/menu")
 @login_required
 @admin_side
-def food_management():
-    restaurant =
-    return render_template('admin/foodManagement.html',
-                           id=id)
+def admin_retrieve_food():
+    food_list = FoodDao.get_foods(current_user.restaurant_id)
+    return render_template('admin/food/retrieveFood.html', food_list=food_list)
+
+
+def get_specs(request_form) -> list:
+    specs = []
+
+    # do specifications exist in first place?
+    for i in range(MAX_SPECIFICATION_ID + 1):
+        if "specification%d" % i in request_form:
+            specs.append(request_form["specification%d" % i])
+        else:
+            break
+    return specs
+
+
+def get_toppings(request_form) -> list:
+    toppings = []
+
+    # do toppings exist in first place?
+    for i in range(MAX_TOPPING_ID + 1):
+        if "topping%d" % i in request_form:
+            toppings.append(request_form["topping%d" % i])
+        else:
+            break
+    return toppings
+
+
+# Create food items. Rewritten by Ashlee.
+@app.route('/admin/createFood', methods=['GET', 'POST'])
+@login_required
+@admin_side
+def admin_create_food():
+    create_food_form = CreateFoodForm(request.form)
+
+    if request.method == 'POST' and create_food_form.validate():
+        # Form submitted. Create a new food object here.
+        restaurant_id = current_user.restaurant_id
+        specs = get_specs(request.form)
+        toppings = get_toppings(request.form)
+        price = round(float(request.form["price"]), 2)
+
+        # Handle the uploaded image here
+        file = request.files["image"]
+
+
+        # TODO: Validation for price
+
+        # TODO: Add support for image
+        stored_filename = save_file(request.files, "image")
+        FoodDao.create_food(restaurant_id, name=request.form["name"], image=stored_filename,
+                            description=request.form["description"],
+                            price=price,
+                            allergy=request.form["allergy"],
+                            specifications=specs,
+                            toppings=toppings)
+
+        return redirect(url_for('admin_retrieve_food'))
+
+    return render_template('admin/food/createFood.html', form=create_food_form,
+                           MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
+                           MAX_TOPPING_ID=MAX_TOPPING_ID, )
+
+
+@app.route("/admin/updateFood/<int:food_id>")
+@login_required
+@admin_side
+def admin_update_food(food_id):
+    update_food_form = CreateFoodForm(request.form)
+
+    food = FoodDao.query(food_id)
+    # Load the details of the food item.
+    update_food_form.name = food.name
+    return render_template('admin/food/createFood.html', form=update_food_form,
+                           MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
+                           MAX_TOPPING_ID=MAX_TOPPING_ID, )
+
+
+@app.route("/admin/deleteFood/<int:food_id>")
+@login_required
+@admin_side
+def admin_delete_food(food_id):
+    return "Placeholder %d" % food_id
