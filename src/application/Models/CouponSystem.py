@@ -8,6 +8,7 @@ import logging
 import shelve
 
 from application.Models.Food import Food
+from application.Models.Food2 import FoodIdNotExistsError
 
 
 class CouponSystem:
@@ -178,7 +179,3 @@ class CouponSystem:
                 coupon_systems_dict = db["coupon_systems_dict"]
                 return coupon_systems_dict.get(coupon_system_id, None)
         return None
-
-
-class FoodIdNotExistsError(Exception):
-    pass

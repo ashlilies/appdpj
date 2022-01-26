@@ -22,67 +22,65 @@ import uuid
 from application.rest_details_form import *
 
 
+
 # <------------------------- CLARA ------------------------------>
-# APP ROUTE TO FOOD MANAGEMENT clara
-@app.route("/admin/foodManagement")
-def food_management():
-    create_food_form = CreateFoodForm(request.form)
-    # For the add food form
-    MAX_SPECIFICATION_ID = 2  # for adding food
-    MAX_TOPPING_ID = 3
-
-    # food_dict = {}
-    # with shelve.open("food.db", "c") as db:
-    #     try:
-    #         if 'food' in db:
-    #             food_dict = db['food']
-    #         else:
-    #             db['food'] = food_dict
-    #     except Exception as e:
-    #         logging.error("create_food: error opening db (%s)" % e)
-
-    #--------------------------------------------------------------------
-
-    # food_dict = {}
-    # with shelve.open('food.db', 'c') as handle:
-    #     try:
-    #         if 'food.db' in handle:
-    #             food_dict = handle['food.db']
-    #             print('existing ', food_dict)
-    #             error = 'line 976 nothing wrong here'
-    #             print(error)
-    #             for key in food_dict:
-    #                 img = food_dict.get(key)
-    #                 print('img: ', img)
-    #             error2 = 'line 980 nothing wrong here'
-    #             print(error2)
-    #             # cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/"
-    #         else:
-    #             handle['food.db'] = food_dict
-    #             print(food_dict)
-    #             logging.info("food_management: nothing found in database, starting empty")
-    #     except Exception as e:
-    #         logging.error("food_management: error opening db (%s)" % e)
-
-#---------------------------------------------------------------------------------------
-    # storing the food keys in food_dict into a new list for displaying and
-    # deleting
-    food_list = []
-    # for key in food_dict:
-    #     food = food_dict.get(key)
-    #     food_list.append(food)
-
-
-    return render_template('admin/foodManagement.html',
-                           create_food_form=create_food_form,
-                           MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
-                           MAX_TOPPING_ID=MAX_TOPPING_ID,
-                           id=id,
-                           food_list=food_list)
-
-
 MAX_SPECIFICATION_ID = 2  # for adding food
 MAX_TOPPING_ID = 3
+
+# APP ROUTE TO FOOD MANAGEMENT clara
+# @app.route("/admin/foodManagement")
+# def food_management():
+#     create_food_form = CreateFoodForm(request.form)
+#     # For the add food form
+#
+#     # food_dict = {}
+#     # with shelve.open("food.db", "c") as db:
+#     #     try:
+#     #         if 'food' in db:
+#     #             food_dict = db['food']
+#     #         else:
+#     #             db['food'] = food_dict
+#     #     except Exception as e:
+#     #         logging.error("create_food: error opening db (%s)" % e)
+#
+#     #--------------------------------------------------------------------
+#
+#     # food_dict = {}
+#     # with shelve.open('food.db', 'c') as handle:
+#     #     try:
+#     #         if 'food.db' in handle:
+#     #             food_dict = handle['food.db']
+#     #             print('existing ', food_dict)
+#     #             error = 'line 976 nothing wrong here'
+#     #             print(error)
+#     #             for key in food_dict:
+#     #                 img = food_dict.get(key)
+#     #                 print('img: ', img)
+#     #             error2 = 'line 980 nothing wrong here'
+#     #             print(error2)
+#     #             # cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/"
+#     #         else:
+#     #             handle['food.db'] = food_dict
+#     #             print(food_dict)
+#     #             logging.info("food_management: nothing found in database, starting empty")
+#     #     except Exception as e:
+#     #         logging.error("food_management: error opening db (%s)" % e)
+#
+# #---------------------------------------------------------------------------------------
+#     # storing the food keys in food_dict into a new list for displaying and
+#     # deleting
+#     food_list = []
+#     # for key in food_dict:
+#     #     food = food_dict.get(key)
+#     #     food_list.append(food)
+#
+#
+#     return render_template('admin/foodManagement.html',
+#                            create_food_form=create_food_form,
+#                            MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
+#                            MAX_TOPPING_ID=MAX_TOPPING_ID,
+#                            id=id,
+#                            food_list=food_list)
 
 
 # ADMIN FOOD FORM clara

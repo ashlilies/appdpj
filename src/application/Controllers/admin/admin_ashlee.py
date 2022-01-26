@@ -8,7 +8,7 @@ from flask import render_template, request, redirect, url_for, session, flash
 from flask_login import logout_user, login_required, current_user, login_user
 from wtforms import ValidationError
 
-from application import app
+from application import app, CreateFoodForm
 from application.CouponForms import CreateCouponForm
 from application.Models.Admin import *
 from application.Models.CouponSystem import CouponSystem, FoodIdNotExistsError
@@ -328,3 +328,16 @@ def coupon_tester():
         flash("Discounted price is $%.2f" % dp)
 
     return redirect(url_for("admin_coupon_management"))
+
+
+# <---------------- Fixing the food management system ----------------->
+MAX_SPECIFICATION_ID = 2  # for adding food
+MAX_TOPPING_ID = 3
+
+@app.route("/admin/foodManagement")
+@login_required
+@admin_side
+def food_management():
+    restaurant =
+    return render_template('admin/foodManagement.html',
+                           id=id)
