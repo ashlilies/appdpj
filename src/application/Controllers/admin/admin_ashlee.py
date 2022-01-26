@@ -1,12 +1,9 @@
 import functools
-import os
 import traceback
-import uuid
 from datetime import date
 
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import logout_user, login_required, current_user, login_user
-from werkzeug.utils import secure_filename
 
 from application import app
 from application.CouponForms import CreateCouponForm
@@ -14,6 +11,7 @@ from application.Models.Admin import *
 from application.Models.CouponSystem import CouponSystem, FoodIdNotExistsError
 from application.Models.Food2 import FoodDao
 from application.CreateFoodForm import CreateFoodForm
+from application.Models.FileUpload import save_file
 
 
 # <------------------------- ASHLEE ------------------------------>
@@ -211,7 +209,8 @@ def admin_coupon_add():
         if create_coupon_form.discount_type.data == "fp":
             discount_type = CouponSystem.DISCOUNT_FIXED_PRICE
             discount_amount = float(create_coupon_form.discount_amount.data),
-            discount_amount = discount_amount[0]  # for some reason we get a tuple here
+            discount_amount = discount_amount[
+                0]  # for some reason we get a tuple here
 
             if discount_amount < 0:
                 flash("Discount pricing can't be negative")
@@ -219,7 +218,8 @@ def admin_coupon_add():
 
         elif create_coupon_form.discount_type.data == "pct":
             discount_type = CouponSystem.DISCOUNT_PERCENTAGE_OFF
-            discount_amount = float(create_coupon_form.discount_amount.data) / 100
+            discount_amount = float(
+                create_coupon_form.discount_amount.data) / 100
 
             if discount_amount > 1:
                 flash("Discount percentage can't be greater than 100%.")
@@ -246,7 +246,8 @@ def admin_coupon_add():
 
         return redirect(url_for("admin_coupon_management"))
     else:
-        return render_template("admin/createCoupon.html", form=create_coupon_form)
+        return render_template("admin/createCoupon.html",
+                               form=create_coupon_form)
 
 
 @app.route("/admin/updateCoupon/<string:coupon_code>", methods=["GET", "POST"])
@@ -270,10 +271,12 @@ def admin_coupon_update(coupon_code):
         if update_coupon_form.discount_type.data == "fp":
             discount_type = CouponSystem.DISCOUNT_FIXED_PRICE
             discount_amount = float(update_coupon_form.discount_amount.data),
-            discount_amount = discount_amount[0]  # for some reason we get a tuple here
+            discount_amount = discount_amount[
+                0]  # for some reason we get a tuple here
         elif update_coupon_form.discount_type.data == "pct":
             discount_type = CouponSystem.DISCOUNT_PERCENTAGE_OFF
-            discount_amount = float(update_coupon_form.discount_amount.data) / 100
+            discount_amount = float(
+                update_coupon_form.discount_amount.data) / 100
         else:
             flash("Invalid discount type!")
             return redirect(url_for("admin_coupon_add"))
@@ -308,7 +311,8 @@ def admin_coupon_update(coupon_code):
     update_coupon_form.discount_type.data = discount_type
     update_coupon_form.discount_amount.data = discount_amount
     update_coupon_form.expiry.data = coupon.expiry
-    return render_template("admin/updateCoupon.html", form=update_coupon_form, coupon_code=coupon_code)
+    return render_template("admin/updateCoupon.html", form=update_coupon_form,
+                           coupon_code=coupon_code)
 
 
 @app.route("/admin/deleteCoupon/<string:coupon_code>", methods=["GET", "POST"])
@@ -338,19 +342,6 @@ def coupon_tester():
 
     return redirect(url_for("admin_coupon_management"))
 
-
-# Generate a random file name
-def save_file(request_files, key: str):
-    file = request_files[key]
-    file_ext = os.path.splitext(file.filename)[1]
-    filename = str(uuid.uuid4()) + str(file_ext)
-    file_upload_path = os.path.join(os.getcwd(), "application/",
-                                    app.config['UPLOAD_FOLDER'])
-    os.makedirs(file_upload_path, exist_ok=True)
-    filepath = os.path.join(file_upload_path, filename)
-    file.save(filepath)
-    stored_filename = "uploads/%s" % filename
-    return stored_filename
 
 # <---------------- Fixing the food management system ----------------->
 MAX_SPECIFICATION_ID = 2  # for adding food
@@ -406,12 +397,12 @@ def admin_create_food():
         # Handle the uploaded image here
         file = request.files["image"]
 
-
         # TODO: Validation for price
 
         # TODO: Add support for image
         stored_filename = save_file(request.files, "image")
-        FoodDao.create_food(restaurant_id, name=request.form["name"], image=stored_filename,
+        FoodDao.create_food(restaurant_id, name=request.form["name"],
+                            image=stored_filename,
                             description=request.form["description"],
                             price=price,
                             allergy=request.form["allergy"],
