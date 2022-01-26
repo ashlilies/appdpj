@@ -19,3 +19,8 @@ __pycache__/
 *.db.bak
 *.db.dat
 *.db.dir
+
+/*.db
+/*.bak
+/*.dat
+/*.dir
