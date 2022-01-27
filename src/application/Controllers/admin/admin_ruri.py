@@ -127,8 +127,7 @@ def admin_myrestaurant():  # ruri
         restaurant_details_form.rest_del5.data = restaurant.del5
 
     return render_template("admin/restaurant.html",
-                           form=restaurant_details_form,
-                           restaurant=all_restaurant())
+                           form=restaurant_details_form)
 
 
 # R (Read)
