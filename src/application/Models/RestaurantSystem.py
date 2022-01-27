@@ -12,6 +12,16 @@ class RestaurantSystem():
         with shelve.open(RESTAURANT_DB, 'c') as db:
             return db.get(restaurant_id)
 
+    # Return a list of all restaurants - Ashlee
+    @staticmethod
+    def get_restaurants():
+        restaurant_list = []
+        with shelve.open(RESTAURANT_DB, 'c') as db:
+            for k in db:
+                restaurant_list.append(db.get(k))
+
+        return restaurant_list
+
     @staticmethod
     def create_restaurant(name, logo, contact, open, close, add1,
                           add2, postc, desc, bank, del1, del2, del3, del4,

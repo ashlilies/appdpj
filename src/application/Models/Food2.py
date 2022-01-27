@@ -101,7 +101,7 @@ class FoodDao:
             logging.error("FoodDao: failed to save food dict")
 
     @staticmethod
-    def query(food_id: int) -> "Food" or None:
+    def query(food_id: int) -> "Food":
         try:
             with shelve.open(FOOD_DB, 'c') as db:
                 if "food" in db:
@@ -110,8 +110,6 @@ class FoodDao:
 
         except KeyError:
             logging.error("Food: tried to query food_id %s but not found" % food_id)
-
-        return None
 
 
 class FoodIdNotExistsError(Exception):

@@ -46,6 +46,26 @@ class Account:
     def __str__(self):
         return self.__email
 
+    # Set authenticated status and save to database
+    def authenticate(self):
+        self.authenticated = True
+
+        with shelve.open("accounts", 'c') as db:
+            if "accounts" in db:  # first run?
+                accounts = db["accounts"]
+                accounts[self.account_id] = self
+                db["accounts"] = accounts
+
+    def deauthenticate(self):
+        self.authenticated = False
+
+        with shelve.open("accounts", 'c') as db:
+            if "accounts" in db:  # first run?
+                accounts = db["accounts"]
+                accounts[self.account_id] = self
+                db["accounts"] = accounts
+
+    # 4 functions below for flask-login
     def is_authenticated(self):
         return self.authenticated
 
@@ -133,6 +153,12 @@ class Account:
         with shelve.open(ACCOUNT_DB, 'c', writeback=True) as db:
             if "accounts" in db:
                 db["accounts"].pop(self.account_id)
+
+    def save(self):  # Save an account to the db
+        with shelve.open(ACCOUNT_DB, 'c') as db:
+            accounts = db["accounts"]
+            accounts[self.account_id] = self
+            db["accounts"] = accounts
 
 
 # Some useful functions used here.

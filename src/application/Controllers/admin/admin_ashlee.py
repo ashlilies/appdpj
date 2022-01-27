@@ -13,10 +13,11 @@ from application.Models.Food2 import FoodDao
 from application.CreateFoodForm import CreateFoodForm
 from application.Models.FileUpload import save_file
 
-
 # <------------------------- ASHLEE ------------------------------>
 
 # Decorator to only allow admin accounts or guests
+from application.Models.Review import ReviewDao
+
 
 def admin_side(view):
     @functools.wraps(view)
@@ -459,3 +460,11 @@ def admin_update_food(food_id):
 def admin_delete_food(food_id):
     FoodDao.delete_food(food_id)
     return redirect(url_for("admin_retrieve_food"))
+
+
+@app.route("/admin/reviews")
+def admin_retrieve_reviews():
+    list_of_reviews = ReviewDao.get_reviews(current_user.restaurant_id)
+    average_rating = ReviewDao.get_average_rating(current_user.restaurant_id)
+    return render_template("admin/retrieveReviews.html", list_of_reviews=list_of_reviews,
+                           count=len(list_of_reviews), average_rating=average_rating)

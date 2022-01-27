@@ -6,19 +6,24 @@
 
 {% block content %}
   <div>
-  <h1 class="display-6">Coupon Management</h1>
-    {% if count == 0 %}
-      <p>There are no coupons.
+    <div class="align-items-center float-start ms-2">
+      <h1 class="display-6">Coupon Management</h1>
+      <p>
+        {% if count == 0 %}
+          There are no coupons.
         {% elif count == 1 %}
-      <p>There is 1 coupon.
+          There is 1 coupon.
         {% else %}
-      <p>There are {{ count }} coupons.
-    {% endif %}
-    <a class="btn btn-primary align-items-center float-end ms-2" href="#" data-bs-toggle="modal"
-       data-bs-target="#TestCouponModal">Test coupons</a>
-    <a class="btn btn-primary align-items-center float-end ms-2"
-       href="{{ url_for("admin_coupon_add") }}" role="button">New Coupon</a>
-    </p>
+          There are {{ count }} coupons.
+        {% endif %}
+      </p>
+    </div>
+    <div class="align-items-center float-end ms-2 mt-4">
+      <a class="btn btn-primary align-items-center float-end ms-2" href="#" data-bs-toggle="modal"
+         data-bs-target="#TestCouponModal">Test coupons</a>
+      <a class="btn btn-primary align-items-center float-end ms-2"
+         href="{{ url_for("admin_coupon_add") }}" role="button">New Coupon</a>
+    </div>
   </div>
   <div>
     <table class="table table-striped retrieveTable">
@@ -46,7 +51,7 @@
             <td>{{ coupon.discount.discount_amount }}</td>
           {% elif coupon.discount.discount_type == coupon.discount.PERCENTAGE_OFF %}
             <td>Percentage Off</td>
-            <td>{{ coupon.discount.discount_amount * 100 }}%</td>
+            <td>{{ "%.2f"|format(coupon.discount.discount_amount * 100) }}%</td>
           {% else %}
             <td>ERROR</td>
             <td>{{ coupon.discount.discount_amount }}</td>
