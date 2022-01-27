@@ -8,10 +8,12 @@
             margin-left: 10px;
             margin-right: 10px;
         }
-        #infodisplay{
+
+        #infodisplay {
             width: 90%;
             margin: auto;
         }
+
         .certdisplay {
             width: 25%;
         }
@@ -36,6 +38,20 @@
 
 {% block content %}
     <div class="">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings"
+                        type="button" role="tab" aria-controls="nav-settings" aria-selected="true"><a
+                        href="{{ url_for('admin_myrestaurant') }}">Restaurant Information</a>
+                </button>
+                <button class="nav-link active" id="nav-restrictions-tab" data-bs-toggle="tab"
+                        data-bs-target="#nav-restrictions"
+                        type="button" role="tab" aria-controls="nav-restrictions" aria-selected="false"><a
+                        href="{{ url_for('test_upload') }}">Food Restrictions</a>
+                </button>
+            </div>
+        </nav>
+
         <h1>EXTENSION TO RESTAURANT DETAILS</h1>
         <div>
             {# hygiene cert #}
@@ -48,7 +64,7 @@
                             {{ cert.id }}'s Certificates
                         </th>
                         <th style="width:300px; display: flex; float:right; margin-right: -80px;">
-                            <a href="/admin/updateCertification/{{ cert.id }}" class="btn btn-danger">Update</a>
+                            <a href="/admin/updateCertification/{{ cert.id }}" class="btn btn-warning">Update</a>
                             <form action="{{ url_for('delete_cert', id=cert.id) }}"
                                   method="POST">
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
@@ -83,14 +99,14 @@
                                                     <tbody>
                                                     <tr>
                                                         <th scope="row">Hygiene Certificate</th>
-                                                        <td>{{ cert.hygiene_cert[53:] }}</td>
+                                                        <td>{{ cert.hygiene_cert[61:] }}</td>
                                                     </tr>
                                                     <tr>
                                                         <th scope="row">Halal Certificate</th>
                                                         {% if not cert.halal_cert %}
                                                             <td>NIL</td>
                                                         {% else %}
-                                                            <td>{{ cert.halal_cert[51:] }}</td>
+                                                            <td>{{ cert.halal_cert[59:] }}</td>
                                                         {% endif %}
                                                     </tr>
                                                     <tr>
@@ -98,20 +114,20 @@
                                                         {% if not cert.vegetarian_cert %}
                                                             <td>NIL</td>
                                                         {% else %}
-                                                            <td>{{ cert.vegetarian_cert[56:] }}</td>
+                                                            <td>{{ cert.vegetarian_cert[64:] }}</td>
                                                         {% endif %}
+                                                    </tr>
+                                                    <tr>
+                                                        <th scope="row">No Pork No lard</th>
+                                                        <td>{{ cert.noPorknoLard }}</td>
                                                     </tr>
                                                     <tr>
                                                         <th scope="row">Vegan Certificate</th>
                                                         {% if not cert.vegan_cert %}
                                                             <td>NIL</td>
                                                         {% else %}
-                                                            <td>{{ cert.vegan_cert[51:] }}</td>
+                                                            <td>{{ cert.vegan_cert[59:] }}</td>
                                                         {% endif %}
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row">No Pork No lard</th>
-                                                        <td>{{ cert.noPorknoLard }}</td>
                                                     </tr>
                                                     <tr>
                                                         <th scope="row">No Beef</th>
@@ -143,8 +159,9 @@
                         <td rowspan="6" style="background-color:rgba(56, 183, 78,0.4); width:20%;">{{ cert.id }}</td>
                         <td class="certdisplay">Hygiene</td>
                         <td>
-{#                            <iframe src="application/static/restaurantCertification/hygiene/1/{{ cert.hygiene_cert }}">Hygiene cert</iframe>#}
-                            <a href="{{ url_for("static", filename=cert.hygiene_cert[19:]) }}" target="_blank">{{ cert.hygiene_cert[53:] }}</a>
+                            {#                            <iframe src="application/static/restaurantCertification/hygiene/1/{{ cert.hygiene_cert }}">Hygiene cert</iframe>#}
+                            <a href="{{ url_for("static", filename=cert.hygiene_cert[19:]) }}"
+                               target="_blank">{{ cert.hygiene_cert[61:] }}</a>
                         </td>
                     </tr>
                     <tr>
@@ -153,7 +170,8 @@
                             <td>NIL</td>
                         {% else %}
                             <td>
-                                <a href="{{ url_for("static", filename=cert.halal_cert[19:]) }}" target="_blank">{{ cert.halal_cert[51:] }}</a>
+                                <a href="{{ url_for("static", filename=cert.halal_cert[19:]) }}"
+                                   target="_blank">{{ cert.halal_cert[59:] }}</a>
                             </td>
                         {% endif %}
                     </tr>
@@ -163,7 +181,8 @@
                             <td>NIL</td>
                         {% else %}
                             <td>
-                                <a href="{{ url_for("static", filename=cert.vegetarian_cert[19:]) }}" target="_blank">{{ cert.vegetarian_cert[56:] }}</a>
+                                <a href="{{ url_for("static", filename=cert.vegetarian_cert[19:]) }}"
+                                   target="_blank">{{ cert.vegetarian_cert[64:] }}</a>
                             </td>
                         {% endif %}
                     </tr>
@@ -177,7 +196,8 @@
                             <td>NIL</td>
                         {% else %}
                             <td>
-                                <a href="{{ url_for("static", filename=cert.vegan_cert[19:]) }}" target="_blank">{{ cert.vegan_cert[51:] }}</a>
+                                <a href="{{ url_for("static", filename=cert.vegan_cert[19:]) }}"
+                                   target="_blank">{{ cert.vegan_cert[59:] }}</a>
                             </td>
                         {% endif %}
                     </tr>

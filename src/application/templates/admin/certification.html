@@ -6,7 +6,7 @@
     <style>
         form {
             background-color: white;
-            width: 80%;
+            width: 90%;
             margin: auto;
         }
 
@@ -22,6 +22,18 @@
 {% endblock %}
 
 {% block content %}
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings"
+                    type="button" role="tab" aria-controls="nav-settings" aria-selected="true"><a href="{{ url_for('admin_myrestaurant') }}">Restaurant Information</a>
+            </button>
+            <button class="nav-link active" id="nav-restrictions-tab" data-bs-toggle="tab" data-bs-target="#nav-restrictions"
+                    type="button" role="tab" aria-controls="nav-restrictions" aria-selected="false"><a
+                    href="{{ url_for('test_upload') }}">Food Restrictions</a>
+            </button>
+        </div>
+    </nav>
+
     <h1>Restaurant Certification</h1>
     <form method="POST" action="{{ url_for('uploader') }}" enctype="multipart/form-data">
         <h3 style="margin: 10px 30px; padding-top: 20px;">Upload your Hygiene Certification below</h3>

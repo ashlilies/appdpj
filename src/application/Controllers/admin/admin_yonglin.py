@@ -2,7 +2,7 @@ import datetime
 import traceback
 
 import flask
-from flask import render_template, request, redirect, url_for, session, flash, Flask
+from flask import render_template, request, redirect, url_for, session, flash, Flask, abort
 import os
 import os.path
 
@@ -202,7 +202,6 @@ def admin_transaction():
     with shelve.open('transaction', 'c') as db:
         if 'shop_transactions' in db:
             transaction_list = db['shop_transactions']
-            print(db['shop_transactions'])
             logging.info("admin_transaction: reading from db['shop_transactions']"
                          ", %d elems" % len(db["shop_transactions"]))
         else:
@@ -261,8 +260,6 @@ def uploader():
     nb = 'NIL'
     npnl = 'NIL'
     if request.method == 'POST':
-        # todo: add different routes for hygiene, halal, vegetarian, vegan
-        # todo: add other file's file saving
         with shelve.open('certification', 'c') as handle:
             try:
                 certification_dict = handle['certification']
@@ -278,9 +275,9 @@ def uploader():
             print(certchecks)
             for i in certchecks:
                 if i == 'NoPorkNoLard':
-                    nb = 'YES'
-                elif i == 'NoBeef':
                     npnl = 'YES'
+                elif i == 'NoBeef':
+                    nb = 'YES'
                 else:
                     print('something is wrong')
             cert.noPorknoLard = npnl
@@ -288,25 +285,23 @@ def uploader():
 
             # HYGIENE CERTIFICATE
             hygiene = request.files['hygieneDocument']  # getting the file from the form
-            # dont need to check if there is input as this file input is compulsory
             hygieneFile = secure_filename(hygiene.filename)
-            app.config['UPLOADED_HYGIENE'] = f'application/static/restaurantCertification/hygiene/{cert.id}/'
-            os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HYGIENE'])), exist_ok=True)
-            # save document in app.config['UPLOAD_HYGIENE']
-            hygiene.save(os.path.join(os.getcwd(), app.config['UPLOADED_HYGIENE']) + hygieneFile)
-            logging.info('Hygiene -- file uploaded successfully')
-            cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/{hygieneFile}"
+            app.config['UPLOADED_HYGIENE'] = f'application/static/uploads/restaurantCertification/hygiene/{cert.id}/'
+            if hygieneFile != '':
+                os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HYGIENE'])), exist_ok=True)
+                hygiene.save(os.path.join(os.getcwd(), app.config['UPLOADED_HYGIENE']) + hygieneFile)
+                logging.info('Hygiene -- file uploaded successfully')
+                cert.hygiene_cert = f"application/static/uploads/restaurantCertification/hygiene/{cert.id}/{hygieneFile}"
 
             # HALAL CERTIFICATE
             halal = request.files['halalDocument']
             halalFile = secure_filename(halal.filename)
             if halal.filename != "":
-                app.config['UPLOADED_HALAL'] = f'application/static/restaurantCertification/halal/{cert.id}/'
+                app.config['UPLOADED_HALAL'] = f'application/static/uploads/restaurantCertification/halal/{cert.id}/'
                 os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HALAL'])), exist_ok=True)
-                # save document in app.config['UPLOADED_HALAL']
                 halal.save(os.path.join(os.getcwd(), app.config['UPLOADED_HALAL']) + halalFile)
                 logging.info('Halal -- file uploaded successfully')
-                cert.halal_cert = f"application/static/restaurantCertification/halal/{cert.id}/{halalFile}"
+                cert.halal_cert = f"application/static/uploads/restaurantCertification/halal/{cert.id}/{halalFile}"
             else:
                 cert.halal_cert = ''
 
@@ -314,29 +309,27 @@ def uploader():
             vegetarian = request.files['vegetarianDocument']
             vegetarianFile = secure_filename(vegetarian.filename)
             if vegetarian.filename != "":
-                app.config['UPLOADED_VEGETARIAN'] = f'application/static/restaurantCertification/vegetarian/{cert.id}/'
+                app.config['UPLOADED_VEGETARIAN'] = f'application/static/uploads/restaurantCertification/vegetarian/{cert.id}/'
                 os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGETARIAN'])),
                             exist_ok=True)
-                # save document in app.config['UPLOADED_HALAL']
                 vegetarian.save(os.path.join(os.getcwd(), app.config['UPLOADED_VEGETARIAN']) + vegetarianFile)
                 logging.info('Vegetarian -- file uploaded successfully')
-                cert.vegetarian_cert = f"application/static/restaurantCertification/vegetarian/{cert.id}/{vegetarianFile}"
+                cert.vegetarian_cert = f"application/static/uploads/restaurantCertification/vegetarian/{cert.id}/{vegetarianFile}"
             else:
                 cert.vegetarian_cert = ''
 
             # VEGAN CERTIFICATE
             vegan = request.files['veganDocument']
             veganFile = secure_filename(vegan.filename)
-            print(vegan.filename)
             if vegan.filename != "":
                 # TODO: Add logic to save the file to filesystem and the Certification object here
-                app.config['UPLOADED_VEGAN'] = f'application/static/restaurantCertification/vegan/{cert.id}/'
+                app.config['UPLOADED_VEGAN'] = f'application/static/uploads/restaurantCertification/vegan/{cert.id}/'
                 os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGAN'])),
                             exist_ok=True)
                 # save document in app.config['UPLOADED_HALAL']
                 vegan.save(os.path.join(os.getcwd(), app.config['UPLOADED_VEGAN']) + veganFile)
                 logging.info('Vegan -- file uploaded successfully')
-                cert.vegan_cert = f"application/static/restaurantCertification/vegan/{cert.id}/{veganFile}"
+                cert.vegan_cert = f"application/static/uploads/restaurantCertification/vegan/{cert.id}/{veganFile}"
             else:
                 cert.vegan_cert = ''
 
@@ -400,18 +393,15 @@ def update_cert(id):
                 certification_dict = db['certification']
 
                 cert = certification_dict.get(id)
-                print(cert)
 
                 # get values from checkboxes
                 certchecks = request.form.getlist('certCheck')
                 print(certchecks)
                 for i in certchecks:
                     if i == 'NoPorkNoLard':
-                        nb = 'YES'
-                    elif i == 'NoBeef':
                         npnl = 'YES'
-                    else:
-                        print('update_cert(line 414: something is with certchecks')
+                    elif i == 'NoBeef':
+                        nb = 'YES'
 
                 cert.noPorknoLard = npnl
                 cert.noBeef = nb
@@ -419,31 +409,30 @@ def update_cert(id):
                 # HYGIENE DOCUMENT
                 hygiene = request.files['hygieneDocument']
                 hygieneFile = secure_filename(hygiene.filename)
-                app.config['UPLOADED_HYGIENE'] = f'application/static/restaurantCertification/hygiene/{cert.id}/'
+                app.config['UPLOADED_HYGIENE'] = f'application/static/uploads/restaurantCertification/hygiene/{cert.id}/'
                 os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HYGIENE'])), exist_ok=True)
                 hygiene.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_HYGIENE']) + hygieneFile))
                 if cert.hygiene_cert != '':
                     # unlinking existing hygiene doc file
-                    if os.path.exists(
-                            f'application/static/restaurantCertification/hygiene/{cert.id}/{cert.hygiene_cert}'):
-                        os.remove(f'application/static/restaurantCertification/hygiene/{cert.id}/{cert.hygiene_cert}')
+                    if os.path.exists(cert.hygiene_cert):
+                        os.remove(cert.hygiene_cert)
                         logging.info('Successfully removed existing hygiene document')
-                    cert.hygiene_cert = f"application/static/restaurantCertification/hygiene/{cert.id}/{hygieneFile}"
+                    cert.hygiene_cert = f"application/static/uploads/restaurantCertification/hygiene/{cert.id}/{hygieneFile}"
 
                 # HALAL DOCUMENT
                 halal = request.files['halalDocument']
                 halalFile = secure_filename(halal.filename)
                 if halal.filename != '':
                     # saving of new file
-                    app.config['UPLOADED_HALAL'] = f'application/static/restaurantCertification/halal/{cert.id}/'
+                    app.config['UPLOADED_HALAL'] = f'application/static/uploads/restaurantCertification/halal/{cert.id}/'
                     os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HALAL'])),
                                 exist_ok=True)
                     halal.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_HALAL']) + halalFile))
+                    cert.halal_cert = f"application/static/uploads/restaurantCertification/halal/{cert.id}/{halalFile}"
                     # deleting of existing file
-                    if os.path.exists(f'application/static/restaurantCertification/halal/{cert.id}/{cert.halal_cert}'):
-                        os.remove(f'application/static/restaurantCertification/halal/{cert.id}/{cert.halal_cert}')
+                    if os.path.exists(cert.halal_cert):
+                        os.remove(cert.halal_cert)
                         logging.info('Successfully removed existing halal document')
-                    cert.halal_cert = f"application/static/restaurantCertification/halal/{cert.id}/{halalFile}"
                 else:
                     cert.halal_cert = ''
 
@@ -452,19 +441,15 @@ def update_cert(id):
                 vegetarianFile = secure_filename(vegetarian.filename)
                 if vegetarian.filename != '':
                     # saving of new file
-                    app.config[
-                        'UPLOADED_VEGETARIAN'] = f'application/static/restaurantCertification/vegetarian/{cert.id}/'
+                    app.config['UPLOADED_VEGETARIAN'] = f'application/static/uploads/restaurantCertification/vegetarian/{cert.id}/'
                     os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGETARIAN'])),
                                 exist_ok=True)
-                    vegetarian.save(
-                        os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_VEGETARIAN']) + vegetarianFile))
+                    vegetarian.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_VEGETARIAN']) + vegetarianFile))
+                    cert.vegetarian_cert = f"application/static/uploads/restaurantCertification/vegetarian/{cert.id}/{vegetarianFile}"
                     # deleting of existing file
-                    if os.path.exists(
-                            f'application/static/restaurantCertification/vegetarian/{cert.id}/{cert.vegetarian_cert}'):
-                        os.remove(
-                            f'application/static/restaurantCertification/vegetarian/{cert.id}/{cert.vegetarian_cert}')
+                    if os.path.exists(cert.vegetarian_cert):
+                        os.remove(cert.vegetarian_cert)
                         logging.info('Successfully removed existing vegetarian document')
-                    cert.vegetarian_cert = f"application/static/restaurantCertification/vegetarian/{cert.id}/{vegetarianFile}"
                 else:
                     cert.vegetarian_cert = ''
 
@@ -473,15 +458,15 @@ def update_cert(id):
                 veganFile = secure_filename(vegan.filename)
                 if vegan.filename != '':
                     # saving of new file
-                    app.config['UPLOADED_VEGAN'] = f'application/static/restaurantCertification/vegan/{cert.id}/'
+                    app.config['UPLOADED_VEGAN'] = f'application/static/uploads/restaurantCertification/vegan/{cert.id}/'
                     os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGAN'])),
                                 exist_ok=True)
                     vegan.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_VEGAN']) + halalFile))
                     # deleting of existing file
-                    if os.path.exists(f'application/static/restaurantCertification/vegan/{cert.id}//{cert.vegan_cert}'):
-                        os.remove(f'application/static/restaurantCertification/vegan/{cert.id}//{cert.vegan_cert}')
+                    if os.path.exists(cert.vegan_cert):
+                        os.remove(cert.vegan_cert)
                         logging.info('Successfully removed existing vegan document')
-                    cert.vegan_cert = f"application/static/restaurantCertification/vegan/{cert.id}/{veganFile}"
+                    cert.vegan_cert = f"application/static/uploads/restaurantCertification/vegan/{cert.id}/{veganFile}"
                 else:
                     cert.vegan_cert = ''
 
@@ -521,71 +506,3 @@ def delete_cert(id):
             logging.error("delete_food: error opening db (%s)" % e)
 
     return redirect(url_for('read_cert'))
-
-# do not deleted! (for reference)
-
-# def upload_cert():
-#     i = 1
-#     certification_form = DocumentUploadForm(request.form)
-#     certifications_dict = {}
-#     if request.method == 'POST' and certification_form.validate():
-#         db = shelve.open(DB_NAME, 'c')
-#         try:
-#             certifications_dict = db['certification']
-#         except Exception as e:
-#             logging.error("Error in retrieving Certification from "
-#                           "certification.db (%s)" % e)
-#
-#         certifications_dict[i] = i
-#         db['certification'] = certifications_dict
-#
-#         db.close()
-#
-#     certification = Certification(request.form["hygieneDocument"])
-#
-#     # if certification_form.validate_on_submit():
-#     #     # file path to save files to:
-#     #     assets_dir = os.path.join(os.path.dirname(app.instance_path), 'restaurantCertification')
-#     #     # assests_dir ==> C:\Users\yongl\appdpj\src\restaurantCertification
-#     #     hygiene = certification_form.hygiene_doc.data
-#     #
-#     #     # saving
-#     #     hygiene.save(os.path.join(assets_dir, 'hygiene', hygiene.filename))
-#     #
-#     #     logging.info('Document uploaded successfully.')
-#     #     return redirect(url_for('admin_home'))
-#
-#     return render_template("admin/certification2.html")
-
-
-# @app.route("/admin/certification", methods=['GET', 'POST'])
-# def admin_certification():
-#     # TODO: FILE UPLOAD, FILE SAVING, SHELVE UPDATE
-#     # set upload directory path
-#     certification_form = RestaurantCertification()
-#     if certification_form.validate_on_submit():
-#         assets_dir = os.path.join(os.path.dirname('./static/restaurantCertification'))
-#
-#         hygiene = certification_form.hygiene_cert.data
-#         halal = certification_form.halal_cert.data
-#         vegetarian = certification_form.vegetarian_cert.data
-#         vegan = certification_form.vegan_cert.data
-#
-#         # document save
-#         # halal.save(os.path.join(app.config['UPLOAD_FOLDER'], halaldoc_name))
-#         hygiene.save(os.path.join(assets_dir, '<userid>', hygiene))
-#         halal.save(os.path.join(assets_dir, '<userid>', halal))
-#         vegetarian.save(os.path.join(assets_dir, '<userid>', vegetarian))
-#         vegan.save(os.path.join(assets_dir, '<userid>', vegan))
-#
-#         # halal.save(os.path.join('/application/static/restaurantCertification', halaldoc_name))
-#         # vegetarian.save(
-#         #     os.path.join('/application/static/restaurantCertification', vegetariandoc_name))
-#         # vegan.save(os.path.join('/application/static/restaurantCertification', vegandoc_name))
-#
-#         flash('Document uploaded successfully')
-#
-#         return redirect(url_for('admin_transaction'))
-#
-#     return render_template("admin/certification.html",
-#                            certification_form=certification_form)
