@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block content %}
-  <h1 class="display-6">Coupon Management</h1>
   <div>
+  <h1 class="display-6">Coupon Management</h1>
     {% if count == 0 %}
       <p>There are no coupons.
         {% elif count == 1 %}
@@ -14,9 +14,10 @@
         {% else %}
       <p>There are {{ count }} coupons.
     {% endif %}
-    <a href="{{ url_for("admin_coupon_add") }}">Add a new coupon</a>
-    or
-    <a href="#" data-bs-toggle="modal" data-bs-target="#TestCouponModal">test coupons</a>.
+    <a class="btn btn-primary align-items-center float-end ms-2" href="#" data-bs-toggle="modal"
+       data-bs-target="#TestCouponModal">Test coupons</a>
+    <a class="btn btn-primary align-items-center float-end ms-2"
+       href="{{ url_for("admin_coupon_add") }}" role="button">New Coupon</a>
     </p>
   </div>
   <div>
@@ -103,7 +104,8 @@
   </div>
   <div id="modals">
     <!-- Test Coupon Modal -->
-    <div class="modal fade" id="TestCouponModal" tabindex="-1" aria-labelledby="TestCouponModalLabel" aria-hidden="true">
+    <div class="modal fade" id="TestCouponModal" tabindex="-1" aria-labelledby="TestCouponModalLabel"
+         aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
