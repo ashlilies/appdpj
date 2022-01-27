@@ -97,6 +97,7 @@ def consumer_logout():
 
 
 @app.route('/writeReview', methods=["GET", "POST"])
+@login_required
 @consumer_side
 def consumer_create_review():
     create_review_form = CreateReviewForm(request.form)
