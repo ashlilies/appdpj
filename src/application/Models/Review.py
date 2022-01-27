@@ -126,6 +126,8 @@ class ReviewDao:
         for review in list_of_reviews:
             total_review_score += review.stars
 
+        if len(list_of_reviews) == 0:
+            return 0
         return total_review_score / len(list_of_reviews)
 
     @staticmethod
