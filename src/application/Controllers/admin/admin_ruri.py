@@ -116,7 +116,6 @@ def admin_myrestaurant():  # ruri
     if current_user.restaurant_id is not None:
         restaurant = RestaurantSystem.find_restaurant_by_id(current_user.restaurant_id)
         restaurant_details_form.rest_name.data = restaurant.name
-        # stored_filename = restaurant.logo
         restaurant_details_form.rest_contact.data = restaurant.contact
         restaurant_details_form.rest_hour_open.data = restaurant.open
         restaurant_details_form.rest_hour_close.data = restaurant.close
