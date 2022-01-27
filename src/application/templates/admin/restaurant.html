@@ -64,7 +64,7 @@
       }
 
       #rest_logo {
-          margin-left: 260px;
+          margin-top: 20px;
       }
 
 
@@ -102,7 +102,7 @@
 
 {% block content %}
   <!-- start of navigation bar-->
-  <nav>
+  <nav style="margin-top: 50px">
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
       <button class="nav-link active" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings"
               type="button" role="tab" aria-controls="nav-settings" aria-selected="true">Restaurant Information
@@ -162,11 +162,12 @@
       <div class="column" style="margin-left: 80px;">
         <div class="form-row">
           <div class="form-group col-md-5">
+              <label for="rest_logo">Logo: </label>
               {% if restaurant %}
-              <img src="{{url_for("static", filename=restaurant.get_logo()) }}" width=50>
-              {% endif %}
-              <label for="rest_logo">Logo</label>
-                <input type="file" class="form-control" name="rest_logo" id="rest_logo" accept="image/*">
+                <img src="{{url_for("static", filename=restaurant.get_logo()) }}" width=150 style="margin-left:10px;">
+                {% endif %}<input type="file" class="form-control" name="rest_logo" id="rest_logo" accept="image/*" size="100px">
+
+
 {#            <input style="margin-left: 0px;" class="form-control" type="file" name="rest_logo" id="rest_logo" placeholder="Upload your logo"/>#}
           </div>
         </div>
