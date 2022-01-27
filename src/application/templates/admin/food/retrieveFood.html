@@ -35,7 +35,7 @@
         <td><img src="{{ url_for("static", filename=food.image) }}" width=100 alt="Food Image"></td>
         <td>{{ food.name }}</td>
         <td>{{ food.description }}</td>
-        <td>${{ food.price }}</td>
+        <td>${{ "%.2f"|format(food.price) }}</td>
         <td>{{ food.allergy }}</td>
         <td>{% for spec in food.specifications %}{{ spec }}<br>{% endfor %}
         </td>
@@ -49,8 +49,7 @@
           </button>
         </td>
         <td>
-          <form action="{{ url_for('admin_delete_food', food_id=food.id) }}"
-                method="POST">
+          <form action="{{ url_for('admin_delete_food', food_id=food.id) }}">
             <input type="submit" value="Delete" class="btn btn-danger">
           </form>
         </td>

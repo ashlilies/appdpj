@@ -2,6 +2,8 @@
 import logging
 import shelve
 
+from application.Models.FileUpload import delete_file
+
 FOOD_DB = "food.db"
 
 
@@ -43,8 +45,11 @@ class FoodDao:
         if food is None:
             raise FoodIdNotExistsError
 
+        if food.image != image_path:
+            delete_file(food.image)
+            food.image = image_path
+
         food.name = name
-        food.image_path = image_path
         food.description = description
         food.price = price
         food.allergy = allergy
@@ -55,6 +60,9 @@ class FoodDao:
     # Hard delete food items
     @staticmethod
     def delete_food(food_id):
+        food = FoodDao.query(food_id)
+        delete_file(food.image)
+
         try:
             with shelve.open(FOOD_DB, 'c') as db:
                 food_dict = db["food"]

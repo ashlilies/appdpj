@@ -394,9 +394,6 @@ def admin_create_food():
         toppings = get_toppings(request.form)
         price = round(float(request.form["price"]), 2)
 
-        # Handle the uploaded image here
-        file = request.files["image"]
-
         # TODO: Validation for price
 
         # TODO: Add support for image
@@ -416,22 +413,49 @@ def admin_create_food():
                            MAX_TOPPING_ID=MAX_TOPPING_ID, )
 
 
-@app.route("/admin/updateFood/<int:food_id>")
+@app.route("/admin/updateFood/<int:food_id>", methods=["GET", "POST"])
 @login_required
 @admin_side
 def admin_update_food(food_id):
     update_food_form = CreateFoodForm(request.form)
-
     food = FoodDao.query(food_id)
+
+    if request.method == "POST" and update_food_form.validate():
+        image_path = food.image
+        if request.files["image"].filename != "":  # file was uploaded
+            image_path = save_file(request.files, "image")
+
+        specs = get_specs(request.form)
+        toppings = get_toppings(request.form)
+        price = round(float(request.form["price"]), 2)
+
+        # TODO: Validation for price
+
+        FoodDao.update_food(food_id=food.id, name=request.form["name"],
+                            image_path=image_path,
+                            description=request.form["description"],
+                            price=price, allergy=request.form["allergy"],
+                            specification=specs,
+                            topping=toppings)
+
+        return redirect(url_for("admin_retrieve_food"))
+
     # Load the details of the food item.
-    update_food_form.name = food.name
-    return render_template('admin/food/createFood.html', form=update_food_form,
+    update_food_form.name.data = food.name
+    update_food_form.description.data = food.description
+    update_food_form.price.data = food.price
+    update_food_form.allergy.data = food.allergy
+
+    return render_template('admin/food/updateFood.html',
+                           form=update_food_form,
+                           food_id=food_id,
                            MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
-                           MAX_TOPPING_ID=MAX_TOPPING_ID, )
+                           MAX_TOPPING_ID=MAX_TOPPING_ID)
 
 
 @app.route("/admin/deleteFood/<int:food_id>")
 @login_required
 @admin_side
 def admin_delete_food(food_id):
-    return "Placeholder %d" % food_id
+    FoodDao.delete_food(food_id)
+    return redirect(url_for("admin_retrieve_food"))
