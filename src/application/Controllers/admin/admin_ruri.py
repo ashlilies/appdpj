@@ -22,13 +22,14 @@ from application.Models.RestaurantSystem import *
 import shelve, os
 import uuid
 from application.rest_details_form import *
+from application. Models.FileUpload import save_file
 
 # Ruri's imported libraries
 import urllib.request
 import os
 from werkzeug.utils import secure_filename
 
-
+app.config["IMAGE_UPLOADS"] = "src/application/static/restaurantLogos"
 # <------------------------- RURI ------------------------------>
 # C (Create)
 @app.route('/admin/create-restaurant', methods=['GET', 'POST'])
@@ -54,9 +55,10 @@ def admin_myrestaurant():  # ruri
             # save_hygiene = f"application/static/restaurantCertification/{restaurant_id}/{hygieneFile}"
 
             # print(current_user.restaurant_id)
+            stored_filename = save_file(request.files, "rest_logo")
             restaurant = RestaurantSystem.create_restaurant(
                 restaurant_details_form.rest_name.data,
-                request.form.get("rest_logo"),
+                stored_filename,
                 restaurant_details_form.rest_contact.data,
                 restaurant_details_form.rest_hour_open.data,
                 restaurant_details_form.rest_hour_close.data,
@@ -72,13 +74,16 @@ def admin_myrestaurant():  # ruri
                 restaurant_details_form.rest_del5.data,
             )
             current_user.restaurant_id = restaurant.id
+            # print(request.files.get["rest_logo"])
+
+            restaurant = None
 
         else:
             restaurant = RestaurantSystem.find_restaurant_by_id(current_user.restaurant_id)
             RestaurantSystem.edit_restaurant(
                 restaurant,
                 restaurant_details_form.rest_name.data,
-                request.form.get("rest_logo"),
+                restaurant.get_logo(),
                 restaurant_details_form.rest_contact.data,
                 restaurant_details_form.rest_hour_open.data,
                 restaurant_details_form.rest_hour_close.data,
@@ -112,6 +117,7 @@ def admin_myrestaurant():  # ruri
     if current_user.restaurant_id is not None:
         restaurant = RestaurantSystem.find_restaurant_by_id(current_user.restaurant_id)
         restaurant_details_form.rest_name.data = restaurant.name
+        stored_filename = restaurant.logo
         restaurant_details_form.rest_contact.data = restaurant.contact
         restaurant_details_form.rest_hour_open.data = restaurant.open
         restaurant_details_form.rest_hour_close.data = restaurant.close
@@ -127,7 +133,7 @@ def admin_myrestaurant():  # ruri
         restaurant_details_form.rest_del5.data = restaurant.del5
 
     return render_template("admin/restaurant.html",
-                           form=restaurant_details_form)
+                           form=restaurant_details_form, restaurant=restaurant)
 
 
 # R (Read)
@@ -185,4 +191,4 @@ def update_restaurant_confirm(id):
 
 @app.route("/admin/dashboard")
 def dashboard():  # ruri
-    return render_template("admin/dashboard.html")
+    return render_template('admin/dashboard.html')
