@@ -463,6 +463,8 @@ def admin_delete_food(food_id):
 
 
 @app.route("/admin/reviews")
+@login_required
+@admin_side
 def admin_retrieve_reviews():
     list_of_reviews = ReviewDao.get_reviews(current_user.restaurant_id)
     average_rating = ReviewDao.get_average_rating(current_user.restaurant_id)
