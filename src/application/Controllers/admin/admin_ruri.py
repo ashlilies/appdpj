@@ -38,6 +38,8 @@ def admin_myrestaurant():  # ruri
     restaurant_details_form = RestaurantDetailsForm(
         request.form)  # Using the Create Restaurant Form
     # The controller will be the place where we do all the interaction
+    restaurant = None
+
     if request.method == 'POST' and restaurant_details_form.validate():
         # Checks if a restaurant has already been created by the current admin
         if not current_user.restaurant_id:
@@ -74,9 +76,6 @@ def admin_myrestaurant():  # ruri
                 restaurant_details_form.rest_del5.data,
             )
             current_user.restaurant_id = restaurant.id
-            # print(request.files.get["rest_logo"])
-
-            restaurant = None
 
         else:
             restaurant = RestaurantSystem.find_restaurant_by_id(current_user.restaurant_id)
