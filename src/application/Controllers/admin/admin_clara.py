@@ -67,9 +67,6 @@ app.config['UPLOAD_PATH'] = 'uploads'
 
 def create_food():
     create_food_form = CreateFoodForm(request.form)
-#--------------------------------------------------------------
-# --------------------------------------------------------------
-
     # get specifications as a List, no WTForms
     def get_specs() -> list:  # tells that the function will return a list, python ignores it
         specs = []
@@ -132,17 +129,17 @@ def create_food():
             food_dict[food.get_food_id()] = food
             db['food'] = food_dict
 
-
-
             # writeback so changes are "updated"
             with shelve.open("food.db", 'c') as db:
                 db['food'] = food_dict
 
             return redirect(url_for('food_management'))
 
-    return render_template('admin/foodManagement.html', form=create_food_form,
+    return render_template('admin/foodManagement.html',
+                           form=create_food_form,
                            MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
-                           MAX_TOPPING_ID=MAX_TOPPING_ID, )
+                           MAX_TOPPING_ID=MAX_TOPPING_ID)
+
 
 
 # Note from Ashlee: when doing integration, please prefix all URLs with /admin/
@@ -223,7 +220,7 @@ def update_food(id):
             with shelve.open("food.db", 'r') as db:
                 food_dict = db['food']
                 food = food_dict.get(id)
-                # request.files["image_file"] = food.get_image()
+                update_food_form.test.data = food.get_image()
                 update_food_form.item_name.data = food.get_name()
                 update_food_form.description.data = food.get_description()
                 update_food_form.price.data = food.get_price()

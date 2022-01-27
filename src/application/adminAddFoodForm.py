@@ -8,6 +8,8 @@ from application.BetterDecimalField import BetterDecimalField
 
 
 class CreateFoodForm(Form):
+    test = StringField('', [validators.Length(min=1, max=50)])
+
     item_name = StringField('', [validators.Length(min=1, max=50),
                                  validators.DataRequired(message='Please enter the name of food!')])
 
