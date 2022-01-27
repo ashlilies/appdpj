@@ -5,19 +5,35 @@
 
 {% block head %}
     <style>
-        div.scroll {
-            background-color: #fed9ff;
-        {#background-color: #ebddf1;#} width: 900px;
-            height: 400px;
-            overflow-x: hidden;
-            overflow-y: auto;
-            text-align: center;
-            padding: 20px;
-            position: relative;
-            top: 70px;
-            left: 150px;
+        {#div.scroll {#}
+        {#    background-color: #fed9ff;#}
+        {#background-color: #ebddf1; width: 900px;#}
+        {#    height: 400px;#}
+        {#    overflow-x: hidden;#}
+        {#    overflow-y: auto;#}
+        {#    text-align: center;#}
+        {#    padding: 20px;#}
+        {#    position: relative;#}
+        {#    top: 70px;#}
+        {#    left: 150px;#}
+        {##}
+        {#{#}
 
+        #tableCss {
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 12px;
+            background-color: white;
+            position:relative;
+            top:30px;
         }
+
+        #height {
+            height:50px;
+        }
+
+
 
         h1 {
             color: red;
@@ -162,8 +178,8 @@
 
         #createFoodButton {
             position: relative;
-            left: 350px;
-            top: 10px;
+            left: 980px;
+            top: 15px;
             padding: 10px;
 
         }
@@ -177,9 +193,9 @@
            href="#createFoodModalToggle" role="button">Add Food</a>
         <div>
 
-            <table class="table table-striped">
+            <table class="table table-striped" id="tableCss">
                 <thead>
-                <tr>
+                <tr id="height">
                     <th>Image</th>
                     <th>Name</th>
                     <th>Description</th>
@@ -193,7 +209,7 @@
                 </thead>
                 <tbody>
                 {% for food in food_list %}
-                    <tr>
+                    <tr id="height">
                         <td><img src="{{ url_for("static", filename=food.get_image()) }}" width=50></td>
                         <td>{{ food.get_name() }}</td>
                         <td>{{ food.get_description() }}</td>
@@ -236,15 +252,15 @@
                 </div>
                 <div class="modal-body">
 
-                    <form method="POST" action="{{ url_for("create_food") }}"  enctype = "multipart/form-data">
+                    <form method="POST" action="{{ url_for("create_food") }}" enctype="multipart/form-data">
 
                         <div class="mb-3">
                             <input class="form-control" type="file" name="image_file"
                                    id="uploadImage" accept="image/*"
                                    placeholder="Upload Image Here" required/>
-{#                            {% for food in stored_filename %}#}
-{#                            <img src="{{ url_for("static", filename=food.get_image()) }}" width=100>#}
-{#                            {% endfor %}#}
+                            {#                            {% for food in stored_filename %}#}
+                            {#                            <img src="{{ url_for("static", filename=food.get_image()) }}" width=100>#}
+                            {#                            {% endfor %}#}
                         </div>
                         <div class="form-group" id="name">
                             <label id="foodNameLabel">Food name:</label>{{ render_field(create_food_form.item_name,

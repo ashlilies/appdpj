@@ -167,6 +167,19 @@
             position: relative;
             left: 540px;
             bottom: 185px;
+
+        }
+        #updateImage{
+            position: relative;
+            bottom:40px;
+            left:200px;
+        }
+        .updateImageName{
+            position: relative;
+            top:30px;
+            left:60px;
+            font-size:18px;
+
         }
 
     </style>
@@ -375,6 +388,7 @@
         document.addEventListener("DOMContentLoaded", load_specs)
         document.addEventListener("DOMContentLoaded", load_top)
 
+
     </script>
 {% endblock %}
 
@@ -391,30 +405,38 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalToggleLabel">Create Food</h5>
+                    <h5 class="modal-title" id="exampleModalToggleLabel">Update Food</h5>
                 </div>
                 <div class="modal-body">
 
                     <form method="POST" action="" enctype="multipart/form-data">
+                     <p class="updateImageName">
+                            Existing image:
+                        </p>
+
+                        <div id="updateImage">
+                            {% if food %}
+                                <img src="{{ url_for("static", filename=food.get_image()) }}" width=100 height=100>
+                            {% endif %}
+                        </div>
 
                         <div class="mb-3">
                             <input class="form-control" type="file" name="image_file" id="uploadImage" accept="image/*"
-                                   placeholder="Upload Image Here" value="{{ request.files["image_file"] }}" required/>
+                                   placeholder="Upload Image Here" value="food.get_image()"/>
                         </div>
                         <div class="form-group" id="name">
-                            <label id="foodNameLabel">Foodiessssss name:</label>{{ render_field(form.item_name,
+                            <label id="foodNameLabel">Food name:</label>{{ render_field(form.item_name,
                         class="form-control") }}
                         </div>
-{##}
-{#                         <div class="mb-3">#}
-{#                            <input name="price" type="number" step="0.01" class="form-control"  />#}
-{#                        </div>#}
+                        {##}
+                        {#                         <div class="mb-3">#}
+                        {#                            <input name="price" type="number" step="0.01" class="form-control"  />#}
+                        {#                        </div>#}
 
                         <div class="form-group" id="price">
                             <label id="priceLabel">Price(SGD):</label>{{ render_field(form.price, class="form-check",
                         style="list-style-type:none") }}
                         </div>
-
 
 
                         <div id="prof">
@@ -462,11 +484,11 @@
                         <input type="submit" value="Submit" class="btn btn-primary"/>
                     </form>
                 </div>
-{#                <div class="modal-footer">#}
-{#                    <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal"#}
-{#                            data-bs-dismiss="modal">Open second modal#}
-{#                    </button>#}
-{#                </div>#}
+                {#                <div class="modal-footer">#}
+                {#                    <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal"#}
+                {#                            data-bs-dismiss="modal">Open second modal#}
+                {#                    </button>#}
+                {#                </div>#}
             </div>
 
         </div>

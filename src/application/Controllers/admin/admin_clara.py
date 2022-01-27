@@ -131,6 +131,7 @@ def create_food():
             # the food object
             food_dict[food.get_food_id()] = food
             db['food'] = food_dict
+            print(food.get_image())
 
 
 
@@ -201,6 +202,8 @@ def update_food(id):
                 food_dict = db['food']
                 food = food_dict.get(id)
                 # food.set_image = request.form["image"]
+                # print(request.form['image'])
+                # original_image = food.get_image()
                 stored_filename = save_file(request.files, "image_file")
                 food.set_image(stored_filename)
                 food.set_name(update_food_form.item_name.data)

@@ -15,3 +15,4 @@ def save_file(request_files, key: str):
     file.save(filepath)
     stored_filename = "uploads/%s" % filename
     return stored_filename
+
