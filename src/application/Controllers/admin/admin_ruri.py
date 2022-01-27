@@ -39,7 +39,6 @@ def admin_myrestaurant():  # ruri
         request.form)  # Using the Create Restaurant Form
     # The controller will be the place where we do all the interaction
     restaurant = None
-
     if request.method == 'POST' and restaurant_details_form.validate():
         # Checks if a restaurant has already been created by the current admin
         if not current_user.restaurant_id:
@@ -79,10 +78,11 @@ def admin_myrestaurant():  # ruri
 
         else:
             restaurant = RestaurantSystem.find_restaurant_by_id(current_user.restaurant_id)
+            stored_filename = save_file(request.files, "rest_logo")
             RestaurantSystem.edit_restaurant(
                 restaurant,
                 restaurant_details_form.rest_name.data,
-                restaurant.get_logo(),
+                stored_filename,
                 restaurant_details_form.rest_contact.data,
                 restaurant_details_form.rest_hour_open.data,
                 restaurant_details_form.rest_hour_close.data,
@@ -116,7 +116,7 @@ def admin_myrestaurant():  # ruri
     if current_user.restaurant_id is not None:
         restaurant = RestaurantSystem.find_restaurant_by_id(current_user.restaurant_id)
         restaurant_details_form.rest_name.data = restaurant.name
-        stored_filename = restaurant.logo
+        # stored_filename = restaurant.logo
         restaurant_details_form.rest_contact.data = restaurant.contact
         restaurant_details_form.rest_hour_open.data = restaurant.open
         restaurant_details_form.rest_hour_close.data = restaurant.close
