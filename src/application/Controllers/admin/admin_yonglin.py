@@ -1,12 +1,6 @@
-import datetime
-import traceback
-
-import flask
-from flask import render_template, request, redirect, url_for, session, flash, Flask, abort
-import os
+from flask import render_template, request, redirect, url_for
 import os.path
 
-from werkzeug.utils import secure_filename
 
 from application import app
 from application.Models.Admin import *
@@ -322,7 +316,6 @@ def uploader():
             vegan = request.files['veganDocument']
             veganFile = secure_filename(vegan.filename)
             if vegan.filename != "":
-                # TODO: Add logic to save the file to filesystem and the Certification object here
                 app.config['UPLOADED_VEGAN'] = f'application/static/uploads/restaurantCertification/vegan/{cert.id}/'
                 os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGAN'])),
                             exist_ok=True)
@@ -379,7 +372,6 @@ def read_cert():
 
 
 # YL: for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)
-# TODO: REDIRECT BACK TO FORM IN 'C IN CRUD'
 # TODO: CHECK IF THE FILES ARE THE SAME AND UPDATE THE DETAILS
 @app.route('/admin/updateCertification/<int:id>', methods=['GET', 'POST'])
 def update_cert(id):
@@ -428,11 +420,11 @@ def update_cert(id):
                     os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HALAL'])),
                                 exist_ok=True)
                     halal.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_HALAL']) + halalFile))
-                    cert.halal_cert = f"application/static/uploads/restaurantCertification/halal/{cert.id}/{halalFile}"
                     # deleting of existing file
                     if os.path.exists(cert.halal_cert):
                         os.remove(cert.halal_cert)
                         logging.info('Successfully removed existing halal document')
+                    cert.halal_cert = f"application/static/uploads/restaurantCertification/halal/{cert.id}/{halalFile}"
                 else:
                     cert.halal_cert = ''
 
@@ -440,16 +432,15 @@ def update_cert(id):
                 vegetarian = request.files['vegetarianDocument']
                 vegetarianFile = secure_filename(vegetarian.filename)
                 if vegetarian.filename != '':
-                    # saving of new file
                     app.config['UPLOADED_VEGETARIAN'] = f'application/static/uploads/restaurantCertification/vegetarian/{cert.id}/'
                     os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGETARIAN'])),
                                 exist_ok=True)
                     vegetarian.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_VEGETARIAN']) + vegetarianFile))
-                    cert.vegetarian_cert = f"application/static/uploads/restaurantCertification/vegetarian/{cert.id}/{vegetarianFile}"
                     # deleting of existing file
                     if os.path.exists(cert.vegetarian_cert):
                         os.remove(cert.vegetarian_cert)
                         logging.info('Successfully removed existing vegetarian document')
+                    cert.vegetarian_cert = f"application/static/uploads/restaurantCertification/vegetarian/{cert.id}/{vegetarianFile}"
                 else:
                     cert.vegetarian_cert = ''
 
@@ -461,7 +452,7 @@ def update_cert(id):
                     app.config['UPLOADED_VEGAN'] = f'application/static/uploads/restaurantCertification/vegan/{cert.id}/'
                     os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGAN'])),
                                 exist_ok=True)
-                    vegan.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_VEGAN']) + halalFile))
+                    vegan.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_VEGAN']) + veganFile))
                     # deleting of existing file
                     if os.path.exists(cert.vegan_cert):
                         os.remove(cert.vegan_cert)

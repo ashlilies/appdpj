@@ -89,14 +89,14 @@
         <tbody>
         <tr>
             <th scope="row">Hygiene Certificate</th>
-            <td>{{ cert.hygiene_cert[61:] }}</td>
+            <td><a href="{{ url_for('static', filename=cert.hygiene_cert[19:]) }}" target="_blank">{{ cert.hygiene_cert[61:] }}</a></td>
         </tr>
         <tr>
             <th scope="row">Halal Certificate</th>
             {% if not cert.halal_cert %}
                 <td>NIL</td>
             {% else %}
-                <td>{{ cert.halal_cert[59:] }}</td>
+                <td><a href="{{ url_for('static', filename=cert.halal_cert[19:]) }}" target="_blank">{{ cert.halal_cert[59:] }}</a></td>
             {% endif %}
         </tr>
         <tr>
@@ -104,7 +104,7 @@
             {% if not cert.vegetarian_cert %}
                 <td>NIL</td>
             {% else %}
-                <td>{{ cert.vegetarian_cert[64:] }}</td>
+                <td><a href="{{ url_for("static", filename=cert.vegetarian_cert[19:]) }}" target="_blank">{{ cert.vegetarian_cert[64:] }}</a></td>
             {% endif %}
         </tr>
         <tr>
@@ -117,7 +117,7 @@
             {% if not cert.vegan_cert %}
                 <td>NIL</td>
             {% else %}
-                <td>{{ cert.vegan_cert[59:] }}</td>
+                <td><a href="{{ url_for('static', filename=cert.vegan_cert[19:]) }}" target="_blank">{{ cert.vegan_cert[59:] }}</a></td>
             {% endif %}
         </tr>
         <tr>
@@ -126,7 +126,6 @@
         </tr>
         </tbody>
     {% endfor %}
-</thead>
 </table>
 </div>
 <div class="modal-footer">
@@ -229,7 +228,7 @@
         function fileUpload3() {
             var veganCheckBox = document.getElementById("veganCheck");
             var veganUpload = document.getElementById("veganFile");
-            if (veganCheckBox.checked == true) {
+            if (veganCheckBox.checked === true) {
                 veganUpload.style.display = "block";
             } else {
                 veganUpload.style.display = "none";

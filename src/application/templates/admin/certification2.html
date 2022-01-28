@@ -55,11 +55,11 @@
         <h1>EXTENSION TO RESTAURANT DETAILS</h1>
         <div>
             {# hygiene cert #}
-            <table class="table" id="infodisplay"
+            <table class="table table-striped" id="infodisplay"
                    style="background-color: white">
                 <thead>
                 {% for cert in certificate_list %}
-                    <tr style="background-color: rgba(175, 97, 203,0.4)">
+                    <tr>
                         <th scope="col" colspan="2">
                             {{ cert.id }}'s Certificates
                         </th>
@@ -156,7 +156,7 @@
                     </thead>
                     <tbody>
                     <tr>
-                        <td rowspan="6" style="background-color:rgba(56, 183, 78,0.4); width:20%;">{{ cert.id }}</td>
+                        <td rowspan="6" style="width:20%;">{{ cert.id }}</td>
                         <td class="certdisplay">Hygiene</td>
                         <td>
                             {#                            <iframe src="application/static/restaurantCertification/hygiene/1/{{ cert.hygiene_cert }}">Hygiene cert</iframe>#}
