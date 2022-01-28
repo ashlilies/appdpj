@@ -14,6 +14,4 @@ class CreateFoodForm(Form):
     price = BetterDecimalField('', places=2, round_always=True, rounding=ROUND_HALF_UP,
                                validators=[DataRequired(message='Price of food is required!')])
 
-    # allergy = TextAreaField('', [validators.DataRequired()])
-
     allergy = TextAreaField('')
