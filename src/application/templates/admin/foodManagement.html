@@ -29,7 +29,7 @@
         }
 
         .modal-content {
-            background-color: #ffd1d1;
+            background-color: white;
             padding: 10px;
             margin: 10px;
         {#background-color: #ebddf1;#}
@@ -408,6 +408,7 @@
 
             function addNewSpecificationRow() {
                 /* are there too many specifications already? */
+                {#show a alert when too many specifications added#}
                 if (specificationId > maxSpecificationId) {
                     console.log("Too many specifications - can't add more");
                     alert("Too many specifications (" + parseInt(maxSpecificationId + 1) + ")");
@@ -417,6 +418,8 @@
                 /* get data from new specification text field */
                 spec = document.getElementById("newSpecification").value;
 
+                /* create element div */
+                /* add the attribute to the var newInputRow */
                 /* with the minus button */
                 var newWholeInputRow = document.createElement("div");
 
@@ -430,6 +433,7 @@
                 newInputRow.style.borderWidth = "thin";
                 newInputRow.value = spec;
                 newInputRow.readonly = true
+                /* append the entire newInputRow to the created Div*/
                 newWholeInputRow.appendChild(newInputRow);
 
                 var minusButton = document.createElement("img");

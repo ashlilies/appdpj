@@ -1,7 +1,6 @@
 <!--ruri flora newman-->
 {% extends "admin/admin_base.html" %}
 {% block title %}Dashboard layout{% endblock %}
-
 {% block head %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"
         integrity="sha512-TW5s0IT/IppJtu76UbysrBH9Hy/5X41OTAbQuffZFU6lQ1rdcLHzpU5BzVvr/YFykoiMYZVWlr/PX1mDcfM9Qg=="
@@ -9,11 +8,23 @@
 
 {% endblock %}
 {% block content %}
-
-<div class="col-xs-10 col-sm-6 col-md-6">
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link active" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings"
+                    type="button" role="tab" aria-controls="nav-settings" aria-selected="true"><a
+                    href="{{ url_for('dashboard') }}">Dashboard</a>
+            </button>
+            <button class="nav-link" id="nav-restrictions-tab" data-bs-toggle="tab"
+                    data-bs-target="#nav-restrictions"
+                    type="button" role="tab" aria-controls="nav-restrictions" aria-selected="false"><a
+                    href="{{ url_for('create_example_transactions') }}">Transactions</a>
+            </button>
+        </div>
+    </nav>
+<div class="col-xs-10 col-sm-6 col-md-6" style="margin: auto;margin-top: 90px">
     <div class="card card-style mb-2">
         <div class="card-body">
-            <div class="chart-container" style="position: relative;">
+            <div class="chart-container" style="margin-left: auto;">
                 <canvas id="income_vs_expense"></canvas>
             </div>
         </div>
