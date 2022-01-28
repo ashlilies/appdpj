@@ -191,101 +191,101 @@ MAX_TOPPING_ID = 3
 
 
 
-# Note from Ashlee: when doing integration, please prefix all URLs with /admin/
-@app.route('/deleteFood/<int:id>', methods=['POST'])
-def delete_food(id):
-    food_dict = {}
-    # with shelve.open("food.db", 'c') as db:
-    #     food_dict = db['food']
-    #     food_dict.pop(id)
-    #     db['food'] = food_dict
+# # Note from Ashlee: when doing integration, please prefix all URLs with /admin/
+# @app.route('/deleteFood/<int:id>', methods=['POST'])
+# def delete_food(id):
+#     food_dict = {}
+#     # with shelve.open("food.db", 'c') as db:
+#     #     food_dict = db['food']
+#     #     food_dict.pop(id)
+#     #     db['food'] = food_dict
+#
+#     return redirect(url_for('food_management'))
 
-    return redirect(url_for('food_management'))
 
-
-# Note from Ashlee: when doing integration, please prefix all URLs with /admin/
-# save new specification and list
-@app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
-def update_food(id):
-    update_food_form = CreateFoodForm(request.form)
-
-    # get specifications as a List, no WTForms
-    def get_specs() -> list:
-        specs = []
-
-        # do specifications exist in first place?
-        for i in range(MAX_SPECIFICATION_ID + 1):
-            if "specification%d" % i in request.form:
-                specs.append(request.form["specification%d" % i])
-            else:
-                break
-
-        logging.info("create_food: specs is %s" % specs)
-        return specs
-
-        # get toppings as a List, no WTForms
-
-    def get_top() -> list:
-        top = []
-
-        # do toppings exist in first place?
-        for i in range(MAX_TOPPING_ID + 1):
-            if "topping%d" % i in request.form:
-                top.append(request.form["topping%d" % i])
-            else:
-                break
-
-        logging.info("create_food: top is %s" % top)
-        return top
-
-    if request.method == 'POST' and update_food_form.validate():
-        food_dict = {}
-        try:
-            # with shelve.open("food.db", 'w') as db:
-            #     food_dict = db['food']
-            #     food = food_dict.get(id)
-                food = Food.query(id)
-                # food.set_image = request.form["image"]
-                food.set_name(update_food_form.item_name.data)
-                food.set_description(update_food_form.description.data)
-                food.set_price(update_food_form.price.data)
-                food.set_allergy(update_food_form.allergy.data)
-                food.set_specification(get_specs())  # set specifications as a List
-                food.toppings = get_top()  # set topping as a List
-                # db["food"] = food_dict
-        except Exception as e:
-            logging.error("update_customer: %s" % e)
-            print("an error has occured in update customer")
-
-        return redirect("/admin/foodManagement")
-    else:
-        food_dict = {}
-        try:
-            # with shelve.open("food.db", 'r') as db:
-            #     food_dict = db['food']
-            #
-            #     food = food_dict.get(id)
-                food = Food.query(id)
-
-                # food.get_image(request.form["image"])
-                update_food_form.item_name.data = food.get_name()
-                update_food_form.description.data = food.get_description()
-                update_food_form.price.data = food.get_price()
-                update_food_form.allergy.data = food.get_allergy()
-
-                # for food in food_dict:
-                #     food.get_specification()
-                #     food.get_topping()
-                #
-        except:
-            print("Error occured when update food")
-
-        return render_template('admin/updateFood.html',
-                               form=update_food_form,
-                               food=food,
-                               MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
-                               MAX_TOPPING_ID=MAX_TOPPING_ID)
-
+# # Note from Ashlee: when doing integration, please prefix all URLs with /admin/
+# # save new specification and list
+# @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
+# def update_food(id):
+#     update_food_form = CreateFoodForm(request.form)
+#
+#     # get specifications as a List, no WTForms
+#     def get_specs() -> list:
+#         specs = []
+#
+#         # do specifications exist in first place?
+#         for i in range(MAX_SPECIFICATION_ID + 1):
+#             if "specification%d" % i in request.form:
+#                 specs.append(request.form["specification%d" % i])
+#             else:
+#                 break
+#
+#         logging.info("create_food: specs is %s" % specs)
+#         return specs
+#
+#         # get toppings as a List, no WTForms
+#
+#     def get_top() -> list:
+#         top = []
+#
+#         # do toppings exist in first place?
+#         for i in range(MAX_TOPPING_ID + 1):
+#             if "topping%d" % i in request.form:
+#                 top.append(request.form["topping%d" % i])
+#             else:
+#                 break
+#
+#         logging.info("create_food: top is %s" % top)
+#         return top
+#
+#     if request.method == 'POST' and update_food_form.validate():
+#         food_dict = {}
+#         try:
+#             # with shelve.open("food.db", 'w') as db:
+#             #     food_dict = db['food']
+#             #     food = food_dict.get(id)
+#                 food = Food.query(id)
+#                 # food.set_image = request.form["image"]
+#                 food.set_name(update_food_form.item_name.data)
+#                 food.set_description(update_food_form.description.data)
+#                 food.set_price(update_food_form.price.data)
+#                 food.set_allergy(update_food_form.allergy.data)
+#                 food.set_specification(get_specs())  # set specifications as a List
+#                 food.toppings = get_top()  # set topping as a List
+#                 # db["food"] = food_dict
+#         except Exception as e:
+#             logging.error("update_customer: %s" % e)
+#             print("an error has occured in update customer")
+#
+#         return redirect("/admin/foodManagement")
+#     else:
+#         food_dict = {}
+#         try:
+#             # with shelve.open("food.db", 'r') as db:
+#             #     food_dict = db['food']
+#             #
+#             #     food = food_dict.get(id)
+#                 food = Food.query(id)
+#
+#                 # food.get_image(request.form["image"])
+#                 update_food_form.item_name.data = food.get_name()
+#                 update_food_form.description.data = food.get_description()
+#                 update_food_form.price.data = food.get_price()
+#                 update_food_form.allergy.data = food.get_allergy()
+#
+#                 # for food in food_dict:
+#                 #     food.get_specification()
+#                 #     food.get_topping()
+#                 #
+#         except:
+#             print("Error occured when update food")
+#
+#         return render_template('admin/updateFood.html',
+#                                form=update_food_form,
+#                                food=food,
+#                                MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
+#                                MAX_TOPPING_ID=MAX_TOPPING_ID)
+#
 # @app.route('/updateFood/<int:id>/', methods=['GET', 'POST'])
 #
 # #save new specification and list
