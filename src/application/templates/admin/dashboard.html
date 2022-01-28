@@ -1,10 +1,16 @@
 <!--ruri flora newman-->
 {% extends "admin/admin_base.html" %}
 {% block title %}Dashboard layout{% endblock %}
+
 {% block head %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"
-        integrity="sha512-TW5s0IT/IppJtu76UbysrBH9Hy/5X41OTAbQuffZFU6lQ1rdcLHzpU5BzVvr/YFykoiMYZVWlr/PX1mDcfM9Qg=="
-        crossOrigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"
+            integrity="sha512-TW5s0IT/IppJtu76UbysrBH9Hy/5X41OTAbQuffZFU6lQ1rdcLHzpU5BzVvr/YFykoiMYZVWlr/PX1mDcfM9Qg=="
+            crossOrigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        .col-xs-10, .col-sm-6, .col-md-6{
+            margin: auto;
+        }
+    </style>
 
 {% endblock %}
 {% block content %}
@@ -21,57 +27,56 @@
             </button>
         </div>
     </nav>
-<div class="col-xs-10 col-sm-6 col-md-6" style="margin: auto;margin-top: 90px">
-    <div class="card card-style mb-2">
-        <div class="card-body">
-            <div class="chart-container" style="margin-left: auto;">
-                <canvas id="income_vs_expense"></canvas>
+
+    <div class="col-xs-10 col-sm-6 col-md-6">
+        <div class="card card-style mb-2">
+            <div class="card-body">
+                <div class="chart-container" style="position: relative;">
+                    <canvas id="income_vs_expense"></canvas>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-const ctx = document.getElementById('income_vs_expense').getContext('2d');
-const yValues = "";
-const myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June','July','August','September', 'October', 'November','December'], //x values (to input shelve)
-        datasets: [{
-            label: '# of transactions',
-            // data: [12, 19, 3, 5, 2, 3],  //y values (to input from shelve)
-            data: [{
-              data: yValues
-            }],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
+    <script>
+        const ctx = document.getElementById('income_vs_expense').getContext('2d');
+        const yValues = "";
+        const myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'], //x values (to input shelve)
+                datasets: [{
+                    label: '# of transactions',
+                    data: [12, 19, 3, 5, 2, 3],  //y values (to input from shelve)
+
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
             }
-        }
-    }
-});
-</script>
+        });
+    </script>
 
 
 {% endblock %}
