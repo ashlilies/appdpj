@@ -15,7 +15,8 @@ class Food:
         with shelve.open(FOOD_DB, 'c') as db:
             if "count_id" in db:
                 Food.count_id = db["count_id"]
-                logging.info("Food: food count food_id loaded: %d" % Food.count_id)
+                logging.info(
+                    "Food: food count food_id loaded: %d" % Food.count_id)
 
         Food.count_id += 1
         self.id = Food.count_id
@@ -34,13 +35,16 @@ class Food:
 
 class FoodDao:
     @staticmethod
-    def create_food(restaurant_id: str, name: str, image: str, description: str, price: float, allergy: str,
+    def create_food(restaurant_id: str, name: str, image: str, description: str,
+                    price: float, allergy: str,
                     specifications: list, toppings: list):
-        food = Food(restaurant_id, name, image, description, price, allergy, specifications, toppings)
+        food = Food(restaurant_id, name, image, description, price, allergy,
+                    specifications, toppings)
         FoodDao.save(food)
 
     @staticmethod
-    def update_food(food_id, name, image_path, description, price, allergy, specification, topping):
+    def update_food(food_id, name, image_path, description, price, allergy,
+                    specification, topping):
         food = FoodDao.query(food_id)
         if food is None:
             raise FoodIdNotExistsError
@@ -73,7 +77,8 @@ class FoodDao:
 
     @staticmethod
     def get_foods(restaurant_id):
-        # Linear search and retun a list of food objects with matching restaurant ID
+        # Linear search and retun a list of food objects with matching
+        # restaurant ID
         food_list = []
 
         food_dict = {}
