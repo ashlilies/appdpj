@@ -219,8 +219,7 @@ def admin_coupon_add():
 
         elif create_coupon_form.discount_type.data == "pct":
             discount_type = CouponSystem.DISCOUNT_PERCENTAGE_OFF
-            discount_amount = float(
-                create_coupon_form.discount_amount.data) / 100
+            discount_amount = float(create_coupon_form.discount_amount.data) / 100
 
             if discount_amount > 1:
                 flash("Discount percentage can't be greater than 100%.")
@@ -468,5 +467,7 @@ def admin_delete_food(food_id):
 def admin_retrieve_reviews():
     list_of_reviews = ReviewDao.get_reviews(current_user.restaurant_id)
     average_rating = ReviewDao.get_average_rating(current_user.restaurant_id)
-    return render_template("admin/retrieveReviews.html", list_of_reviews=list_of_reviews,
-                           count=len(list_of_reviews), average_rating=average_rating)
+    return render_template("admin/retrieveReviews.html",
+                           list_of_reviews=list_of_reviews,
+                           count=len(list_of_reviews),
+                           average_rating=average_rating)

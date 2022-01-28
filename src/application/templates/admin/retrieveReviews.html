@@ -45,6 +45,7 @@
         <h2>{{ review.title }}</h2>
         <p>{{ review.description }}</p>
         <p><em><b>By:</b> {{ review.reviewer_name }}</em></p>
+      {# TODO: use ISO standard for timestamp yyyy-mm-dd sort easily and more marks -yuenloong #}
         <p><em><b>Timestamp:</b> {{ review.datetime.strftime('%d-%m-%Y %H:%M') }}</em></p>
         <img class="review-media" src="{{ url_for("static", filename=review.media_path) }}" alt="No media uploaded"
              width="100">
