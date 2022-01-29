@@ -1,0 +1,55 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Restaurant Reviews{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for("static", filename="css/features.css") }}">
+  <style>
+      .review {
+          background-color: #ffffffee;
+      }
+
+      .review-media {
+          width: -moz-available; /* For Mozzila */
+          width: -webkit-fill-available; /* For Chrome */
+      }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div style="display: flow-root;">
+    <div class="align-items-center float-start ms-2">
+      <h1 class="display-6">Restaurant Reviews</h1>
+      {% if count == 0 %}
+        <p>There are no reviews yet. Perhaps try reaching out?
+          {% elif count == 1 %}
+        <p>There is 1 review right now.
+          {% else %}
+        <p>There are {{ count }} reviews.
+      {% endif %}
+      </p>
+    </div>
+    <div class="align-items-center float-end ms-2 mt-3">
+      <strong>Average rating: {{ "%.2f"|format(average_rating) }}</strong>
+    </div>
+  </div>
+  <div id="content">
+  <div class="container px-4 py-5" id="featured-3">
+  <div class="row g-4 ms-1 me-1 row-cols-1 row-cols-lg-3">
+    {% for review in list_of_reviews %}
+      <div class="feature col review">
+        <div class="">
+          {% for i in range(review.stars) %}
+            <img class="review-star" src="{{ url_for("static", filename="reviews/star.png") }}" alt="Star">
+          {% endfor %}
+        </div>
+        <h2>{{ review.title }}</h2>
+        <p>{{ review.description }}</p>
+        <p><em><b>By:</b> {{ review.reviewer_name }}</em></p>
+      {# TODO: use ISO standard for timestamp yyyy-mm-dd sort easily and more marks -yuenloong #}
+        <p><em><b>Timestamp:</b> {{ review.datetime.strftime('%d-%m-%Y %H:%M') }}</em></p>
+        <img class="review-media" src="{{ url_for("static", filename=review.media_path) }}" alt="No media uploaded"
+             width="100">
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

@@ -10,6 +10,7 @@
     <!-- Page level plugin JavaScript-->
     <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
+
     <style>
         h1 {
             font-weight: bold;
@@ -18,7 +19,7 @@
             top: 20px;
             text-decoration-line: underline;
             font-size: 28px;
-            width: 150px;
+            width: 500px;
         }
 
         .row {
@@ -27,32 +28,26 @@
         }
 
         .display {
-            padding: 30px;
+            width: 90%;
+            margin: auto
         }
+
 
         .table {
             background-color: white;
         }
 
-        .highlight {
+        tr.highlight, tr.highlight:hover > *, .table-striped > tbody > tr.highlight:nth-of-type(odd) > * {
             color: red;
             font-weight: bold;
         }
 
-        .modal {
-            font-color: black;
-            font-weight: normal;
-        }
-
-        .modal:hover {
-            font-color: black;
-            font-weight: normal;
-        }
 
         #myTable td {
             width: 250px;
             overflow: visible;
         }
+
 
         #deletedisplay th {
             width: 30%;
@@ -64,18 +59,45 @@
             overflow: visible;
             font-weight: normal;
         }
-        #deletedisplay tr:hover{
+
+        #deletedisplay tr:hover {
             background-color: #ffffff;
         }
+
+
+        .modal {
+            font-color: black;
+            font-weight: normal;
+        }
+
+        .modal:hover {
+            font-color: black;
+            font-weight: normal;
+        }
+
 
     </style>
 {% endblock %}
 
 {% block content %}
     <div class="bodydiv">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings"
+                        type="button" role="tab" aria-controls="nav-settings" aria-selected="true"><a
+                        href="{{ url_for('dashboard') }}">Dashboard</a>
+                </button>
+                <button class="nav-link active" id="nav-restrictions-tab" data-bs-toggle="tab"
+                        data-bs-target="#nav-restrictions"
+                        type="button" role="tab" aria-controls="nav-restrictions" aria-selected="false"><a
+                        href="{{ url_for('create_example_transactions') }}">Transactions</a>
+                </button>
+            </div>
+        </nav>
+
         <div id="settings">
             <div class="settingsrow">
-                <h1>Dashboard</h1>
+                <h1>Transaction - Dashboard</h1>
             </div>
         </div>
         <br>
@@ -83,7 +105,7 @@
         <div class="display">
             <!--    table form to go back to dashboard? (might change to standardise with dashboard)-->
             <div class="table">
-                <table class="table table-hover" id="myTable">
+                <table class="table table-striped" id="myTable">
                     <thead>
                     <tr>
                         <th scope="col">Transaction ID</th>
@@ -97,7 +119,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for transaction in transaction_system_list %}
+                    {% for transaction in transaction_list %}
                         {% if not transaction.deleted %}
                             {# reading attributes from Transaction.py in each Class obj in transaction_list #}
                             {% if transaction.get_ratings() <= 2 %}
@@ -120,14 +142,14 @@
                                                 <div class="modal-dialog modal-dialog-centered modal-lg">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title">Delete Confirmation</h5>
+                                                            <h5 class="modal-title" style="color: black !important;">Delete Confirmation</h5>
                                                             <button type="button" class="btn-close"
                                                                     data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <p>Are you sure you want to
+                                                            <p style="color: black ! important;">Are you sure you want to
                                                                 delete {{ transaction.account_name }}?</p>
-                                                            <p>Transaction Details:</p>
+                                                            <p style="color: black !important;">Transaction Details:</p>
                                                             <table class="table" id="deletedisplay">
                                                                 <thead>
                                                                 <tr>

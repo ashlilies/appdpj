@@ -9,6 +9,7 @@ from application.Models.Restaurant import Restaurant
 class Admin(Account):
     def __init__(self, restaurant_name, email, password):
         super().__init__(email, password)  # comes first, so we can abort error
+        self.type = "admin"  # for easy rendering in Jinja2
         self.__restaurant_id = None  # set later
         self.__name = None
         self.coupon_system_id = CouponSystem().id

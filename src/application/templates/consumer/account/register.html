@@ -1,0 +1,95 @@
+{# TODO: Add some fancy validation #}
+
+{% extends "consumer/consumer_base.html" %}
+{% block title %}Sign Up{% endblock %}
+
+{% block head %}
+  <style>
+      #login-pane {
+          margin: 2rem;
+          margin-left: auto;
+          margin-right: 0;
+          padding: 2rem;
+          flex-direction: row-reverse;
+          width: 50%;
+          background-color: rgba(255, 227, 173, 0.6);
+
+          height: 70%;
+      }
+
+      #logo-pane {
+          margin: 2rem;
+          margin-left: 0.1rem;
+          margin-right: auto;
+      }
+
+      #login-pane > form {
+          text-align: center;
+      }
+
+      #login-pane > form > input {
+          margin-top: 10px;
+          margin-bottom: 10px;
+
+          background-color: inherit;
+          border: none;
+
+          box-shadow: 0 2px #77777777;
+      }
+
+      form > input#submitButton {
+          background-color: #e06c6c;
+          padding: 10px;
+          width: 30%;
+      }
+
+      label > img {
+          width: 40px;
+          height: 40px;
+          opacity: 60%;
+      }
+
+      #tosLabel {
+          font-size: 0.7rem;
+      }
+  </style>
+
+{% endblock %}
+{% block content %}
+  <div id="mainContent" class="d-flex">
+  <div id="logo-pane">
+    <img src="{{ url_for("static", filename="account/accountpage_logo.jpg") }}" alt="FoodyPulse Logo">
+  </div>
+  <div id="login-pane">
+    <h2>Sign Up</h2>
+    <form action="{{ url_for("consumer_register") }}" method="post" class="login-form" id="registerForm">
+      <label for="name"><img alt="First Name"
+                             src={{ url_for("static", filename="account/person.png") }}/></label>
+      <input type="text" name="firstName" id="first_name"
+             placeholder="First Name" required><br>
+      <label for="name"><img alt="First Name"
+                             src={{ url_for("static", filename="account/person.png") }}/></label>
+      <input type="text" name="lastName" id="last_name"
+             placeholder="Last Name" required><br>
+      <label for="email"><img alt="Email Address"
+                              src={{ url_for("static", filename="account/email.png") }}/></label>
+      <input type="email" name="email" id="email"
+             placeholder="Email Address" required><br>
+      <label for="password"><img style="opacity: 100%" alt="Password"
+          src={{ url_for("static", filename="account/padlock.png") }}/></label>
+      <input type="password" name="password" id="password"
+             placeholder="Password (4-20 chars)" required><br>
+      <label for="passwordAgain"><img style="opacity: 100%" alt="Re-enter Password"
+          src={{ url_for("static", filename="account/padlock.png") }}/></label>
+      <input type="password" name="passwordAgain" id="passwordAgain"
+             placeholder="Re-enter Password" required><br>
+      <input type="checkbox" name="tosAgree" id="tosAgree" value="agreed"
+             required>
+      <label for="tosAgree" id="tosLabel">By checking this, you agree with the
+        Terms & Conditions of FoodyPulse.
+      </label><br>
+      <input type="submit" id="submitButton" value="Submit"><br>
+    </form>
+  </div>
+  </div>
+{% endblock %}

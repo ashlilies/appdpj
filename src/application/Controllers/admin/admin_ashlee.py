@@ -1,26 +1,24 @@
-import datetime
 import functools
-import os
-import uuid
-from datetime import date, timedelta, datetime
-import shelve
 import traceback
+from datetime import date
 
-from flask import render_template, request, redirect, url_for, session, flash
+from flask import render_template, request, redirect, url_for, flash
 from flask_login import logout_user, login_required, current_user, login_user
-from wtforms import ValidationError
 
 from application import app
 from application.CouponForms import CreateCouponForm
 from application.Models.Admin import *
-from application.Models.CouponSystem import CouponSystem
-from application.Models.RestaurantSystem import RestaurantSystem
-from application.rest_details_form import *
-
+from application.Models.CouponSystem import CouponSystem, FoodIdNotExistsError
+from application.Models.Food2 import FoodDao
+from application.CreateFoodForm import CreateFoodForm
+from application.Models.FileUpload import save_file
 
 # <------------------------- ASHLEE ------------------------------>
 
 # Decorator to only allow admin accounts or guests
+from application.Models.Review import ReviewDao
+
+
 def admin_side(view):
     @functools.wraps(view)
     def wrapper(*args, **kwargs):
@@ -29,6 +27,7 @@ def admin_side(view):
             return view(*args, **kwargs)
         flash("You need to log out first to access the Admin side.")
         return redirect('/')
+
     return wrapper
 
 
@@ -211,7 +210,8 @@ def admin_coupon_add():
         if create_coupon_form.discount_type.data == "fp":
             discount_type = CouponSystem.DISCOUNT_FIXED_PRICE
             discount_amount = float(create_coupon_form.discount_amount.data),
-            discount_amount = discount_amount[0]  # for some reason we get a tuple here
+            discount_amount = discount_amount[
+                0]  # for some reason we get a tuple here
 
             if discount_amount < 0:
                 flash("Discount pricing can't be negative")
@@ -219,7 +219,8 @@ def admin_coupon_add():
 
         elif create_coupon_form.discount_type.data == "pct":
             discount_type = CouponSystem.DISCOUNT_PERCENTAGE_OFF
-            discount_amount = float(create_coupon_form.discount_amount.data) / 100
+            discount_amount = float(
+                create_coupon_form.discount_amount.data) / 100
 
             if discount_amount > 1:
                 flash("Discount percentage can't be greater than 100%.")
@@ -233,6 +234,9 @@ def admin_coupon_add():
             return redirect(url_for("admin_coupon_add"))
 
         food_item_ids = create_coupon_form.food_item_ids.data.split()
+        # Convert all item IDs entered to integers
+        food_item_ids = [int(i) for i in food_item_ids]
+
         # TODO: Check if food item ids belong to the current restaurant.
 
         cs.new_coupon(create_coupon_form.coupon_code.data,
@@ -243,7 +247,8 @@ def admin_coupon_add():
 
         return redirect(url_for("admin_coupon_management"))
     else:
-        return render_template("admin/createCoupon.html", form=create_coupon_form)
+        return render_template("admin/createCoupon.html",
+                               form=create_coupon_form)
 
 
 @app.route("/admin/updateCoupon/<string:coupon_code>", methods=["GET", "POST"])
@@ -267,15 +272,19 @@ def admin_coupon_update(coupon_code):
         if update_coupon_form.discount_type.data == "fp":
             discount_type = CouponSystem.DISCOUNT_FIXED_PRICE
             discount_amount = float(update_coupon_form.discount_amount.data),
-            discount_amount = discount_amount[0]  # for some reason we get a tuple here
+            discount_amount = discount_amount[
+                0]  # for some reason we get a tuple here
         elif update_coupon_form.discount_type.data == "pct":
             discount_type = CouponSystem.DISCOUNT_PERCENTAGE_OFF
-            discount_amount = float(update_coupon_form.discount_amount.data) / 100
+            discount_amount = float(
+                update_coupon_form.discount_amount.data) / 100
         else:
             flash("Invalid discount type!")
             return redirect(url_for("admin_coupon_add"))
 
         food_item_ids = update_coupon_form.food_item_ids.data.split()
+        food_item_ids = [int(i) for i in food_item_ids]
+
         # TODO: Check if food item ids belong to the current restaurant.
 
         cs.edit_coupon(coupon_code,
@@ -303,7 +312,8 @@ def admin_coupon_update(coupon_code):
     update_coupon_form.discount_type.data = discount_type
     update_coupon_form.discount_amount.data = discount_amount
     update_coupon_form.expiry.data = coupon.expiry
-    return render_template("admin/updateCoupon.html", form=update_coupon_form, coupon_code=coupon_code)
+    return render_template("admin/updateCoupon.html", form=update_coupon_form,
+                           coupon_code=coupon_code)
 
 
 @app.route("/admin/deleteCoupon/<string:coupon_code>", methods=["GET", "POST"])
@@ -314,3 +324,33 @@ def admin_coupon_delete(coupon_code):
     cs.delete_coupon(coupon_code)
 
     return redirect(url_for("admin_coupon_management"))
+
+
+@app.route("/admin/testCoupon", methods=["POST"])
+@login_required
+@admin_side
+def coupon_tester():
+    cs = CouponSystem.query(current_user.coupon_system_id)
+    food_id = int(request.form["foodID"])
+    discount_code = request.form["discountCode"]
+
+    try:
+        dp = cs.discounted_price(food_id, discount_code)
+    except FoodIdNotExistsError:
+        flash("Food ID doesn't exist. You need to create it first.")
+    else:
+        flash("Discounted price is $%.2f" % dp)
+
+    return redirect(url_for("admin_coupon_management"))
+
+
+@app.route("/admin/reviews")
+@login_required
+@admin_side
+def admin_retrieve_reviews():
+    list_of_reviews = ReviewDao.get_reviews(current_user.restaurant_id)
+    average_rating = ReviewDao.get_average_rating(current_user.restaurant_id)
+    return render_template("admin/retrieveReviews.html",
+                           list_of_reviews=list_of_reviews,
+                           count=len(list_of_reviews),
+                           average_rating=average_rating)

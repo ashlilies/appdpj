@@ -1,10 +1,14 @@
+# Ashlee
+# Provides quick-and-easy file upload from Flask.
+
 import os
 import uuid
 
 from application import app
 
 
-def save_file(request_files, key: str):
+# Returns a stored relative filepath in the static folder.
+def save_file(request_files, key: str) -> str:
     file = request_files[key]
     file_ext = os.path.splitext(file.filename)[1]
     filename = str(uuid.uuid4()) + str(file_ext)
@@ -15,3 +19,13 @@ def save_file(request_files, key: str):
     file.save(filepath)
     stored_filename = "uploads/%s" % filename
     return stored_filename
+
+
+# Deletes a file in the uploads folder.
+def delete_file(stored_filename: str):
+    static_dir = os.path.join(os.getcwd(), "application/static")
+    filepath = os.path.join(static_dir, stored_filename)
+    try:
+        os.remove(filepath)
+    except OSError:
+        pass

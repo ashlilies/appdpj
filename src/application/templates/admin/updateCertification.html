@@ -10,7 +10,7 @@
             margin: auto;
         }
 
-        .btn{
+        .btn {
             display: flex;
             margin-left: 30px;
         }
@@ -23,158 +23,186 @@
             margin: 5px 30px;
         }
 
+        #showdisplay th {
+            width: 30%;
+            overflow: visible;
+        }
+
+        #showdisplay td {
+            width: 70%;
+            overflow: visible;
+        }
+
+
     </style>
 {% endblock %}
 
 {% block content %}
     <h1>Restaurant Certification</h1>
-     form
-    <form method="POST" action="" enctype="multipart/form-data">
-        <h3 style="margin: 10px 30px; padding-top: 20px; display: inline-block">Upload your Hygiene Certification below</h3>
-         display existing inputs
+    {#     form#}
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings"
+                    type="button" role="tab" aria-controls="nav-settings" aria-selected="true"><a
+                    href="{{ url_for('admin_myrestaurant') }}">Restaurant Information</a>
+            </button>
+            <button class="nav-link active" id="nav-restrictions-tab" data-bs-toggle="tab"
+                    data-bs-target="#nav-restrictions"
+                    type="button" role="tab" aria-controls="nav-restrictions" aria-selected="false"><a
+                    href="{{ url_for('test_upload') }}">Food Restrictions</a>
+            </button>
+        </div>
+    </nav>
+
+    {% for cert in id_list %}
+
+        <form method="POST" action="" enctype="multipart/form-data">
+        <h3 style="margin: 10px 30px; padding-top: 20px; display: inline-block">Upload your Hygiene Certification
+            below</h3>
+        {#         display existing inputs#}
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                data-bs-target="#exampleModal" style="display: inline-block !important; margin-top: 30px; margin-right: 30px; float: right;">
+                data-bs-target="#exampleModal"
+                style="display: inline-block !important; margin-top: 30px; margin-right: 30px; float: right;">
             View Pre-existing Certificates
         </button>
 
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1"
              aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                         hygiene cert
-                        <table class="table"
-                               style="background-color: white">
-                            {% for cert in id_list %}
-                                <thead>
-                                <tr>
-                                    <th scope="col">Certificate Name</th>
-                                    <th scope="col">File name</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <th scope="row">Hygiene Certificate</th>
-                                    <td>{{ cert.hygiene_cert }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Halal Certificate</th>
-                                    {% if not cert.halal_cert %}
-                                        <td>NIL</td>
-                                    {% else %}
-                                        <td>{{ cert.halal_cert }}</td>
-                                    {% endif %}
-                                </tr>
-                                <tr>
-                                    <th scope="row">Vegetarian Certificate</th>
-                                    {% if not cert.vegetarian_cert %}
-                                        <td>NIL</td>
-                                    {% else %}
-                                        <td>{{ cert.vegetarian_cert }}</td>
-                                    {% endif %}
-                                </tr>
-                                <tr>
-                                    <th scope="row">Vegan Certificate</th>
-                                    {% if not cert.vegan_cert %}
-                                        <td>NIL</td>
-                                    {% else %}
-                                        <td>{{ cert.vegan_cert }}</td>
-                                    {% endif %}
-                                </tr>
-                                <tr>
-                                    <th scope="row">No Pork No lard</th>
-                                    <td>{{ cert.noPorknoLard }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">No Beef</th>
-                                    <td>{{ cert.noBeef }}</td>
-                                </tr>
-                                </tbody>
-                            {% endfor %}
-                            </thead>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <!--END-->
+        <div class="modal-body">
+        {#                         hygiene cert#}
+        <table class="table" id="showdisplay"
+               style="background-color: white">
+        <thead>
+        <tr>
+            <th scope="col">Certificate Name</th>
+            <th scope="col">File name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th scope="row">Hygiene Certificate</th>
+            <td><a href="{{ url_for('static', filename=cert.hygiene_cert[19:]) }}" target="_blank">{{ cert.hygiene_cert[61:] }}</a></td>
+        </tr>
+        <tr>
+            <th scope="row">Halal Certificate</th>
+            {% if not cert.halal_cert %}
+                <td>NIL</td>
+            {% else %}
+                <td><a href="{{ url_for('static', filename=cert.halal_cert[19:]) }}" target="_blank">{{ cert.halal_cert[59:] }}</a></td>
+            {% endif %}
+        </tr>
+        <tr>
+            <th scope="row">Vegetarian Certificate</th>
+            {% if not cert.vegetarian_cert %}
+                <td>NIL</td>
+            {% else %}
+                <td><a href="{{ url_for("static", filename=cert.vegetarian_cert[19:]) }}" target="_blank">{{ cert.vegetarian_cert[64:] }}</a></td>
+            {% endif %}
+        </tr>
+        <tr>
+            <th scope="row">No Pork No lard</th>
+            <td>{{ cert.noPorknoLard }}</td>
+        </tr>
 
-        <div class="hygienecert">
-            <div class="mb-3">
-                <label>Hygiene Certification</label>
-                <input class="form-control" type="file" name="hygieneDocument" id="hygieneDocument"
-                       accept="application/pdf" value="NIL"
-                       required/>
-            </div>
-        </div>
-        <div style="margin: 10px 30px;">
-            <h3>Please click on the certifications your restaurant can serve</h3>
-        </div>
-{#        halal check #}
-        <div class="halalcheck">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="Halal" name="certCheck"
-                       id="halalCheck" onclick="fileUpload1()">
-                <label class="form-check-label" for="halalCheck">Halal</label>
-            </div>
-        </div>
-{#         vegetarian check #}
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="certCheck"
-                   value="Vegetarian" id="vegetarianCheck" onclick="fileUpload2()">
-            <label class="form-check-label" for="vegetarianCheck">Vegetarian</label>
-        </div>
-{#         no pork no lard check #}
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="certCheck"
-                   value="No Pork No Lard" id="NoPorkNoLard">
-            <label class="form-check-label" for="NoPorkNoLard">No
-                Pork, No Lard</label>
-        </div>
-{#         vegan check #}
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="Vegan" name="certCheck"
-                   id="veganCheck" onclick="fileUpload3()">
-            <label class="form-check-label" for="veganCheck">Vegan</label>
-        </div>
-{#         no beef check #}
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="NoBeef" name="certCheck"
-                   id="NoBeef">
-            <label class="form-check-label" for="NoBeef">No
-                beef</label>
-        </div>
+        <tr>
+            <th scope="row">Vegan Certificate</th>
+            {% if not cert.vegan_cert %}
+                <td>NIL</td>
+            {% else %}
+                <td><a href="{{ url_for('static', filename=cert.vegan_cert[19:]) }}" target="_blank">{{ cert.vegan_cert[59:] }}</a></td>
+            {% endif %}
+        </tr>
+        <tr>
+            <th scope="row">No Beef</th>
+            <td>{{ cert.noBeef }}</td>
+        </tr>
+        </tbody>
+    {% endfor %}
+</table>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+</div>
+</div>
+</div>
+</div>
+<!--END-->
+
+<div class="hygienecert">
+    <div class="mb-3">
+        <label>Hygiene Certification</label>
+        <input class="form-control" type="file" name="hygieneDocument" id="hygieneDocument"
+               accept="application/pdf" value="NIL"
+               required/>
+    </div>
+</div>
+<div style="margin: 10px 30px;">
+    <h3>Please click on the certifications your restaurant can serve</h3>
+</div>
+{#        halal check#}
+<div class="halalcheck">
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="Halal" name="certCheck"
+               id="halalCheck" onclick="fileUpload1()">
+        <label class="form-check-label" for="halalCheck">Halal</label>
+    </div>
+</div>
+{#         vegetarian check#}
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" name="certCheck"
+           value="Vegetarian" id="vegetarianCheck" onclick="fileUpload2()">
+    <label class="form-check-label" for="vegetarianCheck">Vegetarian</label>
+</div>
+{#         no pork no lard check#}
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" name="certCheck"
+           value="NoPorkNoLard" id="NoPorkNoLard">
+    <label class="form-check-label" for="NoPorkNoLard">No
+        Pork, No Lard</label>
+</div>
+{#         vegan check#}
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="Vegan" name="certCheck"
+           id="veganCheck" onclick="fileUpload3()">
+    <label class="form-check-label" for="veganCheck">Vegan</label>
+</div>
+{#         no beef check#}
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="NoBeef" name="certCheck"
+           id="NoBeef">
+    <label class="form-check-label" for="NoBeef">No
+        beef</label>
+</div>
 {#         halal file#}
-        <div class="mb-3" id="halalFile" style="display: none">
-            <label>Upload Halal Certification below</label>
-            <input name="halalDocument" class="form-control" type="file"
-                   id="halalFormFile" value="NIL" accept="application/pdf">
-        </div>
-{#         vegetarian file #}
-        <div class="mb-3" id="vegetarianFile" style="display:none">
-            <label>Upload Vegetarian Certification below</label>
-            <input name="vegetarianDocument" class="form-control"
-                   type="file" id="vegetarianFormFile" value="NIL" accept="application/pdf">
-        </div>
-{#         vegan file #}
-        <div class="mb-3" id="veganFile" style="display:none">
-            <label>Upload Vegan Certification below</label>
-            <input name="veganDocument" class="form-control" type="file"
-                   id="veganFormFile" value="NIL" accept="application/pdf">
-        </div>
+<div class="mb-3" id="halalFile" style="display: none">
+    <label>Upload Halal Certification below</label>
+    <input name="halalDocument" class="form-control" type="file"
+           id="halalFormFile" value="NIL" accept="application/pdf">
+</div>
+{#         vegetarian file#}
+<div class="mb-3" id="vegetarianFile" style="display:none">
+    <label>Upload Vegetarian Certification below</label>
+    <input name="vegetarianDocument" class="form-control"
+           type="file" id="vegetarianFormFile" value="NIL" accept="application/pdf">
+</div>
+{#         vegan file#}
+<div class="mb-3" id="veganFile" style="display:none">
+    <label>Upload Vegan Certification below</label>
+    <input name="veganDocument" class="form-control" type="file"
+           id="veganFormFile" value="NIL" accept="application/pdf">
+</div>
 
 
-        <input type="submit" value="Submit" class="btn btn-primary" style="margin-top: 10px;"/>
-    </form>
+<input type="submit" value="Submit" class="btn btn-primary" style="margin-top: 10px;"/>
+</form>
 
     <script>
         function fileUpload1() {
@@ -200,7 +228,7 @@
         function fileUpload3() {
             var veganCheckBox = document.getElementById("veganCheck");
             var veganUpload = document.getElementById("veganFile");
-            if (veganCheckBox.checked == true) {
+            if (veganCheckBox.checked === true) {
                 veganUpload.style.display = "block";
             } else {
                 veganUpload.style.display = "none";

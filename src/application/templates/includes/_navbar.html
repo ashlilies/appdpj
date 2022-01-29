@@ -12,8 +12,9 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="collapsibleNavbar">
-      <!-- Aligned left -->
+      <!-------------- Aligned left - Consumer and Admin ------------------->
       <div id="navbar-left-items">
+        {# <----------------------CONSUMER SIDE----------------------> #}
         <div id="consumerSide" hidden>
           <ul class="navbar-nav">
             <li class="nav-item">
@@ -21,13 +22,10 @@
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button"
-                 data-bs-toggle="dropdown">
-                Delivery</a>
+                 data-bs-toggle="dropdown"> Delivery</a>
               <ul class="dropdown-menu">
-                <a class="dropdown-item" href="#">Create
-                  User</a>
-                <a class="dropdown-item" href="#">Retrieve
-                  Users</a>
+                <a class="dropdown-item" href="#">Create User</a>
+                <a class="dropdown-item" href="#">Retrieve Users</a>
               </ul>
             </li>
             <li class="nav-item dropdown">
@@ -35,154 +33,183 @@
                  data-bs-toggle="dropdown">
                 Dine-In</a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="/createCustomer">Create
-                  Customer</a></li>
-                <li><a class="dropdown-item"
-                       href="#">Retrieve
-                  Customer</a></li>
+                <li><a class="dropdown-item" href="/createCustomer">Create Customer</a></li>
+                <li><a class="dropdown-item" href="#">Retrieve Customer</a></li>
               </ul>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Contact
-                Us</a>
+              <a class="nav-link" href="#">Contact Us</a>
             </li>
           </ul>
         </div>
 
-
+        {# <----------------------ADMIN SIDE----------------------> #}
         <div id="adminSide" hidden>
           <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for("admin_myrestaurant") }}">Restaurant</a>
-            </li>
+            {# Force users to create a restaurant if not yet exist #}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for("admin_myrestaurant") }}">Restaurant</a>
+              </li>
 
-
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('admin_coupon_management') }}">Coupons</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for("food_management") }}">Menu</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link"
-                 href="#">Dashboard</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link"
-                 href="#">Feedback</a>
-            </li>
+              {% if current_user.restaurant_id or not current_user.is_authenticated%}
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('admin_coupon_management') }}">Coupons</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for("admin_retrieve_food") }}">Menu</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link"
+                     href="{{ url_for("dashboard") }}">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link"
+                     href="{{ url_for("admin_retrieve_reviews") }}">Reviews</a>
+                </li>
+              {% endif %}
           </ul>
         </div>
       </div>
-      <!-- Aligned right -->
+      <!-------------- Aligned right - Consumer and Admin ------------------->
       <div id="navbar-right-items" class="ms-auto">
         <ul class="navbar-nav" id="consumerSideRight" hidden>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button"
-               data-bs-toggle="dropdown">
-              Admin/Consumer</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item"
-                     href={{ url_for("admin_home") }}>Admin</a></li>
-              <li><a class="dropdown-item"
-                     href={{ url_for("consumer_home") }}>Consumer</a>
+          {# <----------------------CONSUMER SIDE----------------------> #}
+          {% if current_user.is_authenticated %}
+            {% if current_user.type == "consumer" %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button"
+                   data-bs-toggle="dropdown">
+                  Reviews</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{{ url_for("consumer_retrieve_reviews") }}">My Reviews</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for("consumer_create_review") }}">Write Review</a></li>
+                </ul>
               </li>
-            </ul>
-          </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button"
+                   data-bs-toggle="dropdown">
+                  Hi, {{ current_user.name }}</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Account settings (U/C)</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for("consumer_logout") }}">Log Out</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for("consumer_cart") }}">Cart</a>
+              </li>
+            {% endif %}
+          {% else %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button"
+                 data-bs-toggle="dropdown">
+                Admin/Consumer</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item"
+                       href={{ url_for("admin_home") }}>Admin</a></li>
+                <li><a class="dropdown-item"
+                       href={{ url_for("consumer_home") }}>Consumer</a>
+                </li>
+              </ul>
+            </li>
 
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button"
-               data-bs-toggle="dropdown">
-              My Account</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Login</a></li>
-              <li><a class="dropdown-item" href="#">Sign Up</a></li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for("consumer_cart") }}">Cart</a>
-          </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button"
+                 data-bs-toggle="dropdown">
+                My Account</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ url_for("consumer_login") }}">Login</a></li>
+                <li><a class="dropdown-item" href="{{ url_for("consumer_register") }}">Sign Up</a></li>
+              </ul>
+            </li>
+          {% endif %}
 
         </ul>
+        {# <----------------------ADMIN SIDE----------------------> #}
         <ul class="navbar-nav" id="adminSideRight" hidden>
           {# Only show switcher if not logged in #}
 
-          {% if current_user.is_authenticated %} {# Account is logged in #}
-          <li class="nav-item dropdown loggedInMenu">
-            <a class="nav-link dropdown-toggle" href="#" role="button"
-               data-bs-toggle="dropdown">
-              Hi, {{ current_user.get_name() }}</a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#accountSettingsModal">
-                Account Settings
-              </a></li>
-              <li><a class="dropdown-item" href={{ url_for("admin_logout") }}>Log Out</a></li>
-            </ul>
-          </li>
+          {# Account is logged in and Admin type #}
+          {% if current_user.is_authenticated %}
+            {% if current_user.type == "admin" %}
+              <li class="nav-item dropdown loggedInMenu">
+                <a class="nav-link dropdown-toggle" href="#" role="button"
+                   data-bs-toggle="dropdown">
+                  Hi, {{ current_user.get_name() }}</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#accountSettingsModal">
+                    Account Settings
+                  </a></li>
+                  <li><a class="dropdown-item" href={{ url_for("admin_logout") }}>Log Out</a></li>
+                </ul>
+              </li>
 
-          <!-- Account Settings modal -->
-          <!-- using BS5 Modal -->
-          <div class="modal fade" id="accountSettingsModal" tabindex="-1" aria-labelledby="accountSettingsModalLabel"
-               aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="accountSettingsModalLabel">Account Settings</h5>
-                </div>
-                <div class="modal-body">
-                  <form action="{{ url_for("admin_update_account") }}" id="accountSettingsForm" method="post">
-                    <label for="updateSettingsPw">To update any settings, you must enter your current password.</label>
-                    <label for="updateSettingsPw" style="margin-top: 1.5rem;">Current Password: </label>
-                    <input type="password" name="updateSettingsPw" id="updateSettingsPw"><br>
-                    <hr>
-                    <div class="form-group row">
-                      <label for="changeName">Current Name: <b>{{ current_user.get_name() }}</b></label>
-                      <label for="changeName" class="col-form-label">New Name: </label>
-                      <input type="text" name="changeName" id="changeName"><br>
+              <!-- Account Settings modal -->
+              <!-- using BS5 Modal -->
+              <div class="modal fade" id="accountSettingsModal" tabindex="-1"
+                   aria-labelledby="accountSettingsModalLabel"
+                   aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="accountSettingsModalLabel">Account Settings</h5>
                     </div>
-                    <hr>
-                    <div class="form-group row">
-                      <label for="changeEmail">Current Email: <b>{{ current_user.get_email() }}</b></label>
-                      <label for="changeEmail" class="col-form-label">New Email: </label>
-                      <input type="text" name="changeEmail" id="changeEmail"><br>
-                    </div>
-                    <div class="form-group row">
-                      <label for="changePw" class="col-form-label">New Password: </label>
-                      <input type="password" name="changePw" id="changePw"><br>
-                    </div>
-                    <div class="form-group row">
-                      <label for="changePwConfirm" class="col-form-label">Confirm Password: </label>
-                      <input type="password" name="changePwConfirm" id="changePwConfirm"><br>
-                    </div>
+                    <div class="modal-body">
+                      <form action="{{ url_for("admin_update_account") }}" id="accountSettingsForm" method="post">
+                        <label for="updateSettingsPw">To update any settings, you must enter your current
+                          password.</label>
+                        <label for="updateSettingsPw" style="margin-top: 1.5rem;">Current Password: </label>
+                        <input type="password" name="updateSettingsPw" id="updateSettingsPw"><br>
+                        <hr>
+                        <div class="form-group row">
+                          <label for="changeName">Current Name: <b>{{ current_user.get_name() }}</b></label>
+                          <label for="changeName" class="col-form-label">New Name: </label>
+                          <input type="text" name="changeName" id="changeName"><br>
+                        </div>
+                        <hr>
+                        <div class="form-group row">
+                          <label for="changeEmail">Current Email: <b>{{ current_user.get_email() }}</b></label>
+                          <label for="changeEmail" class="col-form-label">New Email: </label>
+                          <input type="text" name="changeEmail" id="changeEmail"><br>
+                        </div>
+                        <div class="form-group row">
+                          <label for="changePw" class="col-form-label">New Password: </label>
+                          <input type="password" name="changePw" id="changePw"><br>
+                        </div>
+                        <div class="form-group row">
+                          <label for="changePwConfirm" class="col-form-label">Confirm Password: </label>
+                          <input type="password" name="changePwConfirm" id="changePwConfirm"><br>
+                        </div>
 
-                    {# TODO: FOR Deletion only! Hidden! #}
-                    <label hidden for="deleteAccountField"></label>
-                    <input hidden type="text" name="deleteAccountField" id="deleteAccountField">
-                  </form>
-                </div>
-                <div class="modal-footer">
-                  <div class="d-flex align-items-start">
-                    <button type="button" class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
+                        {# TODO: FOR Deletion only! Hidden! #}
+                        <label hidden for="deleteAccountField"></label>
+                        <input hidden type="text" name="deleteAccountField" id="deleteAccountField">
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <div class="d-flex align-items-start">
+                        <button type="button" class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
+                      </div>
+                      <button type="button" class="btn btn-primary" onclick="updateAccount()">Save changes</button>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
                   </div>
-                  <button type="button" class="btn btn-primary" onclick="updateAccount()">Save changes</button>
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <!-- Account Settings modal script -->
-          <script>
-              function updateAccount() {
-                  document.getElementById("accountSettingsForm").submit();
-              }
-              function deleteAccount() {
-                  if (confirm("Are you REALLY SURE you want to delete your account? This cannot be undone!"))
-                      window.location.href = "{{ url_for("delete_admin_account") }}";
-              }
-          </script>
+              <!-- Account Settings modal script -->
+              <script>
+                  function updateAccount() {
+                      document.getElementById("accountSettingsForm").submit();
+                  }
+
+                  function deleteAccount() {
+                      if (confirm("Are you REALLY SURE you want to delete your account? This cannot be undone!"))
+                          window.location.href = "{{ url_for("delete_admin_account") }}";
+                  }
+              </script>
 
 
+            {% endif %}
           {% else %} {# Account is NOT logged in #}
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button"
@@ -211,3 +238,28 @@
     </div>
   </div>
 </nav>
+
+{# Nowhere else to put this that shares between admin and consumer :( #}
+{# Flashed messages via Flask - Ashlee #}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="container-fluid">
+    <div class="alert alert-dismissible fade show alert-primary d-flex align-items-center" role="alert">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+           class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img"
+           aria-label="Warning:">
+        <path
+            d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+      </svg>
+
+      <div>
+        {% for msg in messages %}
+          {{ msg }}<br>
+        {% endfor %}
+      </div>
+
+      <button type="button" class="btn-close" data-bs-dismiss="alert"
+              aria-label="Close"></button>
+    </div>
+  {% endif %}
+{% endwith %}

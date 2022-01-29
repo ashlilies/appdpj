@@ -1,0 +1,28 @@
+{% extends "consumer/consumer_base.html" %}
+{% block title %}Write Review{% endblock %}
+
+{% block content %}
+  {% from "includes/_formHelper.html" import render_field %}
+
+  <h1 class="display-6">Write Review</h1>
+
+  <form method="POST" action="{{ url_for('consumer_create_review') }}" enctype="multipart/form-data">
+    <div class="form-group">
+      {{ render_field(form.restaurant, class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ render_field(form.stars, class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ render_field(form.title, class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ render_field(form.description, class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ render_field(form.media, class="form-control") }}
+    </div>
+    <br>
+    <input type="submit" value="Submit" class="btn btn-primary"/>
+  </form>
+{% endblock %}
