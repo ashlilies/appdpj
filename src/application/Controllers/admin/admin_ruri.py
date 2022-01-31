@@ -97,7 +97,7 @@ def admin_myrestaurant():  # ruri
                 restaurant_details_form.rest_del4.data,
                 restaurant_details_form.rest_del5.data,
             )
-
+            print(restaurant.get_logo())
         # ashlee - attach restaurant_id to our current user
         # current_user.restaurant_id = restaurant_id
         # print(current_user.restaurant_id)
@@ -190,3 +190,8 @@ def update_restaurant_confirm(id):
 @app.route("/admin/dashboard")
 def dashboard():  # ruri
     return render_template('admin/dashboard.html')
+
+@app.route("/consumer/delordine")
+def delordine():  # ruri
+    return render_template('consumer/delOrdine.html')
+
