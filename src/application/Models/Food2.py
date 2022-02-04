@@ -124,3 +124,4 @@ class FoodDao:
 
 class FoodIdNotExistsError(Exception):
     pass
+

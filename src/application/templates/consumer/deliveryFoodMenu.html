@@ -86,18 +86,28 @@
                 <div class="modal-body">
                     <form method="POST" action="">
                         <p>Edit Toppings</p>
-                        {% for food in food_list %}
-                            {% for topping in food.toppings %}
-                                <div class="mb-3 form-check">
-                                    <input type="checkbox" class="form-check-input" value={{ toppping }} name="toppings"
-                                       id="toppings">
-                                    <label class="form-label" for="exampleCheck1">{{ topping }}<br></label>
-                                </div>
-                            {% endfor %}
-                        {% endfor %}
-                        <br>
-                        <label class="form-label">Other Request</label><input class="form-text" class="form-control" type="text"
-                                                           placeholder="Got other request?" id="otherRequest">
+                        {#                        {% for food in food_list %}#}
+                        {#                            {% for topping in food.toppings %}#}
+                        {#                                <div class="mb-3 form-check">#}
+                        {#                                    <input type="checkbox" class="form-check-input" value={{ toppping }} name="toppings"#}
+                        {#                                       id="toppings">#}
+                        {#                                    <label class="form-label" for="exampleCheck1">{{ topping }}<br></label>#}
+                        {#                                </div>#}
+                        {#                            {% endfor %}#}
+                        {#                        {% endfor %}#}
+
+{#                        <p>#}
+{#                            {{ form.roles.label }}<br>#}
+{#                            {{ form.roles(size=32) }}<br>#}
+{#                            {% for error in form.roles.errors %}#}
+{#                                <span style="color: red;">[{{ error }}]</span>#}
+{#                            {% endfor %}#}
+{#                        </p>#}
+{#                        <br>#}
+{#                        <label class="form-label">Other Request</label><input class="form-text" class="form-control"#}
+{#                                                                              type="text"#}
+{#                                                                              placeholder="Got other request?"#}
+{#                                                                              id="otherRequest">#}
                     </form>
 
 
