@@ -16,7 +16,7 @@ from application.Models.FileUpload import save_file
 # <------------------------- ASHLEE ------------------------------>
 
 # Decorator to only allow admin accounts or guests
-from application.Models.Review import ReviewDao
+from application.Models.Order import ReviewDao
 
 
 def admin_side(view):

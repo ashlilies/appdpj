@@ -25,13 +25,17 @@
             <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15954.644746298643!2d103.8489487!3d1.37995!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xe5f10ff680eed942!2sNanyang%20Polytechnic!5e0!3m2!1sen!2ssg!4v1643549501763!5m2!1sen!2ssg"
                     style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             <div class="form-group">
-                {{ render_field(form.consumer_homeAddress, class="form-control") }}
+                {{ render_field(form.addressType, class="form-control") }}
+            </div>
+
+            <div class="form-group">
+                {{ render_field(form.consumer_homeAddress, class="form-control", placeholder='Enter Home Address here') }}
             </div>
             <div class="form-group">
-                {{ render_field(form.consumer_workAddress, class="form-control") }}
+                {{ render_field(form.consumer_workAddress, class="form-control", placeholder='Enter Work Address here') }}
             </div>
             <div class="form-group">
-                {{ render_field(form.consumer_otherAddress, class="form-control") }}
+                {{ render_field(form.consumer_otherAddress, class="form-control", placeholder='Enter Address here') }}
             </div>
 
             <input type="submit" value="Submit" class="btn btn-primary"/>

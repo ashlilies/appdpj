@@ -9,6 +9,7 @@ from application import app
 # todo: find bootstrap examples of shopping cart, and then make the css look good before getting the data etc.
 # urgent but can only do after integration of everything
 
+
 # ADDRESS FIELD (form field)
 # todo: something similar to ruri's restaurant details, create, and update tgt
 # todo: dropdown box for each individual address? or smt like clara's adding of toppings
@@ -20,18 +21,32 @@ from application.consumer_address_form import ConsumerAddressForm
 def consumer_myaddress():
     consumer_address_form = ConsumerAddressForm(request.form)
     # controller will be the place where we do all the interaction
-    create_address_form = ConsumerAddressForm(request.form)
+    address_form = ConsumerAddressForm(request.form)
 
     if request.method == 'POST' and consumer_address_form.validate():
-        AddressDao.create_address(1, create_address_form.consumer_homeAddress.data,
-                                  create_address_form.consumer_workAddress.data,
-                                  create_address_form.consumer_otherAddress.data)
+        # checks if consumer address has already been inputted by consumer
+        if not current_user.consumer_id:
+            # todo: integrate customer_id into this '1' data
+            consumer = AddressDao.create_address(1, address_form.consumer_homeAddress.data,
+                                      address_form.consumer_workAddress.data,
+                                      address_form.consumer_otherAddress.data
+                                      )
+            current_user.consumer_id = consumer.id
+        else:
+            consumer = AddressDao.get_user_addresss(current_user.consumer_id)
+            AddressDao.update_address(1, address_form.consumer_homeAddress.data,
+                                      address_form.consumer_workAddress.data,
+                                      address_form.consumer_otherAddress.data
+                                      )
 
         return redirect(url_for("consumer_home"))
-    else:
-        print('i hate appdev')
+    if current_user.consumer_id is not None:
+        consumer = AddressDao.get_user_addresss(current_user.consumer_id)
+        address_form.consumer_homeAddress.data = consumer.homeAddress
+        address_form.consumer_workAddress.data = consumer.workAddress
+        address_form.consumer_otherAddress.data = consumer.otherAddress
 
-    return render_template("consumer/address.html", form=create_address_form)
+    return render_template("consumer/address.html", form=address_form)
 
 # ADDRESS UPDATE FIELD (form field)
 # @app.route("/updateAddress")
