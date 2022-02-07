@@ -1,0 +1,39 @@
+{% extends "admin/admin_base.html" %}
+{% block title %} Delivery or dine in {% endblock %}
+{% block head %}
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+  height: 300px; /* Should be removed. Only for demonstration */
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="row" style="margin-left: 30px;">
+  <div class="column" style="padding-top:60px;">
+          <img src="../../static/delordine/dinein.png" alt="Delivery option">
+
+  </div>
+  <div class="column" style="padding-top:60px;">
+          <img src="../../static/delordine/delivery.png" alt="Delivery option">
+
+  </div>
+</div>
+
+{% endblock %}
