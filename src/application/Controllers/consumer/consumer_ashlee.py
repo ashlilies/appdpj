@@ -150,6 +150,23 @@ def consumer_delete_review(review_id):
     return redirect(url_for("consumer_retrieve_reviews"))
 
 @app.route('/cart')
+@login_required
 @consumer_side
 def consumer_cart():
     return render_template("consumer/cart.html")
+
+
+@app.route("/dineIn")
+@consumer_side
+@login_required
+def dine_in():
+    restaurants = RestaurantSystem.get_restaurants()
+    return render_template("consumer/dineIn.html", restaurants=restaurants, count=len(restaurants))
+
+
+@app.route("/delivery")
+@consumer_side
+@login_required
+def delivery():
+    restaurants = RestaurantSystem.get_restaurants()
+    return render_template("consumer/delivery.html", restaurants=restaurants, count=len(restaurants))

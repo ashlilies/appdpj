@@ -1,0 +1,32 @@
+{% extends "consumer/consumer_base.html" %}
+{% block title %}Dine-In{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for("static", filename="css/features.css") }}">
+{% endblock %}
+
+{% block content %}
+   <div class="container px-4 py-5" id="featured-3">
+    <h2 class="pb-2 border-bottom">Choose a Restaurant</h2>
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-1">
+      {% if count %}
+        {% for restaurant in restaurants %}
+        <div class="feature col">
+          <div class="feature-icon bg-primary bg-gradient">
+            <img width=50 height=50 src="{{ url_for("static", filename=restaurant.logo) }}">
+          </div>
+          <h2>{{ restaurant.name }}</h2>
+          <p>{{ restaurant.desc }}</p>
+          <a href="#" class="icon-link">
+            Order
+            <svg class="bi" width="1em" height="1em"><use xlink:href="#chevron-right"/></svg>
+          </a>
+        </div>
+        {% endfor %}
+      {% else %}
+      <p>There are no restaurants on FoodyPulse yet :(</p>
+      {% endif %}
+    </div>
+  </div>
+
+{% endblock %}
