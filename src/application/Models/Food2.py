@@ -13,6 +13,8 @@ class Food:
     def __init__(self, restaurant_id, name, image, description, price, allergy,
                  specification=None, topping=None):
         with shelve.open(FOOD_DB, 'c') as db:
+            # if count_id in database, the food object created
+            # would be stored with count_id as key
             if "count_id" in db:
                 Food.count_id = db["count_id"]
                 logging.info(
@@ -28,12 +30,14 @@ class Food:
         self.specifications = specification
         self.toppings = topping
         self.parent_restaurant_id = restaurant_id
-
+        #writeback
         with shelve.open(FOOD_DB, 'c') as db:
             db["count_id"] = Food.count_id
 
 
 class FoodDao:
+    #doesn't receive any reference argument whether it
+    # is called by an instance of a class or by the class itself
     @staticmethod
     def create_food(restaurant_id: str, name: str, image: str, description: str,
                     price: float, allergy: str,
@@ -48,11 +52,12 @@ class FoodDao:
         food = FoodDao.query(food_id)
         if food is None:
             raise FoodIdNotExistsError
-
+        #if the image is not the same as the initial image,
+        #delete that image and replace it with the old one
         if food.image != image_path:
             delete_file(food.image)
             food.image = image_path
-
+        #reset the public attributes to the updated one
         food.name = name
         food.description = description
         food.price = price
@@ -119,3 +124,4 @@ class FoodDao:
 
 class FoodIdNotExistsError(Exception):
     pass
+

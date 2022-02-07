@@ -89,9 +89,12 @@ def admin_create_food():
 
 
 @app.route("/admin/menu")
+#displaying of food
 @login_required
 @admin_side
 def admin_retrieve_food():
+    #retrieve the food created from FoodDao
+    #using the currernt users restaurant_id
     food_list = FoodDao.get_foods(current_user.restaurant_id)
     return render_template('admin/food/retrieveFood.html', food_list=food_list)
 
@@ -101,11 +104,14 @@ def admin_retrieve_food():
 @admin_side
 def admin_update_food(food_id):
     update_food_form = CreateFoodForm(request.form)
+    #query for the food object created with the relative food_id
     food = FoodDao.query(food_id)
 
     if request.method == "POST" and update_food_form.validate():
+        #reset with the updated datas
         image_path = food.image
         if request.files["image"].filename != "":  # file was uploaded
+            #old image replaced by new image
             image_path = save_file(request.files, "image")
 
         specs = get_specs(request.form)

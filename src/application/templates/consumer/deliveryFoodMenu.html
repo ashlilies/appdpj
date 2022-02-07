@@ -1,64 +1,150 @@
 <!--Clara-->
 {% extends "consumer/consumer_base.html" %}
-{% block title %}Food Management {% endblock %}
-
+{% block title %}Food Modal {% endblock %}
 {% from "includes/_formHelper.html" import render_field %}
 
 {% block head %}
     <style>
+        {##foodDescription {#}
+        {#    margin-top: 5%;#}
+        {#    margin-right:100%;#}
+
+        #}#}
+
+        #foodDescription > p {
+            margin: 1%;
+            padding: 1%;
+        }
+
+        #left-home-content {
+            margin-left: 2%;
+            margin-top: 5%;
+            height: 200px;
+        }
+
+        #image {
+            width: 170px;
+            height: 170px;
+        }
+
+        #foodName {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        #foodDescription {
+            margin-right: 20%;
+            font-size: 15px;
+        {#margin-bottom: 47%;#} padding: 1%;
+            width: 200px;
+            margin-left: 15px;
+        }
+
+        #otherRequest {
+            width: 380px;
+        }
+
 
     </style>
 {% endblock %}
-
 {% block content %}
-    <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <hr>
-
-            <form method="POST" action="{{ url_for("") }}">
-
-                        <div class="mb-3">
-                             {% for food in food_list.get_topping() %}
-                            <label>{{ food.get_topping() }}</label><input type="checkbox" value="1">
+    {#    <div id="whole-homepage" class="d-flex flex-row">#}
+    <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-header">
+                    <div id="left-home-content">
+                        {% for food in food_list %}
+                            <img src="{{ url_for("static", filename=food.image) }}" width=100 id="image"
+                                 alt="Food Image">
+                        {% endfor %}
+                    </div>
+                    <div id="foodDescription">
+                        <div id="foodName" class="text-nowrap bd-highlight" style="width: 8rem;">
+                            {% for food in food_list %}
+                                {{ food.name }}
+                            {% endfor %}
                         </div>
+                        {#                    </div>#}
+                        {##}
+                        <div id="foodDescription">
+                            {#                    <div id="right-home-content" class="text-nowrap bd-highlight" style="width:4rem;">#}
+                            {% for food in food_list %}
+                                <p>{{ food.description }}</p>
+                                <p>${{ "%.2f"|format(food.price) }}</p>
+                                <p>{% for spec in food.specifications %}{{ spec }}</p>{% endfor %}
+                                <p>allergy: {{ food.allergy }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
 
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="">
+                        <p>Edit Toppings</p>
+                        {#                        {% for food in food_list %}#}
+                        {#                            {% for topping in food.toppings %}#}
+                        {#                                <div class="mb-3 form-check">#}
+                        {#                                    <input type="checkbox" class="form-check-input" value={{ toppping }} name="toppings"#}
+                        {#                                       id="toppings">#}
+                        {#                                    <label class="form-label" for="exampleCheck1">{{ topping }}<br></label>#}
+                        {#                                </div>#}
+                        {#                            {% endfor %}#}
+                        {#                        {% endfor %}#}
 
-                        <input type="submit" value="Submit" class="btn btn-primary"/>
+{#                        <p>#}
+{#                            {{ form.roles.label }}<br>#}
+{#                            {{ form.roles(size=32) }}<br>#}
+{#                            {% for error in form.roles.errors %}#}
+{#                                <span style="color: red;">[{{ error }}]</span>#}
+{#                            {% endfor %}#}
+{#                        </p>#}
+{#                        <br>#}
+{#                        <label class="form-label">Other Request</label><input class="form-text" class="form-control"#}
+{#                                                                              type="text"#}
+{#                                                                              placeholder="Got other request?"#}
+{#                                                                              id="otherRequest">#}
                     </form>
 
 
-
-
-
-
-
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">Open second modal</button>
-      </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal"
+                            data-bs-dismiss="modal">Add to cart
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
-<div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalToggleLabel2">Modal 2</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        Hide this modal and show the first with the button below.
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal" data-bs-dismiss="modal">Back to first</button>
-      </div>
+    <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2"
+         tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalToggleLabel2">Modal 2</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Hide this modal and show the first with the button below.
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-bs-target="#exampleModalToggle" data-bs-toggle="modal"
+                            data-bs-dismiss="modal">Back to first
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
-<a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Open first modal</a>
+    <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Open first modal</a>
+    {#    </div>#}
+
+    <script>
+
+    </script>
+
+
 {% endblock %}
