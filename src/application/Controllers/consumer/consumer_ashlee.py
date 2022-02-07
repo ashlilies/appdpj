@@ -15,7 +15,7 @@ from application.Models.Consumer import Consumer
 # Decorator to only allow consumer accounts or guests
 from application.Models.FileUpload import save_file
 from application.Models.RestaurantSystem import RestaurantSystem
-from application.Models.Review import ReviewDao
+from application.Models.Order import ReviewDao
 from application.ReviewForms import CreateReviewForm
 
 
