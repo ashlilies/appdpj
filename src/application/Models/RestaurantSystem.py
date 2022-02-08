@@ -1,4 +1,4 @@
-from application.Models.Restaurant import *
+from application.Models.Restaurant import Restaurant
 import uuid
 import shelve
 import pickle

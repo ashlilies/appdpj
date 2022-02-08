@@ -18,7 +18,7 @@ from application.Models.Food import Food
 from application.Models.Food2 import FoodDao
 from application.Models.Restaurant import Restaurant
 from application import app, login_manager
-from application.Models.Order import ReviewDao
+from application.Models.Review import ReviewDao
 from application.Models.Transaction import Transaction
 from application.CreateFoodForm import CreateFoodForm
 from werkzeug.utils import secure_filename

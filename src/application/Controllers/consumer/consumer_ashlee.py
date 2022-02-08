@@ -17,7 +17,7 @@ from application.Models.Consumer import Consumer
 from application.Models.FileUpload import save_file
 from application.Models.Food2 import FoodDao
 from application.Models.RestaurantSystem import RestaurantSystem
-from application.Models.Order import ReviewDao
+from application.Models.Review import ReviewDao
 from application.ReviewForms import CreateReviewForm
 
 
@@ -158,11 +158,15 @@ def consumer_delete_review(review_id):
     return redirect(url_for("consumer_retrieve_reviews"))
 
 
+# TODO: Identify ordering type, handle discounts
 @app.route('/cart')
 @login_required
 @consumer_side
 def consumer_cart():
-    return render_template("consumer/cart.html")
+    cart = CartDao.get_cart(current_user.cart)
+    cart_items = cart.get_foods()
+    return render_template("consumer/cart.html", cart_items=cart_items,
+                           count=len(cart_items))
 
 
 # TODO: Add quantity support for add and del

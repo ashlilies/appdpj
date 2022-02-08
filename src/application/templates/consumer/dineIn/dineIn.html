@@ -16,27 +16,15 @@
           <div class="card" style="width: 18rem;">
             <img src="{{ url_for("static", filename=restaurant.logo) }}" class="card-img-top" alt="{{ restaurant.name }}">
             <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card
-                title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn btn-primary">Go somewhere</a>
+              <h5 class="card-title">{{ restaurant.name }}</h5>
+              <div class="">
+                {% for i in range(restaurant.stars_int) %}
+                  <img class="review-star" src="{{ url_for("static", filename="reviews/star.png") }}" alt="Star">
+                {% endfor %}
+              </div>
+              <p class="card-text">{{ restaurant.desc }}</p>
+              <a href="{{ url_for("dine_in_food", restaurant_id=restaurant.id) }}" class="btn btn-primary">Order</a>
             </div>
-          </div>
-
-          <div class="feature col">
-            <div class="feature-icon bg-primary bg-gradient">
-              <img width=50 height=50
-                   src="{{ url_for("static", filename=restaurant.logo) }}">
-            </div>
-            <h2>{{ restaurant.name }}</h2>
-            <p>{{ restaurant.desc }}</p>
-            <a href="{{ url_for("dine_in_food", restaurant_id=restaurant.id) }}"
-               class="icon-link">
-              Order
-              <svg class="bi" width="1em" height="1em">
-                <use xlink:href="#chevron-right"/>
-              </svg>
-            </a>
           </div>
         {% endfor %}
       {% else %}

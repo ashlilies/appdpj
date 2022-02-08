@@ -1,6 +1,8 @@
 # Ruri
 import uuid
 import shelve
+
+
 RESTAURANT_DB = 'restaurant_db'
 import pickle
 # from application.Models.Admin import Admin
@@ -125,6 +127,11 @@ class Restaurant():
 
     def get_del5(self):
         return self.del5
+
+    @property
+    def stars_int(self):
+        from application.Models.Review import ReviewDao
+        return int(ReviewDao.get_average_rating(self.id))
 
 
 

@@ -47,7 +47,8 @@ def user_loader(user_id):
 # TODO: We should have 1 common place for login.
 @login_manager.unauthorized_handler
 def unauthorized_callback():
-    return redirect(url_for("admin_login"))
+    flash("Please log in to continue.")
+    return redirect(url_for("consumer_login"))
 
 
 # Includes
