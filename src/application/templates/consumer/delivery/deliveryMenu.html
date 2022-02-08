@@ -13,17 +13,17 @@
     <div class="row g-4 py-5 row-cols-1 row-cols-lg-1">
       {% if count %}
         {% for food in food_list %}
-        <div class="feature col">
-          <div class="feature-icon bg-primary bg-gradient">
-            <img width=50 height=50 src="{{ url_for("static", filename=food.image) }}">
+          <div class="card" style="width: 18rem;">
+            <img src="{{ url_for("static", filename=food.image) }}"
+                 class="card-img-top" alt="{{ food.name }}">
+            <div class="card-body">
+              <h5 class="card-title">{{ food.name }}</h5>
+              <h6 class="card-title">${{ "%.2f" % food.price }}</h6>
+              <p class="card-text">{{ food.description }}</p>
+              <a href="{{ url_for("cart_add", food_id=food.id) }}"
+                 class="btn btn-primary">Add to Cart</a>
+            </div>
           </div>
-          <h2>{{ food.name }}</h2>
-          <p>{{ food.description }}</p>
-          <a href="#" class="icon-link">
-            Add to Cart
-            <svg class="bi" width="1em" height="1em"><use xlink:href="#chevron-right"/></svg>
-          </a>
-        </div>
         {% endfor %}
       {% else %}
       <p>There are no food items in {{ restaurant.name }} yet :(</p>
