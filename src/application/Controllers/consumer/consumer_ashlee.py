@@ -8,12 +8,14 @@ from werkzeug.utils import redirect
 from application import app
 from application.Models.Account import Account
 from application.Models.Admin import Admin
+from application.Models.Cart import CartDao
 from application.Models.Consumer import Consumer
 
 # <------------------------- ASHLEE ------------------------------>
 
 # Decorator to only allow consumer accounts or guests
 from application.Models.FileUpload import save_file
+from application.Models.Food2 import FoodDao
 from application.Models.RestaurantSystem import RestaurantSystem
 from application.Models.Order import ReviewDao
 from application.ReviewForms import CreateReviewForm
@@ -22,7 +24,8 @@ from application.ReviewForms import CreateReviewForm
 def consumer_side(view):
     @functools.wraps(view)
     def wrapper(*args, **kwargs):
-        if isinstance(current_user, Consumer) or not current_user.is_authenticated:
+        if isinstance(current_user,
+                      Consumer) or not current_user.is_authenticated:
             print(current_user)
             return view(*args, **kwargs)
         flash("You need to log out first to access the Consumer side.")
@@ -102,7 +105,9 @@ def consumer_logout():
 def consumer_create_review():
     create_review_form = CreateReviewForm(request.form)
     list_of_restaurants = RestaurantSystem.get_restaurants()
-    create_review_form.restaurant.choices += [(restaurant.id, restaurant.name) for restaurant in list_of_restaurants]
+    create_review_form.restaurant.choices += [(restaurant.id, restaurant.name)
+                                              for restaurant in
+                                              list_of_restaurants]
 
     if request.method == "POST" and create_review_form.validate():
         # Check that restaurant and stars are not invalid
@@ -120,17 +125,19 @@ def consumer_create_review():
         if request.files[create_review_form.media.name].filename != "":
             media_path = save_file(request.files, create_review_form.media.name)
 
-        ReviewDao.create_review(restaurant_id=create_review_form.restaurant.data,
-                                reviewer_id=current_user.account_id,
-                                stars=stars,
-                                title=create_review_form.title.data,
-                                description=create_review_form.description.data,
-                                date_time=current_datetime,
-                                media_path=media_path)
+        ReviewDao.create_review(
+            restaurant_id=create_review_form.restaurant.data,
+            reviewer_id=current_user.account_id,
+            stars=stars,
+            title=create_review_form.title.data,
+            description=create_review_form.description.data,
+            date_time=current_datetime,
+            media_path=media_path)
         # TODO: Redirect to My Reviews
         return redirect(url_for("consumer_retrieve_reviews"))
 
-    return render_template("consumer/reviews/createReview.html", form=create_review_form)
+    return render_template("consumer/reviews/createReview.html",
+                           form=create_review_form)
 
 
 @app.route("/myReviews")
@@ -138,7 +145,8 @@ def consumer_create_review():
 @consumer_side
 def consumer_retrieve_reviews():
     list_of_reviews = ReviewDao.get_user_reviews(current_user.account_id)
-    return render_template("consumer/reviews/myReviews.html", list_of_reviews=list_of_reviews,
+    return render_template("consumer/reviews/myReviews.html",
+                           list_of_reviews=list_of_reviews,
                            count=len(list_of_reviews))
 
 
@@ -149,6 +157,7 @@ def consumer_delete_review(review_id):
     ReviewDao.delete_review(review_id)
     return redirect(url_for("consumer_retrieve_reviews"))
 
+
 @app.route('/cart')
 @login_required
 @consumer_side
@@ -156,12 +165,55 @@ def consumer_cart():
     return render_template("consumer/cart.html")
 
 
+# TODO: Add quantity support for add and del
+@app.route("/cart/add/<int:food_id>")
+def cart_add(food_id):
+    cart = CartDao.get_cart(current_user.cart)
+    cart.add_item(food_id)
+    flash("Successfully added item to cart")
+
+    return redirect(url_for("consumer_cart"))
+
+
+@app.route("/cart/del/<int:food_id>")
+def cart_del(food_id):
+    cart = CartDao.get_cart(current_user.cart)
+    cart.remove_item(food_id)
+    flash("Successfully removed item from cart")
+
+    return redirect(url_for("consumer_cart"))
+
+
+@app.route("/cart/clear")
+def cart_clear():
+    cart = CartDao.get_cart(current_user.cart)
+    cart.clear_cart()
+    flash("Successfully emptied the cart")
+
+    return redirect(url_for("consumer_cart"))
+
 @app.route("/dineIn")
 @consumer_side
 @login_required
 def dine_in():
     restaurants = RestaurantSystem.get_restaurants()
-    return render_template("consumer/dineIn.html", restaurants=restaurants, count=len(restaurants))
+    return render_template("consumer/dineIn/dineIn.html",
+                           restaurants=restaurants, count=len(restaurants))
+
+
+@app.route("/dineIn/<string:restaurant_id>")
+@consumer_side
+@login_required
+def dine_in_food(restaurant_id):
+    restaurant = RestaurantSystem.find_restaurant_by_id(restaurant_id)
+    food_list = FoodDao.get_foods(restaurant_id)
+
+    if restaurant is None:
+        return redirect(url_for("delivery"))
+
+    return render_template("consumer/dineIn/dineInMenu.html",
+                           restaurant=restaurant, food_list=food_list,
+                           count=len(food_list))
 
 
 @app.route("/delivery")
@@ -169,4 +221,21 @@ def dine_in():
 @login_required
 def delivery():
     restaurants = RestaurantSystem.get_restaurants()
-    return render_template("consumer/delivery.html", restaurants=restaurants, count=len(restaurants))
+    return render_template("consumer/delivery/delivery.html",
+                           restaurants=restaurants, count=len(restaurants))
+
+
+@app.route("/delivery/<string:restaurant_id>")
+@consumer_side
+@login_required
+def delivery_food(restaurant_id):
+    restaurant = RestaurantSystem.find_restaurant_by_id(restaurant_id)
+    food_list = FoodDao.get_foods(restaurant_id)
+
+    if restaurant is None:
+        return redirect(url_for("delivery"))
+
+    return render_template("consumer/delivery/deliveryMenu.html",
+                           restaurant=restaurant, food_list=food_list,
+                           count=len(food_list))
+

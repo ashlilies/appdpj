@@ -5,6 +5,7 @@ from application import app
 
 # <------------------------- CLARA ------------------------------>
 from application.Controllers.admin.admin_ashlee import admin_side
+from application.Controllers.consumer.consumer_ashlee import consumer_side
 from application.Models.Food2 import FoodDao
 
 #
@@ -16,14 +17,14 @@ from application.Models.Food2 import FoodDao
 #     return render_template('consumer/deliveryFoodMenu.html')
 
 
-@app.route("/consumer/foodModal")
+@app.route("/consumer/foodModal/<string:restaurant_id>")
 #displaying of food
+@consumer_side
 @login_required
-@admin_side
-def consumer_retrieve_food_modal():
+def consumer_retrieve_food_modal(restaurant_id):
     #retrieve the food created from FoodDao
     #using the currernt users restaurant_id
-    food_list = FoodDao.get_foods(current_user.restaurant_id)
+    food_list = FoodDao.get_foods(restaurant_id)
     return render_template('consumer/deliveryFoodMenu.html', food_list=food_list)
 
 # def edit_user(id):

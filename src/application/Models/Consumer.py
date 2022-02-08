@@ -1,6 +1,6 @@
 # Ashlee
 from application.Models.Account import *
-from application.Models.Cart import Cart
+from application.Models.Cart import Cart, CartDao
 
 
 class Consumer(Account):
@@ -10,7 +10,7 @@ class Consumer(Account):
         self.first_name = first_name
         self.last_name = last_name
         # self.age = int(age)  # To be implemented later, not for MVP
-        self.cart = Cart()
+        self.cart = CartDao.create_cart().id
         self.save()
 
         logging.info("Consumer: created new account with email %s" % email)
