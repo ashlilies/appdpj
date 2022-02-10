@@ -8,6 +8,7 @@ from flask_login import logout_user, login_required, current_user
 import os
 import os.path
 
+from application.Controllers.admin.admin_ashlee import admin_side
 from application.CouponForms import CreateCouponForm
 from application.Models.Admin import *
 from application.Models.CouponSystem import CouponSystem
@@ -34,6 +35,7 @@ app.config["IMAGE_UPLOADS"] = "src/application/static/restaurantLogos"
 # C (Create)
 @app.route('/admin/create-restaurant', methods=['GET', 'POST'])
 @login_required
+@admin_side
 def admin_myrestaurant():  # ruri
     restaurant_details_form = RestaurantDetailsForm(
         request.form)  # Using the Create Restaurant Form
@@ -137,6 +139,8 @@ def admin_myrestaurant():  # ruri
 # R (Read)
 # This is the route that displays all the relevant restaurant details
 @app.route('/admin/my-restaurant')
+@admin_side
+@login_required
 def view_restaurant():
     return render_template('admin/myrestaurantv2.html',
                            restaurant=all_restaurant())
@@ -145,6 +149,8 @@ def view_restaurant():
 # U (Update Form) # This route is to showcase the update route
 # This route contains the form that allows us to update the restaurant details
 @app.route('/updateRestaurant/<id>', methods=['GET', 'POST'])
+@admin_side
+@login_required
 def update_restaurant(id):
     edit_restaurant = RestaurantDetailsForm(request.form)
     restaurant = filter(lambda r: r.get_id() == id,
@@ -162,6 +168,8 @@ def update_restaurant(id):
 
 # U (Update)
 @app.route('/updateRestaurantConfirm/<id>', methods=['GET', 'POST'])
+@admin_side
+@login_required
 def update_restaurant_confirm(id):
     edit_restaurant = RestaurantDetailsForm(request.form)
     editing_restaurant = RestaurantSystem()
@@ -188,10 +196,14 @@ def update_restaurant_confirm(id):
 
 
 @app.route("/admin/dashboard")
+@admin_side
+@login_required
 def dashboard():  # ruri
     return render_template('admin/dashboard.html')
 
 @app.route("/consumer/delordine")
+@admin_side
+@login_required
 def delordine():  # ruri
     return render_template('consumer/delOrdine.html')
 

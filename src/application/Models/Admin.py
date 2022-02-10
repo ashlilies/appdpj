@@ -4,6 +4,7 @@ from application.Models.Account import *
 from application.Models.Certification import Certification
 from application.Models.CouponSystem import CouponSystem
 from application.Models.Restaurant import Restaurant
+from application.Models.RestaurantSystem import RestaurantSystem
 
 
 class Admin(Account):
@@ -12,7 +13,6 @@ class Admin(Account):
         self.type = "admin"  # for easy rendering in Jinja2
         self.__restaurant_id = None  # set later
         self.__name = None
-        self.coupon_system_id = CouponSystem().id
         self.__transaction_system_id = None
         # Certification(self.__restaurant_id)  # doesn't work
         self.set_name(restaurant_name)
@@ -59,4 +59,8 @@ class Admin(Account):
     @property
     def certification_system_id(self):  # as requested by yonglin
         return self.__restaurant_id
+
+    @property
+    def coupon_system_id(self):
+        return RestaurantSystem.find_restaurant_by_id(self.__restaurant_id).coupon_system_id
 

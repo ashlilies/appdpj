@@ -10,7 +10,7 @@
 #      request = TextAreaField('')
 #
 #      choices = []
-#      food_list = FoodDao.get_foods(current_user.restaurant_id)
+#      food_list = FoodDao.get_cart_items(current_user.restaurant_id)
 #      for food in food_list:
 #          choices.append((food.name, food.topping))
 #

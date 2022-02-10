@@ -2,6 +2,7 @@
 import uuid
 import shelve
 
+from application.Models.CouponSystem import CouponSystem
 
 RESTAURANT_DB = 'restaurant_db'
 import pickle
@@ -30,6 +31,7 @@ class Restaurant():
         self.del4 = del4
         self.del5 = del5
 
+        self.coupon_system_id = CouponSystem().id
         # save_db()
 
     def set_id(self, id):

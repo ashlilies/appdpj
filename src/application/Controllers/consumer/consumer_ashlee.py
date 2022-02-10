@@ -164,13 +164,17 @@ def consumer_delete_review(review_id):
 @consumer_side
 def consumer_cart():
     cart = CartDao.get_cart(current_user.cart)
-    cart_items = cart.get_foods()
-    return render_template("consumer/cart.html", cart_items=cart_items,
+    cart_items = cart.get_cart_items()
+    return render_template("consumer/cart.html",
+                           cart=cart,
+                           cart_items=cart_items,
                            count=len(cart_items))
 
 
 # TODO: Add quantity support for add and del
 @app.route("/cart/add/<int:food_id>")
+@login_required
+@consumer_side
 def cart_add(food_id):
     cart = CartDao.get_cart(current_user.cart)
     cart.add_item(food_id)
@@ -180,6 +184,8 @@ def cart_add(food_id):
 
 
 @app.route("/cart/del/<int:food_id>")
+@login_required
+@consumer_side
 def cart_del(food_id):
     cart = CartDao.get_cart(current_user.cart)
     cart.remove_item(food_id)
@@ -189,12 +195,15 @@ def cart_del(food_id):
 
 
 @app.route("/cart/clear")
+@login_required
+@consumer_side
 def cart_clear():
     cart = CartDao.get_cart(current_user.cart)
     cart.clear_cart()
     flash("Successfully emptied the cart")
 
     return redirect(url_for("consumer_cart"))
+
 
 @app.route("/dineIn")
 @consumer_side
@@ -243,3 +252,24 @@ def delivery_food(restaurant_id):
                            restaurant=restaurant, food_list=food_list,
                            count=len(food_list))
 
+
+@app.route("/applyCoupon", methods=["POST"])
+@consumer_side
+@login_required
+def apply_coupon():
+    if "couponCode" in request.form:
+        coupon_code = request.form["couponCode"]
+
+        # apply coupon to the current Cart
+        cart = CartDao.get_cart(current_user.cart)
+        cart.apply_coupon(request.form["couponCode"])
+
+        if coupon_code == "":
+            flash("Successfully removed coupon code from cart")
+        elif cart.get_total_discount() == 0.0:
+            flash("Invalid coupon code - either items are not applicable, or code doesn't exist!")
+            cart.apply_coupon("")  # blank it
+        else:
+            flash("Successfully applied coupon!")
+
+    return redirect(url_for("consumer_cart"))

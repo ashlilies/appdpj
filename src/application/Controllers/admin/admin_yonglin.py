@@ -1,8 +1,10 @@
 from flask import render_template, request, redirect, url_for
 import os.path
 
+from flask_login import login_required
 
 from application import app
+from application.Controllers.admin.admin_ashlee import admin_side
 from application.Models.Admin import *
 from application.Models.Certification import Certification
 from application.Models.Transaction import Transaction
@@ -13,6 +15,8 @@ import shelve, os
 # <------------------------- YONG LIN ------------------------------>
 # YL: for transactions -- creating of dummy data
 @app.route("/admin/transaction/createExampleTransactions")
+@admin_side
+@login_required
 def create_example_transactions():
     # WARNING - Overrides ALL transactions in the db!
     transaction_list = []
@@ -191,6 +195,8 @@ def create_example_transactions():
 
 # YL: for transactions -- reading of data and displaying (R in CRUD)
 @app.route("/admin/transaction")
+@admin_side
+@login_required
 def admin_transaction():
     # read transactions from db
     with shelve.open('transaction', 'c') as db:
@@ -215,6 +221,8 @@ def admin_transaction():
 # YL: for transactions -- soft delete (D in CRUD)
 # soft delete -> restaurant can soft delete transactions jic if the transaction is cancelled
 @app.route('/admin/transaction/delete/<transaction_id>')
+@admin_side
+@login_required
 def delete_transaction(transaction_id):
     transaction_id = int(transaction_id)
 
@@ -244,11 +252,15 @@ def delete_transaction(transaction_id):
 # certification -- xu yong lin
 # YL: for certification -- form (C in CRUD)
 @app.route("/admin/uploadCertification")
+@admin_side
+@login_required
 def test_upload():
     return render_template("admin/certification.html")
 
 
 @app.route('/admin/uploader', methods=['GET', 'POST'])
+@admin_side
+@login_required
 def uploader():
     certification_dict = {}
     nb = 'NIL'
@@ -341,6 +353,8 @@ def uploader():
 
 
 @app.route("/admin/certification")
+@admin_side
+@login_required
 def read_cert():
     # todo: include session id and insert the id in order to read the ind restaurant cert
     certification_dict = {}
@@ -374,6 +388,8 @@ def read_cert():
 # YL: for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)
 # TODO: CHECK IF THE FILES ARE THE SAME AND UPDATE THE DETAILS
 @app.route('/admin/updateCertification/<int:id>', methods=['GET', 'POST'])
+@admin_side
+@login_required
 def update_cert(id):
     nb = 'NIL'
     npnl = 'NIL'
@@ -486,6 +502,8 @@ def update_cert(id):
 
 # YL: for certification -- Delete (D in CRUD)
 @app.route('/deleteCertification/<int:id>', methods=['POST'])
+@admin_side
+@login_required
 def delete_cert(id):
     with shelve.open('certification', 'w') as db:
         try:
