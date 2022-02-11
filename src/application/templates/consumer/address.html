@@ -3,16 +3,34 @@
 
 {% block head %}
     <style>
+        .header {
+            width: 80%;
+            margin: auto;
+        }
+
+        .header h4 {
+            display: inline-block;
+            font-size: 25px;
+            padding-top: 10px;
+        }
+
         .addressDiv {
             background-color: #f3f0d1;
             width: 30%;
             border: 1px black;
         }
 
-        .col-12 {
-            width: 90%;
+        .inputs {
+            width: 80%;
             margin: auto;
-            padding: 30px 0;
+        }
+
+        .form-control {
+            margin: 10px auto;
+        }
+
+        label {
+            margin-top: 10px;
         }
     </style>
 {% endblock %}
@@ -22,23 +40,21 @@
 
     <form method="POST" action="{{ url_for('consumer_myaddress') }}">
         <div class="addressDiv">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15954.644746298643!2d103.8489487!3d1.37995!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xe5f10ff680eed942!2sNanyang%20Polytechnic!5e0!3m2!1sen!2ssg!4v1643549501763!5m2!1sen!2ssg"
-                    style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-            <div class="form-group">
-                {{ render_field(form.addressType, class="form-control") }}
+            <div class="header">
+                <img src="{{ url_for("static", filename="location.png") }}" alt="location Logo"
+                     style="height: 35px; width: 40px; margin: 15px 0px; display: inline-block">
+                <h4 style="margin-left: 20px;">Delivery Address</h4>
             </div>
+            <div class="inputs">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15954.644746298643!2d103.8489487!3d1.37995!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xe5f10ff680eed942!2sNanyang%20Polytechnic!5e0!3m2!1sen!2ssg!4v1643549501763!5m2!1sen!2ssg"
+                        style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                <div class="form-group">
+                    {{ render_field(form.consumer_address, class="form-control", placeholder='Enter Address here') }}
+                </div>
 
-            <div class="form-group">
-                {{ render_field(form.consumer_homeAddress, class="form-control", placeholder='Enter Home Address here') }}
-            </div>
-            <div class="form-group">
-                {{ render_field(form.consumer_workAddress, class="form-control", placeholder='Enter Work Address here') }}
-            </div>
-            <div class="form-group">
-                {{ render_field(form.consumer_otherAddress, class="form-control", placeholder='Enter Address here') }}
-            </div>
+                <input type="submit" value="Submit" class="btn btn-primary" style="margin: 20px 0;"/>
 
-            <input type="submit" value="Submit" class="btn btn-primary"/>
+            </div>
         </div>
     </form>
 {% endblock %}

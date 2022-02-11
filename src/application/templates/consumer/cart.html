@@ -2,76 +2,107 @@
 {% block title %}FoodyPulse - Home{% endblock %}
 
 {% block head %}
+    <style>
+        .display-left {
+            width: 35%;
+            display: flex;
+            float: left;
+        }
+
+        .display-left > .btn > .btn-warning > .btn-block > .btn-lg {
+            font-size: 15px !important;
+        }
+
+        .display-right {
+            width: 62%;
+            display: flex;
+            float: right;
+        }
+
+        .display-bottom {
+            width: 100%;
+            display: flex;
+        }
+
+        .display-bottom > .btn > .btn-warning > .btn-block > .btn-lg{
+            display: flex;
+            float: right;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-<div id="page-content" class="d-flex flex-row">
-<p>Under construction</p>
-  <div class="container h-100 py-5">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col-10">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h3 class="fw-normal mb-0 text-black">Shopping Cart</h3>
-        </div>
+    <div id="page-content" class="d-flex flex-row">
+        <div class="container h-100 py-5">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="fw-normal mb-0 text-black">Your Cart</h3>
+                    </div>
 
-        {% if count %}
-        {% for cart_item in cart_items %}
-        <div class="card rounded-3 mb-4">
-          <div class="card-body p-4">
-            <div class="row d-flex justify-content-between align-items-center">
-              <div class="col-md-2 col-lg-2 col-xl-2">
-                <img src="{{ url_for("static", filename=cart_item[0].image) }}" alt="{{ cart_item[0].name }}"
-                  class="img-fluid rounded-3" alt="Cotton T-shirt">
-              </div>
-              <div class="col-md-3 col-lg-3 col-xl-3">
-                <p class="lead fw-normal mb-2">{{ cart_item[0].name }}</p>
-                <p><span class="text-muted">{{ cart_item[0].description }}</span></p>
-              </div>
-              <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                <a class="btn btn-link px-2" style="color: black; text-decoration: none;" href="{{ url_for("cart_del", food_id=cart_item[0].id) }}">
-                  -
-                </a>
+                    {% if count %}
+                        {% for cart_item in cart_items %}
+                            <div class="card rounded-3 mb-4 display-right">
+                                <div class="card-body p-4">
+                                    <div class="row d-flex justify-content-between align-items-center">
+                                        <div class="col-md-2 col-lg-2 col-xl-2">
+                                            <img src="{{ url_for("static", filename=cart_item[0].image) }}"
+                                                 alt="{{ cart_item[0].name }}"
+                                                 class="img-fluid rounded-3" alt="Cotton T-shirt">
+                                        </div>
+                                        <div class="col-md-3 col-lg-3 col-xl-3">
+                                            <p class="lead fw-normal mb-2">{{ cart_item[0].name }}</p>
+                                            <p><span class="text-muted">{{ cart_item[0].description }}</span></p>
+                                        </div>
+                                        <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                                            <a class="btn btn-link px-2" style="color: black; text-decoration: none;"
+                                               href="{{ url_for("cart_del", food_id=cart_item[0].id) }}">
+                                                -
+                                            </a>
 
-                <input id="form1" min="0" name="quantity" value="{{ cart_item[1] }}" type="text" readonly
-                  class="form-control form-control-sm" />
+                                            <input id="form1" min="0" name="quantity" value="{{ cart_item[1] }}"
+                                                   type="text" readonly
+                                                   class="form-control form-control-sm"/>
 
-                <a class="btn btn-link px-2" style="color: black; text-decoration: none;" href="{{ url_for("cart_add", food_id=cart_item[0].id) }}"
-                  onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                  +
-                </a>
-              </div>
-              <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                <h5 class="mb-0">${{ "%.2f" % (cart_item[0].price * cart_item[1]) }}</h5>
-              </div>
-              <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
-              </div>
+                                            <a class="btn btn-link px-2" style="color: black; text-decoration: none;"
+                                               href="{{ url_for("cart_add", food_id=cart_item[0].id) }}"
+                                               onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                                                +
+                                            </a>
+                                        </div>
+                                        <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                            <h5 class="mb-0">${{ "%.2f" % (cart_item[0].price * cart_item[1]) }}</h5>
+                                        </div>
+                                        <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                                            <a href="#!" class="text-danger"><i class="fas fa-trash fa-lg"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>No items in cart. Add some today!</p>
+                    {% endif %}
+
+                    <div class="card mb-4 display-left">
+                        <div class="card-body p-4 d-flex flex-row">
+                            <div class="form-outline flex-fill">
+                                <label class="form-label" for="form1">Discound code</label>
+                                <input type="text" id="form1" class="form-control form-control-lg"/>
+                            </div>
+                            <button type="button" class="btn btn-lg ms-3"
+                                    style="font-size: 15px !important; font-weight: 450 !important; height: 50px; margin-top: 30px;">
+                                Apply
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="display-bottom">
+                        <button type="button" class="btn btn-warning btn-block btn-lg">Proceed to Pay</button>
+                    </div>
+
+                </div>
             </div>
-          </div>
         </div>
-        {% endfor %}
-          {% else %}
-          <p>No items in cart. Add some today!</p>
-      {% endif %}
-
-        <div class="card mb-4">
-          <div class="card-body p-4 d-flex flex-row">
-            <div class="form-outline flex-fill">
-              <input type="text" id="form1" class="form-control form-control-lg" />
-              <label class="form-label" for="form1">Discound code</label>
-            </div>
-            <button type="button" class="btn btn-lg ms-3">Apply</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-body">
-            <button type="button" class="btn btn-warning btn-block btn-lg">Proceed to Pay</button>
-          </div>
-        </div>
-
-      </div>
     </div>
-  </div>
-</div>
 {% endblock %}

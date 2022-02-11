@@ -1,8 +1,10 @@
 from flask import render_template, request, redirect, url_for
 import os.path
 
+from flask_login import login_required, current_user
 
 from application import app
+from application.Controllers.admin.admin_ashlee import admin_side
 from application.Models.Admin import *
 from application.Models.Certification import Certification
 from application.Models.Transaction import Transaction
@@ -13,6 +15,8 @@ import shelve, os
 # <------------------------- YONG LIN ------------------------------>
 # YL: for transactions -- creating of dummy data
 @app.route("/admin/transaction/createExampleTransactions")
+@login_required
+@admin_side
 def create_example_transactions():
     # WARNING - Overrides ALL transactions in the db!
     transaction_list = []
@@ -191,6 +195,8 @@ def create_example_transactions():
 
 # YL: for transactions -- reading of data and displaying (R in CRUD)
 @app.route("/admin/transaction")
+@login_required
+@admin_side
 def admin_transaction():
     # read transactions from db
     with shelve.open('transaction', 'c') as db:
@@ -244,11 +250,15 @@ def delete_transaction(transaction_id):
 # certification -- xu yong lin
 # YL: for certification -- form (C in CRUD)
 @app.route("/admin/uploadCertification")
+@login_required
+@admin_side
 def test_upload():
     return render_template("admin/certification.html")
 
 
 @app.route('/admin/uploader', methods=['GET', 'POST'])
+@login_required
+@admin_side
 def uploader():
     certification_dict = {}
     nb = 'NIL'
@@ -257,12 +267,12 @@ def uploader():
         with shelve.open('certification', 'c') as handle:
             try:
                 certification_dict = handle['certification']
-                print(certification_dict)
             except Exception as e:
                 logging.error("uploader: ""certification.db (%s)" % e)
 
             # create new class object
             cert = Certification()
+            cert.id = current_user.restaurant_id
 
             # get values in checkboxes
             certchecks = request.form.getlist('certCheck')
@@ -303,7 +313,8 @@ def uploader():
             vegetarian = request.files['vegetarianDocument']
             vegetarianFile = secure_filename(vegetarian.filename)
             if vegetarian.filename != "":
-                app.config['UPLOADED_VEGETARIAN'] = f'application/static/uploads/restaurantCertification/vegetarian/{cert.id}/'
+                app.config[
+                    'UPLOADED_VEGETARIAN'] = f'application/static/uploads/restaurantCertification/vegetarian/{cert.id}/'
                 os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGETARIAN'])),
                             exist_ok=True)
                 vegetarian.save(os.path.join(os.getcwd(), app.config['UPLOADED_VEGETARIAN']) + vegetarianFile)
@@ -341,21 +352,14 @@ def uploader():
 
 
 @app.route("/admin/certification")
+@login_required
+@admin_side
 def read_cert():
-    # todo: include session id and insert the id in order to read the ind restaurant cert
     certification_dict = {}
     with shelve.open('certification', 'c') as handle:
         try:
             if 'certification' in handle:
                 certification_dict = handle['certification']
-                print('existing ', certification_dict)
-                for key in certification_dict:
-                    cert = certification_dict.get(key)
-                    print('cert: ', cert)
-                    print('halal', cert.halal_cert)
-                    print('vegetarian', cert.vegetarian_cert)
-                    print('vegan', cert.vegan_cert)
-
             else:
                 handle['certification'] = certification_dict
                 print(certification_dict)
@@ -365,8 +369,16 @@ def read_cert():
 
         certificate_list = []
         for key in certification_dict:
-            food = certification_dict.get(key)
-            certificate_list.append(food)
+            restaurant = certification_dict.get(current_user.restaurant_id)
+            if key == current_user.restaurant_id:
+                certificate_list = []
+                certificate_list.append(restaurant)
+                print(certificate_list)
+
+        # certificate_list = []
+        # for key in certification_dict:
+        #     food = certification_dict.get(key)
+        #     certificate_list.append(food)
 
     return render_template('admin/certification2.html', id=id, certificate_list=certificate_list)
 
@@ -374,6 +386,8 @@ def read_cert():
 # YL: for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)
 # TODO: CHECK IF THE FILES ARE THE SAME AND UPDATE THE DETAILS
 @app.route('/admin/updateCertification/<int:id>', methods=['GET', 'POST'])
+@login_required
+@admin_side
 def update_cert(id):
     nb = 'NIL'
     npnl = 'NIL'
@@ -401,7 +415,8 @@ def update_cert(id):
                 # HYGIENE DOCUMENT
                 hygiene = request.files['hygieneDocument']
                 hygieneFile = secure_filename(hygiene.filename)
-                app.config['UPLOADED_HYGIENE'] = f'application/static/uploads/restaurantCertification/hygiene/{cert.id}/'
+                app.config[
+                    'UPLOADED_HYGIENE'] = f'application/static/uploads/restaurantCertification/hygiene/{cert.id}/'
                 os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HYGIENE'])), exist_ok=True)
                 hygiene.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_HYGIENE']) + hygieneFile))
                 if cert.hygiene_cert != '':
@@ -410,13 +425,16 @@ def update_cert(id):
                         os.remove(cert.hygiene_cert)
                         logging.info('Successfully removed existing hygiene document')
                     cert.hygiene_cert = f"application/static/uploads/restaurantCertification/hygiene/{cert.id}/{hygieneFile}"
+                else:
+                    cert.hygiene_cert = ''
 
                 # HALAL DOCUMENT
                 halal = request.files['halalDocument']
                 halalFile = secure_filename(halal.filename)
                 if halal.filename != '':
                     # saving of new file
-                    app.config['UPLOADED_HALAL'] = f'application/static/uploads/restaurantCertification/halal/{cert.id}/'
+                    app.config[
+                        'UPLOADED_HALAL'] = f'application/static/uploads/restaurantCertification/halal/{cert.id}/'
                     os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_HALAL'])),
                                 exist_ok=True)
                     halal.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_HALAL']) + halalFile))
@@ -425,17 +443,17 @@ def update_cert(id):
                         os.remove(cert.halal_cert)
                         logging.info('Successfully removed existing halal document')
                     cert.halal_cert = f"application/static/uploads/restaurantCertification/halal/{cert.id}/{halalFile}"
-                else:
-                    cert.halal_cert = ''
 
                 # VEGETARIAN DOCUMENT
                 vegetarian = request.files['vegetarianDocument']
                 vegetarianFile = secure_filename(vegetarian.filename)
                 if vegetarian.filename != '':
-                    app.config['UPLOADED_VEGETARIAN'] = f'application/static/uploads/restaurantCertification/vegetarian/{cert.id}/'
+                    app.config[
+                        'UPLOADED_VEGETARIAN'] = f'application/static/uploads/restaurantCertification/vegetarian/{cert.id}/'
                     os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGETARIAN'])),
                                 exist_ok=True)
-                    vegetarian.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_VEGETARIAN']) + vegetarianFile))
+                    vegetarian.save(
+                        os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_VEGETARIAN']) + vegetarianFile))
                     # deleting of existing file
                     if os.path.exists(cert.vegetarian_cert):
                         os.remove(cert.vegetarian_cert)
@@ -449,7 +467,8 @@ def update_cert(id):
                 veganFile = secure_filename(vegan.filename)
                 if vegan.filename != '':
                     # saving of new file
-                    app.config['UPLOADED_VEGAN'] = f'application/static/uploads/restaurantCertification/vegan/{cert.id}/'
+                    app.config[
+                        'UPLOADED_VEGAN'] = f'application/static/uploads/restaurantCertification/vegan/{cert.id}/'
                     os.makedirs(os.path.join(os.getcwd(), os.path.dirname(app.config['UPLOADED_VEGAN'])),
                                 exist_ok=True)
                     vegan.save(os.path.join(os.path.join(os.getcwd(), app.config['UPLOADED_VEGAN']) + veganFile))
@@ -486,6 +505,8 @@ def update_cert(id):
 
 # YL: for certification -- Delete (D in CRUD)
 @app.route('/deleteCertification/<int:id>', methods=['POST'])
+@login_required
+@admin_side
 def delete_cert(id):
     with shelve.open('certification', 'w') as db:
         try:

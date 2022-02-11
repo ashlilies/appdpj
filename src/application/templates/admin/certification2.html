@@ -18,11 +18,6 @@
             width: 25%;
         }
 
-        .modal {
-            font-color: black;
-            font-weight: normal;
-        }
-
         #deletedisplay th {
             width: 30%;
             overflow: visible;
@@ -47,12 +42,17 @@
                 <button class="nav-link active" id="nav-restrictions-tab" data-bs-toggle="tab"
                         data-bs-target="#nav-restrictions"
                         type="button" role="tab" aria-controls="nav-restrictions" aria-selected="false"><a
-                        href="{{ url_for('test_upload') }}">Food Restrictions</a>
+                        href="{{ url_for('read_cert') }}">Food Restrictions</a>
                 </button>
             </div>
         </nav>
 
-        <h1>EXTENSION TO RESTAURANT DETAILS</h1>
+        <h1>RESTAURANT DETAILS - CERTIFICATION</h1>
+        <div class="align-items-center float-end ms-2 mt-4">
+            <a class="btn btn-primary align-items-center float-end ms-2"
+               href="{{ url_for("test_upload") }}" role="button">Upload Certificate now!</a>
+        </div>
+
         <div>
             {# hygiene cert #}
             <table class="table table-striped" id="infodisplay"
@@ -60,98 +60,11 @@
                 <thead>
                 {% for cert in certificate_list %}
                     <tr>
-                        <th scope="col" colspan="2">
-                            {{ cert.id }}'s Certificates
+                        <th scope="col">
+                            Certificates
                         </th>
-                        <th style="width:300px; display: flex; float:right; margin-right: -80px;">
-                            <a href="/admin/updateCertification/{{ cert.id }}" class="btn btn-warning">Update</a>
-                            <form action="{{ url_for('delete_cert', id=cert.id) }}"
-                                  method="POST">
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                        data-bs-target="#myModal_{{ cert.id }}">
-                                    Delete
-                                </button>
-                                <!-- The Modal -->
-                                <div class="modal" id="myModal_{{ cert.id }}">
-                                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                                        <div class="modal-content">
-                                            <!-- Modal Header -->
-                                            <div class="modal-header">
-                                                <h4 class="modal-title">Delete Confirmation</h4>
-                                                <button type="button" class="btn-close"
-                                                        data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <!-- Modal body -->
-                                            <div class="modal-body">
-                                                Are you sure you want to
-                                                delete
-                                                <bold>ALL</bold>
-                                                the certification of {{ cert.id }}?
-                                                <hr>
-                                                <p>Overview of {{ cert.id }}'s Certifications:
-                                                <table class="table" id="deletedisplay">
-                                                    <thead>
-                                                    <tr>
-                                                        <th scope="col">Certificate Name</th>
-                                                        <th scope="col">File name</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <tr>
-                                                        <th scope="row">Hygiene Certificate</th>
-                                                        <td>{{ cert.hygiene_cert[61:] }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row">Halal Certificate</th>
-                                                        {% if not cert.halal_cert %}
-                                                            <td>NIL</td>
-                                                        {% else %}
-                                                            <td>{{ cert.halal_cert[59:] }}</td>
-                                                        {% endif %}
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row">Vegetarian Certificate</th>
-                                                        {% if not cert.vegetarian_cert %}
-                                                            <td>NIL</td>
-                                                        {% else %}
-                                                            <td>{{ cert.vegetarian_cert[64:] }}</td>
-                                                        {% endif %}
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row">No Pork No lard</th>
-                                                        <td>{{ cert.noPorknoLard }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row">Vegan Certificate</th>
-                                                        {% if not cert.vegan_cert %}
-                                                            <td>NIL</td>
-                                                        {% else %}
-                                                            <td>{{ cert.vegan_cert[59:] }}</td>
-                                                        {% endif %}
-                                                    </tr>
-                                                    <tr>
-                                                        <th scope="row">No Beef</th>
-                                                        <td>{{ cert.noBeef }}</td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-                                                </p>
-                                            </div>
-
-                                            <!-- Modal footer -->
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                    Cancel
-                                                </button>
-                                                <input type="submit" value="Delete" class="btn btn-danger"
-                                                       style="background-color: red !important;">
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </th>
+                        <th scope="col">Type</th>
+                        <th scope="col">File Name</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -161,7 +74,7 @@
                         <td>
                             {#                            <iframe src="application/static/restaurantCertification/hygiene/1/{{ cert.hygiene_cert }}">Hygiene cert</iframe>#}
                             <a href="{{ url_for("static", filename=cert.hygiene_cert[19:]) }}"
-                               target="_blank">{{ cert.hygiene_cert[61:] }}</a>
+                               target="_blank">{{ cert.hygiene_cert[92:] }}</a>
                         </td>
                     </tr>
                     <tr>
@@ -171,7 +84,7 @@
                         {% else %}
                             <td>
                                 <a href="{{ url_for("static", filename=cert.halal_cert[19:]) }}"
-                                   target="_blank">{{ cert.halal_cert[59:] }}</a>
+                                   target="_blank">{{ cert.halal_cert[90:] }}</a>
                             </td>
                         {% endif %}
                     </tr>
@@ -182,7 +95,7 @@
                         {% else %}
                             <td>
                                 <a href="{{ url_for("static", filename=cert.vegetarian_cert[19:]) }}"
-                                   target="_blank">{{ cert.vegetarian_cert[64:] }}</a>
+                                   target="_blank">{{ cert.vegetarian_cert[95:] }}</a>
                             </td>
                         {% endif %}
                     </tr>
@@ -197,7 +110,7 @@
                         {% else %}
                             <td>
                                 <a href="{{ url_for("static", filename=cert.vegan_cert[19:]) }}"
-                                   target="_blank">{{ cert.vegan_cert[59:] }}</a>
+                                   target="_blank">{{ cert.vegan_cert[90:] }}</a>
                             </td>
                         {% endif %}
                     </tr>
