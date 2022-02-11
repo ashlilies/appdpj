@@ -122,7 +122,7 @@
                     <p class="price">${{ "%.2f" % food.price }}</p>
                 </div>
                 <div class="product-price-btn">
-                    <a href="{{ url_for("cart_add", food_id=food.id) }}"
+                    <a href="{{ url_for("foodModal", food_id=food.id) }}"
                        class="btn btn-primary">Add to Cart</a>
                 </div>
             </div>
