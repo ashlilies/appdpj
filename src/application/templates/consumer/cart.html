@@ -103,7 +103,7 @@
                     <img
                         src="{{ url_for("static", filename="cart/trash.png") }}"
                         alt="Trash"
-                        style="height: 35px; width: 40px; margin: 15px 0px; display: inline-block">
+                        style="width: 40px; margin: 0px 0px; display: inline-block">
                   </a>
                 </div>
               </div>
@@ -115,7 +115,7 @@
           today!</p>
       {% endif %}
 
-      <div class="card display-left align-items-stretch">
+      <div class="card display-left align-items-stretch mb-4">
         <div class="card-body p-4 d-flex flex-row">
           <form action="{{ url_for("apply_coupon") }}" method="post">
             <div class="form-outline flex-fill">

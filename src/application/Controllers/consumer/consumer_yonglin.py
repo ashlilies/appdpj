@@ -13,28 +13,28 @@ from application.consumer_address_form import ConsumerAddressForm
 
 # <------------------------- YONG LIN ------------------------------>
 # ADDRESS FIELD (form field)
-GOOGLEMAPS_KEY = '8JZ7i18MjFuM35dJHq70n3Hx4'
-GoogleMaps(app)  # initialize the extension
-
-
-def testAPI():
-    # geolocator = Nominatim(user_agent="foodypulse")
-    #
-    # location = geolocator.geocode("Nanyang Polytechnic")
-    # print(location.address)
-    from flask_googlemaps import get_address, get_coordinates
-    API_KEY = 'YOUR API KEY'
-
-    # Reverse Geocoding: getting detailed address from coordinates of a location
-    print(get_address(API_KEY, 22.4761596, 88.4149326))
-    # output: {'zip': '700150', 'country': 'India', 'state': 'West Bengal', 'city': 'Kolkata', 'locality': 'Kolkata', 'road': 'Techno City', 'formatted_address': 'Sirin Rd, Mauza Ranabhutia, Techno City, Kolkata, West Bengal 700150, India'}
-
-    # Geocoding: getting coordinates from address text
-    print(get_coordinates(API_KEY, 'Netaji Subhash Engineering College Kolkata'))
-    # output: {'lat': 22.4761596, 'lng': 88.4149326}
-
-
-testAPI()
+# GOOGLEMAPS_KEY = '8JZ7i18MjFuM35dJHq70n3Hx4'
+# GoogleMaps(app)  # initialize the extension
+#
+#
+# def testAPI():
+#     # geolocator = Nominatim(user_agent="foodypulse")
+#     #
+#     # location = geolocator.geocode("Nanyang Polytechnic")
+#     # print(location.address)
+#     from flask_googlemaps import get_address, get_coordinates
+#     API_KEY = 'YOUR API KEY'
+#
+#     # Reverse Geocoding: getting detailed address from coordinates of a location
+#     print(get_address(API_KEY, 22.4761596, 88.4149326))
+#     # output: {'zip': '700150', 'country': 'India', 'state': 'West Bengal', 'city': 'Kolkata', 'locality': 'Kolkata', 'road': 'Techno City', 'formatted_address': 'Sirin Rd, Mauza Ranabhutia, Techno City, Kolkata, West Bengal 700150, India'}
+#
+#     # Geocoding: getting coordinates from address text
+#     print(get_coordinates(API_KEY, 'Netaji Subhash Engineering College Kolkata'))
+#     # output: {'lat': 22.4761596, 'lng': 88.4149326}
+#
+#
+# testAPI()
 
 
 @app.route("/myAddress", methods=["GET", "POST"])
