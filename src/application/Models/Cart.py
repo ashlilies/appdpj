@@ -99,8 +99,7 @@ class Cart:
         return cart_items
 
     def clear_cart(self):
-        for item_id in self.__item_dict:
-            self.__item_dict.pop(item_id)
+        self.__item_dict.clear()
 
         CartDao.save(self)
 
