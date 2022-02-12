@@ -12,24 +12,24 @@ from application.Models.Food2 import FoodDao
 from application.Models.RestaurantSystem import RestaurantSystem
 
 
-@app.route('/consumer/foodModal', methods=['GET', 'POST'])
-# @login_required
-# @admin_side
-def foodModal():
-    restaurants = RestaurantSystem.get_restaurants()
-    return render_template('consumer/deliveryFoodMenu.html',
-                           restaurants=restaurants, count=len(restaurants))
+# @app.route('/foodModal', methods=['GET', 'POST'])
+# # @login_required
+# # @admin_side
+# def foodModal():
+#     restaurants = RestaurantSystem.get_restaurants()
+#     return render_template('consumer/foodModal.html',
+#                            restaurants=restaurants, count=len(restaurants))
 
 
-@app.route("/consumer/foodModal/<string:restaurant_id>")
+@app.route("/foodModal/<int:food_id>")
 #displaying of food
 @consumer_side
 @login_required
-def consumer_retrieve_food_modal(restaurant_id):
+def consumer_retrieve_food_modal(food_id):
     #retrieve the food created from FoodDao
     #using the currernt users restaurant_id
-    food_list = FoodDao.get_foods(restaurant_id)
-    return render_template('consumer/deliveryFoodMenu.html', food_list=food_list)
+    food = FoodDao.query(food_id)
+    return render_template('consumer/foodModal.html', food=food)
 
 
 

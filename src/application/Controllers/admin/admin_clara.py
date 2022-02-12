@@ -135,9 +135,14 @@ def admin_update_food(food_id):
     update_food_form.price.data = food.price
     update_food_form.allergy.data = food.allergy
 
+    specs = food.specifications
+    toppings = food.toppings
+
     return render_template('admin/food/updateFood.html',
                            form=update_food_form,
                            food_id=food_id,
+                           specs=specs,
+                           toppings=toppings,
                            MAX_SPECIFICATION_ID=MAX_SPECIFICATION_ID,
                            MAX_TOPPING_ID=MAX_TOPPING_ID)
 

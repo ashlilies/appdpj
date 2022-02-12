@@ -34,6 +34,9 @@
             /* get data from new specification text field */
             spec = document.getElementById("newSpecification").value;
 
+            if (spec === "")
+                return
+
             /* with the minus button */
             var newWholeInputRow = document.createElement("div");
 
@@ -111,6 +114,8 @@
             /* get data from new topping text field */
             tops = document.getElementById("newTopping").value;
 
+            if (tops === "")
+                return
 
             /* with the minus button */
             var wholeNewInputRow = document.createElement("div");
@@ -175,13 +180,18 @@
         document.addEventListener("DOMContentLoaded", init_toppings);
         document.addEventListener("DOMContentLoaded", init_specs);
 
+        function submitForm() {
+            addNewSpecificationRow();
+            addNewToppingRow();
+            document.getElementById("myForm").submit();
+        }
     </script>
 {% endblock %}
 
 
 {% block content %}
     {% from "includes/_formHelper.html" import render_field %}
-    <form method="POST" action="{{ url_for("admin_create_food") }}" enctype=multipart/form-data>
+    <form id="myForm" method="POST" action="{{ url_for("admin_create_food") }}" enctype=multipart/form-data>
 
         <div class="form-group">
             <label id="foodNameLabel">Food name:</label>{{ render_field(form.name,
@@ -241,6 +251,6 @@
         </div>
 
 
-        <input type="submit" value="Submit" class="btn btn-primary"/>
+      <button onclick="submitForm();" class="btn btn-primary">Submit</button>
     </form>
 {% endblock %}

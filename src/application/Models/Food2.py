@@ -61,8 +61,8 @@ class FoodDao:
         food.description = description
         food.price = price
         food.allergy = allergy
-        food.specification = specification
-        food.topping = topping
+        food.specifications = specification
+        food.toppings = topping
         FoodDao.save(food)
 
     # Hard delete food items

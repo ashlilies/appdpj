@@ -9,7 +9,7 @@ from application.Controllers.consumer.consumer_ashlee import consumer_side
 # Moved by Ashlee
 
 
-@app.route("/consumer/delordine")
+@app.route("/delordine")
 @consumer_side
 @login_required
 def delordine():  # ruri

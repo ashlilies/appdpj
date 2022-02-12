@@ -34,6 +34,48 @@
             /* get data from new specification text field */
             spec = document.getElementById("newSpecification").value;
 
+            if (spec === "")
+                return
+
+            /* with the minus button */
+            var newWholeInputRow = document.createElement("div");
+
+            var newInputRow = document.createElement("input");
+            newInputRow.type = "text";
+            newInputRow.id = "specification" + specificationId;
+            newInputRow.name = "specification" + specificationId++;
+            newInputRow.style.margin = "4px";
+            newInputRow.style.borderRadius = "3px";
+            newInputRow.style.borderColor = "grey";
+            newInputRow.style.borderWidth = "thin";
+            newInputRow.value = spec;
+            newWholeInputRow.appendChild(newInputRow);
+
+            var minusButton = document.createElement("img");
+            minusButton.src = "{{ url_for("static",
+                               filename="foodManagement/minus-button.png") }}";
+            minusButton.style = "width: 20px; height: 20px; margin-left: 5px;"
+            minusButton.width = 20;
+            minusButton.height = 20;
+            minusButton.style.marginLeft = "5px";
+            minusButton.onclick = function () {
+                removeSpecificationRow(this);
+            };
+            newWholeInputRow.appendChild(minusButton);
+
+            /* finally we append the whole row to our div */
+            document.getElementById("specificationDiv")
+                .appendChild(newWholeInputRow);
+        }
+
+        function addNewSpecificationRowWithText(spec) {
+            /* are there too many specifications already? */
+            if (specificationId > maxSpecificationId) {
+                console.log("Too many specifications - can't add more");
+                alert("Too many specifications (" + parseInt(maxSpecificationId + 1) + ")");
+                return;
+            }
+
             /* with the minus button */
             var newWholeInputRow = document.createElement("div");
 
@@ -111,6 +153,48 @@
             /* get data from new topping text field */
             tops = document.getElementById("newTopping").value;
 
+            if (tops === "")
+                return
+
+
+            /* with the minus button */
+            var wholeNewInputRow = document.createElement("div");
+
+            var newInputs = document.createElement("input");
+            newInputs.type = "text";
+            newInputs.id = "topping" + toppingId;
+            newInputs.name = "topping" + toppingId++;
+            newInputs.style.margin = "4px";
+            newInputs.style.borderRadius = "3px";
+            newInputs.style.borderColor = "grey";
+            newInputs.style.borderWidth = "thin";
+            newInputs.value = tops;
+            wholeNewInputRow.appendChild(newInputs);
+
+            var buttonMinus = document.createElement("img");
+            buttonMinus.src = "{{ url_for("static",
+                               filename="foodManagement/minus-button.png") }}";
+            buttonMinus.style = "width: 20px; height: 20px; margin-left: 5px;"
+            buttonMinus.width = 20;
+            buttonMinus.height = 20;
+            buttonMinus.style.marginLeft = "5px";
+            buttonMinus.onclick = function () {
+                removeToppingRow(this);
+            };
+            wholeNewInputRow.appendChild(buttonMinus);
+
+            /* finally we append the whole row to our div */
+            document.getElementById("toppingDiv")
+                .appendChild(wholeNewInputRow);
+
+        }
+        function addNewToppingRowWithText(tops) {
+            /* are there too many toppings already? */
+            if (toppingId > maxToppingId) {
+                console.log("Too many toppings - can't add more");
+                alert("Too many toppings (" + parseInt(maxToppingId + 1) + ")");
+                return;
+            }
 
             /* with the minus button */
             var wholeNewInputRow = document.createElement("div");
@@ -172,8 +256,30 @@
         }
 
 
+        function load_specs() {
+            {% for specification in specs %}
+                console.log("adding spec {{ specification }}")
+                addNewSpecificationRowWithText("{{ specification }}");
+            {% endfor %}
+        }
+
+        function load_top() {
+            {% for topping in toppings %}
+                console.log("adding topping {{ topping }}")
+                addNewToppingRowWithText("{{ topping }}");
+            {% endfor %}
+        }
+
         document.addEventListener("DOMContentLoaded", init_toppings);
         document.addEventListener("DOMContentLoaded", init_specs);
+        document.addEventListener("DOMContentLoaded", load_specs);
+        document.addEventListener("DOMContentLoaded", load_top);
+
+        function submitForm() {
+            addNewSpecificationRow();
+            addNewToppingRow();
+            document.getElementById("myForm").submit();
+        }
 
     </script>
 {% endblock %}
@@ -181,7 +287,7 @@
 
 {% block content %}
     {% from "includes/_formHelper.html" import render_field %}
-    <form method="POST" action="{{ url_for("admin_update_food", food_id=food_id) }}" enctype=multipart/form-data>
+    <form id="myForm" method="POST" action="{{ url_for("admin_update_food", food_id=food_id) }}" enctype=multipart/form-data>
 
         <div class="form-group">
             <label id="foodNameLabel">Food name:</label>{{ render_field(form.name, class="form-control") }}
@@ -240,6 +346,6 @@
         </div>
 
 
-        <input type="submit" value="Submit" class="btn btn-primary"/>
+      <button onclick="submitForm();" class="btn btn-primary">Submit</button>
     </form>
 {% endblock %}
