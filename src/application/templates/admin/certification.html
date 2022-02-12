@@ -25,12 +25,15 @@
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <button class="nav-link" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings"
-                    type="button" role="tab" aria-controls="nav-settings" aria-selected="true"><a href="{{ url_for('admin_myrestaurant') }}">Restaurant Information</a>
+                    type="button" role="tab" aria-controls="nav-settings" aria-selected="true"><a
+                    href="{{ url_for('admin_myrestaurant') }}">Restaurant Information</a>
             </button>
-            <button class="nav-link active" id="nav-restrictions-tab" data-bs-toggle="tab" data-bs-target="#nav-restrictions"
+            <button class="nav-link active" id="nav-restrictions-tab" data-bs-toggle="tab"
+                    data-bs-target="#nav-restrictions"
                     type="button" role="tab" aria-controls="nav-restrictions" aria-selected="false"><a
-                    href="{{ url_for('test_upload') }}">Food Restrictions</a>
+                    href="{{ url_for('read_cert') }}">Food Restrictions</a>
             </button>
+        </div>
         </div>
     </nav>
 

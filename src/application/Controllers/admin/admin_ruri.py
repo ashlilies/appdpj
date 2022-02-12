@@ -112,7 +112,7 @@ def admin_myrestaurant():  # ruri
 
         # flask_login.current_user.restaurant = restaurant_id
         # Once done, it'll redirect to the home page
-        return redirect(url_for('test_upload'))
+        return redirect(url_for('read_cert'))
 
     # Load current restaurant's variables if the restaurant created before.
     if current_user.restaurant_id is not None:
