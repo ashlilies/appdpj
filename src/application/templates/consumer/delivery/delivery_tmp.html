@@ -15,7 +15,7 @@
       {% if count %}
         {% for restaurant in restaurants %}
           <div class="card" style="width: 18rem;">
-            <img src="{{ url_for("static", filename=restaurant.logo) }}" class="card-img-top" alt="{{ restaurant.name }}">
+            <img src="{{ url_for("static", filename=restaurant.logo) }}" class="card-img-top" alt="{{ restaurant.name }}" height="220" style="object-fit: cover;">
             <div class="card-body">
               <h5 class="card-title">{{ restaurant.name }}</h5>
               <div class="">

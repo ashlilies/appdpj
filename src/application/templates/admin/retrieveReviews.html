@@ -33,7 +33,7 @@
     </div>
   </div>
   <div id="content">
-  <div class="container px-4 py-5" id="featured-3">
+{#  <div class="container px-4 py-5" id="featured-3">#}
   <div class="row g-4 ms-1 me-1 row-cols-1 row-cols-lg-3">
     {% for review in list_of_reviews %}
       <div class="feature col review">
@@ -47,9 +47,8 @@
         <p><em><b>By:</b> {{ review.reviewer_name }}</em></p>
       {# TODO: use ISO standard for timestamp yyyy-mm-dd sort easily and more marks -yuenloong #}
         <p><em><b>Timestamp:</b> {{ review.datetime.strftime('%d-%m-%Y %H:%M') }}</em></p>
-        <img class="review-media" src="{{ url_for("static", filename=review.media_path) }}" alt="No media uploaded"
-             width="100">
+        <img class="review-media" src="{{ url_for("static", filename=review.media_path) }}" alt="No media uploaded" height="220" style="object-fit: cover;">
       </div>
     {% endfor %}
-  </div>
+{#  </div>#}
 {% endblock %}

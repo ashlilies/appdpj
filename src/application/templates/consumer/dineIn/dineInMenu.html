@@ -15,7 +15,7 @@
       {% if count %}
         {% for food in food_list %}
           <div class="card" style="width: 18rem;">
-            <img src="{{ url_for("static", filename=food.image) }}"
+            <img src="{{ url_for("static", filename=food.image) }}" height="220" style="object-fit: cover;"
                  class="card-img-top" alt="{{ food.name }}">
             <div class="card-body">
               <h5 class="card-title">{{ food.name }}</h5>

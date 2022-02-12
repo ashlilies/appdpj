@@ -30,7 +30,7 @@
     </div>
   </div>
   <div id="content">
-  <div class="container px-4 py-5" id="featured-3">
+{#  <div class="container px-4 py-5" id="featured-3">#}
   <div class="row g-4 ms-1 me-1 row-cols-1 row-cols-lg-3">
     {% for review in list_of_reviews %}
       <div class="feature col review">
@@ -48,10 +48,10 @@
         <h2>{{ review.title }}</h2>
         <p>{{ review.description }}</p>
         <p><em><b>Timestamp:</b> {{ review.datetime.strftime('%d-%m-%Y %H:%M') }}</em></p>
-        <img class="review-media" src="{{ url_for("static", filename=review.media_path) }}" alt="No media uploaded"
+        <img class="review-media" src="{{ url_for("static", filename=review.media_path) }}" alt="No media uploaded" height="220" style="object-fit: cover;"
              width="100">
       <br>
       </div>
     {% endfor %}
-  </div>
+{#  </div>#}
 {% endblock %}
