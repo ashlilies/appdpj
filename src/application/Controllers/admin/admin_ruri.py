@@ -201,9 +201,3 @@ def update_restaurant_confirm(id):
 def dashboard():  # ruri
     return render_template('admin/dashboard.html')
 
-@app.route("/consumer/delordine")
-@admin_side
-@login_required
-def delordine():  # ruri
-    return render_template('consumer/delOrdine.html')
-

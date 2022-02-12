@@ -6,6 +6,7 @@ from flask_login import current_user
 from geopy import Nominatim
 
 from application import app
+from application.Controllers.consumer.consumer_ashlee import consumer_side
 from application.Models.Address import ConsumerAddress
 from application.consumer_address_form import ConsumerAddressForm
 
@@ -16,6 +17,7 @@ geolocator = Nominatim(user_agent="geoapiExercises")
 
 
 @app.route("/myAddress", methods=["GET", "POST"])
+@consumer_side
 def consumer_myaddress():
     consumer_address_form = ConsumerAddressForm(request.form)
     # controller will be the place where we do all the interaction
