@@ -51,9 +51,15 @@
         {% elif cart.mode == cart.DELIVERY %}
           <h3 class="fw-normal mb-0 text-black align-self-center">Delivery&nbsp;&nbsp;</h3>
         {% endif %}
-        <a href="{{ url_for("cart_clear") }}" class="btn btn-warning btn-block btn-lg mt-auto mb-auto align-self-center" style="height: 50%;">
+        <script>
+            function confirmClearCart() {
+                if (confirm("Are you sure you wish to clear the Cart?"))
+                    window.location.replace("{{ url_for("cart_clear") }}");
+            }
+        </script>
+        <button onclick="confirmClearCart()" class="btn btn-warning btn-block btn-lg mt-auto mb-auto align-self-center" style="height: 50%;">
           Clear Cart
-        </a>
+        </button>
       {% endif %}
       </div>
       </div>
