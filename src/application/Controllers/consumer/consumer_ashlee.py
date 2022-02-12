@@ -172,7 +172,6 @@ def consumer_cart():
                            count=len(cart_items))
 
 
-# TODO: Add quantity support for add and del
 @app.route("/cart/add/<int:food_id>")
 @login_required
 @consumer_side
@@ -189,12 +188,28 @@ def cart_add(food_id):
     return redirect(url_for("consumer_cart"))
 
 
+# For removing a quantity of an item
 @app.route("/cart/del/<int:food_id>")
 @login_required
 @consumer_side
 def cart_del(food_id):
     cart = CartDao.get_cart(current_user.cart)
     cart.remove_item(food_id)
+    if cart.is_empty():
+        return redirect(url_for("cart_clear"))
+
+    flash("Successfully removed item from cart")
+
+    return redirect(url_for("consumer_cart"))
+
+
+# For removing ALL of an item.
+@app.route("/cart/delItem/<int:food_id>")
+@login_required
+@consumer_side
+def cart_del_item(food_id):
+    cart = CartDao.get_cart(current_user.cart)
+    cart.remove_item(food_id, remove_all=True)
     if cart.is_empty():
         return redirect(url_for("cart_clear"))
 

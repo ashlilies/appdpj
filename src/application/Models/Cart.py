@@ -75,9 +75,9 @@ class Cart:
 
         CartDao.save(self)
 
-    def remove_item(self, item_id: int, quantity: int = 1):
+    def remove_item(self, item_id: int, quantity: int = 1, remove_all=False):
         if item_id in self.__item_dict:
-            if self.__item_dict[item_id].qty > 1:
+            if self.__item_dict[item_id].qty > 1 and not remove_all:
                 self.__item_dict[item_id].qty -= quantity
             else:
                 self.__item_dict.pop(item_id)
