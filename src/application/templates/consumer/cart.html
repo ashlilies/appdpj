@@ -3,6 +3,10 @@
 
 {% block head %}
     <style> {# done by yong lin #}
+    .card {
+        background-color: #f3f0d1;
+    }
+
     .display-left {
         width: 35%;
         display: flex;
@@ -19,23 +23,39 @@
         float: right;
     }
 
-    {#.card > .rounded-3 > .mb-4 > .display-right{#}
-    {#    margin-left: 20px !important;#}
-    {#}#}
     .img-fluid {
         max-width: 150px !important;
         margin-right: 20px !important;
     }
 
     .display-bottom {
-        width: 100%;
-        display: flex;
-    }
-
-    .display-bottom > .btn > .btn-warning > .btn-block > .btn-lg {
+        width: 62%;
         display: flex;
         float: right;
     }
+
+    .display-bottom > .btn > .btn-warning > .btn-block > .btn-lg {
+        display: inline;
+    }
+
+    .table-bottom {
+        width: 65%;
+        height: 100%;
+        float: left;
+    }
+
+    table th {
+        width: 80%;
+    }
+
+    .proceed-btn {
+        width: 25%;
+        float: right;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+    }
+
     </style>
 {% endblock %}
 
@@ -132,7 +152,7 @@
 
                     <div class="card display-bottom">
                         <div class="card-body">
-                            <table>
+                            <table class="table-bottom">
                                 <tr>
                                     <th>Total</th>
                                     <td>S$ {{ "%.2f" % cart.get_total_before_discount() }}</td>
@@ -157,7 +177,8 @@
                                     <td>S$ {{ "%.2f" % cart.get_subtotal() }}</td>
                                 </tr>
                             </table>
-                            <button type="button" class="btn btn-warning btn-block btn-lg">
+
+                            <button type="button" class="btn btn-warning btn-block btn-lg proceed-btn">
                                 Proceed to Pay
                             </button>
                         </div>

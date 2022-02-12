@@ -3,7 +3,6 @@ import shelve
 
 from flask import render_template, request, redirect, url_for
 from flask_login import current_user
-from flask_googlemaps import GoogleMaps, get_address, get_coordinates
 from geopy.geocoders import Nominatim
 
 from application import app
@@ -12,28 +11,7 @@ from application.consumer_address_form import ConsumerAddressForm
 
 # <------------------------- YONG LIN ------------------------------>
 # ADDRESS FIELD (form field)
-GOOGLEMAPS_KEY = '8JZ7i18MjFuM35dJHq70n3Hx4'
-GoogleMaps(app)  # initialize the extension
-
-
-def testAPI():
-    # geolocator = Nominatim(user_agent="foodypulse")
-    #
-    # location = geolocator.geocode("Nanyang Polytechnic")
-    # print(location.address)
-    from flask_googlemaps import get_address, get_coordinates
-    API_KEY = 'YOUR API KEY'
-
-    # Reverse Geocoding: getting detailed address from coordinates of a location
-    print(get_address(API_KEY, 22.4761596, 88.4149326))
-    # output: {'zip': '700150', 'country': 'India', 'state': 'West Bengal', 'city': 'Kolkata', 'locality': 'Kolkata', 'road': 'Techno City', 'formatted_address': 'Sirin Rd, Mauza Ranabhutia, Techno City, Kolkata, West Bengal 700150, India'}
-
-    # Geocoding: getting coordinates from address text
-    print(get_coordinates(API_KEY, 'Netaji Subhash Engineering College Kolkata'))
-    # output: {'lat': 22.4761596, 'lng': 88.4149326}
-
-
-testAPI()
+geolocator = Nominatim(user_agent="foodypulse")
 
 
 @app.route("/myAddress", methods=["GET", "POST"])
@@ -42,8 +20,9 @@ def consumer_myaddress():
     # controller will be the place where we do all the interaction
     # address_form = ConsumerAddressForm(request.form)
 
+    # todo: change attributes to private attributes (for 'safety' reason)
     if request.method == 'POST' and consumer_address_form.validate():
-        # if the address does not exist
+        # saving / updating the user's address
         address_dict = {}
         with shelve.open('address.db', 'c') as db:
             try:
@@ -51,9 +30,20 @@ def consumer_myaddress():
             except Exception as e:
                 print('Error in retrieving address from address.db (%s)' % e)
 
-            consumer = ConsumerAddress(current_user.account_id, consumer_address_form.consumer_address.data)
+            # implementation of api
+            try:
+                # todo: limit area to Singapore Region
+                # todo: show the location on the map itself
+                location = geolocator.geocode(consumer_address_form.consumer_address.data)
+                print(location.address)
+            except Exception as e:
+                # todo: input showing of error as a pop out page at the top -- follow Ashlee's code
+                print('Error in Address (%s)' %e)
+
+            consumer = ConsumerAddress(current_user.account_id, location.address)
             address_dict[current_user.account_id] = consumer
-            current_user.checkout_address = consumer_address_form.consumer_address
+
+            # current_user.checkout_address = consumer_address_form.consumer_address
             db['address'] = address_dict
         return redirect(url_for('consumer_cart'))  # todo: link to ruri's payment link
     else:
@@ -62,7 +52,7 @@ def consumer_myaddress():
             try:
                 address_dict = db['address']
                 consumer = address_dict.get(current_user.account_id)
-                consumer_address_form.consumer_address.data = consumer.consumer_address
+                consumer_address_form.consumer_address.data = consumer.address
             except Exception as e:
                 logging.error('address: unable to display address due to %s in db' % e)
         return render_template("consumer/address.html", form=consumer_address_form)
