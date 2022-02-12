@@ -43,14 +43,28 @@ class CartItem:
 class Cart:
     count_id = 0
 
+    NOT_SET = 0
+    DINE_IN = 1
+    DELIVERY = 2
+
     def __init__(self):
         CountId.load(CART_DB, Cart)
         Cart.count_id += 1
         self.id = Cart.count_id
         CountId.save(CART_DB, Cart)
         self.coupon_code = ""
+        self.__mode = Cart.NOT_SET
 
         self.__item_dict = {}  # key: item_id, value: quantity
+
+    @property
+    def mode(self):
+        return self.__mode
+
+    @mode.setter
+    def mode(self, new_mode):
+        self.__mode = new_mode
+        CartDao.save(self)
 
     def add_item(self, item_id: int, quantity: int = 1):
         for i in range(quantity):
@@ -117,6 +131,11 @@ class Cart:
             item = self.__item_dict[item_id]
             price += item.price
         return price
+
+    def is_empty(self):
+        if self.get_cart_items() == []:
+            return True
+        return False
 
 
 class CartDao:

@@ -1,14 +1,15 @@
 import functools
+import logging
 from datetime import datetime
 
-from flask import url_for, render_template, flash, request
+from flask import url_for, render_template, flash, request, session
 from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.utils import redirect
 
 from application import app
 from application.Models.Account import Account
 from application.Models.Admin import Admin
-from application.Models.Cart import CartDao
+from application.Models.Cart import CartDao, Cart
 from application.Models.Consumer import Consumer
 
 # <------------------------- ASHLEE ------------------------------>
@@ -176,9 +177,14 @@ def consumer_cart():
 @login_required
 @consumer_side
 def cart_add(food_id):
-    cart = CartDao.get_cart(current_user.cart)
-    cart.add_item(food_id)
-    flash("Successfully added item to cart")
+    if session["cart_mode"] != Cart.NOT_SET:
+        cart = CartDao.get_cart(current_user.cart)
+        cart.add_item(food_id)
+        cart.mode = session["cart_mode"]
+        flash("Successfully added item to cart")
+    else:
+        flash("Error adding item to cart")
+        logging.error("Couldn't add item to cart due to unset mode")
 
     return redirect(url_for("consumer_cart"))
 
@@ -189,6 +195,9 @@ def cart_add(food_id):
 def cart_del(food_id):
     cart = CartDao.get_cart(current_user.cart)
     cart.remove_item(food_id)
+    if cart.is_empty():
+        return redirect(url_for("cart_clear"))
+
     flash("Successfully removed item from cart")
 
     return redirect(url_for("consumer_cart"))
@@ -200,6 +209,8 @@ def cart_del(food_id):
 def cart_clear():
     cart = CartDao.get_cart(current_user.cart)
     cart.clear_cart()
+    cart.mode = Cart.NOT_SET
+    cart.apply_coupon("")  # clear the coupon to prevent bugs
     flash("Successfully emptied the cart")
 
     return redirect(url_for("consumer_cart"))
@@ -209,6 +220,12 @@ def cart_clear():
 @consumer_side
 @login_required
 def dine_in():
+    cart = CartDao.get_cart(current_user.cart)
+    if not (cart.mode == Cart.DINE_IN or cart.mode == Cart.NOT_SET):
+        flash("You are already placing a Delivery order. "
+              "Complete it first, or empty your cart.")
+        return redirect(url_for("delivery"))
+
     restaurants = RestaurantSystem.get_restaurants()
     return render_template("consumer/dineIn/dineIn.html",
                            restaurants=restaurants, count=len(restaurants))
@@ -218,6 +235,8 @@ def dine_in():
 @consumer_side
 @login_required
 def dine_in_food(restaurant_id):
+    session["cart_mode"] = Cart.DINE_IN
+
     restaurant = RestaurantSystem.find_restaurant_by_id(restaurant_id)
     food_list = FoodDao.get_foods(restaurant_id)
 
@@ -233,6 +252,12 @@ def dine_in_food(restaurant_id):
 @consumer_side
 @login_required
 def delivery():
+    cart = CartDao.get_cart(current_user.cart)
+    if not (cart.mode == Cart.DELIVERY or cart.mode == Cart.NOT_SET):
+        flash("You are already placing a Dine-In order. "
+              "Complete it first, or empty your cart.")
+        return redirect(url_for("dine_in"))
+
     restaurants = RestaurantSystem.get_restaurants()
     return render_template("consumer/delivery/delivery.html",
                            restaurants=restaurants, count=len(restaurants))
@@ -242,6 +267,8 @@ def delivery():
 @consumer_side
 @login_required
 def delivery_food(restaurant_id):
+    session["cart_mode"] = Cart.DELIVERY
+
     restaurant = RestaurantSystem.find_restaurant_by_id(restaurant_id)
     food_list = FoodDao.get_foods(restaurant_id)
 
@@ -267,7 +294,8 @@ def apply_coupon():
         if coupon_code == "":
             flash("Successfully removed coupon code from cart")
         elif cart.get_total_discount() == 0.0:
-            flash("Invalid coupon code - either items are not applicable, or code doesn't exist!")
+            flash("Invalid coupon code - either items are not applicable, "
+                  "or code doesn't exist!")
             cart.apply_coupon("")  # blank it
         else:
             flash("Successfully applied coupon!")
