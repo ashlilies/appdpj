@@ -1,4 +1,3 @@
-# Ashlee
 import logging
 import shelve
 

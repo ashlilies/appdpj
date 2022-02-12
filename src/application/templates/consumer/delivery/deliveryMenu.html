@@ -3,32 +3,160 @@
 {% block title %}Delivery{% endblock %}
 
 {% block head %}
-  <link rel="stylesheet" href="{{ url_for("static", filename="css/features.css") }}">
+    <style>
+
+        .wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            height: 220px;
+            width: 454px;
+            border-radius: 7px 7px 7px 7px;
+            /* VIA CSS MATIC https://goo.gl/cIbnS */
+            -webkit-box-shadow: 0px 14px 32px 0px rgba(0, 0, 0, 0.15);
+            -moz-box-shadow: 0px 14px 32px 0px rgba(0, 0, 0, 0.15);
+            box-shadow: 0px 14px 32px 0px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-img {
+            height: 220px;
+            width: 227px;
+        }
+
+        .product-img img {
+            border-radius: 7px 0 0 7px;
+            height:220px;
+        }
+
+        .product-info {
+            float: left;
+            height: 220px;
+            width: 227px;
+            border-radius: 0 7px 10px 7px;
+            background-color: #ffffff;
+        }
+
+        .product-text {
+            height: 180px;
+            width: 227px;
+        }
+
+
+        .name{
+            height: 20px;
+            margin-right:20px;
+            margin-left:20px;
+            font-family: 'Playfair Display', serif;
+            color: #8d8d8d;
+            line-height: 1.7em;
+            font-size: 15px;
+            font-weight: lighter;
+            overflow: hidden;
+        }
+
+        .price{
+            height: 20px;
+            margin-right:20px;
+            margin-left:20px;
+            font-family: 'Playfair Display', serif;
+            color: #8d8d8d;
+            line-height: 1.7em;
+            font-size: 15px;
+            font-weight: lighter;
+            overflow: hidden;
+        }
+        .desc {
+            height: 80px;
+            margin-right:20px;
+            margin-left:20px;
+            font-family: 'Playfair Display', serif;
+            color: #8d8d8d;
+            line-height: 1.7em;
+            font-size: 15px;
+            font-weight: lighter;
+            overflow: hidden;
+        }
+
+        .product-price-btn {
+            height: 103px;
+            width: 327px;
+            position: relative;
+        }
+
+        span {
+            display: inline-block;
+            height: 50px;
+            font-family: 'Suranna', serif;
+            font-size: 34px;
+        }
+
+        .product-price-btn button {
+            float: right;
+            height: 50px;
+            width: 176px;
+        }
+
+        .product-price-btn button:hover {
+            background-color: #79b0a1;
+        }
+
+    </style>
+    <link rel="stylesheet" href="{{ url_for("static", filename="css/features.css") }}">
 {% endblock %}
 
 {% block content %}
-   <div class="container px-4 py-5" id="featured-3">
-   <h1 class="pb-2">{{ restaurant.name }}</h1>
+    <h1 class="pb-2">{{ restaurant.name }}</h1>
     <h2 class="pb-2 border-bottom">Choose Food Item</h2>
-    <div class="row g-4 py-5 row-cols-1 row-cols-lg-1">
-      {% if count %}
+
+
+    {% if count %}
         {% for food in food_list %}
-          <div class="card" style="width: 18rem;">
-            <img src="{{ url_for("static", filename=food.image) }}"
-                 class="card-img-top" alt="{{ food.name }}">
-            <div class="card-body">
-              <h5 class="card-title">{{ food.name }}</h5>
-              <h6 class="card-title">${{ "%.2f" % food.price }}</h6>
-              <p class="card-text">{{ food.description }}</p>
-              <a href="{{ url_for("cart_add", food_id=food.id) }}"
-                 class="btn btn-primary">Add to Cart</a>
+            <div class="clara">
+            <div class="wrapper">
+            <div class="product-img">
+                <img src="{{ url_for("static", filename=food.image) }}"/>
             </div>
-          </div>
+            <div class="product-info">
+                <div class="product-text">
+                    <p class="name">{{ food.name }}</p>
+                    <p class="desc">{{ food.description }}</p>
+                    <p class="price">${{ "%.2f" % food.price }}</p>
+                </div>
+                <div class="product-price-btn">
+                    <a href="{{ url_for("foodModal", food_id=food.id) }}"
+                       class="btn btn-primary">Add to Cart</a>
+                </div>
+            </div>
         {% endfor %}
-      {% else %}
-      <p>There are no food items in {{ restaurant.name }} yet :(</p>
-      {% endif %}
-    </div>
-  </div>
+    {% else %}
+        <p>There are no food items in {{ restaurant.name }} yet :(</p>
+    {% endif %}
+</div>
+
+
+
+    {#    ---------------------------------------------------------------------------#}
+    {#    <div class="container px-4 py-5" id="featured-3">#}
+    {#        <h1 class="pb-2">{{ restaurant.name }}</h1>#}
+    {#        <h2 class="pb-2 border-bottom">Choose Food Item</h2>#}
+    {#        <div class="row g-4 py-5 row-cols-1 row-cols-lg-1">#}
+    {#            {% if count %}#}
+    {#                {% for food in food_list %}#}
+    {#                    <div class="card" style="width: 18rem;">#}
+    {#                        <img src="{{ url_for("static", filename=food.image) }}"#}
+    {#                             class="card-img-top" alt="{{ food.name }}">#}
+    {#                        <div class="card-body">#}
+    {#                            <h5 class="card-title">{{ food.name }}</h5>#}
+    {#                            <h6 class="card-title">${{ "%.2f" % food.price }}</h6>#}
+    {#                            <p class="card-text">{{ food.description }}</p>#}
+    {#                            <a href="{{ url_for("cart_add", food_id=food.id) }}"#}
+    {#                               class="btn btn-primary">Add to Cart</a>#}
+    {#                        </div>#}
+    {#                    </div>#}
+    {#                {% endfor %}#}
+    {#            {% else %}#}
+    {#                <p>There are no food items in {{ restaurant.name }} yet :(</p>#}
+    {#            {% endif %}#}
+    {#        </div>#}
+    {#    </div>#}
 
 {% endblock %}
