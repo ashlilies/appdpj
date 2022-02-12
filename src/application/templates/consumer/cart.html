@@ -13,7 +13,7 @@
         display: inline !important;
     }
 
-    .display-left > .btn > .btn-lg > .ms-3{
+    .display-left > .btn > .btn-lg > .ms-3 {
         display: inline;
     }
 
@@ -95,8 +95,11 @@
                                             {% endif %}
                                         </div>
                                         <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                                            <a href="#!" class="text-danger"><i
-                                                    class="fas fa-trash fa-lg"></i></a>
+                                            <a href="#!" class="text-danger">
+                                                <img src="{{ url_for("static", filename="cart/trash.png") }}"
+                                                     alt="trash"
+                                                     style="height: 35px; width: 40px; margin: 15px 0px; display: inline-block">
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
