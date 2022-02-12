@@ -165,7 +165,7 @@ def consumer_delete_review(review_id):
 def consumer_cart():
     cart = CartDao.get_cart(current_user.cart)
     cart_items = cart.get_cart_items()
-    return render_template("consumer/cart.html",
+    return render_template("consumer/cart_tmp.html",
                            cart=cart,
                            cart_items=cart_items,
                            count=len(cart_items))
