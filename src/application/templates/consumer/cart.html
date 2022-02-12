@@ -109,11 +109,11 @@
                 <div class="form-outline flex-fill">
                   <input type="text" id="form1" name="couponCode"
                          class="form-control form-control-lg"/>
-                  <label class="form-label" for="form1">Coupon Code</label>
+                  <label class="form-label" for="form1">Coupon Code (case-sensitive)</label>
                 </div>
                 <button type="submit" class="btn btn-lg ms-3">Apply</button>
                 {% if cart.coupon_code != "" %}
-                  <p>Coupon Code Applied: {{ cart.coupon_code }}</p>
+                  <p style="color: red;"><b>Coupon Code Applied: {{ cart.coupon_code }}</b></p>
                 {% endif %}
               </form>
 
