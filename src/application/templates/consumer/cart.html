@@ -45,14 +45,16 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-normal mb-0 text-black">Your Cart</h3>
       <div class="d-flex align-items-end">
+      {% if cart.mode == cart.DINE_IN or cart.mode == cart.DELIVERY %}
         {% if cart.mode == cart.DINE_IN %}
           <h3 class="fw-normal mb-0 text-black align-self-center">Dine-In&nbsp;&nbsp;</h3>
-          <a href="{{ url_for("cart_clear") }}" class="btn btn-warning btn-block btn-lg mt-auto mb-auto align-self-center" style="height: 50%;">
-            Clear Cart
-          </a>
         {% elif cart.mode == cart.DELIVERY %}
-          <h3 class="fw-normal mb-0 text-black">Delivery</h3>
+          <h3 class="fw-normal mb-0 text-black align-self-center">Delivery&nbsp;&nbsp;</h3>
         {% endif %}
+        <a href="{{ url_for("cart_clear") }}" class="btn btn-warning btn-block btn-lg mt-auto mb-auto align-self-center" style="height: 50%;">
+          Clear Cart
+        </a>
+      {% endif %}
       </div>
       </div>
 

@@ -274,7 +274,7 @@ def delivery():
         return redirect(url_for("dine_in"))
 
     restaurants = RestaurantSystem.get_restaurants()
-    return render_template("consumer/delivery/delivery.html",
+    return render_template("consumer/delivery/delivery_tmp.html",
                            restaurants=restaurants, count=len(restaurants))
 
 
@@ -290,7 +290,7 @@ def delivery_food(restaurant_id):
     if restaurant is None:
         return redirect(url_for("delivery"))
 
-    return render_template("consumer/delivery/deliveryMenu.html",
+    return render_template("consumer/delivery/deliveryMenu_tmp.html",
                            restaurant=restaurant, food_list=food_list,
                            count=len(food_list))
 
