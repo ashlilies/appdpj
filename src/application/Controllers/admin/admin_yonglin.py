@@ -274,7 +274,7 @@ def uploader():
 
             # create new class object
             cert = Certification()
-            # cert.id = current_user.restaurant_id
+            cert.id = current_user.restaurant_id
 
             # get values in checkboxes
             certchecks = request.form.getlist('certCheck')

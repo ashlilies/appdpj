@@ -2,33 +2,41 @@
 {% block title %}FoodyPulse - Home{% endblock %}
 
 {% block head %}
-  <style>
-      .display-left {
-          width: 35%;
-          display: flex;
-          float: left;
-      }
+    <style> {# done by yong lin #}
+    .display-left {
+        width: 35%;
+        display: flex;
+        float: left;
+    }
 
-      .display-left > .btn > .btn-warning > .btn-block > .btn-lg {
-          font-size: 15px !important;
-      }
+    .display-left > .form-outline, .flex-fill {
+        display: inline !important;
+    }
 
-      .display-right {
-          width: 62%;
-          display: flex;
-          float: right;
-      }
+    .display-left > .btn > .btn-lg > .ms-3 {
+        display: inline;
+    }
 
-      .display-bottom {
-          width: 100%;
-          display: flex;
-      }
+    .display-left > .btn > .btn-warning > .btn-block > .btn-lg {
+        font-size: 15px !important;
+    }
 
-      .display-bottom > .btn > .btn-warning > .btn-block > .btn-lg {
-          display: flex;
-          float: right;
-      }
-  </style>
+    .display-right {
+        width: 62%;
+        display: flex;
+        float: right;
+    }
+
+    .display-bottom {
+        width: 100%;
+        display: flex;
+    }
+
+    .display-bottom > .btn > .btn-warning > .btn-block > .btn-lg {
+        display: flex;
+        float: right;
+    }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -75,41 +83,44 @@
                              type="text" readonly
                              class="form-control form-control-sm"/>
 
-                      <a class="btn btn-link px-2"
-                         style="color: black; text-decoration: none;"
-                         href="{{ url_for("cart_add", food_id=cart_item.food.id) }}"
-                         onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                        +
-                      </a>
-                    </div>
-                    <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                      {% if cart_item.is_discounted() %}
-                        <h5 class="mb-0" style="text-decoration: line-through">
-                          ${{ "%.2f" % (cart_item.food.price * cart_item.qty) }}</h5>
-                        <h5 class="mb-0">${{ "%.2f" % cart_item.price }}</h5>
-                      {% else %}
-                        <h5 class="mb-0">${{ "%.2f" % cart_item.price }}</h5>
-                      {% endif %}
-                    </div>
-                    <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                      <a href="#!" class="text-danger"><i
-                          class="fas fa-trash fa-lg"></i></a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            {% endfor %}
-          {% else %}
-            <p class="rounded-3 mb-4 display-right">No items in cart. Add some today!</p>
-          {% endif %}
+                                            <a class="btn btn-link px-2"
+                                               style="color: black; text-decoration: none;"
+                                               href="{{ url_for("cart_add", food_id=cart_item.food.id) }}"
+                                               onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                                                +
+                                            </a>
+                                        </div>
+                                        <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                            {% if cart_item.is_discounted() %}
+                                                <h5 class="mb-0" style="text-decoration: line-through">
+                                                    ${{ "%.2f" % (cart_item.food.price * cart_item.qty) }}</h5>
+                                                <h5 class="mb-0">${{ "%.2f" % cart_item.price }}</h5>
+                                            {% else %}
+                                                <h5 class="mb-0">${{ "%.2f" % cart_item.price }}</h5>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                                            <a href="#!" class="text-danger">
+                                                <img src="{{ url_for("static", filename="cart/trash.png") }}"
+                                                     alt="trash"
+                                                     style="height: 35px; width: 40px; margin: 15px 0px; display: inline-block">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="rounded-3 mb-4 display-right">No items in cart. Add some today!</p>
+                    {% endif %}
 
           <div class="card mb-4 display-left">
             <div class="card-body p-4 d-flex flex-row">
               <form action="{{ url_for("apply_coupon") }}" method="post">
                 <div class="form-outline flex-fill">
+                  <label class="form-label" for="form1">Coupon Code (case-sensitive)</label>
                   <input type="text" id="form1" name="couponCode"
                          class="form-control form-control-lg"/>
-                  <label class="form-label" for="form1">Coupon Code (case-sensitive)</label>
                 </div>
                 <button type="submit" class="btn btn-lg ms-3">Apply</button>
                 {% if cart.coupon_code != "" %}
