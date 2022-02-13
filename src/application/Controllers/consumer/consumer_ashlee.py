@@ -316,3 +316,37 @@ def apply_coupon():
             flash("Successfully applied coupon!")
 
     return redirect(url_for("consumer_cart"))
+
+
+# --------------------------------------------------------------------------
+# Temporary for Clara testing
+@app.route("/delivery2")
+@consumer_side
+@login_required
+def delivery2():
+    cart = CartDao.get_cart(current_user.cart)
+    if not (cart.mode == Cart.DELIVERY or cart.mode == Cart.NOT_SET):
+        flash("You are already placing a Dine-In order. "
+              "Complete it first, or empty your cart.")
+        return redirect(url_for("dine_in"))
+
+    restaurants = RestaurantSystem.get_restaurants()
+    return render_template("consumer/delivery/delivery.html",
+                           restaurants=restaurants, count=len(restaurants))
+
+
+@app.route("/delivery2/<string:restaurant_id>")
+@consumer_side
+@login_required
+def delivery_food2(restaurant_id):
+    session["cart_mode"] = Cart.DELIVERY
+
+    restaurant = RestaurantSystem.find_restaurant_by_id(restaurant_id)
+    food_list = FoodDao.get_foods(restaurant_id)
+
+    if restaurant is None:
+        return redirect(url_for("delivery"))
+
+    return render_template("consumer/delivery/deliveryMenu.html",
+                           restaurant=restaurant, food_list=food_list,
+                           count=len(food_list))
