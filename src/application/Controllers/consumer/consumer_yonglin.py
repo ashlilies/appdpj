@@ -5,7 +5,6 @@ import overpy as overpy
 from flask import render_template, request, redirect, url_for
 from flask_login import current_user
 from flask_googlemaps import GoogleMaps
-from flask_googlemaps import Map
 
 from geopy.geocoders import Nominatim
 
@@ -24,6 +23,8 @@ def consumer_myaddress():
     consumer_address_form = ConsumerAddressForm(request.form)
     # controller will be the place where we do all the interaction
     # address_form = ConsumerAddressForm(request.form)
+    lonlist = []
+    latlist = []
 
     # todo: change attributes to private attributes (for 'safety' reason)
     if request.method == 'POST' and consumer_address_form.validate():
@@ -39,8 +40,8 @@ def consumer_myaddress():
             try:
                 # todo: limit area to Singapore Region
                 location = geolocator.geocode(consumer_address_form.consumer_address.data)
-                print(location.address)
-
+                latlist.append(location.latitude)
+                lonlist.append(location.longitude)
             except Exception as e:
                 # todo: input showing of error as a pop out page at the top -- follow Ashlee's code
                 logging.error('Error in Address (%s)' % e)
@@ -50,7 +51,7 @@ def consumer_myaddress():
 
             # current_user.checkout_address = consumer_address_form.consumer_address
             db['address'] = address_dict
-        return redirect(url_for('consumer_myaddress'))  # todo: link to ruri's payment link
+        return render_template("consumer/address.html", form=consumer_address_form, lonlist=lonlist, latlist=latlist)
     else:
         address_dict = {}
         with shelve.open('address.db', 'c') as db:
