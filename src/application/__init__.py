@@ -2,8 +2,13 @@
 
 import atexit
 import logging
+
+import flask_mail
 from flask import Flask
 from flask_login import LoginManager
+import os
+
+from flask_mail import Mail
 
 app = Flask(__name__)
 app.secret_key = "doofypulseEngineers"  # used for secure stuff
@@ -29,7 +34,6 @@ def exit_handler():
 
 atexit.register(exit_handler)
 
-
 # Initialize our login manager.
 login_manager = LoginManager()
 login_manager.init_app(app)  # app is a Flask object
@@ -49,6 +53,19 @@ def user_loader(user_id):
 def unauthorized_callback():
     flash("Please log in to continue.")
     return redirect(url_for("consumer_login"))
+
+
+mail_settings = {
+    "MAIL_SERVER": 'smtp-mail.outlook.com',
+    "MAIL_PORT": 587,
+    "MAIL_USE_TLS": True,
+    "MAIL_USE_SSL": False,
+    "MAIL_USERNAME": os.environ['EMAIL_USER'],
+    "MAIL_PASSWORD": os.environ['EMAIL_PASSWORD']
+}
+
+app.config.update(mail_settings)
+mail = Mail(app)
 
 
 # Includes

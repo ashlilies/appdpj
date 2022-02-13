@@ -106,6 +106,10 @@
                         <input type="password" name="updateSettingsPw" id="updateSettingsPw"><br>
                         <hr>
                         <div class="form-group row">
+                          <label>Your OTP secret: <b>{{ current_user.totp_secret }}</b> <a href="{{ url_for("regenerate_otp") }}">(regenerate)</a></label>
+                        </div>
+                        <hr>
+                        <div class="form-group row">
                           <label>First Name: <b>{{ current_user.first_name }}</b></label>
                           <label>Last Name: <b>{{ current_user.last_name }}</b></label>
                           <label for="changeFirstName" class="col-form-label">New First Name: </label>
@@ -218,6 +222,10 @@
                           password.</label>
                         <label for="updateSettingsPw" style="margin-top: 1.5rem;">Current Password: </label>
                         <input type="password" name="updateSettingsPw" id="updateSettingsPw"><br>
+                        <hr>
+                        <div class="form-group row">
+                          <label>Your OTP secret: <b>{{ current_user.totp_secret }}</b> <a href="{{ url_for("regenerate_otp") }}">(regenerate)</a></label>
+                        </div>
                         <hr>
                         <div class="form-group row">
                           <label for="changeName">Current Name: <b>{{ current_user.get_name() }}</b></label>

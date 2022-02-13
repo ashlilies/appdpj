@@ -82,14 +82,17 @@
     <h2>Log In</h2>
     <form action="" method="post" class="login-form">
       <label id="loginErrorMsg" hidden>Incorrect email or password.</label><br>
-      <label for="email"><img style="opacity: 60%" src={{ url_for("static", filename="account/person.png") }}/></label>
+      <label for="email"><img style="opacity: 60%" src="{{ url_for("static", filename="account/person.png") }}" /></label>
       <input type="email" name="email" id="email"
              placeholder="Business E-mail" required><br>
-      <label for="password"><img src={{ url_for("static", filename="account/padlock.png") }}/></label>
+      <label for="password"><img src="{{ url_for("static", filename="account/padlock.png") }}" /></label>
       <input type="password" name="password" id="password"
              placeholder="Password" required><br>
+      <label for="otp"><img style="opacity: 60%" src="{{ url_for("static", filename="account/otp.png") }}"/></label>
+      <input type="text" name="otp" id="otp" placeholder="One-Time Password" required><br>
 
       <input type="submit" value="Log In" id="submitButton"><br>
+      <a class="btn btn-secondary" href="{{ url_for("admin_forget_password") }}">Forgot Password</a> <br>
     </form>
   </div>
   </div>

@@ -38,6 +38,7 @@ def admin_home():  # ashlee
     return render_template("admin/home.html")
 
 
+# TOTP Web Client https://totp.danhersam.com/
 @app.route("/admin/login", methods=["GET", "POST"])
 @admin_side
 def admin_login():  # ashlee
@@ -49,13 +50,14 @@ def admin_login():  # ashlee
         login = Account.check_credentials(request.form["email"],
                                           request.form["password"])
         if login is not None:
-            with shelve.open(ACCOUNT_DB, 'c') as db:
-                accounts = db["accounts"]
-                accounts[login.account_id].authenticated = True
-                db["accounts"] = accounts
-
-            login_user(login)
-            return redirect(url_for("admin_home"))
+            # Check OTP
+            if login.check_otp(request.form["otp"]):
+                login.authenticate()
+                login_user(login)
+                return redirect(url_for("admin_home"))
+            else:
+                flash("Incorrect OTP")
+                return render_template("admin/login.html")
         return login_error()
     return render_template("admin/login.html")
 
@@ -96,6 +98,8 @@ def admin_register():  # ashlee
             db["accounts"] = accounts
             login_user(account)
 
+        flash("Your OTP secret is %s. Enter this into your OTP app!"
+              % account.totp_secret)
         return redirect(url_for("admin_myrestaurant"))
 
     return render_template("admin/register.html")
@@ -350,3 +354,34 @@ def admin_retrieve_reviews():
                            list_of_reviews=list_of_reviews,
                            count=len(list_of_reviews),
                            average_rating=average_rating)
+
+@app.route("/admin/forgetPassword", methods=["GET", "POST"])
+@admin_side
+def admin_forget_password():
+    if request.method == "POST":
+        email = request.form["email"]
+        account = Account.get_account_by_email(email)
+        if account is not None:
+            flash("An email with a link has been sent.")
+            account.reset_password()
+            return redirect(url_for("admin_forget_password_key"))
+        else:
+            flash("Email doesn't exist.")
+
+    return render_template("admin/account/forgetPassword.html")
+
+
+@app.route("/admin/forgetPasswordKey", methods=["GET", "POST"])
+@admin_side
+def admin_forget_password_key():
+    if request.method == "POST":
+        email = request.form["email"]
+        account = Account.get_account_by_email(email)
+        tok = request.form["token"]
+        if account is not None:
+            return redirect(url_for("password_auto_reset",
+                                    account_id=account.account_id,
+                                    pw_reset_token=tok))
+        else:
+            flash("Invalid email")
+    return render_template("admin/account/forgetPasswordKey.html")

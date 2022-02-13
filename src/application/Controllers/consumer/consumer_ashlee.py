@@ -1,5 +1,6 @@
 import functools
 import logging
+import traceback
 from datetime import datetime
 
 from flask import url_for, render_template, flash, request, session
@@ -52,9 +53,13 @@ def consumer_login():
         login = Account.check_credentials(request.form["email"],
                                           request.form["password"])
         if login is not None:
-            login.authenticate()
-            login_user(login)
-            return redirect(url_for("consumer_home"))
+            if login.check_otp(request.form["otp"]):
+                login.authenticate()
+                login_user(login)
+                return redirect(url_for("consumer_home"))
+            else:
+                flash("Incorrect OTP")
+                return render_template("consumer/account/login.html")
         return login_error()
 
     return render_template("consumer/account/login.html")
@@ -78,13 +83,15 @@ def consumer_register():
                                email=request.form["email"],
                                password=request.form["password"])
         except Exception as e:
-            for error in e.args:
-                flash(str(error))
+            flash("An error occured. Please contact FoodyPulse support.")
+            traceback.print_exc()
             return redirect(url_for("consumer_register"))
 
         account.authenticate()
         login_user(account)
 
+        flash("Your OTP secret is %s. Enter this into your OTP app!"
+              % account.totp_secret)
         return redirect(url_for("consumer_home"))
     return render_template("consumer/account/register.html")
 
@@ -386,3 +393,64 @@ def consumer_update_account():
 
     return redirect(url_for("consumer_home"))
 
+
+@app.route("/forgetPassword", methods=["GET", "POST"])
+@consumer_side
+def consumer_forget_password():
+    if request.method == "POST":
+        email = request.form["email"]
+        account = Account.get_account_by_email(email)
+        if account is not None:
+            flash("An email with a link has been sent.")
+            account.reset_password()
+            return redirect(url_for("consumer_forget_password_key"))
+        else:
+            flash("Email doesn't exist.")
+
+    return render_template("consumer/account/forgetPassword.html")
+
+
+@app.route("/forgetPasswordKey", methods=["GET", "POST"])
+@consumer_side
+def consumer_forget_password_key():
+    if request.method == "POST":
+        email = request.form["email"]
+        account = Account.get_account_by_email(email)
+        tok = request.form["token"]
+        if account is not None:
+            return redirect(url_for("password_auto_reset",
+                                    account_id=account.account_id,
+                                    pw_reset_token=tok))
+        else:
+            flash("Invalid email")
+    return render_template("consumer/account/forgetPasswordKey.html")
+
+# This endpoint works for all account types
+@app.route("/<int:account_id>/<string:pw_reset_token>")
+def password_auto_reset(account_id, pw_reset_token):
+    account = Account.query(account_id)
+    if account.reset_pw_verify(pw_reset_token):
+        flash("A new password has been sent to your email.")
+
+        if isinstance(Account.query(account_id), Admin):
+            return redirect(url_for("admin_home"))
+        else:
+            return redirect(url_for("consumer_home"))
+
+    flash("Wrong password reset key. Try again?")
+
+    if isinstance(account, Admin):
+        return redirect(url_for("admin_forget_password_key"))
+    return redirect(url_for("consumer_forget_password_key"))
+
+# Regenerate OTP for all account types
+@app.route("/regenOTP")
+@login_required
+def regenerate_otp():
+    current_user.generate_otp_secret()
+    flash("Your OTP secret is %s. Enter this into your OTP app!"
+          % current_user.totp_secret)
+
+    if isinstance(current_user, Admin):
+        return redirect(url_for("admin_home"))
+    return redirect(url_for("consumer_home"))
