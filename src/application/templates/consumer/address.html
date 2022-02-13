@@ -16,7 +16,7 @@
 
         .addressDiv {
             background-color: #f3f0d1;
-            width: 30%;
+            width: 40%;
             border: 1px black;
         }
 
@@ -35,25 +35,30 @@
         }
 
         #map {
-            height: 400px;
-            width: 100%;
+            height: 250px;
+            width: 90%;
+            margin: auto;
         }
     </style>
-    <script>
-        function initMap() {
-            // the location of Nanyang Polytechnic
-            const nyp = {lat: 1.3800, lng: 103.8489};
-            // center the map at nyp
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 4,
-                center: nyp,
-            });
-        }
-    </script>
 {% endblock %}
 
 {% block content %}
     {% from "includes/_formHelper.html" import render_field %}
+    <script>
+        function initMap() {
+            // the location of Nanyang Polytechnic
+            const location = {lat: {{ latitude }}, lng: {{ longitude }} };
+            // center the map at nyp
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: location,
+            });
+            const marker = new google.maps.Marker({
+                position: location,
+                map: map,
+            });
+        }
+    </script>
 
     <form method="POST" action="{{ url_for('consumer_myaddress') }}">
         <div class="addressDiv">
