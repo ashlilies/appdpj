@@ -70,7 +70,7 @@
                 <td style="text-align: right">S$ {{ "%.2f" % (cart.get_subtotal()) }}</td>
               </tr>
             </table>
-              <form action="/payment" method="POST">
+              <form action="{{ url_for('payment') }}" method="POST">
 {#                  {%  set amount = (cart.get_subtotal()).replace('.','')%}#}
                   <script
                     src="https://checkout.stripe.com/checkout.js"

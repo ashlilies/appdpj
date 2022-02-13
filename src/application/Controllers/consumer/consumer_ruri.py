@@ -2,7 +2,7 @@ import functools
 import logging
 from datetime import datetime
 
-from flask import url_for, render_template, flash, request, session
+from flask import render_template,session, request,redirect,url_for,flash,current_app,make_response
 from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.utils import redirect
 
@@ -26,7 +26,7 @@ publishable_key = 'pk_test_VrWD12lh918aMAaU4HP11c4e00I9shY8fg'
 stripe.api_key = 'sk_test_kpzk6dqINLVhzC75dZi29d7z00bIiWFNxf'
 
 
-@app.route("/payment")
+@app.route("/payment", methods=['POST'])
 @consumer_side
 @login_required
 def payment():
@@ -36,6 +36,17 @@ def payment():
                            cart=cart,
                            cart_items=cart_items,
                            count=len(cart_items))
+    customer = stripe.Customer.create(
+        email=request.form['stripeEmail'],
+        source=request.form['stripeToken'],
+    )
+
+    charge = stripe.Charge.create(
+        customer=current_user.account_id,
+        description='Foody pulse payment',
+        amount={{cart.get_subtotal()}},
+        currency='sgd',
+    )
     return redirect(url_for('thankyou'))
 
 @app.route("/delordine")
@@ -48,6 +59,6 @@ def delordine():  # ruri
 @consumer_side
 @login_required
 def thankyou():
-    return render_template('customer/thankyou.html')
+    return render_template('consumer/thankyou.html')
 
 
