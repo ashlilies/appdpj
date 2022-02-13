@@ -55,13 +55,20 @@ def unauthorized_callback():
     return redirect(url_for("consumer_login"))
 
 
+email_user = ""
+if os.environ.get('EMAIL_USER'):
+    email_user = os.environ['EMAIL_USER']
+email_pw = ""
+if os.environ.get('EMAIL_PASSWORD'):
+    email_pw = os.environ['EMAIL_PASSWORD']
+
 mail_settings = {
     "MAIL_SERVER": 'smtp-mail.outlook.com',
     "MAIL_PORT": 587,
     "MAIL_USE_TLS": True,
     "MAIL_USE_SSL": False,
-    "MAIL_USERNAME": os.environ['EMAIL_USER'],
-    "MAIL_PASSWORD": os.environ['EMAIL_PASSWORD']
+    "MAIL_USERNAME": email_user,
+    "MAIL_PASSWORD": email_pw
 }
 
 app.config.update(mail_settings)

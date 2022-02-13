@@ -355,18 +355,24 @@ def admin_retrieve_reviews():
                            count=len(list_of_reviews),
                            average_rating=average_rating)
 
+
 @app.route("/admin/forgetPassword", methods=["GET", "POST"])
 @admin_side
 def admin_forget_password():
     if request.method == "POST":
-        email = request.form["email"]
-        account = Account.get_account_by_email(email)
-        if account is not None:
-            flash("An email with a link has been sent.")
-            account.reset_password()
-            return redirect(url_for("admin_forget_password_key"))
-        else:
-            flash("Email doesn't exist.")
+        try:
+            email = request.form["email"]
+            account = Account.get_account_by_email(email)
+            if account is not None:
+                flash("An email with a link has been sent.")
+                account.reset_password()
+                return redirect(url_for("admin_forget_password_key"))
+            else:
+                flash("Email doesn't exist.")
+        except AssertionError:
+            flash("FoodyPulse's SMTP email and password wasn't properly "
+                  "configured."
+                  "Please contact FoodyPulse support.")
 
     return render_template("admin/account/forgetPassword.html")
 
