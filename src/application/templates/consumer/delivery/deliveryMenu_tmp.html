@@ -21,10 +21,15 @@
               <h5 class="card-title">{{ food.name }}</h5>
               <h6 class="card-title">${{ "%.2f" % food.price }}</h6>
               <p class="card-text">{{ food.description }}</p>
-              <a href="{{ url_for("cart_add", food_id=food.id) }}"
-                 class="btn btn-primary">Add to Cart</a>
+{#              <a href="{{ url_for("cart_add", food_id=food.id) }}"#}
+{#                 class="btn btn-primary">Add to Cart</a>#}
+              <button data-bs-toggle="modal" data-bs-target="#foodModal{{ food.id }}"
+                 class="btn btn-primary">Add to Cart</button>
             </div>
           </div>
+
+          {# Food Modal #}
+          {% include "consumer/foodModal.html" %}
         {% endfor %}
       {% else %}
         <p>There are no food items in {{ restaurant.name }} yet :(</p>

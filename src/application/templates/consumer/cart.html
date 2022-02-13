@@ -44,24 +44,26 @@
     <div class="col-12">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-normal mb-0 text-black">Your Cart</h3>
-      <div class="d-flex align-items-end">
-      {% if cart.mode == cart.DINE_IN or cart.mode == cart.DELIVERY %}
-        {% if cart.mode == cart.DINE_IN %}
-          <h3 class="fw-normal mb-0 text-black align-self-center">Dine-In&nbsp;&nbsp;</h3>
-        {% elif cart.mode == cart.DELIVERY %}
-          <h3 class="fw-normal mb-0 text-black align-self-center">Delivery&nbsp;&nbsp;</h3>
-        {% endif %}
-        <script>
-            function confirmClearCart() {
-                if (confirm("Are you sure you wish to clear the Cart?"))
-                    window.location.replace("{{ url_for("cart_clear") }}");
-            }
-        </script>
-        <button onclick="confirmClearCart()" class="btn btn-warning btn-block btn-lg mt-auto mb-auto align-self-center" style="height: 50%;">
-          Clear Cart
-        </button>
-      {% endif %}
-      </div>
+        <div class="d-flex align-items-end">
+          {% if cart.mode == cart.DINE_IN or cart.mode == cart.DELIVERY %}
+            {#        {% if cart.mode == cart.DINE_IN %}#}
+            {#          <h3 class="fw-normal mb-0 text-black align-self-center">Dine-In&nbsp;&nbsp;</h3>#}
+            {#        {% elif cart.mode == cart.DELIVERY %}#}
+            {#          <h3 class="fw-normal mb-0 text-black align-self-center">Delivery&nbsp;&nbsp;</h3>#}
+            {#        {% endif %}#}
+            <script>
+                function confirmClearCart() {
+                    if (confirm("Are you sure you wish to clear the Cart?"))
+                        window.location.replace("{{ url_for("cart_clear") }}");
+                }
+            </script>
+            <button onclick="confirmClearCart()"
+                    class="btn btn-warning btn-block btn-lg mt-auto mb-auto align-self-center"
+                    style="height: 50%;">
+              Clear Cart
+            </button>
+          {% endif %}
+        </div>
       </div>
 
       {% if count %}
@@ -77,13 +79,31 @@
                       class="img-fluid rounded-3" alt="Cotton T-shirt"
                       style="object-fit: cover">
                 </div>
-                <div class="col-md-3 col-lg-3 col-xl-3">
+                <div class="col-md-4 col-lg-4 col-xl-4">
                   <p class="lead fw-normal mb-2">{{ cart_item.food.name }}</p>
-                  <p><span
-                      class="text-muted">{{ cart_item.food.description }}</span>
+                  {#                  <p><span class="text-muted">{{ cart_item.food.description }}</span>#}
+                  </p>
+                  <p>
+                    <em class="text-muted">Toppings:
+                      {% if cart_item.toppings != "" %}
+                      {% for topping in cart_item.toppings %}
+                        {{ topping }}&nbsp;
+                      {% endfor %}
+                      {% else %}
+                        <span class="text-muted">None</span>
+                      {% endif %}
+                    </em>
+                    <br>
+                    <em class="text-muted">Other Requests:
+                      {% if cart_item.requests != "" %}
+                      {{ cart_item.requests }}
+                      {% else %}
+                      <span class="text-muted">None</span>
+                      {% endif %}
+                    </em>
                   </p>
                 </div>
-                <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                <div class="col-md-2 col-lg-2 col-xl-2 d-flex">
                   <a class="btn btn-link px-2"
                      style="color: black; text-decoration: none;"
                      href="{{ url_for("cart_del", food_id=cart_item.food.id) }}">
@@ -156,7 +176,8 @@
             <table style="width: 80%;">
               <tr>
                 <th>Total</th>
-                <td style="text-align: right">S$ {{ "%.2f" % cart.get_total_before_discount() }}</td>
+                <td style="text-align: right">
+                  S$ {{ "%.2f" % cart.get_total_before_discount() }}</td>
               </tr>
               <tr>
                 <th>Delivery Fee</th>
@@ -165,7 +186,8 @@
               {% if cart.coupon_code != "" %}
                 <tr>
                   <th>Discount</th>
-                  <td style="text-align: right">-S$ {{ "%.2f" % cart.get_total_discount() }}</td>
+                  <td style="text-align: right">
+                    -S$ {{ "%.2f" % cart.get_total_discount() }}</td>
                 </tr>
               {% endif %}
               <tr>
@@ -175,7 +197,8 @@
               </tr>
               <tr>
                 <th>Subtotal</th>
-                <td style="text-align: right">S$ {{ "%.2f" % cart.get_subtotal() }}</td>
+                <td style="text-align: right">
+                  S$ {{ "%.2f" % cart.get_subtotal() }}</td>
               </tr>
             </table>
             <button type="button"

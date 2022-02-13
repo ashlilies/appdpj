@@ -105,16 +105,7 @@ def admin_register():  # ashlee
 @login_required
 @admin_side
 def admin_logout():
-    # Logout the current user
-    current_user.authenticated = False
-    with shelve.open("accounts", 'c') as db:
-        accounts = db["accounts"]
-        accounts[current_user.account_id].authenticated = False
-        db["accounts"] = accounts
-
-    logout_user()
-    flash("You have logged out.")
-    return redirect(url_for("admin_home"))
+    return redirect(url_for("logout"))
 
 
 # API for updating account, to be called by Account Settings
@@ -159,24 +150,29 @@ def admin_update_account():
     return redirect(url_for("admin_home"))
 
 
-@app.route("/admin/deleteAccount")
+# Can be used for all account types
+@app.route("/deleteAccount", methods=["POST"])
 @login_required
-@admin_side
-def delete_admin_account():
-    # TODO: Add account settings password confirmation before allowing delete
-    if current_user.is_authenticated:
-        # current_user.hard_delete_account()
-        with shelve.open(ACCOUNT_DB, 'c') as db:
-            accounts = db["accounts"]
-            account = accounts.get(current_user.account_id)
-            account.disabled = True
-            db["accounts"] = accounts
+def delete_account():
+    if current_user.is_authenticated and "updateSettingsPw" in request.form:
+        if current_user.check_password_hash(request.form["updateSettingsPw"]):
+            with shelve.open(ACCOUNT_DB, 'c') as db:
+                accounts = db["accounts"]
+                account = accounts.get(current_user.account_id)
+                account.disabled = True
+                db["accounts"] = accounts
 
-        flash("Successfully deleted your account")
+            flash("Successfully deleted your account")
+            return redirect(url_for("logout"))
+        else:
+            flash("Incorrect password")
     else:
         flash("Failed to delete your account!")
 
-    return redirect(url_for("admin_logout"))
+    if isinstance(current_user, Admin):
+        return redirect(url_for("admin_home"))
+    else:
+        return redirect(url_for("consumer_home"))
 
 
 @app.route("/admin/coupon")

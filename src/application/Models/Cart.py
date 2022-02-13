@@ -13,10 +13,12 @@ CART_DB = "cart.db"
 
 # LIMITATION: Only 1 coupon code can be applied at the same time.
 class CartItem:
-    def __init__(self, item_id, qty):
+    def __init__(self, item_id, qty, toppings, requests):
         self.item_id = item_id
         self.qty = qty
         self.coupon_code = None
+        self.toppings = toppings
+        self.requests = requests
 
     def is_discounted(self) -> bool:
         if self.food.price * self.qty == self.price:
@@ -66,12 +68,18 @@ class Cart:
         self.__mode = new_mode
         CartDao.save(self)
 
-    def add_item(self, item_id: int, quantity: int = 1):
+    def add_item(self, item_id: int, quantity: int = 1, toppings=None,
+                 requests=""):
         for i in range(quantity):
             if item_id in self.__item_dict:
-                self.__item_dict[item_id].qty += 1
+                item = self.__item_dict[item_id]
+                item.qty += 1
+                item.toppings = toppings
+                item.requests = requests
+                self.__item_dict[item_id] = item
             else:
-                self.__item_dict[item_id] = CartItem(item_id, quantity)
+                self.__item_dict[item_id] = CartItem(item_id, quantity,
+                                                     toppings, requests)
 
         CartDao.save(self)
 
@@ -97,6 +105,9 @@ class Cart:
             cart_items.append(self.__item_dict[food_id])
 
         return cart_items
+
+    def get_cart_items_dict(self) -> dict:
+        return self.__item_dict
 
     def clear_cart(self):
         self.__item_dict.clear()

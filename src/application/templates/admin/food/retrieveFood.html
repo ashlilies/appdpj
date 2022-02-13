@@ -35,10 +35,26 @@
         <td>{{ food.name }}</td>
         <td>{{ food.description }}</td>
         <td>${{ "%.2f"|format(food.price) }}</td>
-        <td>{{ food.allergy }}</td>
-        <td>{% for spec in food.specifications %}{{ spec }}<br>{% endfor %}
+        <td>
+          {% if food.allergy %}
+            {{ food.allergy }}
+          {% else %}
+            <p class="text-secondary">None</p>
+          {% endif %}
         </td>
-        <td>{% for topping in food.toppings %}{{ topping }}<br>{% endfor %}
+        <td>
+          {% if food.specifications %}
+            {% for spec in food.specifications %}{{ spec }}<br>{% endfor %}
+          {% else %}
+            <p class="text-secondary">None</p>
+          {% endif %}
+        </td>
+        <td>
+          {% if food.toppings %}
+            {% for topping in food.toppings %}{{ topping }}<br>{% endfor %}
+          {% else %}
+            <p class="text-secondary">None</p>
+          {% endif %}
         </td>
 
         <td>

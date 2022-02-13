@@ -40,6 +40,10 @@ def get_specs(request_form) -> list:
             specs.append(request_form["specification%d" % i])
         else:
             break
+
+    # Remove duplicates, but without preserving order
+    specs = list(set(specs))
+
     return specs
 
 
@@ -52,6 +56,10 @@ def get_toppings(request_form) -> list:
             toppings.append(request_form["topping%d" % i])
         else:
             break
+
+    # Remove duplicates, but without preserving order
+    toppings = list(set(toppings))
+
     return toppings
 
 

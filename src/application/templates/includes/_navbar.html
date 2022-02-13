@@ -21,13 +21,13 @@
               <a class="nav-link" href="/">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for("delivery") }}">Delivery</a>
+              <a class="nav-link" href="{{ url_for("delivery") }}">Restaurants</a>
             </li>
+{#            <li class="nav-item">#}
+{#              <a class="nav-link" href="{{ url_for("dine_in") }}">Dine-In</a>#}
+{#            </li>#}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for("dine_in") }}">Dine-In</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Contact Us</a>
+              <a class="nav-link" href="#">Orders</a>
             </li>
           </ul>
         </div>
@@ -79,13 +79,83 @@
                    data-bs-toggle="dropdown">
                   Hi, {{ current_user.name }}</a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Account settings (U/C)</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for("consumer_logout") }}">Log Out</a></li>
+                  <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#accountSettingsModalConsumer">Account Settings</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for("logout") }}">Log Out</a></li>
                 </ul>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{{ url_for("consumer_cart") }}">Cart</a>
               </li>
+
+
+              <!-- Account Settings modal for consumer -->
+              <!-- using BS5 Modal -->
+              <div class="modal fade" id="accountSettingsModalConsumer" tabindex="-1"
+                   aria-labelledby="accountSettingsModalConsumerLabel"
+                   aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="accountSettingsModalConsumerLabel">Account Settings</h5>
+                    </div>
+                    <div class="modal-body">
+                      <form action="{{ url_for("consumer_update_account") }}" id="accountSettingsConsumerForm" method="post">
+                        <label for="updateSettingsPw">To update any settings, you must enter your current
+                          password.</label>
+                        <label for="updateSettingsPw" style="margin-top: 1.5rem;">Current Password: </label>
+                        <input type="password" name="updateSettingsPw" id="updateSettingsPw"><br>
+                        <hr>
+                        <div class="form-group row">
+                          <label>First Name: <b>{{ current_user.first_name }}</b></label>
+                          <label>Last Name: <b>{{ current_user.last_name }}</b></label>
+                          <label for="changeFirstName" class="col-form-label">New First Name: </label>
+                          <input type="text" name="changeFirstName" id="changeFirstName"><br>
+                          <label for="changeLastName" class="col-form-label">New First Name: </label>
+                          <input type="text" name="changeLastName" id="changeLastName"><br>
+                        </div>
+                        <hr>
+                        <div class="form-group row">
+                          <label for="changeEmail">Current Email: <b>{{ current_user.get_email() }}</b></label>
+                          <label for="changeEmail" class="col-form-label">New Email: </label>
+                          <input type="text" name="changeEmail" id="changeEmail"><br>
+                        </div>
+                        <div class="form-group row">
+                          <label for="changePw" class="col-form-label">New Password: </label>
+                          <input type="password" name="changePw" id="changePw"><br>
+                        </div>
+                        <div class="form-group row">
+                          <label for="changePwConfirm" class="col-form-label">Confirm Password: </label>
+                          <input type="password" name="changePwConfirm" id="changePwConfirm"><br>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <div class="d-flex align-items-start">
+                        <button type="button" class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
+                      </div>
+                      <button type="button" class="btn btn-primary" onclick="updateAccount()">Save changes</button>
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Account Settings modal script -->
+              <script>
+                  function updateAccount() {
+                      document.getElementById("accountSettingsConsumerForm").submit();
+                  }
+
+                  function deleteAccount() {
+                      if (confirm("Are you REALLY SURE you want to delete your account? This cannot be undone!")) {
+                          var form = document.getElementById("accountSettingsConsumerForm");
+                          form.setAttribute("action", "{{ url_for("delete_account") }}");
+                          form.submit();
+                          {#window.location.href = "{{ url_for("delete_account") }}";#}
+                      }
+                  }
+              </script>
+
             {% endif %}
           {% else %}
             <li class="nav-item dropdown">
@@ -193,7 +263,7 @@
 
                   function deleteAccount() {
                       if (confirm("Are you REALLY SURE you want to delete your account? This cannot be undone!"))
-                          window.location.href = "{{ url_for("delete_admin_account") }}";
+                          window.location.href = "{{ url_for("delete_account") }}";
                   }
               </script>
 

@@ -89,15 +89,20 @@ def consumer_register():
     return render_template("consumer/account/register.html")
 
 
+# Generic logout for all account types
 @app.route("/logout")
 @login_required
-@consumer_side
-def consumer_logout():
+def logout():
+    if isinstance(current_user, Admin):
+        redirect_url = url_for("admin_home")
+    else:
+        redirect_url = url_for("consumer_home")
+
     current_user.deauthenticate()
     logout_user()
 
     flash("You have logged out.")
-    return redirect(url_for("consumer_home"))
+    return redirect(redirect_url)
 
 
 @app.route('/writeReview', methods=["GET", "POST"])
@@ -172,13 +177,29 @@ def consumer_cart():
                            count=len(cart_items))
 
 
-@app.route("/cart/add/<int:food_id>")
+# GET for manipulating the quantity buttons, POST for adding a customized one.
+@app.route("/cart/add/<int:food_id>", methods=["GET", "POST"])
 @login_required
 @consumer_side
 def cart_add(food_id):
     if session["cart_mode"] != Cart.NOT_SET:
         cart = CartDao.get_cart(current_user.cart)
-        cart.add_item(food_id)
+
+        if request.method == "POST":
+            topping_list = []
+            food = FoodDao.query(food_id)
+            for topping in food.toppings:
+                checked = request.form.get(topping)
+                if checked is not None:
+                    topping_list.append(topping)
+
+            custom_requests = request.form["otherRequest"]
+        else:
+            cart_item_dict = cart.get_cart_items_dict()
+            topping_list = cart_item_dict[food_id].toppings
+            custom_requests = cart_item_dict[food_id].requests
+
+        cart.add_item(food_id, 1, topping_list, custom_requests)
         cart.mode = session["cart_mode"]
         flash("Successfully added item to cart")
     else:
@@ -316,3 +337,52 @@ def apply_coupon():
             flash("Successfully applied coupon!")
 
     return redirect(url_for("consumer_cart"))
+
+
+# API for updating account, to be called by Account Settings
+@app.route("/updateAccount", methods=["GET", "POST"])
+@login_required
+@consumer_side
+def consumer_update_account():
+    if request.method == "GET":
+        flash("Failed to update account settings")
+        return redirect(url_for("consumer_home"))
+
+    # Check if current password entered was correct
+    if not current_user.check_password_hash(request.form["updateSettingsPw"]):
+        flash("Current Password is Wrong")
+        return redirect(url_for("consumer_home"))
+
+    if "changeFirstName" in request.form:
+        if request.form["changeFirstName"] != "":
+            current_user.first_name = request.form["changeFirstName"]
+            current_user.save()
+            flash("Successfully updated First Name to %s"
+                  % request.form["changeFirstName"])
+
+    if "changeLastName" in request.form:
+        if request.form["changeLastName"] != "":
+            current_user.last_name = request.form["changeLastName"]
+            current_user.save()
+            flash("Successfully updated Last Name to %s"
+                  % request.form["changeLastName"])
+
+    if "changeEmail" in request.form:
+        if request.form["changeEmail"] != "":
+            result = (current_user.set_email(request.form["changeEmail"]))
+            if result == Account.EMAIL_CHANGE_SUCCESS:
+                flash("Successfully updated email")
+            elif result == Account.EMAIL_CHANGE_ALREADY_EXISTS:
+                flash("Failed updating email, Email already Exists")
+            elif result == Account.EMAIL_CHANGE_INVALID:
+                flash("Failed updating email, email is Invalid")
+
+    if "changePw" in request.form:
+        if request.form["changePw"] != request.form["changePwConfirm"]:
+            flash("Confirm Password does not match Password")
+        elif request.form["changePw"] != "":
+            current_user.set_password_hash(request.form["changePw"])
+            flash("Successfully updated password")
+
+    return redirect(url_for("consumer_home"))
+
