@@ -102,7 +102,7 @@
                 </div>
               {% endfor %}
             {% else %}
-              <p class="text-secondary">No toppings available</pc>
+              <p class="text-secondary">No toppings available</p>
             {% endif %}
 
             <p>
@@ -122,8 +122,10 @@
 
         </div>
         <div class="modal-footer">
-          <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal"
-                  data-bs-dismiss="modal">Add to cart
+{#          <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal"#}
+{#                  data-bs-dismiss="modal">Add to cart#}
+               <a href="{{ url_for("cart", food_id=food.id) }}"
+             class="btn btn-primary">Add to Cart</a>
           </button>
         </div>
       </div>
