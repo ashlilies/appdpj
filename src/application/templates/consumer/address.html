@@ -4,7 +4,7 @@
 {% block head %}
     <style>
         .header {
-            width: 80%;
+            width: 90%;
             margin: auto;
         }
 
@@ -21,27 +21,26 @@
         }
 
         .inputs {
-            width: 80%;
+            width: 90%;
             margin: auto;
         }
 
         .form-control {
             margin: 10px auto;
+            height: 150px;
         }
 
         label {
             margin-top: 10px;
         }
     </style>
+
 {% endblock %}
 
 {% block content %}
     {% from "includes/_formHelper.html" import render_field %}
-
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAP52-q45W97wOOVb4k3_TnVNPnwFFasII&region=SGP&callback=initMap&libraries=&v=weekly"
             defer></script>
-    {# defer: ask the browser to parse the html document first before loading the script #}
-    {# when the script is executed, it will call the function specified using the callback parameter #}
 
     <form method="POST" action="{{ url_for('consumer_myaddress') }}">
         <div class="addressDiv">
@@ -52,22 +51,16 @@
             </div>
             <div class="inputs">
                 {# todo: display the location after the user press 'submit' button #}
-
-                <div id="map">
-
-                </div>
-                <script>initMap();</script>
                 <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15954.644746298643!2d103.8489487!3d1.37995!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xe5f10ff680eed942!2sNanyang%20Polytechnic!5e0!3m2!1sen!2ssg!4v1643549501763!5m2!1sen!2ssg"
-                        style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-
+                        style="border:0; width: 100%" allowfullscreen="" loading="lazy"></iframe>
 
                 <div class="form-group">
                     {{ render_field(form.consumer_address, class="form-control", placeholder='Enter Address here') }}
                 </div>
 
                 <input type="submit" value="Submit" class="btn btn-primary" style="margin: 20px 0;"/>
-
             </div>
         </div>
     </form>
+
 {% endblock %}
