@@ -409,7 +409,7 @@ def consumer_forget_password():
                 flash("Email doesn't exist.")
         except AssertionError:
             flash("FoodyPulse's SMTP email and password wasn't properly "
-                  "configured."
+                  "configured. "
                   "Please contact FoodyPulse support.")
 
     return render_template("consumer/account/forgetPassword.html")
@@ -445,7 +445,7 @@ def password_auto_reset(account_id, pw_reset_token):
                 return redirect(url_for("consumer_home"))
     except AssertionError:
         flash("FoodyPulse's SMTP email and password wasn't properly configured."
-              "Please contact FoodyPulse support.")
+              " Please contact FoodyPulse support.")
 
     flash("Wrong password reset key. Try again?")
 

@@ -371,7 +371,7 @@ def admin_forget_password():
                 flash("Email doesn't exist.")
         except AssertionError:
             flash("FoodyPulse's SMTP email and password wasn't properly "
-                  "configured."
+                  "configured. "
                   "Please contact FoodyPulse support.")
 
     return render_template("admin/account/forgetPassword.html")
