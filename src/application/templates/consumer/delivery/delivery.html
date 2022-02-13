@@ -113,111 +113,168 @@
 
     </style>
     <link rel="stylesheet" href="{{ url_for("static", filename="css/features.css") }}">
+    <!-- Our customized base CSS - clara -->
+    <link rel="stylesheet" href={{ url_for("static", filename="deliveryMenu/bootstrap.min.css") }}>
+    <link rel="stylesheet" href={{ url_for("static", filename="deliveryMenu/templatemo.css") }}>
+    <link rel="stylesheet" href={{ url_for("static", filename="deliveryMenu/custom.css") }}>
+    <link rel="stylesheet" href={{ url_for("static", filename="deliveryMenu/fontawesome.min.css") }}>
+
 {% endblock %}
 
 {% block content %}
 
-  <h1 class="pb-2">Delivery</h1>
-  <h2 class="pb-2 border-bottom">Choose a Restaurant</h2>
-            {% if count %}
-                {% for restaurant in restaurants %}
-                    <div class="clara">
-                    <div class="wrapper">
-                        <div class="product-img">
-                            <img src="{{ url_for("static", filename=restaurant.logo) }}" class="card-img-top" height="220" style="object-fit: cover;"
-                                 alt="{{ restaurant.name }}">
-                        </div>
-                        <div class="product-info">
-                            <div class="product-text">
-                                <h1>{{ restaurant.name }}</h1>
-                                {% for i in range(restaurant.stars_int) %}
-                                    <img class="review-star" src="{{ url_for("static", filename="reviews/star.png") }}"
-                                         alt="Star">
-                                {% endfor %}
-                                <p>{{ restaurant.desc }}</p>
-                            </div>
-                            <div class="product-price-btn">
-                                <a href="{{ url_for("delivery_food2", restaurant_id=restaurant.id) }}"
-                                   class="btn btn-primary">Order</a>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p>There are no restaurants on FoodyPulse yet :(</p>
-            {% endif %}
+
+    <section>
+        <sec class="container py-5">
+            <div class="row text-center py-3">
+                <div class="col-lg-6 m-auto">
+                    <h1 class="h1">Delivery</h1>
+                    <p>
+                        Choose a Restaurant
+                    </p>
+                </div>
             </div>
+            <div class="row">
+                <div class="col-6 col-md-4">
+                    {% if count %}
+                        {% for restaurant in restaurants %}
+                            <div class="foodCard">
+                                <div class="card h-50">
+                                    <img src="{{ url_for("static", filename=restaurant.logo) }}" class="card-img-top"
+                                         height="220" style="object-fit: cover;"
+                                         alt="{{ restaurant.name }}">
+                                    <div class="card-body">
+                                        <ul class="list-unstyled d-flex justify-content-between">
+                                            <li>{% for i in range(restaurant.stars_int) %}
+                                                <img class="review-star"
+                                                     src="{{ url_for("static", filename="reviews/star.png") }}"
+                                                     alt="Star">
+                                            {% endfor %}
+                                            </li>
 
-    {##}
-    {#<section class="products">#}
-    {#    <div class="container px-4 py-5" id="featured-3">#}
-    {#        <h2 class="pb-2 border-bottom">Choose a Restaurant</h2>#}
-    {#        <div class="row g-4 py-5 row-cols-1 row-cols-lg-1">#}
-    {#            {% if count %}#}
-    {#                {% for restaurant in restaurants %}#}
-    {#                    <div class="card" style="width: 18rem;">#}
-    {#                        <div id="image">#}
-    {#                            <img src="{{ url_for("static", filename=restaurant.logo) }}" class="card-img-top"#}
-    {#                                 alt="{{ restaurant.name }}">#}
-    {#                        </div>#}
-    {#                        <hr>#}
-    {#                        <div class="card-body">#}
-    {#                            <h5 class="card-title">{{ restaurant.name }}</h5>#}
-    {#                            <div class="">#}
-    {#                                {% for i in range(restaurant.stars_int) %}#}
-    {#                                    <img class="review-star"#}
-    {#                                         src="{{ url_for("static", filename="reviews/star.png") }}" alt="Star">#}
-    {#                                {% endfor %}#}
-    {#                            </div>#}
-    {#                            <p class="card-text">{{ restaurant.desc }}</p>#}
-    {#                            <a href="{{ url_for("delivery_food", restaurant_id=restaurant.id) }}"#}
-    {#                               class="btn btn-primary">Order</a>#}
-    {#                        </div>#}
-    {#                    </div>#}
-    {#                {% endfor %}#}
-    {#            {% else %}#}
-    {#                <p>There are no restaurants on FoodyPulse yet :(</p>#}
-    {#            {% endif %}#}
-    {#        </div>#}
-    {#    </div>#}
-    {##}
-    {##}
-    {#</section>#}
+                                        </ul>
 
-
-    {#    ------------------------------------------------------------------------------------------------------------#}
-    {#    <section class="products">#}
-    {#   <div class="container px-4 py-5" id="featured-3">#}
-    {#    <h2 class="pb-2 border-bottom">Choose a Restaurant</h2>#}
-    {#    <div class="row g-4 py-5 row-cols-1 row-cols-lg-1">#}
-    {#      {% if count %}#}
-    {#        {% for restaurant in restaurants %}#}
-    {#          <div class="card" style="width: 18rem;">#}
-    {#          <div id="image">#}
-    {#            <img src="{{ url_for("static", filename=restaurant.logo) }}" class="card-img-top" alt="{{ restaurant.name }}">#}
-    {#          </div>#}
-    {#          <hr>#}
-    {#            <div class="card-body">#}
-    {#              <h5 class="card-title">{{ restaurant.name }}</h5>#}
-    {#              <div class="">#}
-    {#                {% for i in range(restaurant.stars_int) %}#}
-    {#                  <img class="review-star" src="{{ url_for("static", filename="reviews/star.png") }}" alt="Star">#}
-    {#                {% endfor %}#}
-    {#              </div>#}
-    {#              <p class="card-text">{{ restaurant.desc }}</p>#}
-    {#              <a href="{{ url_for("delivery_food", restaurant_id=restaurant.id) }}" class="btn btn-primary">Order</a>#}
-    {#            </div>#}
-    {#          </div>#}
-    {#        {% endfor %}#}
-    {#      {% else %}#}
-    {#      <p>There are no restaurants on FoodyPulse yet :(</p>#}
-    {#      {% endif %}#}
-    {#    </div>#}
-    {#  </div>#}
-    {##}
-    {##}
-    {#    </section>#}
+                                        <p class="h2 text-decoration-none text-dark">  {{ restaurant.name }}</p>
+                                        <p class="card-text">
+                                            {{ restaurant.desc }}
+                                        </p>
+                                        <a href="{{ url_for("delivery_food2", restaurant_id=restaurant.id) }}"
+                                           class="btn btn-primary">Order</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>There are no food items in {{ restaurant.name }} yet :(</p>
+                    {% endif %}
+                </div>
+            </div>
+        </sec>
+    </section>
 {% endblock %}
+
+{#----------------------------------------------------------------------------#}
+{#  <h1 class="pb-2">Delivery</h1>#}
+{#  <h2 class="pb-2 border-bottom">Choose a Restaurant</h2>#}
+{#            {% if count %}#}
+{#                {% for restaurant in restaurants %}#}
+{#                    <div class="clara">#}
+{#                    <div class="wrapper">#}
+{#                        <div class="product-img">#}
+{#                            <img src="{{ url_for("static", filename=restaurant.logo) }}" class="card-img-top" height="220" style="object-fit: cover;"#}
+{#                                 alt="{{ restaurant.name }}">#}
+{#                        </div>#}
+{#<div class="product-info">#}
+{#    <div class="product-text">#}
+{#        <h1>{{ restaurant.name }}</h1>#}
+{#        {% for i in range(restaurant.stars_int) %}#}
+{#            <img class="review-star" src="{{ url_for("static", filename="reviews/star.png") }}"#}
+{#                 alt="Star">#}
+{#        {% endfor %}#}
+{#        <p>{{ restaurant.desc }}</p>#}
+{#    </div>#}
+{#<div class="product-price-btn">#}
+{#    <a href="{{ url_for("delivery_food2", restaurant_id=restaurant.id) }}"#}
+{#       class="btn btn-primary">Order</a>#}
+{#</div>#}
+{#</div>#}
+{#</div>#}
+{#{% endfor %}#}
+{#{% else %}#}
+{#<p>There are no restaurants on FoodyPulse yet :(</p>#}
+{#{% endif %}#}
+{#</div>#}
+{#------------------------------------------------------------------------#}
+{##}
+{#<section class="products">#}
+{#    <div class="container px-4 py-5" id="featured-3">#}
+{#        <h2 class="pb-2 border-bottom">Choose a Restaurant</h2>#}
+{#        <div class="row g-4 py-5 row-cols-1 row-cols-lg-1">#}
+{#            {% if count %}#}
+{#                {% for restaurant in restaurants %}#}
+{#                    <div class="card" style="width: 18rem;">#}
+{#                        <div id="image">#}
+{#                            <img src="{{ url_for("static", filename=restaurant.logo) }}" class="card-img-top"#}
+{#                                 alt="{{ restaurant.name }}">#}
+{#                        </div>#}
+{#                        <hr>#}
+{#                        <div class="card-body">#}
+{#                            <h5 class="card-title">{{ restaurant.name }}</h5>#}
+{#                            <div class="">#}
+{#                                {% for i in range(restaurant.stars_int) %}#}
+{#                                    <img class="review-star"#}
+{#                                         src="{{ url_for("static", filename="reviews/star.png") }}" alt="Star">#}
+{#                                {% endfor %}#}
+{#                            </div>#}
+{#                            <p class="card-text">{{ restaurant.desc }}</p>#}
+{#                            <a href="{{ url_for("delivery_food", restaurant_id=restaurant.id) }}"#}
+{#                               class="btn btn-primary">Order</a>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                {% endfor %}#}
+{#            {% else %}#}
+{#                <p>There are no restaurants on FoodyPulse yet :(</p>#}
+{#            {% endif %}#}
+{#        </div>#}
+{#    </div>#}
+{##}
+{##}
+{#</section>#}
+
+
+{#    ------------------------------------------------------------------------------------------------------------#}
+{#    <section class="products">#}
+{#   <div class="container px-4 py-5" id="featured-3">#}
+{#    <h2 class="pb-2 border-bottom">Choose a Restaurant</h2>#}
+{#    <div class="row g-4 py-5 row-cols-1 row-cols-lg-1">#}
+{#      {% if count %}#}
+{#        {% for restaurant in restaurants %}#}
+{#          <div class="card" style="width: 18rem;">#}
+{#          <div id="image">#}
+{#            <img src="{{ url_for("static", filename=restaurant.logo) }}" class="card-img-top" alt="{{ restaurant.name }}">#}
+{#          </div>#}
+{#          <hr>#}
+{#            <div class="card-body">#}
+{#              <h5 class="card-title">{{ restaurant.name }}</h5>#}
+{#              <div class="">#}
+{#                {% for i in range(restaurant.stars_int) %}#}
+{#                  <img class="review-star" src="{{ url_for("static", filename="reviews/star.png") }}" alt="Star">#}
+{#                {% endfor %}#}
+{#              </div>#}
+{#              <p class="card-text">{{ restaurant.desc }}</p>#}
+{#              <a href="{{ url_for("delivery_food", restaurant_id=restaurant.id) }}" class="btn btn-primary">Order</a>#}
+{#            </div>#}
+{#          </div>#}
+{#        {% endfor %}#}
+{#      {% else %}#}
+{#      <p>There are no restaurants on FoodyPulse yet :(</p>#}
+{#      {% endif %}#}
+{#    </div>#}
+{#  </div>#}
+{##}
+{##}
+{#    </section>#}
+{#{% endblock %}#}
 {#    --------------------------------------------------------------------------------------------#}
 {#   <div class="container px-4 py-5" id="featured-3">#}
 {#    <h2 class="pb-2 border-bottom">Choose a Restaurant</h2>#}
