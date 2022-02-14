@@ -3,6 +3,7 @@ import logging
 import shelve
 
 # from application import DB_NAME
+from application.Models.Account import Account
 from application.Models.CountId import CountId
 
 TRANSACTION_DB = "transaction.db"
@@ -15,14 +16,14 @@ class Transaction:
     STATUS_ON_THE_WAY = 1
     STATUS_DELIVERED = 2
 
-    def __init__(self, restaurant_id, account_name, price, used_coupon=None):
+    def __init__(self, restaurant_id, account_id, price, used_coupon=None):
         CountId.load(TRANSACTION_DB, Transaction)
         self.id = Transaction.count_id
         Transaction.count_id += 1
         CountId.save(TRANSACTION_DB, Transaction)
 
         self.restaurant_id = restaurant_id
-        self.account_name = account_name
+        self.account_id = account_id
         self.price = price
         self.used_coupon = used_coupon
         self.deleted = False
@@ -37,6 +38,11 @@ class Transaction:
             return "Delivered"
         else:
             return "Unknown"
+
+    @property
+    def acccount_name(self):
+        account = Account.query(self.account_id)
+        return account.name
 
     @property
     def status(self):
@@ -82,6 +88,22 @@ class TransactionDao:
         for transaction_id in transaction_dict:
             transaction = transaction_dict.get(transaction_id)
             if transaction.restaurant_id == restaurant_id:
+                transaction_list.append(transaction)
+
+        return transaction_list
+
+    # Returns a list of transaction objects
+    @staticmethod
+    def get_user_transactions(account_id) -> list:
+        transaction_list = []
+        transaction_dict = {}
+        with shelve.open(TRANSACTION_DB, 'c') as db:
+            if "transaction" in db:
+                transaction_dict = db["transaction"]
+
+        for transaction_id in transaction_dict:
+            transaction = transaction_dict.get(transaction_id)
+            if transaction.account_id == account_id:
                 transaction_list.append(transaction)
 
         return transaction_list

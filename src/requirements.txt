@@ -63,7 +63,6 @@ Pillow==9.0.1
 protobuf==3.19.4
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
-pycosat==0.6.3
 Pygments==2.11.2
 pymdown-extensions==9.2
 pyotp==2.6.0

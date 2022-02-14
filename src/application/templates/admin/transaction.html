@@ -27,8 +27,6 @@
     {#    text-decoration-line: underline;#}
     {#    font-size: 28px;#}
     {#    width: 500px;#}
-    {
-    #}#}
 
     .row {
         margin: 0px;
@@ -153,6 +151,8 @@
 
 
 
+
+
                     {#                {% elif transaction.status == transaction.STATUS_ON_THE_WAY %}#}
 {#                  blue#}
 {#                {% else %}#}
@@ -162,122 +162,145 @@
                   <td>{{ transaction.id }}</td>
                   <td>{{ transaction.account_name }}</td>
                   <td>{{ '%.2f'% transaction.price|float }}</td>
-                  <td>{{ transaction.used_coupon }}</td>
+                  <td>{% if transaction.used_coupon %}
+                    {{ transaction.used_coupon }}
+                  {% else %}
+                    <span class="text-secondary">None</span>
+                  {% endif %}
+                  </td>
                   <td>{{ transaction.text_status() }}</td>
                   <td>
-                      <!-- Button to Open the Modal -->
-                      <button type="button" class="btn btn-info"
-                              data-bs-toggle="modal"
-                              data-bs-target="#myUpdateStatusModal_{{ transaction.id }}">
-                        Update Status
-                      </button>
-                      <button type="button" class="btn btn-danger"
-                              data-bs-toggle="modal"
-                              data-bs-target="#myModal_{{ transaction.id }}">
-                        Delete
-                      </button>
-                      <!-- Vertically centered modal -->
-                      <div class="modal"
-                           id="myModal_{{ transaction.id }}">
-                        <div
-                            class="modal-dialog modal-dialog-centered modal-lg">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title"
-                                  style="color: black !important;">Delete
-                                Confirmation</h5>
-                              <button type="button" class="btn-close"
-                                      data-bs-dismiss="modal"
-                                      aria-label="Close"></button>
-                            </div>
+                    <!-- Button to Open the Modal -->
+                    <button type="button" class="btn btn-info"
+                            data-bs-toggle="modal"
+                            data-bs-target="#myUpdateStatusModal_{{ transaction.id }}">
+                      Update Status
+                    </button>
+                    <button type="button" class="btn btn-danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#myModal_{{ transaction.id }}">
+                      Delete
+                    </button>
+                    <!-- Vertically centered modal -->
+                    <div class="modal"
+                         id="myModal_{{ transaction.id }}">
+                      <div
+                          class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title"
+                                style="color: black !important;">Delete
+                              Confirmation</h5>
+                            <button type="button" class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <p style="color: black ! important;">Are you
+                              sure you want to
+                              delete {{ transaction.account_name }}?</p>
+                            <p style="color: black !important;">Transaction
+                              Details:</p>
+                            <table class="table" id="deletedisplay">
+                              <thead>
+                              <tr>
+                                <th scope="col">Transaction Details</th>
+                                <th scope="col"></th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              <tr>
+                                <th scope="row">Name</th>
+                                <td>{{ transaction.account_name }}</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">Transaction Amount</th>
+                                <td>{{ '%0.2f'% transaction.price|float }}</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">Coupons Used</th>
+                                <td>{{ transaction.used_coupon }}</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">Transaction Rating</th>
+                                <td>{{ transaction.rating }}</td>
+                              </tr>
+                              <tr>
+                                <th scope="row">Status</th>
+                                <td>{{ transaction.text_status() }}</td>
+                              </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Close
+                            </button>
+
+                            {# soft delete transactions #}
+                            <a href="/admin/transaction/delete/{{ transaction.id }}">
+                              <input type="button" value="Delete"
+                                     class="btn btn-danger">
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Modal -->
+                    <div class="modal fade"
+                         id="myUpdateStatusModal_{{ transaction.id }}"
+                         data-bs-backdrop="static" data-bs-keyboard="false"
+                         tabindex="-1" aria-labelledby="staticBackdropLabel"
+                         aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">
+                              Update Transaction Status
+                            </h5>
+                            <button type="button" class="btn-close"
+                                    data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                          </div>
+                          <form
+                              action="{{ url_for("update_transaction_status", transaction_id=transaction.id) }}"
+                              method="post">
                             <div class="modal-body">
-                              <p style="color: black ! important;">Are you
-                                sure you want to
-                                delete {{ transaction.account_name }}?</p>
-                              <p style="color: black !important;">Transaction
-                                Details:</p>
-                              <table class="table" id="deletedisplay">
-                                <thead>
-                                <tr>
-                                  <th scope="col">Transaction Details</th>
-                                  <th scope="col"></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                  <th scope="row">Name</th>
-                                  <td>{{ transaction.account_name }}</td>
-                                </tr>
-                                <tr>
-                                  <th scope="row">Transaction Amount</th>
-                                  <td>{{ '%0.2f'% transaction.price|float }}</td>
-                                </tr>
-                                <tr>
-                                  <th scope="row">Coupons Used</th>
-                                  <td>{{ transaction.used_coupon }}</td>
-                                </tr>
-                                <tr>
-                                  <th scope="row">Transaction Rating</th>
-                                  <td>{{ transaction.rating }}</td>
-                                </tr>
-                                <tr>
-                                  <th scope="row">Status</th>
-                                  <td>{{ transaction.text_status() }}</td>
-                                </tr>
-                                </tbody>
-                              </table>
+                              <select class="form-select"
+                                      aria-label="Default select example"
+                                      name="transactionStatus">
+                                {% if transaction.status == transaction.STATUS_UNKNOWN %}
+                                  <option selected="selected">----
+                                  </option>{% endif %}
+                                <option
+                                    {% if transaction.status == transaction.STATUS_PREPARING %}
+                                      selected="selected" {% endif %}value="{{ transaction.STATUS_PREPARING }}">
+                                  Preparing
+                                </option>
+                                <option
+                                    {% if transaction.status == transaction.STATUS_ON_THE_WAY %}
+                                      selected="selected" {% endif %}value="{{ transaction.STATUS_ON_THE_WAY }}">
+                                  On the Way
+                                </option>
+                                <option
+                                    {% if transaction.status == transaction.STATUS_DELIVERED %}
+                                      selected="selected" {% endif %}value="{{ transaction.STATUS_DELIVERED }}">
+                                  Delivered
+                                </option>
+                              </select>
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-secondary"
-                                      data-bs-dismiss="modal">Close
+                                      data-bs-dismiss="modal">Cancel
                               </button>
-
-                              {# soft delete transactions #}
-                              <a href="/admin/transaction/delete/{{ transaction.id }}">
-                                <input type="button" value="Delete"
-                                       class="btn btn-danger">
-                              </a>
+                              <input type="submit" class="btn btn-success"
+                                     value="Update">
                             </div>
-                          </div>
+                          </form>
                         </div>
                       </div>
-
-                      <!-- Modal -->
-                      <div class="modal fade"
-                           id="myUpdateStatusModal_{{ transaction.id }}"
-                           data-bs-backdrop="static" data-bs-keyboard="false"
-                           tabindex="-1" aria-labelledby="staticBackdropLabel"
-                           aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="staticBackdropLabel">
-                                Update Transaction Status
-                              </h5>
-                              <button type="button" class="btn-close"
-                                      data-bs-dismiss="modal"
-                                      aria-label="Close"></button>
-                            </div>
-                            <form action="{{ url_for("update_transaction_status", transaction_id=transaction.id) }}" method="post">
-                              <div class="modal-body">
-                                <select class="form-select" aria-label="Default select example" name="transactionStatus">
-                                  {% if transaction.status == transaction.STATUS_UNKNOWN %} <option selected="selected" >----</option>{% endif %}
-                                  <option {% if transaction.status == transaction.STATUS_PREPARING %} selected="selected" {% endif %}value="{{ transaction.STATUS_PREPARING }}">Preparing</option>
-                                  <option {% if transaction.status == transaction.STATUS_ON_THE_WAY %} selected="selected" {% endif %}value="{{ transaction.STATUS_ON_THE_WAY }}">On the Way</option>
-                                  <option {% if transaction.status == transaction.STATUS_DELIVERED %} selected="selected" {% endif %}value="{{ transaction.STATUS_DELIVERED }}">Delivered</option>
-                                </select>
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Cancel
-                                </button>
-                                <input type="submit" class="btn btn-success"
-                                       value="Update">
-                              </div>
-                            </form>
-                          </div>
-                        </div>
-                      </div>
+                    </div>
 
                     </form>
                   </td>
@@ -295,4 +318,5 @@
             $('#myTable').dataTable();
         });
     </script>
+  </div>
 {% endblock %}

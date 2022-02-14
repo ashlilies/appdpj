@@ -1,0 +1,187 @@
+<!--xu yong lin-->
+{% extends "consumer/consumer_base.html" %}
+{% block title %}Admin Transaction History{% endblock %}
+
+{% block head %}
+  <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+      rel="stylesheet">
+  <link
+      href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css"
+      rel="stylesheet">
+  <!-- Bootstrap core JavaScript-->
+  <script
+      src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- Page level plugin JavaScript-->
+  <script
+      src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+  <script
+      src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
+
+  <style>
+    {#h1 {#}
+    {#    font-weight: bold;#}
+    {#    position: relative;#}
+    {#    left: 30px;#}
+    {#    top: 20px;#}
+    {#    text-decoration-line: underline;#}
+    {#    font-size: 28px;#}
+    {#    width: 500px;#}
+
+    .row {
+        margin: 0px;
+        width: 100%;
+    }
+
+    .display {
+        width: 90%;
+        margin: auto
+    }
+
+
+    .table {
+        background-color: white;
+    }
+
+    .red > * {
+        color: red;
+    }
+
+    .green > * {
+        color: green;
+    }
+
+    .blue > * {
+        color: blue;
+    }
+
+    {##}
+    {#tr.highlight, tr.highlight:hover > *, .table-striped > tbody > tr.highlight:nth-of-type(odd) > * {#}
+    {#    color: red;#}
+    {#    font-weight: bold;#}
+
+
+    #myTable td {
+        width: 250px;
+        overflow: visible;
+    }
+
+
+    #deletedisplay th {
+        width: 30%;
+        overflow: visible;
+    }
+
+    #deletedisplay td {
+        width: 70%;
+        overflow: visible;
+        font-weight: normal;
+    }
+
+    #deletedisplay tr:hover {
+        background-color: #ffffff;
+    }
+
+
+    .modal {
+        font-color: black;
+        font-weight: normal;
+    }
+
+    .modal:hover {
+        font-color: black;
+        font-weight: normal;
+    }
+
+
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="bodydiv">
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link" id="nav-settings-tab" data-bs-toggle="tab"
+                data-bs-target="#nav-settings"
+                type="button" role="tab" aria-controls="nav-settings"
+                aria-selected="true"><a
+            href="{{ url_for('dashboard') }}">Dashboard</a>
+        </button>
+        <button class="nav-link active" id="nav-restrictions-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#nav-restrictions"
+                type="button" role="tab" aria-controls="nav-restrictions"
+                aria-selected="false"><a
+            href="{{ url_for('create_example_transactions') }}">Transactions</a>
+        </button>
+      </div>
+    </nav>
+
+    <div class="align-items-center float-start ms-2">
+
+      <div id="settings">
+        <div class="settingsrow">
+          <h1 class="display-6">Transactions</h1>
+        </div>
+      </div>
+      <br>
+      <!--table-->
+      <div class="display">
+        <!--    table form to go back to dashboard? (might change to standardise with dashboard)-->
+        <div class="table">
+          <table class="table" id="myTable">
+            <thead>
+            <tr>
+              <th scope="col">Transaction ID</th>
+              <th scope="col">Price</th>
+              <th scope="col">Coupon</th>
+              <th scope="col">Status</th>
+              <th></th>
+              {# for delete button #}
+            </tr>
+            </thead>
+            <tbody>
+            {% for transaction in transaction_list %}
+              {% if not transaction.deleted %}
+                {# Green - Delivered, Blue - On the way, Red - Preparing #}
+                <tr class="
+{#                {% if transaction.status == transaction.STATUS_PREPARING %}#}
+{#                  red#}
+
+
+
+                    {#                {% elif transaction.status == transaction.STATUS_ON_THE_WAY %}#}
+{#                  blue#}
+{#                {% else %}#}
+{#                  green#}
+{#                {% endif %}#}
+                ">
+                  <td>{{ transaction.id }}</td>
+                  <td>{{ '%.2f'% transaction.price|float }}</td>
+                  <td>{% if transaction.used_coupon %}
+                    {{ transaction.used_coupon }}
+                    {% else %}
+                    <span class="text-secondary">None</span>
+                    {% endif %}
+                    </td>
+                  <td>{{ transaction.text_status() }}</td>
+                  <td>
+                      <a class="btn btn-info" href="{{ url_for("transaction_confirmation", transaction_id=transaction.id) }}">View Status</a>
+
+                  </td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#myTable').dataTable();
+        });
+    </script>
+  </div>
+{% endblock %}

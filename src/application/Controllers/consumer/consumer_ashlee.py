@@ -20,6 +20,7 @@ from application.Models.FileUpload import save_file
 from application.Models.Food2 import FoodDao
 from application.Models.RestaurantSystem import RestaurantSystem
 from application.Models.Review import ReviewDao, Review
+from application.Models.Transaction import TransactionDao
 from application.ReviewForms import CreateReviewForm
 
 
@@ -485,6 +486,15 @@ def retrieve_reviews(restaurant_id):
                            count=len(list_of_reviews),
                            average_rating=average_rating,
                            threshold=Review.TRUSTWORTHINESS_THRESHOLD)
+
+
+@app.route("/orders")
+@login_required
+@consumer_side
+def retrieve_transactions():
+    transaction_list = TransactionDao.get_user_transactions(current_user.account_id)
+    return render_template("consumer/transaction/transaction.html",
+                           transaction_list=transaction_list)
 
 
 # --------------------------------------------------------------------------
