@@ -1,0 +1,90 @@
+{% extends "consumer/consumer_base.html" %}
+{% block title %}Cart{% endblock %}
+
+{% block head %}
+  <style> {# css done by yong lin #}
+  .display-left {
+      width: 35%;
+      display: flex;
+  }
+
+  .display-left > .form-outline, .flex-fill {
+      display: inline !important;
+  }
+
+  .display-left > .btn > .btn-lg > .ms-3 {
+      display: inline;
+  }
+
+  .display-left > .btn > .btn-warning > .btn-block > .btn-lg {
+      font-size: 15px !important;
+  }
+
+  .display-right {
+      width: 62%;
+      display: flex;
+      float: right;
+  }
+
+  .display-bottom {
+      width: 100%;
+      display: flex;
+  }
+
+  .display-bottom > .btn > .btn-warning > .btn-block > .btn-lg {
+      display: flex;
+      float: right;
+  }
+  </style>
+{% endblock %}
+
+
+{% block content %}
+
+
+{% if count %}
+        <div class="card display-bottom">
+          <div class="card-body d-flex justify-content-evenly">
+            <table style="width: 80%;">
+              <tr>
+                <th>Total</th>
+                <td style="text-align: right">S$ {{ "%.2f" % cart.get_total_before_discount() }}</td>
+              </tr>
+              <tr>
+                <th>Delivery Fee</th>
+                <td style="text-align: right">&nbsp;TODO</td>
+              </tr>
+              {% if cart.coupon_code != "" %}
+                <tr>
+                  <th>Discount</th>
+                  <td style="text-align: right">-S$ {{ "%.2f" % cart.get_total_discount() }}</td>
+                </tr>
+              {% endif %}
+              <tr>
+                <td colspan="2">
+                  <hr>
+                </td>
+              </tr>
+              <tr>å
+                <th>Subtotal</th>
+                <td style="text-align: right">S$ {{ "%.2f" % (cart.get_subtotal()) }}</td>
+              </tr>
+            </table>
+              <form action="{{ url_for('payment') }}" method="POST">
+{#                  {%  set amount = (cart.get_subtotal()).replace('.','')%}#}
+                  <script
+                    src="https://checkout.stripe.com/checkout.js"
+                    class="stripe-button"
+                    data-key="pk_test_VrWD12lh918aMAaU4HP11c4e00I9shY8fg"
+                    data-name="Payment to FoodyPulse"
+                    data-description="Food on Impulse"
+                    data-amount="{{ cart.get_subtotal() * 100 }}"
+
+                    data-currency="sgd">
+                  </script>
+                </form>
+          </div>
+        </div>
+        </div>
+      {% endif %}
+{% endblock %}
