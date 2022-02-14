@@ -35,7 +35,7 @@ class RestaurantSystem():
     @staticmethod
     def edit_restaurant(restaurant: Restaurant,
                         name, logo, contact, open, close, add1,
-                        postc, latitude, longitude,desc, bank, del1, del2, del3, del4, del5):
+                        postc, latitude, longitude, desc, bank, del1, del2, del3, del4, del5):
         restaurant.set_name(name)
         restaurant.set_logo(logo)
         restaurant.set_contact(contact)

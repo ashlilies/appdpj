@@ -1,5 +1,7 @@
 # XU YONG LIN
 # Address field - Consumer
+from math import radians
+
 import geopy
 from geopy.distance import geodesic
 
@@ -23,22 +25,31 @@ class ConsumerAddress:
         return self.__latitude
 
 
-def calculate_distance(conLatitude, conLongitude, resLatitude, resLongitude):
-    consumer_latitude = conLatitude
-    consumer_longitude = conLongitude
+# def
+
+def calculate_distance(conLatitude, conLongitude, restaurant):
+    resLatitude = restaurant.latitude
+    resLongitude = restaurant.longitude
+
+    consumer_latitude = radians(conLatitude)
+    consumer_longitude = radians(conLongitude)
     consumer_latlon = (consumer_latitude, consumer_longitude)
 
-    restaurant_latitude = resLatitude
-    restaurant_longitude = resLongitude
+    restaurant_latitude = radians(resLatitude)
+    restaurant_longitude = radians(resLongitude)
     restaurant_latlon = (restaurant_latitude, restaurant_longitude)
 
-    res_con_dist = geopy.distance.geodisc(restaurant_latlon, consumer_latlon)
+    res_con_dist = (geopy.distance.distance(consumer_latlon, restaurant_latlon)*100)
+    res_con_dist = float(str(res_con_dist)[:-3])
 
     print(res_con_dist)
+    calculate_deltime_bydist(res_con_dist)
+
 
 def calculate_deltime_bydist(res_con_dist):
-    est_del_time = 15 # estimate per 2km
+    prep_time = 15
+    est_del_time = 5 # estimate per 2km
     duration = res_con_dist/2
-    delivery_time = est_del_time*duration
+    total_time = (est_del_time*duration) + prep_time
 
-    return delivery_time
+    print(total_time)
