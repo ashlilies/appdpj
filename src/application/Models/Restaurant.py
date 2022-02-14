@@ -135,5 +135,12 @@ class Restaurant():
         from application.Models.Review import ReviewDao
         return int(ReviewDao.get_average_rating(self.id))
 
+    @property
+    def average_rating(self):
+        from application.Models.Review import ReviewDao
+        return ReviewDao.get_average_rating(self.id)
 
+    def get_top_reviews(self, count=None):
+        from application.Models.Review import ReviewDao
+        return ReviewDao.get_top_reviews(self.id, count)
 

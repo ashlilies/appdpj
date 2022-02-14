@@ -16,7 +16,7 @@ from application.Models.FileUpload import save_file
 # <------------------------- ASHLEE ------------------------------>
 
 # Decorator to only allow admin accounts or guests
-from application.Models.Review import ReviewDao
+from application.Models.Review import ReviewDao, Review
 
 
 def admin_side(view):
@@ -358,7 +358,8 @@ def admin_retrieve_reviews():
     return render_template("admin/retrieveReviews.html",
                            list_of_reviews=list_of_reviews,
                            count=len(list_of_reviews),
-                           average_rating=average_rating)
+                           average_rating=average_rating,
+                           threshold=Review.TRUSTWORTHINESS_THRESHOLD)
 
 
 @app.route("/admin/forgetPassword", methods=["GET", "POST"])
@@ -396,3 +397,13 @@ def admin_forget_password_key():
         else:
             flash("Invalid email")
     return render_template("admin/account/forgetPasswordKey.html")
+
+
+@app.route("/admin/deleteReview/<int:review_id>")
+@admin_side
+@login_required
+def admin_delete_review(review_id):
+    review = ReviewDao.query(review_id)
+    if review.delete_untrustworthy():
+        flash("Successfully deleted review")
+    return redirect(url_for("admin_retrieve_reviews"))

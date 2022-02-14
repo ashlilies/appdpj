@@ -11,7 +11,7 @@ import xgboost
 # XGB_CLASSIFIER_FILENAME = "xgb_classifier.model"
 # TFIDF_VECTORIZER_FILENAME = 'tfidf_vectorizer.pickle'
 
-dataset_filename = "application/Models/review-ai/fake-reviews-dataset.csv"
+dataset_filename = "application/Models/review-ai/restaurant_reviews_anonymized.csv"
 XGB_CLASSIFIER_FILENAME = "xgb_classifier_model.pickle"
 TFIDF_VECTORIZER_FILENAME = 'tfidf_vectorizer.pickle'
 
@@ -62,11 +62,11 @@ def learn():
     df = pd.read_csv(dataset_filename, engine="python")
     df.head()
 
-    df["label"].value_counts()
+    df["Real"].value_counts()
 
     tfidf = TfidfVectorizer(stop_words="english", strip_accents="unicode")
-    X = tfidf.fit_transform(df["text_"])
-    Y = df["label"].map({"CG": 0, "OR": 1})
+    X = tfidf.fit_transform(df["Review"])
+    Y = df["Real"].map({"0": 0, "1": 1})
 
     x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.3,
                                                         random_state=101,

@@ -19,7 +19,7 @@ from application.Models.Consumer import Consumer
 from application.Models.FileUpload import save_file
 from application.Models.Food2 import FoodDao
 from application.Models.RestaurantSystem import RestaurantSystem
-from application.Models.Review import ReviewDao
+from application.Models.Review import ReviewDao, Review
 from application.ReviewForms import CreateReviewForm
 
 
@@ -470,6 +470,21 @@ def regenerate_otp():
     if isinstance(current_user, Admin):
         return redirect(url_for("admin_home"))
     return redirect(url_for("consumer_home"))
+
+
+@app.route("/reviews/<string:restaurant_id>")
+@login_required
+@consumer_side
+def retrieve_reviews(restaurant_id):
+    restaurant = RestaurantSystem.find_restaurant_by_id(restaurant_id)
+    list_of_reviews = ReviewDao.get_top_reviews(restaurant_id)
+    average_rating = ReviewDao.get_average_rating(restaurant_id)
+    return render_template("consumer/reviews/retrieveReviews.html",
+                           restaurant=restaurant,
+                           list_of_reviews=list_of_reviews,
+                           count=len(list_of_reviews),
+                           average_rating=average_rating,
+                           threshold=Review.TRUSTWORTHINESS_THRESHOLD)
 
 
 # --------------------------------------------------------------------------

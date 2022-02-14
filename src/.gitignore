@@ -25,4 +25,6 @@ __pycache__/
 /*.dat
 /*.dir
 
+*.pickle
+
 application/static/uploads/

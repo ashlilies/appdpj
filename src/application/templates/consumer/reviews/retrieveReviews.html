@@ -1,5 +1,5 @@
-{% extends "admin/admin_base.html" %}
-{% block title %}Restaurant Reviews{% endblock %}
+{% extends "consumer/consumer_base.html" %}
+{% block title %}{{ restaurant.name }} Reviews{% endblock %}
 
 {% block head %}
   <link rel="stylesheet" href="{{ url_for("static", filename="css/features.css") }}">
@@ -18,19 +18,19 @@
 {% block content %}
   <div style="display: flow-root;">
     <div class="align-items-center float-start ms-2">
-      <h1 class="display-6">Restaurant Reviews</h1>
+      <h1 class="display-6">{{ restaurant.name }} Reviews</h1>
       {% if count == 0 %}
-        <p>There are no reviews yet. Perhaps try reaching out?
+        <p>There are no reviews yet.
           {% elif count == 1 %}
         <p>There is 1 review right now.
           {% else %}
         <p>There are {{ count }} reviews.
       {% endif %}
-      <em>You can delete reviews with a trustworthiness score below <b>{{ threshold }}%</b>.</em>
       </p>
     </div>
     <div class="align-items-center float-end ms-2 mt-3">
       <strong>Average rating: {{ "%.2f"|format(average_rating) }}</strong>
+      <a href="{{ url_for("delivery_food", restaurant_id=restaurant.id) }}" class="btn">&lt; Back to Menu</a>
     </div>
   </div>
   <div id="content">

@@ -5,6 +5,8 @@ import logging
 import shelve
 from datetime import datetime
 
+# from application.Models import ReviewAi
+from application.Models import ReviewAi as ReviewAi
 from application.Models.Account import Account
 from application.Models.CountId import CountId
 from application.Models.FileUpload import delete_file
@@ -15,6 +17,7 @@ REVIEWS_DB = "reviews.db"
 
 class Review:
     count_id = 1
+    TRUSTWORTHINESS_THRESHOLD = 50  # % before a review is considered trusted
 
     def __init__(self, parent_restaurant_id, reviewer_id, stars: int, title, description,
                  date_time: datetime, media_path: str):
@@ -43,6 +46,20 @@ class Review:
     def restaurant_name(self):
         restaurant = RestaurantSystem.find_restaurant_by_id(self.parent_restaurant_id)
         return restaurant.name
+
+    # Returns a trustworthiness score of a review from 0.0 to 1.0.
+    # 0 - untrustworthy (fake), 1 - trustworthy
+    # Processes the description, or title if it doesn't exist.
+    def trustworthiness(self):
+        if self.description != "":
+            return ReviewAi.predict(self.description)
+        return ReviewAi.predict(self.title)
+
+    def delete_untrustworthy(self):
+        if self.trustworthiness() < Review.TRUSTWORTHINESS_THRESHOLD:
+            ReviewDao.delete_review(self.id)
+            return True
+        return False
 
 
 # Review Data Access Object
@@ -103,8 +120,29 @@ class ReviewDao:
         return review_list
 
     @staticmethod
+    def get_top_reviews(restaurant_id, count=None):
+        # Linear search and retun the [count] most trustworthy reviews
+        review_list = []
+        review_dict = {}
+
+        with shelve.open(REVIEWS_DB, 'c') as db:
+            if "review" in db:
+                review_dict = db["review"]
+
+        for k in review_dict:
+            review = review_dict[k]
+            if review.parent_restaurant_id == restaurant_id:
+                review_list.append(review)
+
+        review_list.sort(key=lambda x: x.trustworthiness(), reverse=True)
+
+        if count is not None:
+            review_list = review_list[:count]
+        return review_list
+
+    @staticmethod
     def get_user_reviews(user_id):
-        # Linear search and retun a list of review objects with matching user ID
+        # Linear search and retun list of review objects with matching user ID
         review_list = []
         review_dict = {}
 

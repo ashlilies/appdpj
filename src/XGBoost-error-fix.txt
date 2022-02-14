@@ -1,0 +1,12 @@
+If you get an error regarding XGBoost, run these commands from your PyCharm terminal:
+
+WINDOWS:
+pip install xgboost-1.5.1-pp38-pypy38_pp73-win_amd64.whl
+
+MAC OS X:
+Install latest cmake dmg from https://cmake.org/download/
+Then:
+sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install
+pip3 install xgboost
+
+-Ashlee
