@@ -1,7 +1,6 @@
 {% extends "consumer/consumer_base.html" %}
 {% block title %}Thank You Page{% endblock %}
 
-
 {% block head %}
     <style>
     #japone{
@@ -465,7 +464,7 @@
             <h2 style="color: #E16B6B">Your order has been delivered</h2>
             <hr>
             <h6>Thank you for your patience. Hope you have pleasant day ahead.<br><br>
-            <button>Give ratings and feedback!</button>
+            <button href="{{ url_for('consumer_create_review') }}">Give ratings and feedback!</button>
             <hr>
             Your Food Has Arrived At Your Doorstep. Please collect it.</h6>
       	</div>
