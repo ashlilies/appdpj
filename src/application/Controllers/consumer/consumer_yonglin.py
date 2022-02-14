@@ -37,7 +37,9 @@ def consumer_myaddress(restaurant_id):
     latitude = None
     location = None
     del_time = None
-    del_fee = None
+    del_fee = 0.0
+    cart = CartDao.get_cart(current_user.cart)
+    cart_items = cart.get_cart_items()
 
     if request.method == 'POST' and consumer_address_form.validate():
         address_dict = {}
@@ -63,16 +65,15 @@ def consumer_myaddress(restaurant_id):
                 distance = calculate_distance(latitude, longitude, restaurant)
                 del_time = calculate_deltime_bydist(distance)
                 del_fee = delivery_fee(distance, restaurant)
+                cart.delivery_fee = float(del_fee)
 
             except Exception as e:
                 logging.error('Error in Address (%s)' % e)
                 flash("Invalid address, please try again")
+                cart.delivery_fee = 0.0
             # writeback
             db['address'] = address_dict
 
-        cart = CartDao.get_cart(current_user.cart)
-        cart_items = cart.get_cart_items()
-        cart.delivery_fee = float(del_fee)
     else:
         address_dict = {}
         with shelve.open('address.db', 'c') as db:
@@ -86,7 +87,7 @@ def consumer_myaddress(restaurant_id):
 
         cart = CartDao.get_cart(current_user.cart)
         cart_items = cart.get_cart_items()
-        del_fee = 0.0
+        cart.delivery_fee = del_fee
 
     return render_template("consumer/address.html", form=consumer_address_form, location=location,
                            latitude=latitude,
