@@ -142,25 +142,27 @@
                 <span style="position: absolute; right: 10%;">S$ {{ "%.2f" % cart.get_subtotal() }}</span>
             </p>
 
-{#            <button type="button"#}
-{#                    class="btn btn-warning btn-block btn-lg mt-auto mb-auto"#}
-{#                    style="height: 50%;">#}
-{#                Proceed to Pay#}
-{#            </button>#}
+            {#            <button type="button"#}
+            {#                    class="btn btn-warning btn-block btn-lg mt-auto mb-auto"#}
+            {#                    style="height: 50%;">#}
+            {#                Proceed to Pay#}
+            {#            </button>#}
 
-        <form action="{{ url_for('payment') }}" method="POST">
-{#                <input type="hidden" name="amount" value="{{cart.get_subtotal() *100}}">#}
-{#                  {%  set amount = (cart.get_subtotal()).replace('.','')%}#}
-                  <script
-                    src="https://checkout.stripe.com/checkout.js"
-                    class="stripe-button"
-                    data-key="pk_test_VrWD12lh918aMAaU4HP11c4e00I9shY8fg"
-                    data-name="Payment to FoodyPulse"
-                    data-description="Food on Impulse"
-                    data-amount="{{ cart.get_subtotal() * 100 }}"
-                    data-currency="sgd">
-                  </script>
-                </form>
+            {% if del_fee > 0.0 %}
+            <form action="{{ url_for('payment') }}" method="POST">
+                {#                <input type="hidden" name="amount" value="{{cart.get_subtotal() *100}}">#}
+                {#                  {%  set amount = (cart.get_subtotal()).replace('.','')%}#}
+                <script
+                        src="https://checkout.stripe.com/checkout.js"
+                        class="stripe-button"
+                        data-key="pk_test_VrWD12lh918aMAaU4HP11c4e00I9shY8fg"
+                        data-name="Payment to FoodyPulse"
+                        data-description="Food on Impulse"
+                        data-amount="{{ cart.get_subtotal() * 100 }}"
+                        data-currency="sgd">
+                </script>
+            </form>
+        {% endif %}
 
         </div>
     </div>

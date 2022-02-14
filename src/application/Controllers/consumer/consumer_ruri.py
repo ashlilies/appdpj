@@ -49,6 +49,8 @@ def payment():
         )
 
         session["payment_made"] = True
+        TransactionDao.create_transaction(cart.restaurant_id, current_user.account_id, cart.get_subtotal(), cart.coupon_code)
+
         return redirect(url_for('thankyou', restaurant_id=cart.restaurant_id))
 
     cart = CartDao.get_cart(current_user.cart)
@@ -70,6 +72,10 @@ def delordine():  # ruri
 @consumer_side
 @login_required
 def thankyou():
+    if session.get("payment_made"):
+        cart = CartDao.get_cart(current_user.cart)
+        cart.clear_cart()
+        session["payment_made"] = False
     return render_template('consumer/thankyou.html')
 
 

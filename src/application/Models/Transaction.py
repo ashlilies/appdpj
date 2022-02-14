@@ -60,9 +60,8 @@ class Transaction:
 
 class TransactionDao:
     @staticmethod
-    def create_transaction(restaurant_id, account_name, price, used_coupon=None,
-                           rating=0) -> Transaction:
-        transaction = Transaction(restaurant_id, account_name, price,
+    def create_transaction(restaurant_id, account_id, price, used_coupon=None) -> Transaction:
+        transaction = Transaction(restaurant_id, account_id, price,
                                   used_coupon)
         TransactionDao.save(transaction)
         return transaction

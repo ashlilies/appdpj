@@ -121,6 +121,8 @@ class Cart:
 
     def clear_cart(self):
         self.__item_dict.clear()
+        self.apply_coupon("")
+        self.delivery_fee = 0.0
 
         CartDao.save(self)
 
