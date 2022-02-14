@@ -41,7 +41,7 @@ geolocator = Nominatim(user_agent="foodypulse")
 @login_required
 @admin_side
 def admin_myrestaurant():  # ruri
-    logitude = None
+    longitude = None
     latitude = None
     location = None
     restaurant_details_form = RestaurantDetailsForm(
@@ -99,7 +99,7 @@ def admin_myrestaurant():  # ruri
             except Exception as e:
                 logging.error('Error in Address (%s)' % e)
                 flash("Could not find your address, please try again")
-                return redirect(url_for("admin_myrestaurant"))
+                return redirect(url_for("admin_myrestaurant"), longitude=longitude, latitude=latitude)
 
 
         else:
@@ -110,7 +110,6 @@ def admin_myrestaurant():  # ruri
                 print(location.address)
                 longitude = location.longitude
                 latitude = location.latitude
-                # todo: ask ruri if i can delete address line 2 and postal code (?)
                 flash("Successfully saved your delivery address!")
 
                 RestaurantSystem.edit_restaurant(
@@ -135,6 +134,7 @@ def admin_myrestaurant():  # ruri
                     restaurant_details_form.rest_del5.data,
                 )
                 print(restaurant.get_logo())
+                print(latitude, longitude)
 
             except Exception as e:
                 logging.error('Error in Address (%s)' % e)
@@ -172,10 +172,12 @@ def admin_myrestaurant():  # ruri
         restaurant_details_form.rest_del3.data = restaurant.del3
         restaurant_details_form.rest_del4.data = restaurant.del4
         restaurant_details_form.rest_del5.data = restaurant.del5
+        latitude = restaurant.latitude
+        longitude = restaurant.longitude
         print(restaurant.latitude, restaurant.longitude)
 
     return render_template("admin/restaurant.html",
-                           form=restaurant_details_form, restaurant=restaurant)
+                           form=restaurant_details_form, restaurant=restaurant, longitude=longitude, latitude=latitude)
 
 
 # R (Read)
