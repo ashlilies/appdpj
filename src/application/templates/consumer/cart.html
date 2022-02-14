@@ -201,7 +201,7 @@
                   S$ {{ "%.2f" % cart.get_subtotal() }}</td>
               </tr>
             </table>
-            <a href="{{ url_for("consumer_myaddress", restaurant_id=cart.get_cart_items()[0].food.parent_restaurant_id) }}" type="button"
+            <a href="{{ url_for("consumer_myaddress", restaurant_id=cart.restaurant_id) }}" type="button"
                     class="btn btn-warning btn-block btn-lg mt-auto mb-auto"
                     style="height: 50%;">
               Proceed to Pay

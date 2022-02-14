@@ -1,0 +1,542 @@
+{% extends "consumer/consumer_base.html" %}
+{% block title %}Thank You Page{% endblock %}
+
+{% block head %}
+  <style>
+      #japone {
+          padding: 50px 50px 50px 50px;
+          padding-top: 40px;
+          padding-bottom: 100px;
+          top: 0;
+          margin: -100px -100px;
+          /* background: url(images/cherryblossoms.gif);
+          background-position: left;
+          background-size: cover;
+          background-repeat: no-repeat; */
+          margin-top: -30px; /*just reaching header*/
+          margin-bottom: 40px;
+      }
+
+      /* #color-overlay {
+         position: absolute;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         background-color: black;
+         opacity: 0.6;
+      } */
+
+      /* #quizone{
+        padding-top: 0px;
+        padding-bottom: 150px;
+        margin: -100px -100px;
+        background-color: #FF00B5;
+      } */
+
+
+      #two {
+          padding-top: 0px;
+          padding-bottom: 150px;
+          margin: -100px -100px;
+          background-color: #FF00B5;
+      }
+
+      #three {
+          padding: 50px 50px 50px 50px;
+          top: 0;
+          margin: -100px -100px;
+          background-color: #017143;
+          margin-top: -30px; /*just reaching header*/
+      }
+
+      {#h1 {#}
+      {# color:#fff;#}
+      {# font-weight:700;#}
+      {# margin-top:30px;#}
+      {# text-align:center;#}
+      {# text-transform:uppercase;#}
+      {# letter-spacing:4px;#}
+      {# line-height:23px;#}
+
+      #japone h3 {
+          color: #000;
+          text-align: center;
+      }
+
+      #quizone h3 {
+
+          color: #000;
+          font-weight: 700;
+          margin-top: 0px;
+          text-align: center;
+          text-transform: uppercase;
+          letter-spacing: 4px;
+          line-height: 23px;
+      }
+
+
+      /* --- start progress bar by ruri --- */
+
+      .process-wrapper-1 {
+          transform: translateX(0px);
+          margin: auto;
+          max-width: 1080px;
+          margin-bottom: 100px;
+      }
+
+      .process-wrapper-2 {
+          margin: auto;
+          max-width: 1080px;
+      }
+
+      #progress-bar-container {
+          position: relative;
+          width: 90%;
+          margin: auto;
+          height: 100px;
+          margin-top: 70px;
+      }
+
+      #progress-bar-container ul {
+          padding: 0;
+          margin: 0;
+          padding-top: 15px;
+          z-index: 9999;
+          position: absolute;
+          width: 100%;
+          margin-top: -40px
+      }
+
+      #progress-bar-container li:before {
+          content: " ";
+          display: block;
+          margin: auto;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          border: solid 2px #aaa;
+          transition: all ease 0.3s;
+
+      }
+
+      #progress-bar-container li.active:before, #progress-bar-container li:hover:before {
+          border: solid 2px #fff;
+
+          background: linear-gradient(to right, #E91E63 0%, #fff 100%);
+      }
+
+      #progress-bar-container li {
+          list-style: none;
+          float: left;
+          width: 33%;
+          text-align: center;
+          color: #aaa;
+          text-transform: uppercase;
+          font-size: 11px;
+          cursor: pointer;
+          font-weight: 700;
+          transition: all ease 0.2s;
+          vertical-align: bottom;
+          height: 60px;
+          position: relative;
+      }
+
+      #progress-bar-container li .step-inner {
+          position: absolute;
+          color: black;
+          width: 100%;
+          bottom: 0;
+          font-size: 9px;
+      }
+
+      #progress-bar-container li.active, #progress-bar-container li:hover {
+          color: #444;
+      }
+
+      #progress-bar-container li:after {
+          content: " ";
+          display: block;
+          width: 6px;
+          height: 6px;
+          background: #777;
+          margin: auto;
+          border: solid 7px #fff;
+          border-radius: 50%;
+          margin-top: 40px;
+          box-shadow: 0 2px 13px -1px rgba(0, 0, 0, 0.3);
+          transition: all ease 0.2s;
+
+      }
+
+      #progress-bar-container li:hover:after {
+          background: #555;
+      }
+
+      #progress-bar-container li.active:after {
+          background: #207893;
+      }
+
+      #progress-bar-container #line {
+          width: 80%;
+          margin: auto;
+          background: #eee;
+          height: 6px;
+          position: absolute;
+          left: 10%;
+          top: 57px;
+          z-index: 1;
+          border-radius: 50px;
+          transition: all ease 0.9s;
+      }
+
+      #progress-bar-container #line-progress {
+          content: "";
+          width: 1%;
+          height: 100%;
+          background: #207893;
+          background: linear-gradient(to right, #E16B6B 0%, #E16B6B 100%);
+          position: absolute;
+          z-index: 2;
+          border-radius: 50px;
+          transition: all ease 0.4s;
+      }
+
+      #progress-content-section {
+          width: 90%;
+          margin: auto;
+          background: #f3f3f3;
+          border-radius: 4px;
+      }
+
+      #progress-content-section .section-content {
+          padding: 30px 40px;
+          text-align: center;
+      }
+
+      #progress-content-section .section-content h2 {
+          font-size: 23px;
+          color: #333;
+      }
+
+      #progress-content-section .section-content p {
+          font-size: 16px;
+          /* padding-top: 20px; */
+          padding-bottom: 50px;
+          line-height: 1.8em;
+          color: #777;
+      }
+
+      #progress-content-section .section-content {
+          display: none;
+          animation: FadeInUp 700ms ease 1;
+          animation-fill-mode: forwards;
+          transform: translateY(15px);
+          opacity: 0;
+      }
+
+      #progress-content-section .section-content.active {
+          display: block;
+      }
+
+      @keyframes FadeInUp {
+          0% {
+              transform: translateY(15px);
+              opacity: 0;
+          }
+
+          100% {
+              transform: translateY(0px);
+              opacity: 1;
+          }
+      }
+
+
+      ::selection {
+          color: #fff;
+          background: #007bff;
+      }
+
+      .start_btn { /*seperate such that the button appears in the relatvant relative section, and the rest appears in the fixed area*/
+          position: relative;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+                      0 6px 20px 0 rgba(0, 0, 0, 0.19); */
+
+      }
+
+      .info_box,
+      .quiz_box,
+      .result_box {
+          position: relative;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+          0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      }
+
+      .quiz_box.activeQuiz {
+          opacity: 1;
+          z-index: 5;
+          pointer-events: auto;
+          transform: translate(-50%, -90%) scale(1);
+
+      }
+
+      .info_box.activeInfo {
+          position: relative;
+          opacity: 1;
+          z-index: 5;
+          pointer-events: auto;
+          transform: translate(-50%, -50%) scale(1);
+      }
+
+      .result_box.activeResult {
+          margin-top: -750px;
+          position: relative;
+          opacity: 1;
+          z-index: 5;
+          pointer-events: auto;
+          transform: translate(-50%, -50%) scale(1);
+      }
+
+      .start_btn button {
+          font-size: 25px;
+          font-weight: 500;
+          color: black;
+          padding: 15px 30px;
+          /* margin-left: 540px; inserted by ruri for marginal spacing*/
+          margin-top: 100px; /*inserted by ruri for marginal spacing*/
+          background: transparent;
+          outline: none;
+          border: none;
+          border-radius: 5px;
+          background: #fff;
+          cursor: pointer;
+
+      }
+
+      .info_box {
+          width: 540px;
+          background: #fff;
+          border-radius: 5px;
+          transform: translate(-50%, -50%) scale(0.9);
+          opacity: 0;
+          pointer-events: none;
+          transition: all 0.3s ease;
+      }
+
+      .info_box .info-title {
+          height: 60px;
+          width: 100%;
+          border-bottom: 1px solid lightgrey;
+          display: flex;
+          align-items: center;
+          padding: 0 30px;
+          border-radius: 5px 5px 0 0;
+          font-size: 20px;
+          font-weight: 600;
+      }
+
+      .info_box .info-list {
+          padding: 15px 30px;
+      }
+
+      .info_box .info-list .info {
+          margin: 5px 0;
+          font-size: 17px;
+      }
+
+      .info_box .info-list .info span {
+          font-weight: 600;
+          color: #007bff;
+      }
+
+      .info_box .buttons {
+          height: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          padding: 0 30px;
+          border-top: 1px solid lightgrey;
+      }
+
+      .info_box .buttons button {
+          margin: 0 5px;
+          height: 40px;
+          width: 100px;
+          font-size: 16px;
+          font-weight: 500;
+          cursor: pointer;
+          border: none;
+          outline: none;
+          border-radius: 5px;
+          border: 1px solid #007bff;
+          transition: all 0.3s ease;
+      }
+
+      table {
+          position: relative;
+          z-index: 2;
+          left: 50%;
+          top: 50%;
+          margin-top: 200px;
+          margin-bottom: -100px;
+          transform: translate(-50%, -50%);
+          width: 100%;
+          border-collapse: collapse;
+          border-spacing: 0;
+          box-shadow: 0 2px 15px rgba(64, 64, 64, .7);
+          border-radius: 12px 12px 0 0;
+          overflow: hidden;
+
+      }
+
+      td, th {
+          padding: 15px 20px;
+          text-align: center;
+
+
+      }
+
+      th {
+          background-color: #eb7495;
+          color: #fafafa;
+          font-weight: 200;
+          text-transform: uppercase;
+
+      }
+
+      tr {
+          width: 100%;
+          background-color: #fafafa;
+      }
+
+      tr:nth-child(even) {
+          background-color: #eeeeee;
+      }
+
+      /* #section-content analysis{
+
+        height: 50px;
+
+      } */
+
+
+  </style>
+{% endblock %}
+
+{% block content %}
+  <h1 style="margin-top: 70px;font-weight: bold;color: #E16B6B;">
+    {% if transaction.status == transaction.STATUS_PREPARING %}
+      Your order is successful.
+    {% elif transaction.status == transaction.STATUS_ON_THE_WAY %}
+      Your order is on the way.
+    {% else %}
+      Your order has been delivered.
+    {% endif %}
+  </h1>
+
+  <div id="japone">
+    <!--  <div id="color-overlay"></div> -->
+    <br>
+    <div class="process-wrapper-1">
+      <div id="progress-bar-container">
+        <ul>
+          <li class="step step01" id="step1">
+            <div class="step-inner">Preparing your order</div>
+          </li>
+          <li class="step step02" id="step2">
+            <div class="step-inner">Driver is on the way</div>
+          </li>
+          <li class="step step03" id="step3">
+            <div class="step-inner">Your food has been delivered</div>
+          </li>
+        </ul>
+
+        <div id="line">
+          <div id="line-progress"></div>
+        </div>
+      </div>
+
+      <div id="progress-content-section">
+        <div class="section-content discovery active">
+          <h2 style="color: #E16B6B">Preparing your order</h2>
+          <hr>
+          <h6>Your food is being prepared by our skilled chef. Please be patient
+            with us.
+            <hr>
+            Your food is on the waiting list for preparation. Estimated waiting
+            time is around 15 minutes. Please be patient.
+          </h6>
+        </div>
+
+        <div class="section-content strategy">
+          <h2 style="color: #E16B6B">Your order has been picked up.</h2>
+          <hr>
+          <h6>Food items have been picked up by the driver.
+            <hr>
+            Your driver is now on the way to your location to deliver your food.
+          </h6>
+        </div>
+
+        <div class="section-content creative">
+          <h2 style="color: #E16B6B">Your order has been delivered</h2>
+          <hr>
+          <h6>Thank you for your patience. Hope you have pleasant day ahead.<br><br>
+            <a class="btn" href="{{ url_for('consumer_create_review') }}">Give
+              ratings and feedback!</a>
+            <hr>
+            Your Food Has Arrived At Your Doorstep. Please collect it.
+          </h6>
+        </div>
+
+      </div>
+      <script>
+          $(".step").click(function () {
+              $(this).addClass("active").prevAll().addClass("active");
+              $(this).nextAll().removeClass("active");
+          });
+
+          $(".step01").click(function () {
+              $("#line-progress").css("width", "0%");
+              $(".discovery").addClass("active").siblings().removeClass("active");
+          });
+
+          $(".step02").click(function () {
+              $("#line-progress").css("width", "50%");
+              $(".strategy").addClass("active").siblings().removeClass("active");
+          });
+
+          $(".step03").click(function () {
+              $("#line-progress").css("width", "100%");
+              $(".creative").addClass("active").siblings().removeClass("active");
+          });
+
+          var status = {{ transaction.status }};
+          loadStatus(status);
+
+          function loadStatus(status) {
+              {% if transaction.status == transaction.STATUS_PREPARING %}
+                  document.getElementById("step1").classList.add("active");
+                  $(".step01").click()
+              {% elif transaction.status == transaction.STATUS_ON_THE_WAY %}
+                  document.getElementById("step2").classList.add("active");
+                  $(".step02").click()
+              {% else %}
+                  document.getElementById("step3").classList.add("active");
+                  $(".step03").click()
+              {% endif %}
+
+              $("#step1").css("pointer-events","none");
+              $("#step2").css("pointer-events","none");
+              $("#step3").css("pointer-events","none");
+          }
+
+      </script>
+    </div>
+  </div>
+{% endblock %}
+

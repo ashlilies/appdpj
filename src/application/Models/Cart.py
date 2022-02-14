@@ -147,6 +147,14 @@ class Cart:
             return True
         return False
 
+    # Temporary for week 18 presentation
+    @property
+    def restaurant_id(self):
+        try:
+            return self.get_cart_items()[0].food.parent_restaurant_id
+        except:  # no items in cart
+            return None
+
 
 class CartDao:
     @staticmethod
