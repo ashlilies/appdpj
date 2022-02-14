@@ -1,0 +1,4 @@
+diff --git a/application/templates/consumer/payment.html b/application/templates/consumer/payment.html
+new file mode 100644
+diff --git a/application/templates/consumer/thankyou.html b/application/templates/consumer/thankyou.html
+new file mode 100644
