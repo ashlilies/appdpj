@@ -106,6 +106,8 @@
                         <input type="password" name="updateSettingsPw" id="updateSettingsPw"><br>
                         <hr>
                         <div class="form-group row">
+                            <img src="{{ current_user.otp_uri_image() }}" style="width: 50%; margin-left: auto; margin-right: auto;" alt="">
+                            <span class="text-secondary">Scan with your favourite OTP app, such as Authy or Google Authenticator.</span>
                           <label>Your OTP secret: <b>{{ current_user.totp_secret }}</b> <a href="{{ url_for("regenerate_otp") }}">(regenerate)</a></label>
                         </div>
                         <hr>
@@ -224,6 +226,8 @@
                         <input type="password" name="updateSettingsPw" id="updateSettingsPw"><br>
                         <hr>
                         <div class="form-group row">
+                            <img src="{{ current_user.otp_uri_image() }}" style="width: 50%; margin-left: auto; margin-right: auto;" alt="">
+                            <span class="text-secondary">Scan with your favourite OTP app, such as Authy or Google Authenticator.</span>
                           <label>Your OTP secret: <b>{{ current_user.totp_secret }}</b> <a href="{{ url_for("regenerate_otp") }}">(regenerate)</a></label>
                         </div>
                         <hr>
@@ -327,6 +331,7 @@
 
       <button type="button" class="btn-close" data-bs-dismiss="alert"
               aria-label="Close"></button>
+    </div>
     </div>
   {% endif %}
 {% endwith %}

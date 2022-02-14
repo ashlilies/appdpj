@@ -3,6 +3,7 @@
 # By Ashlee
 # Fulfils: Create, Read, Update, Delete (?)
 import logging
+import os
 import re  # regex
 import uuid
 
@@ -176,6 +177,21 @@ class Account:
     def check_otp(self, otp: str):
         totp = pyotp.TOTP(self.totp_secret)
         return totp.verify(otp)
+
+    def otp_uri(self):
+        totp = pyotp.TOTP(self.totp_secret)
+        return totp.provisioning_uri(name='alice@google.com', issuer_name='Secure App')
+
+    # Returns a value for the src tag of an img
+    def otp_uri_image(self):
+        import qrcode
+        img = qrcode.make(self.otp_uri())
+        file_upload_path = os.path.join(os.getcwd(), "application/",
+                                        app.config['UPLOAD_FOLDER'], "otp-uri/")
+        os.makedirs(file_upload_path, exist_ok=True)
+        img.save("application/static/uploads/otp-uri/%s.png" % self.totp_secret)
+
+        return url_for("static", filename="uploads/otp-uri/%s.png" % self.totp_secret)
 
     def reset_password(self):
         if not self.disabled:
