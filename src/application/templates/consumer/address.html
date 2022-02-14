@@ -117,11 +117,6 @@
     <div class="card rounded-3 mb-4">
         <div class="card-body p-4">
             <p class="lead fw-normal mb-2">
-                Total
-                <span style="position: absolute; right: 10%;">S$ {{ "%.2f" % cart.get_subtotal() }}</span>
-            </p>
-            <hr>
-            <p class="lead fw-normal mb-2">
                 Address:
                 <br>
                 {{ location }}
@@ -136,10 +131,15 @@
             {% if del_fee %}
                 <p class="lead fw-normal mb-2">
                     Delivery Fee:
-                    ${{ "%.2f" % del_fee }}
+                    <span style="position: absolute; right: 10%;">S$ {{ "%.2f" % del_fee }}</span>
                 </p>
             {% endif %}
 
+            <hr>
+            <p class="lead fw-normal mb-2">
+                Total
+                <span style="position: absolute; right: 10%;">S$ {{ "%.2f" % cart.get_subtotal() }}</span>
+            </p>
 
             <a href="{{ url_for("payment") }}"
                     class="btn btn-warning btn-block btn-lg mt-auto mb-auto"
