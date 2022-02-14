@@ -11,10 +11,12 @@ from geopy.geocoders import Nominatim
 from application import app
 from application.Controllers.consumer.consumer_ashlee import consumer_side
 from application.Models.Address import ConsumerAddress
+from application.Models.Cart import CartDao, Cart
 from application.consumer_address_form import ConsumerAddressForm
 
 # <------------------------- YONG LIN ------------------------------>
 # ADDRESS FIELD (form field)
+# create/update, reading of address
 geolocator = Nominatim(user_agent="foodypulse")
 GoogleMaps(app)
 
@@ -51,12 +53,15 @@ def consumer_myaddress():
                 print(consumer.get_latitude(), consumer.get_longitude())
 
             except Exception as e:
-                # todo: input showing of error as a pop out page at the top -- follow Ashlee's code
                 logging.error('Error in Address (%s)' % e)
                 flash("Could not find your address, please try again")
-
+            # writeback
             db['address'] = address_dict
-        return render_template("consumer/address.html", form=consumer_address_form, latitude=latitude, longitude=longitude)
+        # cart = CartDao.get_cart(current_user.cart)
+        # cart_items = cart.get_cart_items()
+
+        return render_template("consumer/address.html", form=consumer_address_form, latitude=latitude,
+                               longitude=longitude)
     else:
         address_dict = {}
         with shelve.open('address.db', 'c') as db:
@@ -64,8 +69,17 @@ def consumer_myaddress():
                 address_dict = db['address']
                 consumer = address_dict.get(current_user.account_id)
                 consumer_address_form.consumer_address.data = consumer.address
+                latitude = consumer.get_latitude()
+                longitude = consumer.get_longitude()
                 print(consumer.address)
             except Exception as e:
                 logging.error('address: unable to display address due to %s in db' % e)
 
-        return render_template("consumer/address.html", form=consumer_address_form)
+        cart = CartDao.get_cart(current_user.cart)
+        cart_items = cart.get_cart_items()
+
+        for item in cart_items:
+            print(item.food.name)
+            print(item.qty)
+        return render_template("consumer/address.html", cart=cart, cart_items=cart_items,
+                               count=len(cart_items), form=consumer_address_form, latitude=latitude, longitude=longitude)

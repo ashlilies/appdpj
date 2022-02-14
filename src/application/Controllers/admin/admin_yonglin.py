@@ -250,6 +250,8 @@ def delete_transaction(transaction_id):
 
 
 # certification -- xu yong lin
+
+
 # YL: for certification -- form (C in CRUD)
 @app.route("/admin/uploadCertification")
 @admin_side
@@ -386,7 +388,6 @@ def read_cert():
 
 
 # YL: for certification -- Update certification [if it expires/needs to be updated] (U in CRUD)
-# TODO: CHECK IF THE FILES ARE THE SAME AND UPDATE THE DETAILS
 @app.route('/admin/updateCertification/<int:id>', methods=['GET', 'POST'])
 @admin_side
 @login_required
