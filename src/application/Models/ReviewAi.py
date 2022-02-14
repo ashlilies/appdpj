@@ -1,23 +1,23 @@
 # Ashlee
 # AI for detecting fake reviews.
 
-# for data
 import pandas as pd
 import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
 
-# for plotting
-import matplotlib.pyplot as plt
-import seaborn as sns
+# from xgboost import  XGBClassifier
 
-# for statistical tests
-import scipy
-import statsmodels.formula.api as smf
-import statsmodels.api as sm
 
-# for machine learning
-from sklearn import model_selection, preprocessing, feature_selection
-from sklearn import ensemble, linear_model, metrics, decomposition
-
-# for explainer
-from lime import lime_tabular
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import f1_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import auc
+from sklearn.metrics import roc_curve
+from sklearn.metrics import plot_confusion_matrix
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
 

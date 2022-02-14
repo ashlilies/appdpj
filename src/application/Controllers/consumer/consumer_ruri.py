@@ -31,6 +31,8 @@ stripe.api_key = 'sk_test_kpzk6dqINLVhzC75dZi29d7z00bIiWFNxf'
 @login_required
 def payment():
     if request.method == "POST":
+        cart = CartDao.get_cart(current_user.cart)
+
         customer = stripe.Customer.create(
             email=request.form['stripeEmail'],
             source=request.form['stripeToken'],
