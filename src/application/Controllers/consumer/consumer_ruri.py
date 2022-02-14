@@ -49,7 +49,7 @@ def payment():
         )
 
         session["payment_made"] = True
-        return redirect(url_for('thanks', restaurant_id=cart.restaurant_id))
+        return redirect(url_for('thankyou', restaurant_id=cart.restaurant_id))
 
     cart = CartDao.get_cart(current_user.cart)
     cart_items = cart.get_cart_items()
