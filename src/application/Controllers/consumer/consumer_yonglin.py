@@ -30,6 +30,7 @@ def consumer_myaddress():
     # address_form = ConsumerAddressForm(request.form)
     longitude = None
     latitude = None
+    location = None
 
     if request.method == 'POST' and consumer_address_form.validate():
         # saving / updating the user's address
@@ -57,11 +58,11 @@ def consumer_myaddress():
                 flash("Could not find your address, please try again")
             # writeback
             db['address'] = address_dict
-        # cart = CartDao.get_cart(current_user.cart)
-        # cart_items = cart.get_cart_items()
+        cart = CartDao.get_cart(current_user.cart)
+        cart_items = cart.get_cart_items()
 
-        return render_template("consumer/address.html", form=consumer_address_form, latitude=latitude,
-                               longitude=longitude)
+        return render_template("consumer/address.html", form=consumer_address_form, location=location, latitude=latitude,
+                               longitude=longitude, cart=cart, cart_items=cart_items)
     else:
         address_dict = {}
         with shelve.open('address.db', 'c') as db:
@@ -71,6 +72,7 @@ def consumer_myaddress():
                 consumer_address_form.consumer_address.data = consumer.address
                 latitude = consumer.get_latitude()
                 longitude = consumer.get_longitude()
+                location = consumer.address
                 print(consumer.address)
             except Exception as e:
                 logging.error('address: unable to display address due to %s in db' % e)
@@ -78,8 +80,5 @@ def consumer_myaddress():
         cart = CartDao.get_cart(current_user.cart)
         cart_items = cart.get_cart_items()
 
-        for item in cart_items:
-            print(item.food.name)
-            print(item.qty)
         return render_template("consumer/address.html", cart=cart, cart_items=cart_items,
-                               count=len(cart_items), form=consumer_address_form, latitude=latitude, longitude=longitude)
+                               count=len(cart_items), form=consumer_address_form, location=location, latitude=latitude, longitude=longitude)
