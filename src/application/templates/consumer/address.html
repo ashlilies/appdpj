@@ -16,7 +16,8 @@
 
         .addressDiv {
             background-color: #ffffff;
-            width: 30%;
+            width: 80%;
+            height:40%;
         }
 
         .inputs {
@@ -34,15 +35,28 @@
         }
 
         #map {
-            height: 250px;
-            width: 90%;
+            height: 125px;
+            width: 125px;
             margin: auto;
         }
 
         .orderConfirm {
-            width: 60%;
-            float: right;
-            margin-top: -200px;;
+            width: 90%;
+        }
+
+
+        /* Create two equal columns that floats next to each other */
+        .column {
+          float: left;
+          width: 50%;
+          padding: 10px;
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+          content: "";
+          display: table;
+          clear: both;
         }
     </style>
 {% endblock %}
@@ -65,29 +79,37 @@
         }
     </script>
 
-    <form method="POST" action="{{ url_for('consumer_myaddress', restaurant_id=restaurant.id) }}">
-        <div class="addressDiv">
-            <div class="header">
-                <img src="{{ url_for("static", filename="cart/location.png") }}" alt="location Logo"
-                     style="height: 35px; width: 40px; margin: 15px 0px; display: inline-block">
-                <h4 style="margin-left: 20px;">Delivery Address</h4>
-            </div>
 
-            <div id="map"></div>
 
-            <div class="inputs">
-                <div class="form-group">{{ render_field(form.consumer_address, class="form-control", placeholder='Enter Address here') }}</div>
 
-                <input type="submit" value="Submit" class="btn btn-primary" style="margin: 20px 0;"/>
-            </div>
+            <div class="row">
+              <div class="column" style="background-color:#aaa;">
+                  <form method="POST" action="{{ url_for('consumer_myaddress', restaurant_id=restaurant.id) }}">
+                    <div class="addressDiv">
+                        <div class="header">
+                            <img src="{{ url_for("static", filename="cart/location.png") }}" alt="location Logo"
+                                 style="height: 35px; width: 40px; margin: 15px 0px; display: inline-block">
+                            <h4 style="margin-left: 30px;">Delivery Address</h4>
+                        </div>
 
-            {# async script executes immediately and msut be after any DOM elements used in callbacl. #}
-            <script
-                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCu8EK_J5eGH_o7frDEGfeWEJfWJIY6hbE&callback=initMap&libraries=&v=weekly"
-                    async
-            ></script>
-        </div>
-    </form>
+                        <div id="map"></div>
+
+                        <div class="inputs">
+                            <div class="form-group">{{ render_field(form.consumer_address, class="form-control", placeholder='Enter Address here') }}</div>
+
+                            <input type="submit" value="Submit" class="btn btn-primary" style="margin: 20px 0;"/>
+                        </div>
+
+                        {# async script executes immediately and msut be after any DOM elements used in callbacl. #}
+                        <script
+                                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCu8EK_J5eGH_o7frDEGfeWEJfWJIY6hbE&callback=initMap&libraries=&v=weekly"
+                                async
+                        ></script>
+                    </div>
+                  </form>
+              </div>
+              <div class="column" style="background-color:#bbb;">
+
 
     <div class="orderConfirm">
         {% for cart_item in cart_items %}
@@ -115,6 +137,13 @@
             </div>
         {% endfor %}
     </div>
+              </div>
+            </div>
+
+
+
+
+
     <div class="card rounded-3 mb-4">
         <div class="card-body p-4">
             <p class="lead fw-normal mb-2">
