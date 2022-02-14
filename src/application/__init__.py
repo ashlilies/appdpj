@@ -11,6 +11,7 @@ import os
 from flask_mail import Mail
 
 app = Flask(__name__)
+
 app.secret_key = "doofypulseEngineers"  # used for secure stuff
 
 # Handling Flask uploads.

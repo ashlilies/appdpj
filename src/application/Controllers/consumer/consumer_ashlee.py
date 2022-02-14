@@ -184,6 +184,9 @@ def consumer_delete_review(review_id):
 def consumer_cart():
     cart = CartDao.get_cart(current_user.cart)
     cart_items = cart.get_cart_items()
+
+    # temporary
+    cart.delivery_fee = 0.0
     return render_template("consumer/cart.html",
                            cart=cart,
                            cart_items=cart_items,
