@@ -67,15 +67,15 @@ class CouponSystem:
 
     def __init__(self):
         with shelve.open("coupons", 'c') as db:
-            if "count_id" in db:
-                CouponSystem.count_id = db["count_id"]
+            if "id" in db:
+                CouponSystem.count_id = db["id"]
 
         CouponSystem.count_id += 1
         self.id = CouponSystem.count_id
         self.coupons = {}
 
         with shelve.open("coupons", 'c') as db:
-            db["count_id"] = CouponSystem.count_id
+            db["id"] = CouponSystem.count_id
             coupon_systems_dict = {}
             if "coupon_systems_dict" in db:
                 coupon_systems_dict = db["coupon_systems_dict"]

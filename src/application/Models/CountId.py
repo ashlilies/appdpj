@@ -6,7 +6,7 @@ import shelve
 
 
 class CountId:
-    # If count_id not saved in db, we don't change the target class's count_id
+    # If id not saved in db, we don't change the target class's id
     @staticmethod
     def load(db_name: str, target_class):
         with shelve.open(db_name, 'c') as db:

@@ -71,7 +71,7 @@ def admin_myrestaurant():  # ruri
                 print(location.address)
                 longitude = location.longitude
                 latitude = location.latitude
-                flash("Successfully Saved your delivery address!")
+                flash("Successfully saved your delivery address!")
 
                 restaurant = RestaurantSystem.create_restaurant(
                     restaurant_details_form.rest_name.data,
@@ -94,11 +94,13 @@ def admin_myrestaurant():  # ruri
                     restaurant_details_form.rest_del5.data,
                 )
 
+                current_user.restaurant_id = restaurant.id
+
             except Exception as e:
                 logging.error('Error in Address (%s)' % e)
                 flash("Could not find your address, please try again")
+                return redirect(url_for("admin_myrestaurant"))
 
-            current_user.restaurant_id = restaurant.id
 
         else:
             restaurant = RestaurantSystem.find_restaurant_by_id(current_user.restaurant_id)
@@ -109,7 +111,7 @@ def admin_myrestaurant():  # ruri
                 longitude = location.longitude
                 latitude = location.latitude
                 # todo: ask ruri if i can delete address line 2 and postal code (?)
-                flash("Successfully Saved your delivery address!")
+                flash("Successfully saved your delivery address!")
 
                 RestaurantSystem.edit_restaurant(
                     restaurant,
@@ -133,9 +135,11 @@ def admin_myrestaurant():  # ruri
                     restaurant_details_form.rest_del5.data,
                 )
                 print(restaurant.get_logo())
+
             except Exception as e:
                 logging.error('Error in Address (%s)' % e)
                 flash("Could not find your address, please try again")
+                return redirect(url_for("admin_myrestaurant"))
 
         # ashlee - attach restaurant_id to our current user
         # current_user.restaurant_id = restaurant_id

@@ -26,8 +26,8 @@ class Account:
         with shelve.open(ACCOUNT_DB, 'c') as db:
             # Load current count id and dict of accounts from db
             accounts_dict = {}
-            if "count_id" in db:
-                Account.count_id = db["count_id"]
+            if "id" in db:
+                Account.count_id = db["id"]
                 accounts_dict = db["accounts"]
 
             # First, check if email already exists.
@@ -45,7 +45,7 @@ class Account:
             self.authenticated = False  # autologin on creation
             accounts_dict[self.account_id] = self
 
-            db["count_id"] = Account.count_id
+            db["id"] = Account.count_id
             db["accounts"] = accounts_dict
 
             logging.info("BaseAccount: Successfully created account, email=%s"

@@ -12,10 +12,10 @@ class Food:
     def __init__(self, restaurant_id, name, image, description, price, allergy,
                  specification=None, topping=None):
         with shelve.open(FOOD_DB, 'c') as db:
-            # if count_id in database, the food object created
-            # would be stored with count_id as key
-            if "count_id" in db:
-                Food.count_id = db["count_id"]
+            # if id in database, the food object created
+            # would be stored with id as key
+            if "id" in db:
+                Food.count_id = db["id"]
                 logging.info(
                     "Food: food count food_id loaded: %d" % Food.count_id)
 
@@ -31,7 +31,7 @@ class Food:
         self.parent_restaurant_id = restaurant_id
         #writeback
         with shelve.open(FOOD_DB, 'c') as db:
-            db["count_id"] = Food.count_id
+            db["id"] = Food.count_id
 
 
 class FoodDao:

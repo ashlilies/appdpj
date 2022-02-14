@@ -7,188 +7,37 @@ from application import app
 from application.Controllers.admin.admin_ashlee import admin_side
 from application.Models.Admin import *
 from application.Models.Certification import Certification
-from application.Models.Transaction import Transaction
+from application.Models.Transaction import Transaction, TransactionDao
 from werkzeug.utils import secure_filename
 import shelve, os
 
 
 # <------------------------- YONG LIN ------------------------------>
+
 # YL: for transactions -- creating of dummy data
 @app.route("/admin/transaction/createExampleTransactions")
 @admin_side
 @login_required
 def create_example_transactions():
-    # WARNING - Overrides ALL transactions in the db!
-    transaction_list = []
+    restaurant_id = current_user.restaurant_id
 
-    # creating a shelve file with dummy data
-    # 1: <account id> ; <user_id> ; <option> ; <price> ; <coupons> , <rating>
-    t1 = Transaction()
-    t1.account_name = 'Yong Lin'
-    t1.set_option('Delivery')
-    t1.set_price(50.30)
-    t1.set_used_coupons('SPAGETIT')
-    t1.set_ratings(2)
-    transaction_list.append(t1)
+    TransactionDao.create_transaction(restaurant_id=restaurant_id,
+                                      account_name="Yong Lin",
+                                      price=50.30,
+                                      used_coupon="SPAGETIT",
+                                      rating=2)
 
-    t2 = Transaction()  # t2
-    t2.account_name = 'Ching Chong'
-    t2.set_option('Dine-in')
-    t2.set_price(80.90)
-    t2.set_used_coupons('50PASTA')
-    t2.set_ratings(5)
-    transaction_list.append(t2)
+    TransactionDao.create_transaction(restaurant_id=restaurant_id,
+                                      account_name="Ching Chong",
+                                      price=80.90,
+                                      used_coupon="50PASTA",
+                                      rating=5)
 
-    t3 = Transaction()  # t3
-    t3.account_name = 'Hosea'
-    t3.set_option('Delivery')
-    t3.set_price(20.10)
-    t3.set_used_coupons('50PASTA')
-    t3.set_ratings(1)
-    transaction_list.append(t3)
-
-    t4 = Transaction()  # t4
-    t4.account_name = 'Clara'
-    t4.set_option('Delivery')
-    t4.set_price(58.30)
-    t4.set_used_coupons('SPAGETIT')
-    t4.set_ratings(2)
-    transaction_list.append(t4)
-
-    t5 = Transaction()  # t5
-    t5.account_name = 'Ruri'
-    t5.set_option('Dine-in')
-    t5.set_price(80.90)
-    t5.set_used_coupons('50PASTA')
-    t5.set_ratings(3)
-    transaction_list.append(t5)
-
-    t6 = Transaction()  # t6
-    t6.account_name = 'Ashlee'
-    t6.set_option('Delivery')
-    t6.set_price(100.10)
-    t6.set_used_coupons('50PASTA')
-    t6.set_ratings(2)
-    transaction_list.append(t6)
-
-    t7 = Transaction()
-    t7.account_name = 'Hello'
-    t7.set_option('Dine-in')
-    t7.set_price(10.90)
-    t7.set_used_coupons('50PASTA')
-    t7.set_ratings(4)
-    transaction_list.append(t7)
-
-    t8 = Transaction()
-    t8.account_name = 'Lolita'
-    t8.set_option('Delivery')
-    t8.set_price(50.30)
-    t8.set_used_coupons('SPAGETIT')
-    t8.set_ratings(2)
-    transaction_list.append(t8)
-
-    t9 = Transaction()  # t2
-    t9.account_name = 'Cheryln'
-    t9.set_option('Dine-in')
-    t9.set_price(80.90)
-    t9.set_used_coupons('50PASTA')
-    t9.set_ratings(5)
-    transaction_list.append(t9)
-
-    t10 = Transaction()  # t4
-    t10.account_name = 'Swee Koon'
-    t10.set_option('Delivery')
-    t10.set_price(58.30)
-    t10.set_used_coupons('SPAGETIT')
-    t10.set_ratings(2)
-    transaction_list.append(t10)
-
-    t11 = Transaction()  # t5
-    t11.account_name = 'Adrian'
-    t11.set_option('Dine-in')
-    t11.set_price(80.90)
-    t11.set_used_coupons('50PASTA')
-    t11.set_ratings(3)
-    transaction_list.append(t11)
-
-    t12 = Transaction()  # t6
-    t12.account_name = 'Ryan'
-    t12.set_option('Delivery')
-    t12.set_price(100.10)
-    t12.set_used_coupons('50PASTA')
-    t12.set_ratings(2)
-    transaction_list.append(t12)
-
-    t13 = Transaction()
-    t13.account_name = 'Sammi'
-    t13.set_option('Dine-in')
-    t13.set_price(10.90)
-    t13.set_used_coupons('50PASTA')
-    t13.set_ratings(4)
-    transaction_list.append(t13)
-
-    t14 = Transaction()  # t4
-    t14.account_name = 'Vianna'
-    t14.set_option('Delivery')
-    t14.set_price(58.30)
-    t14.set_used_coupons('SPAGETIT')
-    t14.set_ratings(2)
-    transaction_list.append(t14)
-
-    t15 = Transaction()  # t5
-    t15.account_name = 'Dylan'
-    t15.set_option('Dine-in')
-    t15.set_price(80.90)
-    t15.set_used_coupons('50PASTA')
-    t15.set_ratings(3)
-    transaction_list.append(t15)
-
-    t16 = Transaction()  # t6
-    t16.account_name = 'Chit Boon'
-    t16.set_option('Delivery')
-    t16.set_price(100.10)
-    t16.set_used_coupons('50PASTA')
-    t16.set_ratings(2)
-    transaction_list.append(t16)
-
-    t17 = Transaction()
-    t17.account_name = 'Kit Fan'
-    t17.set_option('Dine-in')
-    t17.set_price(10.90)
-    t17.set_used_coupons('50PASTA')
-    t17.set_ratings(4)
-    transaction_list.append(t17)
-
-    t18 = Transaction()
-    t18.account_name = 'Gabriel Choo'
-    t18.set_option('Delivery')
-    t18.set_price(50.30)
-    t18.set_used_coupons('SPAGETIT')
-    t18.set_ratings(2)
-    transaction_list.append(t18)
-
-    t19 = Transaction()  # t2
-    t19.account_name = 'Bryan Hoo'
-    t19.set_option('Dine-in')
-    t19.set_price(80.90)
-    t19.set_used_coupons('50PASTA')
-    t19.set_ratings(5)
-    transaction_list.append(t19)
-
-    t20 = Transaction()  # t3
-    t20.account_name = 'Yuen Loong'
-    t20.set_option('Delivery')
-    t20.set_price(20.10)
-    t20.set_used_coupons('50PASTA')
-    t20.set_ratings(1)
-    transaction_list.append(t20)
-
-    # writing to the database
-    with shelve.open('transaction', "c") as db:
-        try:
-            db['shop_transactions'] = transaction_list
-        except Exception as e:
-            logging.error("create_example_transactions: error writing to db (%s)" % e)
+    TransactionDao.create_transaction(restaurant_id=restaurant_id,
+                                      account_name="Hosea",
+                                      price=20.10,
+                                      used_coupon="50PASTA",
+                                      rating=1)
 
     return redirect(url_for("admin_transaction"))
 
@@ -198,54 +47,33 @@ def create_example_transactions():
 @admin_side
 @login_required
 def admin_transaction():
-    # read transactions from db
-    with shelve.open('transaction', 'c') as db:
-        if 'shop_transactions' in db:
-            transaction_list = db['shop_transactions']
-            logging.info("admin_transaction: reading from db['shop_transactions']"
-                         ", %d elems" % len(db["shop_transactions"]))
-        else:
-            logging.info("admin_transaction: nothing found in db, starting empty")
-            transaction_list = []
-
-    def get_transaction_by_id(transaction_id):  # debug
-        for transaction in transaction_list:
-            if transaction_id == transaction.count_id:
-                return transaction
+    restaurant_id = current_user.restaurant_id
+    transaction_list = TransactionDao.get_transactions(restaurant_id)
 
     return render_template("admin/transaction.html",
                            count=len(transaction_list),
                            transaction_list=transaction_list)
 
 
+@app.route("/admin/transaction/update/<int:transaction_id>", methods=["POST"])
+@admin_side
+@login_required
+def update_transaction_status(transaction_id):
+    transaction = TransactionDao.get_transaction(transaction_id)
+
+    if transaction:
+        transaction.status = int(request.form.get("transactionStatus", '-1'))
+
+    return redirect(url_for("admin_transaction"))
+
+
 # YL: for transactions -- soft delete (D in CRUD)
 # soft delete -> restaurant can soft delete transactions jic if the transaction is cancelled
-@app.route('/admin/transaction/delete/<transaction_id>')
+@app.route('/admin/transaction/delete/<int:transaction_id>')
 @admin_side
 @login_required
 def delete_transaction(transaction_id):
-    transaction_id = int(transaction_id)
-
-    transaction_list = []
-    with shelve.open('transaction', 'c') as db:
-        for transaction in db['shop_transactions']:
-            transaction_list.append(transaction)
-
-    def get_transaction_by_id(t_id):  # debug
-        for t in transaction_list:
-            if t_id == t.count_id:
-                return t
-
-    logging.info("delete_transaction: deleted transaction with id %d"
-                 % transaction_id)
-
-    # set instance attribute 'deleted' of Transaction.py = False
-    get_transaction_by_id(transaction_id).deleted = True
-
-    # writeback to shelve
-    with shelve.open('transaction', 'c') as db:
-        db["shop_transactions"] = transaction_list
-
+    TransactionDao.delete_transaction(transaction_id)
     return redirect(url_for('admin_transaction'))
 
 

@@ -3,65 +3,107 @@ import logging
 import shelve
 
 # from application import DB_NAME
+from application.Models.CountId import CountId
+
+TRANSACTION_DB = "transaction.db"
 
 
 class Transaction:
-    transaction_id = 1
-    food_coupons = ['SPAGETIT', '50PASTA']
+    count_id = 1
+    STATUS_UNKNOWN = -1
+    STATUS_PREPARING = 0
+    STATUS_ON_THE_WAY = 1
+    STATUS_DELIVERED = 2
 
-    def __init__(self, account_name=None, option=None, price=0, used_coupons=None,
-                 ratings=0):
+    def __init__(self, restaurant_id, account_name, price, used_coupon=None):
+        CountId.load(TRANSACTION_DB, Transaction)
+        self.id = Transaction.count_id
+        Transaction.count_id += 1
+        CountId.save(TRANSACTION_DB, Transaction)
 
-        with shelve.open('transaction', 'c') as db:
-            try:
-                Transaction.transaction_id = db['transaction_id_count']
-            except Exception as e:
-                logging.info("transaction_id_count: error reading from db (%s)" % e)
-        self.count_id = Transaction.transaction_id
+        self.restaurant_id = restaurant_id
         self.account_name = account_name
-        self.__option = option
-        self.__price = price
-        self.__used_coupons = used_coupons
-        self.__ratings = ratings
+        self.price = price
+        self.used_coupon = used_coupon
         self.deleted = False
-        Transaction.transaction_id += 1
-        # writeback
-        with shelve.open('transaction', 'c') as db:
-            db['transaction_id_count'] = Transaction.transaction_id
+        self.__status = Transaction.STATUS_PREPARING
 
-    def set_option(self, option):
-        self.__option = option
-
-    def get_option(self):
-        return self.__option
-
-    # price must be in 2 dp, can only accept numbers
-    def set_price(self, price):
-        try:
-            if price == float(price):
-                self.__price = price
-        except:
-            self.deleted = True
-
-    def get_price(self):
-        return self.__price
-
-    def set_used_coupons(self, used_coupons):
-        if used_coupons in Transaction.food_coupons:
-            self.__used_coupons = used_coupons
+    def text_status(self):
+        if self.status == Transaction.STATUS_PREPARING:
+            return "Preparing"
+        elif self.status == Transaction.STATUS_ON_THE_WAY:
+            return "On the Way"
+        elif self.status == Transaction.STATUS_DELIVERED:
+            return "Delivered"
         else:
-            self.__used_coupons = 'NIL'
+            return "Unknown"
 
-    def get_used_coupons(self):
-        return self.__used_coupons
+    @property
+    def status(self):
+        if self.__status not in [Transaction.STATUS_PREPARING,
+                                 Transaction.STATUS_ON_THE_WAY,
+                                 Transaction.STATUS_DELIVERED]:
+            return Transaction.STATUS_UNKNOWN
+        return self.__status
 
-    # ratings must be in 2 dp, can only accept numbers
-    def set_ratings(self, ratings):
+    @status.setter
+    def status(self, new_status: int):
+        self.__status = new_status
+        TransactionDao.save(self)
+
+
+class TransactionDao:
+    @staticmethod
+    def create_transaction(restaurant_id, account_name, price, used_coupon=None,
+                           rating=0) -> Transaction:
+        transaction = Transaction(restaurant_id, account_name, price,
+                                  used_coupon)
+        TransactionDao.save(transaction)
+        return transaction
+
+    @staticmethod
+    def get_transaction(transaction_id) -> Transaction:
+        transaction_dict = {}
+        with shelve.open(TRANSACTION_DB, 'c') as db:
+            if "transaction" in db:
+                transaction_dict = db["transaction"]
+
+        return transaction_dict.get(transaction_id)
+
+    # Returns a list of transaction objects
+    @staticmethod
+    def get_transactions(restaurant_id) -> list:
+        transaction_list = []
+        transaction_dict = {}
+        with shelve.open(TRANSACTION_DB, 'c') as db:
+            if "transaction" in db:
+                transaction_dict = db["transaction"]
+
+        for transaction_id in transaction_dict:
+            transaction = transaction_dict.get(transaction_id)
+            if transaction.restaurant_id == restaurant_id:
+                transaction_list.append(transaction)
+
+        return transaction_list
+
+    # Soft-delete transactions
+    @staticmethod
+    def delete_transaction(transaction_id):
+        transaction = TransactionDao.get_transaction(transaction_id)
+        if transaction:
+            logging.info("delete_transaction: deleted transaction with id %d"
+                         % transaction_id)
+            transaction.deleted = True
+            TransactionDao.save(transaction)
+
+    @staticmethod
+    def save(transaction: Transaction):
         try:
-            if ratings == int(ratings):
-                self.__ratings = ratings
-        except:
-            self.deleted = True
-
-    def get_ratings(self):
-        return self.__ratings
+            with shelve.open(TRANSACTION_DB, 'c') as db:
+                transaction_dict = {}
+                if "transaction" in db:
+                    transaction_dict = db["transaction"]
+                transaction_dict[transaction.id] = transaction
+                db["transaction"] = transaction_dict
+        except KeyError:
+            logging.error("Transaction: failed to save transaction dict")
