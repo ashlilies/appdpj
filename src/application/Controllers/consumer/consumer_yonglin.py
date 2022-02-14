@@ -1,16 +1,21 @@
 import logging
 import shelve
 
+import apply as apply
+import geopy.distance
 import overpy as overpy
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import current_user, login_required
 from flask_googlemaps import GoogleMaps
 
 from geopy.geocoders import Nominatim
+import pandas as pd
+import numpy as np
+from geopy.distance import geodesic
 
 from application import app
 from application.Controllers.consumer.consumer_ashlee import consumer_side
-from application.Models.Address import ConsumerAddress
+from application.Models.Address import ConsumerAddress, calculate_distance
 from application.Models.Cart import CartDao, Cart
 from application.consumer_address_form import ConsumerAddressForm
 
@@ -51,7 +56,6 @@ def consumer_myaddress():
 
                 consumer = ConsumerAddress(current_user.account_id, location.address, latitude, longitude)
                 address_dict[current_user.account_id] = consumer
-                print(consumer.get_latitude(), consumer.get_longitude())
 
             except Exception as e:
                 logging.error('Error in Address (%s)' % e)
@@ -61,7 +65,8 @@ def consumer_myaddress():
         cart = CartDao.get_cart(current_user.cart)
         cart_items = cart.get_cart_items()
 
-        return render_template("consumer/address.html", form=consumer_address_form, location=location, latitude=latitude,
+        return render_template("consumer/address.html", form=consumer_address_form, location=location,
+                               latitude=latitude,
                                longitude=longitude, cart=cart, cart_items=cart_items)
     else:
         address_dict = {}
@@ -73,7 +78,7 @@ def consumer_myaddress():
                 latitude = consumer.get_latitude()
                 longitude = consumer.get_longitude()
                 location = consumer.address
-                print(consumer.address)
+                calculate_distance(longitude, latitude, 1.4067, 103.9024)
             except Exception as e:
                 logging.error('address: unable to display address due to %s in db' % e)
 
@@ -81,4 +86,25 @@ def consumer_myaddress():
         cart_items = cart.get_cart_items()
 
         return render_template("consumer/address.html", cart=cart, cart_items=cart_items,
-                               count=len(cart_items), form=consumer_address_form, location=location, latitude=latitude, longitude=longitude)
+                               count=len(cart_items), form=consumer_address_form, location=location, latitude=latitude,
+                               longitude=longitude)
+
+def test_del_time():
+    with shelve.open('address.db', 'c') as db:
+        address_dict = {}
+        try:
+            address_dict = db['address']
+            consumer = address_dict.get(current_user.account_id)
+            latitude = consumer.get_latitude()
+            longitude = consumer.get_longitude()
+
+            waterway_point_lat = 1.4067
+            waterway_point_long = 103.9024
+            print(f'test_del_distance', calculate_distance(latitude, longitude, waterway_point_lat, waterway_point_long))
+
+        except Exception as e:
+            logging.error('test_del_time: unable to display address of consumer due to %s' %e)
+
+
+test = test_del_time()
+

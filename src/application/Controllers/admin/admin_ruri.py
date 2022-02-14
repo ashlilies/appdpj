@@ -7,6 +7,7 @@ from flask import render_template, request, redirect, url_for, session, flash, \
 from flask_login import logout_user, login_required, current_user
 import os
 import os.path
+from geopy.geocoders import Nominatim
 
 from application.Controllers.admin.admin_ashlee import admin_side
 from application.CouponForms import CreateCouponForm
@@ -23,7 +24,7 @@ from application.Models.RestaurantSystem import *
 import shelve, os
 import uuid
 from application.rest_details_form import *
-from application. Models.FileUpload import save_file
+from application.Models.FileUpload import save_file
 
 # Ruri's imported libraries
 import urllib.request
@@ -31,12 +32,18 @@ import os
 from werkzeug.utils import secure_filename
 
 app.config["IMAGE_UPLOADS"] = "src/application/static/restaurantLogos"
+geolocator = Nominatim(user_agent="foodypulse")
+
+
 # <------------------------- RURI ------------------------------>
 # C (Create)
 @app.route('/admin/create-restaurant', methods=['GET', 'POST'])
 @login_required
 @admin_side
 def admin_myrestaurant():  # ruri
+    logitude = None
+    latitude = None
+    location = None
     restaurant_details_form = RestaurantDetailsForm(
         request.form)  # Using the Create Restaurant Form
     # The controller will be the place where we do all the interaction
@@ -59,47 +66,77 @@ def admin_myrestaurant():  # ruri
 
             # print(current_user.restaurant_id)
             stored_filename = save_file(request.files, "rest_logo")
-            restaurant = RestaurantSystem.create_restaurant(
-                restaurant_details_form.rest_name.data,
-                stored_filename,
-                restaurant_details_form.rest_contact.data,
-                restaurant_details_form.rest_hour_open.data,
-                restaurant_details_form.rest_hour_close.data,
-                restaurant_details_form.rest_address1.data,
-                restaurant_details_form.rest_address2.data,
-                restaurant_details_form.rest_postcode.data,
-                restaurant_details_form.rest_desc.data,
-                restaurant_details_form.rest_bank.data,
-                restaurant_details_form.rest_del1.data,
-                restaurant_details_form.rest_del2.data,
-                restaurant_details_form.rest_del3.data,
-                restaurant_details_form.rest_del4.data,
-                restaurant_details_form.rest_del5.data,
-            )
+            try:
+                location = geolocator.geocode(restaurant_details_form.rest_address1.data)
+                print(location.address)
+                longitude = location.longitude
+                latitude = location.latitude
+                flash("Successfully Saved your delivery address!")
+
+                restaurant = RestaurantSystem.create_restaurant(
+                    restaurant_details_form.rest_name.data,
+                    stored_filename,
+                    restaurant_details_form.rest_contact.data,
+                    restaurant_details_form.rest_hour_open.data,
+                    restaurant_details_form.rest_hour_close.data,
+                    # restaurant_details_form.rest_address1.data,
+                    location.address,
+                    # restaurant_details_form.rest_address2.data,
+                    restaurant_details_form.rest_postcode.data,
+                    latitude,
+                    longitude,
+                    restaurant_details_form.rest_desc.data,
+                    restaurant_details_form.rest_bank.data,
+                    restaurant_details_form.rest_del1.data,
+                    restaurant_details_form.rest_del2.data,
+                    restaurant_details_form.rest_del3.data,
+                    restaurant_details_form.rest_del4.data,
+                    restaurant_details_form.rest_del5.data,
+                )
+
+            except Exception as e:
+                logging.error('Error in Address (%s)' % e)
+                flash("Could not find your address, please try again")
+
             current_user.restaurant_id = restaurant.id
 
         else:
             restaurant = RestaurantSystem.find_restaurant_by_id(current_user.restaurant_id)
             stored_filename = save_file(request.files, "rest_logo")
-            RestaurantSystem.edit_restaurant(
-                restaurant,
-                restaurant_details_form.rest_name.data,
-                stored_filename,
-                restaurant_details_form.rest_contact.data,
-                restaurant_details_form.rest_hour_open.data,
-                restaurant_details_form.rest_hour_close.data,
-                restaurant_details_form.rest_address1.data,
-                restaurant_details_form.rest_address2.data,
-                restaurant_details_form.rest_postcode.data,
-                restaurant_details_form.rest_desc.data,
-                restaurant_details_form.rest_bank.data,
-                restaurant_details_form.rest_del1.data,
-                restaurant_details_form.rest_del2.data,
-                restaurant_details_form.rest_del3.data,
-                restaurant_details_form.rest_del4.data,
-                restaurant_details_form.rest_del5.data,
-            )
-            print(restaurant.get_logo())
+            try:
+                location = geolocator.geocode(restaurant_details_form.rest_address1.data)
+                print(location.address)
+                longitude = location.longitude
+                latitude = location.latitude
+                # todo: ask ruri if i can delete address line 2 and postal code (?)
+                flash("Successfully Saved your delivery address!")
+
+                RestaurantSystem.edit_restaurant(
+                    restaurant,
+                    restaurant_details_form.rest_name.data,
+                    stored_filename,
+                    restaurant_details_form.rest_contact.data,
+                    restaurant_details_form.rest_hour_open.data,
+                    restaurant_details_form.rest_hour_close.data,
+                    # restaurant_details_form.rest_address1.data,
+                    location.address,
+                    # restaurant_details_form.rest_address2.data,
+                    restaurant_details_form.rest_postcode.data,
+                    latitude,
+                    longitude,
+                    restaurant_details_form.rest_desc.data,
+                    restaurant_details_form.rest_bank.data,
+                    restaurant_details_form.rest_del1.data,
+                    restaurant_details_form.rest_del2.data,
+                    restaurant_details_form.rest_del3.data,
+                    restaurant_details_form.rest_del4.data,
+                    restaurant_details_form.rest_del5.data,
+                )
+                print(restaurant.get_logo())
+            except Exception as e:
+                logging.error('Error in Address (%s)' % e)
+                flash("Could not find your address, please try again")
+
         # ashlee - attach restaurant_id to our current user
         # current_user.restaurant_id = restaurant_id
         # print(current_user.restaurant_id)
@@ -122,7 +159,7 @@ def admin_myrestaurant():  # ruri
         restaurant_details_form.rest_hour_open.data = restaurant.open
         restaurant_details_form.rest_hour_close.data = restaurant.close
         restaurant_details_form.rest_address1.data = restaurant.add1
-        restaurant_details_form.rest_address2.data = restaurant.add2
+        # restaurant_details_form.rest_address2.data = restaurant.add2
         restaurant_details_form.rest_postcode.data = restaurant.postc
         restaurant_details_form.rest_desc.data = restaurant.desc
         restaurant_details_form.rest_bank.data = restaurant.bank
@@ -131,6 +168,7 @@ def admin_myrestaurant():  # ruri
         restaurant_details_form.rest_del3.data = restaurant.del3
         restaurant_details_form.rest_del4.data = restaurant.del4
         restaurant_details_form.rest_del5.data = restaurant.del5
+        print(restaurant.latitude, restaurant.longitude)
 
     return render_template("admin/restaurant.html",
                            form=restaurant_details_form, restaurant=restaurant)
@@ -200,4 +238,3 @@ def update_restaurant_confirm(id):
 @login_required
 def dashboard():  # ruri
     return render_template('admin/dashboard.html')
-

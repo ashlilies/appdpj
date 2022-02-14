@@ -10,7 +10,10 @@ import pickle
 
 
 class Restaurant():
-    def __init__(self, name, logo, contact, open, close, add1, add2, postc, desc, bank, del1, del2, del3, del4, del5):
+    # def __init__(self, name, logo, contact, open, close, add1, add2, postc, desc, bank, del1, del2, del3, del4, del5):
+    def __init__(self, name, logo, contact, open, close, add1, postc, latitude, longitude, desc, bank, del1, del2, del3, del4,
+                 del5):
+
         # super().__init__(restaurant_name)  #using the restaurant name created @ account level
         # self.user_object = user_object
         restaurant_id = uuid.uuid4().hex
@@ -21,8 +24,10 @@ class Restaurant():
         self.open = open
         self.close = close
         self.add1 = add1
-        self.add2 = add2
+        # self.add2 = add2
         self.postc = postc
+        self.latitude = latitude
+        self.longitude = longitude
         self.bank = bank
         self.desc = desc
         self.del1 = del1
@@ -76,11 +81,11 @@ class Restaurant():
     def get_add1(self):
         return self.add1
 
-    def set_add2(self, add2):
-        self.add2 = add2
-
-    def get_add2(self):
-        return self.add2
+    # def set_add2(self, add2):
+    #     self.add2 = add2
+    #
+    # def get_add2(self):
+    #     return self.add2
 
     def set_postc(self, postc):
         self.postc = postc
