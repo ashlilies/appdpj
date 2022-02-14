@@ -103,12 +103,12 @@
 {% block content %}
     <!-- start of navigation bar-->
     <nav style="margin-top: 50px">
-        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <div class="nav nav-tabs active" id="nav-tab" role="tablist">
             <button class="nav-link" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings"
                     type="button" role="tab" aria-controls="nav-settings" aria-selected="true"><a
                     href="{{ url_for('admin_myrestaurant') }}">Restaurant Information</a>
             </button>
-            <button class="nav-link active" id="nav-restrictions-tab" data-bs-toggle="tab"
+            <button class="nav-link" id="nav-restrictions-tab" data-bs-toggle="tab"
                     data-bs-target="#nav-restrictions"
                     type="button" role="tab" aria-controls="nav-restrictions" aria-selected="false"><a
                     href="{{ url_for('read_cert') }}">Food Restrictions</a>
@@ -152,14 +152,14 @@
                     {{ render_field(form.rest_address1, class="form-control", placeholder="123 Floral Street") }}
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group col-md-10">
-                        {{ render_field(form.rest_address2, class="form-control", placeholder="Apartment, Studio, or Floor") }}
-                    </div>
-                    <div class="form-group col-md-2">
-                        {{ render_field(form.rest_postcode, class="form-control", placeholder="123456") }}
-                    </div>
-                </div>
+{#                <div class="form-row">#}
+{#                    <div class="form-group col-md-10">#}
+{#                        {{ render_field(form.rest_address2, class="form-control", placeholder="Apartment, Studio, or Floor") }}#}
+{#                    </div>#}
+{#                    <div class="form-group col-md-2">#}
+{#                        {{ render_field(form.rest_postcode, class="form-control", placeholder="123456") }}#}
+{#                    </div>#}
+{#                </div>#}
             </div> <!--end of column one content-->
 
             <div class="column" style="margin-left: 80px;">

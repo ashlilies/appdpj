@@ -24,10 +24,10 @@ class RestaurantSystem():
 
     @staticmethod
     def create_restaurant(name, logo, contact, open, close, add1,
-                          add2, postc, desc, bank, del1, del2, del3, del4,
+                          postc,latitude, longitude, desc, bank, del1, del2, del3, del4,
                           del5):
         restaurant = Restaurant(name, logo, contact, open, close, add1,
-                                add2, postc, desc, bank, del1, del2, del3, del4,
+                                postc, latitude, longitude, desc, bank, del1, del2, del3, del4,
                                 del5)
         RestaurantSystem.save_to_shelve(restaurant)
         return restaurant
@@ -35,15 +35,17 @@ class RestaurantSystem():
     @staticmethod
     def edit_restaurant(restaurant: Restaurant,
                         name, logo, contact, open, close, add1,
-                        add2, postc, desc, bank, del1, del2, del3, del4, del5):
+                        postc, latitude, longitude, desc, bank, del1, del2, del3, del4, del5):
         restaurant.set_name(name)
         restaurant.set_logo(logo)
         restaurant.set_contact(contact)
         restaurant.set_open(open)
         restaurant.set_close(close)
         restaurant.set_add1(add1)
-        restaurant.set_add2(add2)
+        # restaurant.set_add2(add2)
         restaurant.set_postc(postc)
+        restaurant.latitude = latitude
+        restaurant.longitude = longitude
         restaurant.set_desc(desc)
         restaurant.set_bank(bank)
         restaurant.set_del1(del1)
