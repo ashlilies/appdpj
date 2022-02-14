@@ -5,8 +5,6 @@ from application import app
 from flask import request
 from chatterbot import ChatBot
 from chatterbot.trainers import ChatterBotCorpusTrainer
-from chatbot import chatbot
-from chatterbot.trainers import ListTrainer
 
 
 # <------------------------ CLARA ------------------------------>

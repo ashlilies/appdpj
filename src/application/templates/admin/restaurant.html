@@ -92,6 +92,13 @@
             transition: all 0.35s ease-in-out;
         }
 
+        #map {
+            height: 250px;
+            width: 100%;
+            margin: 20px auto;
+        }
+
+
         td {
             background-color: transparent;
             padding-right: 10px;
@@ -101,6 +108,22 @@
 {% endblock %}
 
 {% block content %}
+    <script>
+        function initMap() {
+            // the location of Nanyang Polytechnic
+            const location = {lat: {{ latitude }}, lng: {{ longitude }}};
+            // center the map at nyp
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 17,
+                center: location,
+            });
+            const marker = new google.maps.Marker({
+                position: location,
+                map: map,
+            });
+        }
+    </script>
+
     <!-- start of navigation bar-->
     <nav style="margin-top: 50px">
         <div class="nav nav-tabs active" id="nav-tab" role="tablist">
@@ -152,14 +175,21 @@
                     {{ render_field(form.rest_address1, class="form-control", placeholder="123 Floral Street") }}
                 </div>
 
-{#                <div class="form-row">#}
-{#                    <div class="form-group col-md-10">#}
-{#                        {{ render_field(form.rest_address2, class="form-control", placeholder="Apartment, Studio, or Floor") }}#}
-{#                    </div>#}
-{#                    <div class="form-group col-md-2">#}
-{#                        {{ render_field(form.rest_postcode, class="form-control", placeholder="123456") }}#}
-{#                    </div>#}
-{#                </div>#}
+                <div id="map"></div>
+
+                <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+                <script
+                        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCu8EK_J5eGH_o7frDEGfeWEJfWJIY6hbE&callback=initMap&libraries=&v=weekly"
+                        async
+                ></script>
+                {#                <div class="form-row">#}
+                {#                    <div class="form-group col-md-10">#}
+                {#                        {{ render_field(form.rest_address2, class="form-control", placeholder="Apartment, Studio, or Floor") }}#}
+                {#                    </div>#}
+                {#                    <div class="form-group col-md-2">#}
+                {#                        {{ render_field(form.rest_postcode, class="form-control", placeholder="123456") }}#}
+                {#                    </div>#}
+                {#                </div>#}
             </div> <!--end of column one content-->
 
             <div class="column" style="margin-left: 80px;">
