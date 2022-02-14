@@ -1,0 +1,60 @@
+Index: application/Controllers/consumer/consumer_ruri.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import functools\nimport logging\nfrom datetime import datetime\n\nfrom flask import render_template,session, request,redirect,url_for,flash,current_app,make_response\nfrom flask_login import current_user, login_user, login_required, logout_user\nfrom werkzeug.utils import redirect\n\nfrom application import app\nfrom application.Controllers.consumer.consumer_ashlee import consumer_side\nfrom application.Models.Account import Account\nfrom application.Models.Admin import Admin\nfrom application.Models.Cart import CartDao, Cart\nfrom application.Models.Consumer import Consumer\n\n# Decorator to only allow consumer accounts or guests\nfrom application.Models.FileUpload import save_file\nfrom application.Models.Food2 import FoodDao\nfrom application.Models.RestaurantSystem import RestaurantSystem\nfrom application.Models.Review import ReviewDao\nfrom application.ReviewForms import CreateReviewForm\nimport stripe\n# <------------------------- RURI ------------------------------>\n\npublishable_key = 'pk_test_VrWD12lh918aMAaU4HP11c4e00I9shY8fg'\nstripe.api_key = 'sk_test_kpzk6dqINLVhzC75dZi29d7z00bIiWFNxf'\n\n\n@app.route(\"/payment\", methods=['GET', 'POST'])\n@consumer_side\n@login_required\ndef payment():\n    if request.method == \"POST\":\n        customer = stripe.Customer.create(\n            email=request.form['stripeEmail'],\n            source=request.form['stripeToken'],\n        )\n\n        charge = stripe.Charge.create(\n            customer=current_user.account_id,\n            description='Foody pulse payment',\n            amount={{cart.get_subtotal()}},\n            currency='sgd',\n        )\n        return redirect(url_for('thankyou'))\n\n    cart = CartDao.get_cart(current_user.cart)\n    cart_items = cart.get_cart_items()\n    return render_template(\"consumer/payment.html\",\n                           cart=cart,\n                           cart_items=cart_items,\n                           count=len(cart_items))\n\n@app.route(\"/delordine\")\n@consumer_side\n@login_required\ndef delordine():  # ruri\n    return render_template('consumer/delOrDine.html')\n\n@app.route(\"/thanks\")\n@consumer_side\n@login_required\ndef thankyou():\n    return render_template('consumer/thankyou.html')\n\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/application/Controllers/consumer/consumer_ruri.py b/application/Controllers/consumer/consumer_ruri.py
+--- a/application/Controllers/consumer/consumer_ruri.py	
++++ b/application/Controllers/consumer/consumer_ruri.py	
+@@ -26,31 +26,29 @@
+ stripe.api_key = 'sk_test_kpzk6dqINLVhzC75dZi29d7z00bIiWFNxf'
+ 
+ 
+-@app.route("/payment", methods=['GET', 'POST'])
++@app.route("/payment", methods=['GET','POST'])
+ @consumer_side
+ @login_required
+ def payment():
+-    if request.method == "POST":
+-        customer = stripe.Customer.create(
+-            email=request.form['stripeEmail'],
+-            source=request.form['stripeToken'],
+-        )
++    cart = CartDao.get_cart(current_user.cart)
++    cart_items = cart.get_cart_items()
++    return render_template("consumer/payment.html",
++                           cart=cart,
++                           cart_items=cart_items,
++                           count=len(cart_items))
++    customer = stripe.Customer.create(
++        email=request.form['stripeEmail'],
++        source=request.form['stripeToken'],
++    )
+ 
+-        charge = stripe.Charge.create(
+-            customer=current_user.account_id,
+-            description='Foody pulse payment',
+-            amount={{cart.get_subtotal()}},
+-            currency='sgd',
+-        )
+-        return redirect(url_for('thankyou'))
++    charge = stripe.Charge.create(
++        customer=current_user.account_id,
++        description='Foody pulse payment',
++        amount={{cart.get_subtotal()}},
++        currency='sgd',
++    )
++    return redirect(url_for('thankyou'))
+ 
+-    cart = CartDao.get_cart(current_user.cart)
+-    cart_items = cart.get_cart_items()
+-    return render_template("consumer/payment.html",
+-                           cart=cart,
+-                           cart_items=cart_items,
+-                           count=len(cart_items))
+-
+ @app.route("/delordine")
+ @consumer_side
+ @login_required

@@ -1,0 +1,29 @@
+Index: application/templates/consumer/payment.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{% extends \"consumer/consumer_base.html\" %}\n{% block title %}Cart{% endblock %}\n\n{% block head %}\n  <style> {# css done by yong lin #}\n  .display-left {\n      width: 35%;\n      display: flex;\n  }\n\n  .display-left > .form-outline, .flex-fill {\n      display: inline !important;\n  }\n\n  .display-left > .btn > .btn-lg > .ms-3 {\n      display: inline;\n  }\n\n  .display-left > .btn > .btn-warning > .btn-block > .btn-lg {\n      font-size: 15px !important;\n  }\n\n  .display-right {\n      width: 62%;\n      display: flex;\n      float: right;\n  }\n\n  .display-bottom {\n      width: 100%;\n      display: flex;\n  }\n\n  .display-bottom > .btn > .btn-warning > .btn-block > .btn-lg {\n      display: flex;\n      float: right;\n  }\n  </style>\n{% endblock %}\n\n\n{% block content %}\n\n\n{% if count %}\n        <div class=\"card display-bottom\">\n          <div class=\"card-body d-flex justify-content-evenly\">\n            <table style=\"width: 80%;\">\n              <tr>\n                <th>Total</th>\n                <td style=\"text-align: right\">S$ {{ \"%.2f\" % cart.get_total_before_discount() }}</td>\n              </tr>\n              <tr>\n                <th>Delivery Fee</th>\n                <td style=\"text-align: right\">&nbsp;TODO</td>\n              </tr>\n              {% if cart.coupon_code != \"\" %}\n                <tr>\n                  <th>Discount</th>\n                  <td style=\"text-align: right\">-S$ {{ \"%.2f\" % cart.get_total_discount() }}</td>\n                </tr>\n              {% endif %}\n              <tr>\n                <td colspan=\"2\">\n                  <hr>\n                </td>\n              </tr>\n              <tr>å\n                <th>Subtotal</th>\n                <td style=\"text-align: right\">S$ {{ \"%.2f\" % (cart.get_subtotal()) }}</td>\n              </tr>\n            </table>\n              <form action=\"{{ url_for('payment') }}\" method=\"POST\">\n{#                  {%  set amount = (cart.get_subtotal()).replace('.','')%}#}\n                  <script\n                    src=\"https://checkout.stripe.com/checkout.js\"\n                    class=\"stripe-button\"\n                    data-key=\"pk_test_VrWD12lh918aMAaU4HP11c4e00I9shY8fg\"\n                    data-name=\"Payment to FoodyPulse\"\n                    data-description=\"Food on Impulse\"\n                    data-amount=\"{{ cart.get_subtotal() * 100 }}\"\n\n                    data-currency=\"sgd\">\n                  </script>\n                </form>\n          </div>\n        </div>\n        </div>\n      {% endif %}\n{% endblock %}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/application/templates/consumer/payment.html b/application/templates/consumer/payment.html
+--- a/application/templates/consumer/payment.html	
++++ b/application/templates/consumer/payment.html	
+@@ -71,6 +71,8 @@
+               </tr>
+             </table>
+               <form action="{{ url_for('payment') }}" method="POST">
++
++                <input type="hidden" name="amount" value="{{cart.get_subtotal() *100}}">
+ {#                  {%  set amount = (cart.get_subtotal()).replace('.','')%}#}
+                   <script
+                     src="https://checkout.stripe.com/checkout.js"
+@@ -79,8 +81,7 @@
+                     data-name="Payment to FoodyPulse"
+                     data-description="Food on Impulse"
+                     data-amount="{{ cart.get_subtotal() * 100 }}"
+-
+-                    data-currency="sgd">
++                    data-currency="usd">
+                   </script>
+                 </form>
+           </div>
