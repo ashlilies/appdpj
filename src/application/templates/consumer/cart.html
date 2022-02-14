@@ -2,40 +2,64 @@
 {% block title %}Cart{% endblock %}
 
 {% block head %}
-  <style> {# css done by yong lin #}
-  .display-left {
-      width: 35%;
-      display: flex;
-  }
+    <style> {# done by yong lin #}
+    .card {
+        background-color: #f3f0d1;
+    }
 
-  .display-left > .form-outline, .flex-fill {
-      display: inline !important;
-  }
+    .display-left {
+        max-width: 35%;
+        display: flex;
+        float: left;
+        position: fixed;
 
-  .display-left > .btn > .btn-lg > .ms-3 {
-      display: inline;
-  }
+    }
 
-  .display-left > .btn > .btn-warning > .btn-block > .btn-lg {
-      font-size: 15px !important;
-  }
+    .display-left > .form-outline, .flex-fill {
+        display: inline-block !important;
+    }
 
-  .display-right {
-      width: 62%;
-      display: flex;
-      float: right;
-  }
+    .display-right {
+        width: 62%;
+        display: flex;
+        float: right;
+    }
 
-  .display-bottom {
-      width: 100%;
-      display: flex;
-  }
+    .img-fluid {
+        max-width: 150px !important;
+        max-height: 75% !important;
+        margin-right: 20px !important;
+    }
 
-  .display-bottom > .btn > .btn-warning > .btn-block > .btn-lg {
-      display: flex;
-      float: right;
-  }
-  </style>
+    .display-bottom {
+        width: 62%;
+        display: flex;
+        float: right;
+    }
+
+    .display-bottom > .btn > .btn-warning > .btn-block > .btn-lg {
+        display: inline;
+    }
+
+    .table-bottom {
+        width: 65%;
+        height: 100%;
+        float: left;
+    }
+
+    table th {
+        width: 80%;
+    }
+
+    .proceed-btn {
+        width: 25%;
+        float: right;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+    }
+
+    </style>
 {% endblock %}
 
 {% block content %}

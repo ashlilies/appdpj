@@ -10,8 +10,8 @@
         }
 
         #infodisplay {
-            width: 90%;
-            margin: auto;
+            width: 100%;
+            margin: 20px auto !important;
         }
 
         .certdisplay {
@@ -32,7 +32,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="">
+    <div>
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
                 <button class="nav-link" id="nav-settings-tab" data-bs-toggle="tab" data-bs-target="#nav-settings"
@@ -47,11 +47,9 @@
             </div>
         </nav>
 
-        <h1>RESTAURANT DETAILS - CERTIFICATION</h1>
-        <div class="align-items-center float-end ms-2 mt-4">
-            <a class="btn btn-primary align-items-center float-end ms-2"
-               href="{{ url_for("test_upload") }}" role="button">Upload Certificate now!</a>
-        </div>
+        <h1 style="font-size: 40px; display: inline; float: left;">RESTAURANT DETAILS - CERTIFICATION</h1>
+        <a class="btn btn-primary align-items-center float-end ms-2"
+           href="{{ url_for("test_upload") }}" role="button" style="display: inline; float: right; margin-top: 5px;">Upload Certificate now!</a>
 
         <div>
             {# hygiene cert #}
@@ -60,16 +58,13 @@
                 <thead>
                 {% for cert in certificate_list %}
                     <tr>
-                        <th scope="col">
-                            Certificates
-                        </th>
                         <th scope="col">Type</th>
                         <th scope="col">File Name</th>
+                        <th scope="col">Update Button TODO</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
-                        <td rowspan="6" style="width:20%;">{{ cert.id }}</td>
                         <td class="certdisplay">Hygiene</td>
                         <td>
                             {#                            <iframe src="application/static/restaurantCertification/hygiene/1/{{ cert.hygiene_cert }}">Hygiene cert</iframe>#}

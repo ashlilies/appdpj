@@ -4,7 +4,7 @@
 {% block head %}
     <style>
         .header {
-            width: 80%;
+            width: 90%;
             margin: auto;
         }
 
@@ -16,27 +16,49 @@
 
         .addressDiv {
             background-color: #f3f0d1;
-            width: 30%;
+            width: 40%;
             border: 1px black;
         }
 
         .inputs {
-            width: 80%;
+            width: 90%;
             margin: auto;
         }
 
         .form-control {
             margin: 10px auto;
+            height: 150px;
         }
 
         label {
             margin-top: 10px;
+        }
+
+        #map {
+            height: 250px;
+            width: 90%;
+            margin: auto;
         }
     </style>
 {% endblock %}
 
 {% block content %}
     {% from "includes/_formHelper.html" import render_field %}
+    <script>
+        function initMap() {
+            // the location of Nanyang Polytechnic
+            const location = {lat: {{ latitude }}, lng: {{ longitude }}};
+            // center the map at nyp
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: location,
+            });
+            const marker = new google.maps.Marker({
+                position: location,
+                map: map,
+            });
+        }
+    </script>
 
     <form method="POST" action="{{ url_for('consumer_myaddress') }}">
         <div class="addressDiv">
@@ -45,16 +67,50 @@
                      style="height: 35px; width: 40px; margin: 15px 0px; display: inline-block">
                 <h4 style="margin-left: 20px;">Delivery Address</h4>
             </div>
+
+            <div id="map"></div>
+
             <div class="inputs">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15954.644746298643!2d103.8489487!3d1.37995!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xe5f10ff680eed942!2sNanyang%20Polytechnic!5e0!3m2!1sen!2ssg!4v1643549501763!5m2!1sen!2ssg"
-                        style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                <div class="form-group">
-                    {{ render_field(form.consumer_address, class="form-control", placeholder='Enter Address here') }}
-                </div>
+                <div class="form-group">{{ render_field(form.consumer_address, class="form-control", placeholder='Enter Address here') }}</div>
 
                 <input type="submit" value="Submit" class="btn btn-primary" style="margin: 20px 0;"/>
-
             </div>
+
+            {# async script executes immediately and msut be after any DOM elements used in callbacl. #}
+            <script
+                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCu8EK_J5eGH_o7frDEGfeWEJfWJIY6hbE&callback=initMap&libraries=&v=weekly"
+                    async
+            ></script>
         </div>
     </form>
+
+    <div class="orderConfirm">
+
+        {% for cart_item in cart_items %}
+            <div class="card rounded-3 mb-4 display-right">
+                <div class="card-body p-4">
+                    <div
+                            class="row d-flex justify-content-between align-items-center">
+                        <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                            <p>{{ cart_item.qty }}x </p>
+                        </div>
+
+                        <div class="col-md-3 col-lg-3 col-xl-3">
+                            <p class="lead fw-normal mb-2">{{ cart_item.food.name }}</p>
+                        </div>
+                        <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                            {% if cart_item.is_discounted() %}
+                                <h5 class="mb-0" style="text-decoration: line-through">
+                                    ${{ "%.2f" % (cart_item.food.price * cart_item.qty) }}</h5>
+                                <h5 class="mb-0">${{ "%.2f" % cart_item.price }}</h5>
+                            {% else %}
+                                <h5 class="mb-0">${{ "%.2f" % cart_item.price }}</h5>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
 {% endblock %}
