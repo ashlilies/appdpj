@@ -26,28 +26,34 @@ publishable_key = 'pk_test_VrWD12lh918aMAaU4HP11c4e00I9shY8fg'
 stripe.api_key = 'sk_test_kpzk6dqINLVhzC75dZi29d7z00bIiWFNxf'
 
 
-@app.route("/payment", methods=['POST'])
+@app.route("/payment", methods=['GET', 'POST'])
 @consumer_side
 @login_required
 def payment():
+    if request.method == "POST":
+        cart = CartDao.get_cart(current_user.cart)
+
+        customer = stripe.Customer.create(
+            email=request.form['stripeEmail'],
+            source=request.form['stripeToken'],
+        )
+
+        charge = stripe.Charge.create(
+            customer='cus_L9F83gwhu37N0i',
+            description='Foody pulse payment',
+            amount=round(cart.get_subtotal()*100),
+            currency='sgd',
+        )
+
+
+        return redirect(url_for('thankyou'))
+
     cart = CartDao.get_cart(current_user.cart)
     cart_items = cart.get_cart_items()
     return render_template("consumer/payment.html",
                            cart=cart,
                            cart_items=cart_items,
                            count=len(cart_items))
-    customer = stripe.Customer.create(
-        email=request.form['stripeEmail'],
-        source=request.form['stripeToken'],
-    )
-
-    charge = stripe.Charge.create(
-        customer=current_user.account_id,
-        description='Foody pulse payment',
-        amount={{cart.get_subtotal()}},
-        currency='sgd',
-    )
-    return redirect(url_for('thankyou'))
 
 @app.route("/delordine")
 @consumer_side

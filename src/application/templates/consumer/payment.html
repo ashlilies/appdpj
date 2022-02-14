@@ -71,6 +71,7 @@
               </tr>
             </table>
               <form action="{{ url_for('payment') }}" method="POST">
+{#                <input type="hidden" name="amount" value="{{cart.get_subtotal() *100}}">#}
 {#                  {%  set amount = (cart.get_subtotal()).replace('.','')%}#}
                   <script
                     src="https://checkout.stripe.com/checkout.js"
@@ -79,8 +80,7 @@
                     data-name="Payment to FoodyPulse"
                     data-description="Food on Impulse"
                     data-amount="{{ cart.get_subtotal() * 100 }}"
-
-                    data-currency="sgd">
+                    data-currency="usd">
                   </script>
                 </form>
           </div>
