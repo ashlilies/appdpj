@@ -39,11 +39,13 @@ def payment():
         )
 
         charge = stripe.Charge.create(
-            customer=current_user.account_id,
+            customer='cus_L9F83gwhu37N0i',
             description='Foody pulse payment',
-            amount={{cart.get_subtotal()}},
+            amount=round(cart.get_subtotal()*100),
             currency='sgd',
         )
+
+
         return redirect(url_for('thankyou'))
 
     cart = CartDao.get_cart(current_user.cart)
