@@ -61,14 +61,8 @@
     {# line-height:23px;#}
 
     #japone h3 {
-
      color:#000;
-     font-weight:700;
-     margin-top:100px;
      text-align:center;
-     text-transform:uppercase;
-     letter-spacing:4px;
-     line-height:23px;
     }
 
     #quizone h3 {
@@ -223,12 +217,8 @@
     }
 
     #progress-content-section .section-content h2 {
-     font-size:17px;
-     padding-top: 30px;
-     padding-bottom:20px;
-     text-transform:uppercase;
+    font-size: 23px;
      color:#333;
-     letter-spacing:1px;
     }
 
     #progress-content-section .section-content p {
@@ -456,112 +446,30 @@
 
       <div id="progress-content-section">
       	<div class="section-content discovery active">
-      		<h1>Preparing your order</h1>
+      		<h2 style="color: #E16B6B">Preparing your order</h2>
             <hr>
-            <p>Your food is being prepared by our skilled chef. Please be patient with us.
+            <h6>Your food is being prepared by our skilled chef. Please be patient with us.
             <hr>
-            Your food is on the waiting list for preparation. Estimated waiting time is around 15 minutes. Please be patient.
-
-</p>
+            Your food is on the waiting list for preparation. Estimated waiting time is around 15 minutes. Please be patient.</h6>
       	</div>
 
       	<div class="section-content strategy">
-      		<h2>GREETINGS</h2>
-          <p style="margin-bottom:-40px">Say these phrases with a smile, and practise to get fluency!</p>
-
-
-          <table border="1">
-            <tr>
-              <th>ENGLISH</th>
-              <th>ROMANIZATION</th>
-              <th>JAPANESE</th>
-
-            </tr>
-            <tr>
-              <td>Hello!</td>
-              <td>Ko-Nee-Chi-Wa</td>
-              <td>こんにちは</td>
-            </tr>
-
-            <tr>
-              <td>Good Morning</td>
-              <td>Ohayō-gozai-masu</td>
-              <td>おはようございます</td>
-            </tr>
-
-            <tr>
-              <td>Good Evening</td>
-              <td>Kon-ban-wa</td>
-              <td>こんばんは</td>
-            </tr>
-
-            <tr>
-              <td>How are you?</td>
-              <td>O-genki-deska?</td>
-              <td>お元気ですか</td>
-            </tr>
-
-            <tr>
-              <td>I'm fine</td>
-              <td>Genki-desu</td>
-              <td>元気です</td>
-            </tr>
-
-            <tr>
-              <td>Goodbye!</td>
-              <td>Sayo-nara</td>
-              <td>さようなら</td>
-            </tr>
-          </table>
-
-      		<p style="color:blue;text-align:right">TIP: Bowing is a sign of respect - keep your back straight, and <br>bend at the waist at least 15 degrees iwth your eyes downward.</p>
+            <h2 style="color: #E16B6B">Your order has been picked up.</h2>
+            <hr>
+            <h6>Food items have been picked up by the driver.
+            <hr>
+            Your driver is now on the way to your location to deliver your food.</h6>
       	</div>
 
-      	<div class="section-content creative">
-      		<h2>PRONOUNS</h2>
-          <p style="margin-bottom:-40px">Learn to address yourself and others properly!</p>
-
-          <table border="1" style="margin-top:200px">
-            <tr>
-              <th>ENGLISH</th>
-              <th>ROMANIZATION</th>
-              <th>JAPANESE</th>
-            </tr>
-
-            <tr>
-              <td>I</td>
-              <td>Wa-ta-shi</td>
-              <td>わたし</td>
-            </tr>
-
-            <tr>
-              <td>You</td>
-              <td>Ana-ta</td>
-              <td>あなた</td>
-            </tr>
-
-            <tr>
-              <td>She</td>
-              <td>Ka-no-jo</td>
-              <td>かのじょ</td>
-            </tr>
-
-            <tr>
-              <td>He</td>
-              <td>Ka-re</td>
-              <td>彼</td>
-            </tr>
-
-            <tr>
-              <td>They</td>
-              <td>Genki-desu</td>
-              <td>元気です</td>
-            </tr>
-
-          </table>
-          <p style="color:magenta;text-align:right">TIP: Although there are other ways to address yourself (I), such as 俺(oré), <br> it is preferred to use the formal adressés from the above table out of politeness.</p>
-
+      	      	<div class="section-content creative">
+            <h2 style="color: #E16B6B">Your order has been delivered</h2>
+            <hr>
+            <h6>Thank you for your patience. Hope you have pleasant day ahead.<br><br>
+            <button>Give ratings and feedback!</button>
+            <hr>
+            Your Food Has Arrived At Your Doorstep. Please collect it.</h6>
       	</div>
+
       </div>
       <script>
         $(".step").click( function() {
@@ -570,12 +478,12 @@
         });
 
         $(".step01").click( function() {
-        $("#line-progress").css("width", "33.4%");
+        $("#line-progress").css("width", "0%");
         $(".discovery").addClass("active").siblings().removeClass("active");
         });
 
         $(".step02").click( function() {
-        $("#line-progress").css("width", "66.6%");
+        $("#line-progress").css("width", "50%");
         $(".strategy").addClass("active").siblings().removeClass("active");
         });
 
