@@ -39,7 +39,7 @@
             margin: auto;
         }
 
-        .orderConfirm{
+        .orderConfirm {
             width: 60%;
             float: right;
         }
@@ -126,6 +126,21 @@
                 <br>
                 {{ location }}
             </p>
+            {% if del_time %}
+                <p class="lead fw-normal mb-2">
+                    Delivery Duration:
+                    <br>
+                    {{ "%d" % del_time }} mins
+                </p>
+            {% endif %}
+            {% if del_fee %}
+                <p class="lead fw-normal mb-2">
+                    Delivery Fee:
+                    ${{ "%.2f" % del_fee }}
+                </p>
+            {% endif %}
+
+
             <button type="button"
                     class="btn btn-warning btn-block btn-lg mt-auto mb-auto"
                     style="height: 50%;">
