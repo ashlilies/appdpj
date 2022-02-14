@@ -9,6 +9,7 @@ from flask_login import LoginManager
 import os
 
 from flask_mail import Mail
+from flask_recaptcha import ReCaptcha
 
 app = Flask(__name__)
 
@@ -74,6 +75,10 @@ mail_settings = {
 
 app.config.update(mail_settings)
 mail = Mail(app)
+
+app.config['RECAPTCHA_SITE_KEY'] = '6Lc6xnoeAAAAAIL1QJbYG7g6H4Uh98viYp2v8OJa' # <-- Add your site key
+app.config['RECAPTCHA_SECRET_KEY'] = '6Lc6xnoeAAAAAO8clUhP0zoX68LDR-lvdqJqe4wC' # <-- Add your secret key
+recaptcha = ReCaptcha(app) # Create a ReCaptcha object by passing in 'app' as parameter
 
 
 # Includes

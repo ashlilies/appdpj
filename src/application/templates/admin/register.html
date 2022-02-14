@@ -46,7 +46,7 @@
           }
 
           if (!err)
-              document.getElementById("registerForm").submit();
+              document.getElementById("triggerModal").click();
           else
               document.getElementById("errorMessage").hidden = false;
       }
@@ -144,6 +144,36 @@
         Terms & Conditions of FoodyPulse.
       </label><br>
       <input type="button" value="Sign Up" id="submitButton" onclick="validateRegistrationInput()"><br>
+
+
+        <!-- Button trigger modal hidden -->
+<button type="button" class="btn btn-primary" id="triggerModal" data-bs-toggle="modal" data-bs-target="#exampleModal" hidden>
+  Launch demo modal
+</button>
+                <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">One More Step...</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+                <span class="pt-3">Please confirm that you are not a robot.</span>
+              <div class="modal-body d-flex justify-content-center">
+                {{ recaptcha }}
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="register();">Register</button>
+                  <script>
+                      function register() {
+                          document.getElementById("registerForm").submit();
+                      }
+                  </script>
+              </div>
+            </div>
+          </div>
+        </div>
+
     </form>
   </div>
   </div>

@@ -10,8 +10,8 @@ class CreateReviewForm(Form):
     restaurant = SelectField('Restaurant', choices=[('', '---')])
    # TODO: Make Stars a clickable star field - not used to using dropdowns
     #       and dropdowns only for 5 options max
-    stars = SelectField('Stars', choices=[('', '---'), (1, '1: Very Poor'), (2, '2: Poor'), (3, '3: Average'),
-                                          (4, '4: Good'), (5, '5: Excellent')])
+    # stars = SelectField('Stars', choices=[('', '---'), (1, '1: Very Poor'), (2, '2: Poor'), (3, '3: Average'),
+    #                                       (4, '4: Good'), (5, '5: Excellent')])
     title = StringField('Review Title', [validators.Length(min=1, max=50), validators.DataRequired()])
     description = TextAreaField('Describe your experience (500 characters maximum)',
                                 [validators.Length(min=0, max=500)])

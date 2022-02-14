@@ -89,8 +89,39 @@
       <label for="tosAgree" id="tosLabel">By checking this, you agree with the
         Terms & Conditions of FoodyPulse.
       </label><br>
-      <input class="btn" type="submit" id="submitButton" value="Submit"><br>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Submit
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">One More Step...</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+                <span class="pt-3">Please confirm that you are not a robot.</span>
+              <div class="modal-body d-flex justify-content-center">
+                {{ recaptcha }}
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="register();">Register</button>
+                  <script>
+                      function register() {
+                          document.getElementById("registerForm").submit();
+                      }
+                  </script>
+              </div>
+            </div>
+          </div>
+        </div>
+{#      <input class="btn" type="submit" id="submitButton" value="Submit"><br>#}
     </form>
+
+
+
   </div>
   </div>
 {% endblock %}

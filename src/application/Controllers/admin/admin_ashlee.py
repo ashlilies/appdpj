@@ -5,7 +5,7 @@ from datetime import date
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import logout_user, login_required, current_user, login_user
 
-from application import app
+from application import app, recaptcha
 from application.CouponForms import CreateCouponForm
 from application.Models.Admin import *
 from application.Models.CouponSystem import CouponSystem, FoodIdNotExistsError
@@ -73,39 +73,42 @@ def admin_register():  # ashlee
         return redirect("%s?error=1" % url_for("admin_register"))
 
     if request.method == "POST":
-        # Check for errors in the form submitted
-        if (request.form["tosAgree"] == "agreed"
-                and request.form["email"] != ""  # not blank email
-                and request.form["name"] != ""  # not blank restaurant name
-                and request.form["password"] != ""  # not blank pw
-                and request.form["password"] == request.form["passwordAgain"]
-                and 4 <= len(request.form["password"]) <= 20):
-            try:
-                account = Admin(request.form["name"], request.form["email"],
-                                request.form["password"])
+        if recaptcha.verify():
+            # Check for errors in the form submitted
+            if (request.form["tosAgree"] == "agreed"
+                    and request.form["email"] != ""  # not blank email
+                    and request.form["name"] != ""  # not blank restaurant name
+                    and request.form["password"] != ""  # not blank pw
+                    and request.form["password"] == request.form["passwordAgain"]
+                    and 4 <= len(request.form["password"]) <= 20):
+                try:
+                    account = Admin(request.form["name"], request.form["email"],
+                                    request.form["password"])
 
-            except EmailAlreadyExistsException as e:
-                flash("Account with email already exists")
-                return redirect(url_for("admin_register"))
+                except EmailAlreadyExistsException as e:
+                    flash("Account with email already exists")
+                    return redirect(url_for("admin_register"))
 
-            except Exception as e:
-                logging.info("admin_register: error %s" % e)
-                traceback.print_exc()
-                return reg_error(e)  # handle errors here
+                except Exception as e:
+                    logging.info("admin_register: error %s" % e)
+                    traceback.print_exc()
+                    return reg_error(e)  # handle errors here
+            else:
+                return reg_error()
+
+            # Successfully authenticated
+            with shelve.open("accounts", 'c') as db:
+                accounts = db["accounts"]
+                # For Flask-login
+                accounts[account.account_id].authenticated = True
+                db["accounts"] = accounts
+                login_user(account)
+
+            flash("Your OTP secret is %s. Enter this into your OTP app!"
+                  % account.totp_secret)
+            return redirect(url_for("admin_myrestaurant"))
         else:
-            return reg_error()
-
-        # Successfully authenticated
-        with shelve.open("accounts", 'c') as db:
-            accounts = db["accounts"]
-            # For Flask-login
-            accounts[account.account_id].authenticated = True
-            db["accounts"] = accounts
-            login_user(account)
-
-        flash("Your OTP secret is %s. Enter this into your OTP app!"
-              % account.totp_secret)
-        return redirect(url_for("admin_myrestaurant"))
+            flash("Please fill out the captcha")
 
     return render_template("admin/register.html")
 

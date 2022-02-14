@@ -7,7 +7,7 @@ from flask import url_for, render_template, flash, request, session
 from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.utils import redirect
 
-from application import app
+from application import app, recaptcha
 from application.Models.Account import Account, EmailAlreadyExistsException
 from application.Models.Admin import Admin
 from application.Models.Cart import CartDao, Cart
@@ -70,35 +70,38 @@ def consumer_login():
 @consumer_side
 def consumer_register():
     if request.method == "POST":
-        # TODO: Validate input manually to prevent hacks?
-        pw1 = request.form["password"]
-        pw2 = request.form["passwordAgain"]
+        if recaptcha.verify():
+            # TODO: Validate input manually to prevent hacks?
+            pw1 = request.form["password"]
+            pw2 = request.form["passwordAgain"]
 
-        if pw1 != pw2:
-            flash("Passwords don't match")
-            return redirect(url_for("consumer_register"))
+            if pw1 != pw2:
+                flash("Passwords don't match")
+                return redirect(url_for("consumer_register"))
 
-        try:
-            account = Consumer(first_name=request.form["firstName"],
-                               last_name=request.form["lastName"],
-                               email=request.form["email"],
-                               password=request.form["password"])
-        except EmailAlreadyExistsException as e:
-            flash("Account with email already exists")
-            return redirect(url_for("consumer_register"))
+            try:
+                account = Consumer(first_name=request.form["firstName"],
+                                   last_name=request.form["lastName"],
+                                   email=request.form["email"],
+                                   password=request.form["password"])
+            except EmailAlreadyExistsException as e:
+                flash("Account with email already exists")
+                return redirect(url_for("consumer_register"))
 
-        except Exception as e:
-            flash("An error occured. Please contact FoodyPulse support.")
-            logging.error(e)
-            traceback.print_exc()
-            return redirect(url_for("consumer_register"))
+            except Exception as e:
+                flash("An error occured. Please contact FoodyPulse support.")
+                logging.error(e)
+                traceback.print_exc()
+                return redirect(url_for("consumer_register"))
 
-        account.authenticate()
-        login_user(account)
+            account.authenticate()
+            login_user(account)
 
-        flash("Your OTP secret is %s. Enter this into your OTP app!"
-              % account.totp_secret)
-        return redirect(url_for("consumer_home"))
+            flash("Your OTP secret is %s. Enter this into your OTP app!"
+                  % account.totp_secret)
+            return redirect(url_for("consumer_home"))
+        else:
+            flash("Please fill out the captcha")
     return render_template("consumer/account/register.html")
 
 
@@ -129,31 +132,35 @@ def consumer_create_review():
                                               list_of_restaurants]
 
     if request.method == "POST" and create_review_form.validate():
-        # Check that restaurant and stars are not invalid
-        if create_review_form.restaurant.data == "":
-            flash("Please choose a restaurant to review!")
-            return redirect(url_for("consumer_create_review"))
+        if recaptcha.verify():
+            # Check that restaurant and stars are not invalid
+            if create_review_form.restaurant.data == "":
+                flash("Please choose a restaurant to review!")
+                return redirect(url_for("consumer_create_review"))
 
-        if create_review_form.stars.data == "":
-            flash("Please choose a number of stars!")
-            return redirect(url_for("consumer_create_review"))
+            # if create_review_form.stars.data == "":
+            #     flash("Please choose a number of stars!")
+            #     return redirect(url_for("consumer_create_review"))
 
-        current_datetime = datetime.now()
-        stars = int(create_review_form.stars.data)
-        media_path = ""
-        if request.files[create_review_form.media.name].filename != "":
-            media_path = save_file(request.files, create_review_form.media.name)
+            current_datetime = datetime.now()
+            # stars = int(create_review_form.stars.data)
+            stars = int(request.form["rate"])
+            media_path = ""
+            if request.files[create_review_form.media.name].filename != "":
+                media_path = save_file(request.files, create_review_form.media.name)
 
-        ReviewDao.create_review(
-            restaurant_id=create_review_form.restaurant.data,
-            reviewer_id=current_user.account_id,
-            stars=stars,
-            title=create_review_form.title.data,
-            description=create_review_form.description.data,
-            date_time=current_datetime,
-            media_path=media_path)
-        # TODO: Redirect to My Reviews
-        return redirect(url_for("consumer_retrieve_reviews"))
+            ReviewDao.create_review(
+                restaurant_id=create_review_form.restaurant.data,
+                reviewer_id=current_user.account_id,
+                stars=stars,
+                title=create_review_form.title.data,
+                description=create_review_form.description.data,
+                date_time=current_datetime,
+                media_path=media_path)
+            # TODO: Redirect to My Reviews
+            return redirect(url_for("consumer_retrieve_reviews"))
+        else:
+            flash("Please fill out the captcha")
 
     return render_template("consumer/reviews/createReview.html",
                            form=create_review_form)
