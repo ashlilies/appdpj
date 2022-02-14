@@ -56,6 +56,7 @@ class Cart:
         CountId.save(CART_DB, Cart)
         self.coupon_code = ""
         self.__mode = Cart.NOT_SET
+        self.__delivery_fee = 0.0
 
         self.__item_dict = {}  # key: item_id, value: quantity
 
@@ -66,6 +67,15 @@ class Cart:
     @mode.setter
     def mode(self, new_mode):
         self.__mode = new_mode
+        CartDao.save(self)
+
+    @property
+    def delivery_fee(self):
+        return self.__delivery_fee
+
+    @delivery_fee.setter
+    def delivery_fee(self, delivery_fee):
+        self.__delivery_fee = delivery_fee
         CartDao.save(self)
 
     def add_item(self, item_id: int, quantity: int = 1, toppings=None,
@@ -136,10 +146,12 @@ class Cart:
         return orig_total - discount_total
 
     def get_subtotal(self):
+        delivery_fee = self.delivery_fee
         price = 0.0
         for item_id in self.__item_dict:
             item = self.__item_dict[item_id]
             price += item.price
+        price += delivery_fee
         return price
 
     def is_empty(self):
