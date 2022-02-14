@@ -83,6 +83,11 @@ def admin_register():  # ashlee
             try:
                 account = Admin(request.form["name"], request.form["email"],
                                 request.form["password"])
+
+            except EmailAlreadyExistsException as e:
+                flash("Account with email already exists")
+                return redirect(url_for("admin_register"))
+
             except Exception as e:
                 logging.info("admin_register: error %s" % e)
                 traceback.print_exc()

@@ -8,7 +8,7 @@ from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.utils import redirect
 
 from application import app
-from application.Models.Account import Account
+from application.Models.Account import Account, EmailAlreadyExistsException
 from application.Models.Admin import Admin
 from application.Models.Cart import CartDao, Cart
 from application.Models.Consumer import Consumer
@@ -82,8 +82,13 @@ def consumer_register():
                                last_name=request.form["lastName"],
                                email=request.form["email"],
                                password=request.form["password"])
+        except EmailAlreadyExistsException as e:
+            flash("Account with email already exists")
+            return redirect(url_for("consumer_register"))
+
         except Exception as e:
             flash("An error occured. Please contact FoodyPulse support.")
+            logging.error(e)
             traceback.print_exc()
             return redirect(url_for("consumer_register"))
 
