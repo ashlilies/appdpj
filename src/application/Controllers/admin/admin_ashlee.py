@@ -277,8 +277,8 @@ def admin_coupon_update(coupon_code):
         if update_coupon_form.discount_type.data == "fp":
             discount_type = CouponSystem.DISCOUNT_FIXED_PRICE
             discount_amount = float(update_coupon_form.discount_amount.data),
-            discount_amount = discount_amount[
-                0]  # for some reason we get a tuple here
+            # for some reason we get a tuple here
+            discount_amount = discount_amount[0]
         elif update_coupon_form.discount_type.data == "pct":
             discount_type = CouponSystem.DISCOUNT_PERCENTAGE_OFF
             discount_amount = float(
