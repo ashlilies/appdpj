@@ -17,7 +17,7 @@ REVIEWS_DB = "reviews.db"
 
 class Review:
     count_id = 1
-    TRUSTWORTHINESS_THRESHOLD = 50  # % before a review is considered trusted
+    TRUSTWORTHINESS_THRESHOLD = 60  # % before a review is considered trusted
 
     def __init__(self, parent_restaurant_id, reviewer_id, stars: int, title, description,
                  date_time: datetime, media_path: str):
@@ -56,7 +56,7 @@ class Review:
         return ReviewAi.predict(self.title)
 
     def delete_untrustworthy(self):
-        if self.trustworthiness() < Review.TRUSTWORTHINESS_THRESHOLD:
+        if self.trustworthiness() * 100 < Review.TRUSTWORTHINESS_THRESHOLD:
             ReviewDao.delete_review(self.id)
             return True
         return False

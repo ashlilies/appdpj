@@ -38,6 +38,9 @@
   <div class="row g-4 ms-1 me-1 row-cols-1 row-cols-lg-3">
   {% for review in list_of_reviews %}
     <div class="feature col review">
+      {% if review.trustworthiness() * 100 < review.TRUSTWORTHINESS_THRESHOLD %}
+        <p><strong style="color: red;">This review is possibly fake.</strong></p>
+      {% endif %}
       <div class="">
         {% for i in range(review.stars) %}
           <img class="review-star"
@@ -52,10 +55,7 @@
         <b>Trustworthiness
           score:</b> {{ "%.1f" % (review.trustworthiness() * 100) }}%
         &nbsp;
-        {% if review.trustworthiness() * 100 < review.TRUSTWORTHINESS_THRESHOLD %}
-          <a href="{{ url_for("admin_delete_review", review_id=review.id) }}">(delete)</a>
-        {% endif %}
-      </em></p>
+      </em>
       {# TODO: use ISO standard for timestamp yyyy-mm-dd sort easily and more marks -yuenloong #}
       <p><em><b>Timestamp:</b> {{ review.datetime.strftime('%d-%m-%Y %H:%M') }}
       </em></p>

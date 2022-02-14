@@ -406,4 +406,6 @@ def admin_delete_review(review_id):
     review = ReviewDao.query(review_id)
     if review.delete_untrustworthy():
         flash("Successfully deleted review")
+    else:
+        flash("Can't delete review as it is above the trust threshold")
     return redirect(url_for("admin_retrieve_reviews"))
