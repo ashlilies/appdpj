@@ -32,7 +32,7 @@ class Account:
 
             # First, check if email already exists.
             if Account.email_exists(email):
-                raise Exception(Account.EMAIL_ALREADY_EXISTS)
+                raise EmailAlreadyExistsException
 
             Account.count_id += 1
             self.account_id = Account.count_id
@@ -241,3 +241,7 @@ regex = "^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$"
 
 def check_email(email):  # check email using re(gex)
     return re.search(regex, email)
+
+
+class EmailAlreadyExistsException(Exception):
+    pass
