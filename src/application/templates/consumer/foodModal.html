@@ -1,6 +1,6 @@
 <!--Clara-->
 
-<style>
+  <style>
     {##foodDescription {#}
     {#    margin-top: 5%;#}
     {#    margin-right:100%;#}
@@ -42,101 +42,99 @@
     }
 
 
-</style>
+  </style>
 
-{#    <div id="whole-homepage" class="d-flex flex-row">#}
-<div class="modal fade" id="foodModal{{ food.id }}" aria-hidden="true"
-     aria-labelledby="exampleModalToggleLabel"
-     tabindex="-1">
+  {#    <div id="whole-homepage" class="d-flex flex-row">#}
+  <div class="modal fade" id="foodModal{{ food.id }}" aria-hidden="true"
+       aria-labelledby="exampleModalToggleLabel"
+       tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalHeaderLabel">Add to Cart</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-            </div>
-            <div class="modal-header">
-                <div id="left-home-content">
-                    <img src="{{ url_for("static", filename=food.image) }}" width=100
-                         id="image"
-                         alt="Food Image">
-                </div>
-                <div id="foodDescription">
-                    <div id="foodName" class="text-nowrap bd-highlight"
-                         style="width: 8rem;">
-                        {{ food.name }}
-                    </div>
-                    {#                    </div>#}
-                    {##}
-                    <div id="foodDescription">
-                        {#                    <div id="right-home-content" class="text-nowrap bd-highlight" style="width:4rem;">#}
-                        <p>{{ food.description }}</p>
-                        <p>${{ "%.2f"|format(food.price) }}</p>
-                        <p>Specifications:
-                            {% if food.specifications %}
-                                {% for spec in food.specifications %}{{ spec }}&nbsp;
-                                {% endfor %}
-                            {% else %}
-                                <span class="text-secondary">Unspecified</span>
-                            {% endif %}
-                        </p>
-                        <p>Allergens:
-                            {% if food.allergy != "" %}
-                                {{ food.allergy }}
-                            {% else %}
-                                <span class="text-secondary">None</span>
-                            {% endif %}
-                        </p>
-                    </div>
-                </div>
-
-            </div>
-            <div class="modal-body">
-                <form method="POST" id="toppingEditForm{{ food.id }}"
-                      action="{{ url_for("cart_add", food_id=food.id) }}">
-                    <p>Edit Toppings</p>
-                    {% if food.toppings %}
-                        {% for topping in food.toppings %}
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input"
-                                       value="{{ topping }}" name="{{ topping }}"
-                                       id="{{ topping }}" checked>
-                                <label class="form-label"
-                                       for="{{ topping }}">{{ topping }}<br></label>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <p class="text-secondary">No toppings available</p>
-                    {% endif %}
-
-                    <p>
-                        {#                            {{ form.roles.label }}<br>#}
-                        {#                            {{ form.roles(size=32) }}<br>#}
-                        {#                            {% for error in form.roles.errors %}#}
-                        {#                                <span style="color: red;">[{{ error }}]</span>#}
-                        {#                            {% endfor %}#}
-                        {#                        </p>#}
-                        <br>
-                        <label class="form-label" for="otherRequest">Other Requests</label>
-                        <input class="form-text form-control" type="text"
-                               placeholder="Have a custom request?"
-                               name="otherRequest" id="otherRequest">
-                </form>
-
-
-            </div>
-            <div class="modal-footer">
-                <a href="{{ url_for("bot") }}"
-                   class="btn btn-primary">ChatBot</a>
-                <button class="btn btn-primary" onclick="addToCart{{ food.id }}();">Add to Cart
-                </button>
-                <script>
-                    function addToCart{{ food.id }}() {
-                        let form = document.getElementById("toppingEditForm{{ food.id }}");
-                        form.submit();
-                    }
-                </script>
-            </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalHeaderLabel">Add to Cart</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"
+                  aria-label="Close"></button>
         </div>
+        <div class="modal-header">
+          <div id="left-home-content">
+            <img src="{{ url_for("static", filename=food.image) }}" width=100
+                 id="image"
+                 alt="Food Image">
+          </div>
+          <div id="foodDescription">
+            <div id="foodName" class="text-nowrap bd-highlight"
+                 style="width: 8rem;">
+              {{ food.name }}
+            </div>
+            {#                    </div>#}
+            {##}
+            <div id="foodDescription">
+              {#                    <div id="right-home-content" class="text-nowrap bd-highlight" style="width:4rem;">#}
+              <p>{{ food.description }}</p>
+              <p>${{ "%.2f"|format(food.price) }}</p>
+              <p>Specifications:
+                {% if food.specifications %}
+                  {% for spec in food.specifications %}{{ spec }}&nbsp;
+                  {% endfor %}
+                {% else %}
+                  <span class="text-secondary">Unspecified</span>
+                {% endif %}
+              </p>
+              <p>Allergens:
+                {% if food.allergy != "" %}
+                  {{ food.allergy }}
+                {% else %}
+                  <span class="text-secondary">None</span>
+                {% endif %}
+              </p>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-body">
+          <form method="POST" id="toppingEditForm{{ food.id }}"
+                action="{{ url_for("cart_add", food_id=food.id) }}">
+            <p>Edit Toppings</p>
+            {% if food.toppings %}
+              {% for topping in food.toppings %}
+                <div class="mb-3 form-check">
+                  <input type="checkbox" class="form-check-input"
+                         value="{{ toppping }}" name="{{ topping }}"
+                         id="{{ topping }}" checked>
+                  <label class="form-label"
+                         for="{{ topping }}">{{ topping }}<br></label>
+                </div>
+              {% endfor %}
+            {% else %}
+              <p class="text-secondary">No toppings available</p>
+            {% endif %}
+
+            <p>
+              {#                            {{ form.roles.label }}<br>#}
+              {#                            {{ form.roles(size=32) }}<br>#}
+              {#                            {% for error in form.roles.errors %}#}
+              {#                                <span style="color: red;">[{{ error }}]</span>#}
+              {#                            {% endfor %}#}
+              {#                        </p>#}
+              <br>
+              <label class="form-label" for="otherRequest">Other Requests</label>
+              <input class="form-text form-control" type="text"
+                     placeholder="Have a custom request?"
+                     name="otherRequest" id="otherRequest">
+          </form>
+
+
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="addToCart{{ food.id }}();">Add to Cart
+          </button>
+          <script>
+              function addToCart{{ food.id }}() {
+                  let form = document.getElementById("toppingEditForm{{ food.id }}");
+                  form.submit();
+              }
+          </script>
+        </div>
+      </div>
     </div>
-</div>
+  </div>

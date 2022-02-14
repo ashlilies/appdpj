@@ -72,6 +72,7 @@ def consumer_myaddress(restaurant_id):
 
         cart = CartDao.get_cart(current_user.cart)
         cart_items = cart.get_cart_items()
+        cart.delivery_fee = float(del_fee)
     else:
         address_dict = {}
         with shelve.open('address.db', 'c') as db:

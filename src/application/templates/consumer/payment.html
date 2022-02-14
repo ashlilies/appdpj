@@ -52,7 +52,7 @@
               </tr>
               <tr>
                 <th>Delivery Fee</th>
-                <td style="text-align: right">&nbsp;TODO</td>
+                <td style="text-align: right">S$ {{ "%.2f" % cart.delivery_fee }}</td>
               </tr>
               {% if cart.coupon_code != "" %}
                 <tr>
