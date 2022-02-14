@@ -86,6 +86,7 @@ def consumer_myaddress(restaurant_id):
 
         cart = CartDao.get_cart(current_user.cart)
         cart_items = cart.get_cart_items()
+        del_fee = 0.0
 
     return render_template("consumer/address.html", form=consumer_address_form, location=location,
                            latitude=latitude,
