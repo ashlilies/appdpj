@@ -15,7 +15,7 @@
   <table class="table table-striped retrieveTable">
     <thead>
     <tr>
-      <th>ID</th>
+{#      <th>ID</th>#}
       <th>Image</th>
       <th>Name</th>
       <th>Description</th>
@@ -30,7 +30,7 @@
     <tbody>
     {% for food in food_list %}
       <tr>
-        <td>{{ food.id }}</td>
+{#        <td>{{ food.id }}</td>#}
         <td><img src="{{ url_for("static", filename=food.image) }}" width=100 alt="Food Image"></td>
         <td>{{ food.name }}</td>
         <td>{{ food.description }}</td>
