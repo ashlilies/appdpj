@@ -43,6 +43,7 @@ geolocator = Nominatim(user_agent="foodypulse")
 def admin_myrestaurant():  # ruri
     longitude = None
     latitude = None
+    location = None
     restaurant_details_form = RestaurantDetailsForm(
         request.form)  # Using the Create Restaurant Form
     # The controller will be the place where we do all the interaction
@@ -81,10 +82,9 @@ def admin_myrestaurant():  # ruri
                     # restaurant_details_form.rest_address1.data,
                     location.address,
                     # restaurant_details_form.rest_address2.data,
-                    # restaurant_details_form.rest_postcode.data,
+                    restaurant_details_form.rest_postcode.data,
                     latitude,
                     longitude,
-                    # restaurant_details_form.rest_unit_number.data,
                     restaurant_details_form.rest_desc.data,
                     restaurant_details_form.rest_bank.data,
                     restaurant_details_form.rest_del1.data,
@@ -97,9 +97,10 @@ def admin_myrestaurant():  # ruri
                 current_user.restaurant_id = restaurant.id
 
             except Exception as e:
-                logging.error('Line 101 Error in Address (%s)' % e)
+                logging.error('Error in Address (%s)' % e)
                 flash("Could not find your address, please try again")
-                return redirect(url_for("admin_myrestaurant"))
+                return redirect(url_for("admin_myrestaurant"), longitude=longitude, latitude=latitude)
+
 
         else:
             restaurant = RestaurantSystem.find_restaurant_by_id(current_user.restaurant_id)
@@ -121,10 +122,9 @@ def admin_myrestaurant():  # ruri
                     # restaurant_details_form.rest_address1.data,
                     location.address,
                     # restaurant_details_form.rest_address2.data,
-                    # restaurant_details_form.rest_postcode.data,
+                    restaurant_details_form.rest_postcode.data,
                     latitude,
                     longitude,
-                    # restaurant_details_form.rest_unit_number.data,
                     restaurant_details_form.rest_desc.data,
                     restaurant_details_form.rest_bank.data,
                     restaurant_details_form.rest_del1.data,
@@ -137,7 +137,7 @@ def admin_myrestaurant():  # ruri
                 print(latitude, longitude)
 
             except Exception as e:
-                logging.error('Line 141 Error in Address (%s)' % e)
+                logging.error('Error in Address (%s)' % e)
                 flash("Could not find your address, please try again")
                 return redirect(url_for("admin_myrestaurant"))
 
@@ -163,8 +163,8 @@ def admin_myrestaurant():  # ruri
         restaurant_details_form.rest_hour_open.data = restaurant.open
         restaurant_details_form.rest_hour_close.data = restaurant.close
         restaurant_details_form.rest_address1.data = restaurant.add1
-        # restaurant_details_form.rest_unit_number.data = restaurant.unit_number
-        # restaurant_details_form.rest_postcode.data = restaurant.postc
+        # restaurant_details_form.rest_address2.data = restaurant.add2
+        restaurant_details_form.rest_postcode.data = restaurant.postc
         restaurant_details_form.rest_desc.data = restaurant.desc
         restaurant_details_form.rest_bank.data = restaurant.bank
         restaurant_details_form.rest_del1.data = restaurant.del1
@@ -218,7 +218,6 @@ def update_restaurant_confirm(id):
     edit_restaurant = RestaurantDetailsForm(request.form)
     editing_restaurant = RestaurantSystem()
     if request.method == 'POST' and edit_restaurant.validate():
-
         editing_restaurant.edit_restaurant(
             id,
             edit_restaurant.rest_name.data,
@@ -227,8 +226,8 @@ def update_restaurant_confirm(id):
             edit_restaurant.rest_hour_open.data,
             edit_restaurant.rest_hour_close.data,
             edit_restaurant.rest_address1.data,
-            # edit_restaurant.rest_unit_number.data,
-            # edit_restaurant.rest_postcode.data,
+            edit_restaurant.rest_address2.data,
+            edit_restaurant.rest_postcode.data,
             edit_restaurant.rest_desc.data,
             edit_restaurant.rest_bank.data,
             edit_restaurant.rest_del1.data,

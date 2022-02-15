@@ -11,7 +11,7 @@ import pickle
 
 class Restaurant():
     # def __init__(self, name, logo, contact, open, close, add1, add2, postc, desc, bank, del1, del2, del3, del4, del5):
-    def __init__(self, name, logo, contact, open, close, add1, latitude, longitude,desc, bank, del1, del2, del3, del4,
+    def __init__(self, name, logo, contact, open, close, add1, postc, latitude, longitude, desc, bank, del1, del2, del3, del4,
                  del5):
 
         # super().__init__(restaurant_name)  #using the restaurant name created @ account level
@@ -25,10 +25,9 @@ class Restaurant():
         self.close = close
         self.add1 = add1
         # self.add2 = add2
-        # self.postc = postc
+        self.postc = postc
         self.latitude = latitude
         self.longitude = longitude
-        # self.unit_number = unit_number
         self.bank = bank
         self.desc = desc
         self.del1 = del1
