@@ -49,9 +49,14 @@ def payment():
         )
 
         session["payment_made"] = True
-        TransactionDao.create_transaction(cart.restaurant_id, current_user.account_id, cart.get_subtotal(), cart.coupon_code)
+        t = TransactionDao.create_transaction(cart.restaurant_id,
+                                              current_user.account_id,
+                                              cart.get_subtotal(),
+                                              cart.coupon_code)
 
-        return redirect(url_for('thankyou', restaurant_id=cart.restaurant_id))
+        # return redirect(url_for('thankyou', restaurant_id=cart.restaurant_id))
+        return redirect(url_for("transaction_confirmation",
+                                transaction_id=t.id))
 
     cart = CartDao.get_cart(current_user.cart)
     cart_items = cart.get_cart_items()

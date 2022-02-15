@@ -85,7 +85,7 @@
                   </p>
                   <p>
                     <em class="text-muted">Toppings:
-                      {% if cart_item.toppings != "" %}
+                      {% if cart_item.toppings != [] %}
                       {% for topping in cart_item.toppings %}
                         {{ topping }}&nbsp;
                       {% endfor %}
