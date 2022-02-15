@@ -14,34 +14,6 @@ import shelve, os
 
 # <------------------------- YONG LIN ------------------------------>
 
-# YL: for transactions -- creating of dummy data
-@app.route("/admin/transaction/createExampleTransactions")
-@admin_side
-@login_required
-def create_example_transactions():
-    restaurant_id = current_user.restaurant_id
-
-    TransactionDao.create_transaction(restaurant_id=restaurant_id,
-                                      account_name="Yong Lin",
-                                      price=50.30,
-                                      used_coupon="SPAGETIT",
-                                      rating=2)
-
-    TransactionDao.create_transaction(restaurant_id=restaurant_id,
-                                      account_name="Ching Chong",
-                                      price=80.90,
-                                      used_coupon="50PASTA",
-                                      rating=5)
-
-    TransactionDao.create_transaction(restaurant_id=restaurant_id,
-                                      account_name="Hosea",
-                                      price=20.10,
-                                      used_coupon="50PASTA",
-                                      rating=1)
-
-    return redirect(url_for("admin_transaction"))
-
-
 # YL: for transactions -- reading of data and displaying (R in CRUD)
 @app.route("/admin/transaction")
 @admin_side
