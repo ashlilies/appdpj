@@ -99,7 +99,7 @@ def admin_myrestaurant():  # ruri
             except Exception as e:
                 logging.error('Error in Address (%s)' % e)
                 flash("Could not find your address, please try again")
-                return redirect(url_for("admin_myrestaurant"), longitude=longitude, latitude=latitude)
+                return redirect(url_for("admin_myrestaurant"))
 
 
         else:

@@ -60,21 +60,25 @@
                     <tr>
                         <th scope="col">Type</th>
                         <th scope="col">File Name</th>
-                        <th scope="col">Update Button TODO</th>
+{#                        <th scope="col">Update Button TODO</th>#}
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
                         <td class="certdisplay">Hygiene</td>
+                        {% if cert.hygiene_cert == '' or not cert.hygiene_cert %}
+                        <td>NIL</td>
+                        {% else %}
                         <td>
                             {#                            <iframe src="application/static/restaurantCertification/hygiene/1/{{ cert.hygiene_cert }}">Hygiene cert</iframe>#}
                             <a href="{{ url_for("static", filename=cert.hygiene_cert[19:]) }}"
                                target="_blank">{{ cert.hygiene_cert[92:] }}</a>
                         </td>
+                        {% endif %}
                     </tr>
                     <tr>
                         <td class="certdisplay">Halal</td>
-                        {% if cert.halal_cert == '' %}
+                        {% if cert.halal_cert == '' or not cert.halal_cert %}
                             <td>NIL</td>
                         {% else %}
                             <td>
@@ -85,7 +89,7 @@
                     </tr>
                     <tr>
                         <td class="certdisplay">Vegetarian</td>
-                        {% if cert.vegetarian_cert == '' %}
+                        {% if cert.vegetarian_cert == '' or not cert.vegetarian_cert %}
                             <td>NIL</td>
                         {% else %}
                             <td>
@@ -100,7 +104,7 @@
                     </tr>
                     <tr>
                         <td class="certdisplay">Vegan</td>
-                        {% if cert.vegan_cert == '' %}
+                        {% if cert.vegan_cert == '' or not cert.vegan_cert %}
                             <td>NIL</td>
                         {% else %}
                             <td>
