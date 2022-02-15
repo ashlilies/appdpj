@@ -6,7 +6,6 @@ from flask import request
 from chatterbot import ChatBot
 from chatterbot.trainers import ChatterBotCorpusTrainer
 
-
 # <------------------------ CLARA ------------------------------>
 from application.Controllers.admin.admin_ashlee import admin_side
 from application.Controllers.consumer.consumer_ashlee import consumer_side
@@ -21,23 +20,19 @@ trainer.train("chatterbot.corpus.english")
 def bot():
     return render_template("consumer/chatbot.html")
 
+
 @app.route("/get")
 def get_bot_response():
     userText = request.args.get("msg")
     return str(english_bot.get_response(userText))
 
 
-
-
-
 @app.route("/foodModal/<int:food_id>")
-#displaying of food
+# displaying of food
 @consumer_side
 @login_required
 def consumer_retrieve_food_modal(food_id):
-    #retrieve the food created from FoodDao
-    #using the currernt users restaurant_id
+    # retrieve the food created from FoodDao
+    # using the currernt users restaurant_id
     food = FoodDao.query(food_id)
     return render_template('consumer/foodModal.html', food=food)
-
-
