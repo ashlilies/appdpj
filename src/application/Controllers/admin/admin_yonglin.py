@@ -136,7 +136,27 @@ def delete_transaction(transaction_id):
 @admin_side
 @login_required
 def test_upload():
-    return render_template("admin/certification.html")
+    certification_dict = {}
+    with shelve.open('certification', 'c') as handle:
+        try:
+            if 'certification' in handle:
+                certification_dict = handle['certification']
+            else:
+                handle['certification'] = certification_dict
+                print(certification_dict)
+                logging.info("read_cert: nothing found in database, starting empty")
+        except Exception as e:
+            logging.error("read_cert: error opening db (%s)" % e)
+
+        certificate_list = []
+        for key in certification_dict:
+            restaurant = certification_dict.get(current_user.restaurant_id)
+            if key == current_user.restaurant_id:
+                certificate_list = []
+                certificate_list.append(restaurant)
+                print(certificate_list)
+
+    return render_template("admin/certification.html", certificate_list=certificate_list)
 
 
 @app.route('/admin/uploader', methods=['GET', 'POST'])

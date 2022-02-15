@@ -15,7 +15,7 @@
         }
 
         .certdisplay {
-            width: 25%;
+            width: 30%;
         }
 
         #deletedisplay th {
@@ -46,21 +46,21 @@
                 </button>
             </div>
         </nav>
+        {% for cert in certificate_list %}
 
         <h1 style="font-size: 40px; display: inline; float: left;">Restaurant Details - Certification</h1>
         <a class="btn btn-primary align-items-center float-end ms-2"
-           href="{{ url_for("test_upload") }}" role="button" style="display: inline; float: right; margin-top: 5px;">Upload Certificate now!</a>
+           href="{{ url_for("test_upload") }}" role="button" style="display: inline; float: right; margin-top: 5px;">Upload
+            Certificate now!</a>
 
         <div>
             {# hygiene cert #}
             <table class="table table-striped" id="infodisplay"
                    style="background-color: white">
                 <thead>
-                {% for cert in certificate_list %}
                     <tr>
                         <th scope="col">Type</th>
                         <th scope="col">File Name</th>
-                        <th scope="col">Update Button TODO</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -116,11 +116,6 @@
                 {% endfor %}
                 </tbody>
             </table>
-            {# halal cert #}
-            {# vegetarian cert #}
-            {# no pork no lard indication #}
-            {# vegan cert #}
-            {# no beef indication #}
         </div>
     </div>
 
