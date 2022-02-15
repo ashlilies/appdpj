@@ -3,18 +3,94 @@
 {% block head %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
+
+        h1 {
+            color: black;
+            margin-bottom: 0;
+            margin-top: 0;
+            text-align: center;
+            font-size: 40px;
+        }
+
+        h3 {
+            color: black;
+            font-size: 20px;
+            margin-top: 3px;
+            text-align: center;
+        }
+
+
+        #chatbox {
+            margin-left: auto;
+            margin-right: auto;
+            width: 40%;
+            margin-top: 60px;
+
+        }
+
+        #userInput {
+            margin-left: auto;
+            margin-right: auto;
+            width: 40%;
+            margin-top: 60px;
+            margin-bottom: 20px;
+        }
+
+        #textInput {
+            width: 87%;
+            border: none;
+            border-bottom: 3px solid #009688;
+            font-family: monospace;
+            font-size: 17px;
+            margin-bottom: 20px;
+        }
+
+        #buttonInput {
+            padding: 3px;
+            font-family: monospace;
+            font-size: 17px;
+        }
+
+        .userText {
+            color: white;
+            font-family: monospace;
+            font-size: 17px;
+            text-align: right;
+            line-height: 30px;
+        }
+
+        .userText span {
+            background-color: #009688;
+            padding: 10px;
+            border-radius: 2px;
+        }
+
+        .botText {
+            color: white;
+            font-family: monospace;
+            font-size: 17px;
+            text-align: left;
+            line-height: 30px;
+        }
+
+        .botText span {
+            background-color: #EF5350;
+            padding: 10px;
+            border-radius: 2px;
+        }
+
     </style>
 {% endblock %}
 
 {% block content %}
     <h1> Welcome to our ChatBot</h1>
-    <div id="chatbox">
-        <p class="botText"><span>Hi! Im ChatterBot</span></p>
-    </div>
-    <div id="userInput">
-        <input id= "textInput" type="text" name="msg" placeholder="Message">
-        <input id="buttonInput" type="submit" value="Send">
-    </div>
+        <div id="chatbox">
+            <p class="botText"><span>Hi! Im ChatterBot</span></p>
+        </div>
+        <div id="userInput">
+            <input id="textInput" type="text" name="msg" placeholder="Message">
+            <input id="buttonInput" type="submit" value="Send">
+        </div>
     <script>
         function getBotResponse() {
             var rawText = $("#textInput").val();
@@ -22,7 +98,7 @@
             $("#textInput").val("");
             $("#chatbox").append(userHtml);
             document.getElementById("userInput").scrollIntoView({block: 'start', behavior: 'smooth'});
-            $.get("/get", {msg: rawText}).done(function(data) {
+            $.get("/get", {msg: rawText}).done(function (data) {
                 var botHtml = '<p class="botText"><span>' + data + '</span></p>';
                 $("#chatbox").append(botHtml);
                 document.getElementById("userInput").scrollIntoView({block: 'start', behavior: 'smooth'});
