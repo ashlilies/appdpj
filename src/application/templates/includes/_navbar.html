@@ -5,333 +5,476 @@
 <!-- TODO: Separate navbar for both admin and consumer side. -ashlee -->
 
 <nav class="navbar navbar-expand-sm bg-light navbar-light" id="main-nav">
-  <div class="container-fluid">
-    <a class="navbar-brand" id="website-logo" href="/">Loading...</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-            data-bs-target="#collapsibleNavbar">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="collapsibleNavbar">
-      <!-------------- Aligned left - Consumer and Admin ------------------->
-      <div id="navbar-left-items">
-        {# <----------------------CONSUMER SIDE----------------------> #}
-        <div id="consumerSide" hidden>
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for("delivery") }}">Restaurants</a>
-            </li>
-{#            <li class="nav-item">#}
-{#              <a class="nav-link" href="{{ url_for("dine_in") }}">Dine-In</a>#}
-{#            </li>#}
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for("retrieve_transactions") }}">Orders</a>
-            </li>
-          </ul>
-        </div>
-
-        {# <----------------------ADMIN SIDE----------------------> #}
-        <div id="adminSide" hidden>
-          <ul class="navbar-nav">
-            {# Force users to create a restaurant if not yet exist #}
-              <li class="nav-item">
-                <a class="nav-link" href="{{ url_for("admin_myrestaurant") }}">Restaurant</a>
-              </li>
-
-              {% if current_user.restaurant_id or not current_user.is_authenticated%}
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('admin_coupon_management') }}">Coupons</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for("admin_retrieve_food") }}">Menu</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link"
-                     href="{{ url_for("admin_transaction") }}">Transactions</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link"
-                     href="{{ url_for("admin_retrieve_reviews") }}">Reviews</a>
-                </li>
-              {% endif %}
-          </ul>
-        </div>
-      </div>
-      <!-------------- Aligned right - Consumer and Admin ------------------->
-      <div id="navbar-right-items" class="ms-auto">
-        <ul class="navbar-nav" id="consumerSideRight" hidden>
-          {# <----------------------CONSUMER SIDE----------------------> #}
-          {% if current_user.is_authenticated %}
-            {% if current_user.type == "consumer" %}
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button"
-                   data-bs-toggle="dropdown">
-                  Reviews</a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{{ url_for("consumer_retrieve_reviews") }}">My Reviews</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for("consumer_create_review") }}">Write Review</a></li>
-                </ul>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button"
-                   data-bs-toggle="dropdown">
-                  Hi, {{ current_user.name }}</a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#accountSettingsModalConsumer">Account Settings</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for("logout") }}">Log Out</a></li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{{ url_for("consumer_cart") }}">Cart</a>
-              </li>
-
-
-              <!-- Account Settings modal for consumer -->
-              <!-- using BS5 Modal -->
-              <div class="modal fade" id="accountSettingsModalConsumer" tabindex="-1"
-                   aria-labelledby="accountSettingsModalConsumerLabel"
-                   aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="accountSettingsModalConsumerLabel">Account Settings</h5>
-                    </div>
-                    <div class="modal-body">
-                      <form action="{{ url_for("consumer_update_account") }}" id="accountSettingsConsumerForm" method="post">
-                        <label for="updateSettingsPw">To update any settings, you must enter your current
-                          password.</label>
-                        <label for="updateSettingsPw" style="margin-top: 1.5rem;">Current Password: </label>
-                        <input type="password" name="updateSettingsPw" id="updateSettingsPw"><br>
-                        <hr>
-                        <div class="form-group row">
-                            <img src="{{ current_user.otp_uri_image() }}" style="width: 50%; margin-left: auto; margin-right: auto;" alt="">
-                            <span class="text-secondary">Scan with your favourite OTP app, such as Authy or Google Authenticator.</span>
-                          <label>Your OTP secret: <b>{{ current_user.totp_secret }}</b> <a href="{{ url_for("regenerate_otp") }}">(regenerate)</a></label>
-                        </div>
-                        <hr>
-                        <div class="form-group row">
-                          <label>First Name: <b>{{ current_user.first_name }}</b></label>
-                          <label>Last Name: <b>{{ current_user.last_name }}</b></label>
-                          <label for="changeFirstName" class="col-form-label">New First Name: </label>
-                          <input type="text" name="changeFirstName" id="changeFirstName"><br>
-                          <label for="changeLastName" class="col-form-label">New First Name: </label>
-                          <input type="text" name="changeLastName" id="changeLastName"><br>
-                        </div>
-                        <hr>
-                        <div class="form-group row">
-                          <label for="changeEmail">Current Email: <b>{{ current_user.get_email() }}</b></label>
-                          <label for="changeEmail" class="col-form-label">New Email: </label>
-                          <input type="text" name="changeEmail" id="changeEmail"><br>
-                        </div>
-                        <div class="form-group row">
-                          <label for="changePw" class="col-form-label">New Password: </label>
-                          <input type="password" name="changePw" id="changePw"><br>
-                        </div>
-                        <div class="form-group row">
-                          <label for="changePwConfirm" class="col-form-label">Confirm Password: </label>
-                          <input type="password" name="changePwConfirm" id="changePwConfirm"><br>
-                        </div>
-                      </form>
-                    </div>
-                    <div class="modal-footer">
-                      <div class="d-flex align-items-start">
-                        <button type="button" class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
-                      </div>
-                      <button type="button" class="btn btn-primary" onclick="updateAccount()">Save changes</button>
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    </div>
-                  </div>
+    <div class="container-fluid">
+        <a class="navbar-brand" id="website-logo" href="/">Loading...</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <!-------------- Aligned left - Consumer and Admin ------------------->
+            <div id="navbar-left-items">
+                {# <----------------------CONSUMER SIDE----------------------> #}
+                <div id="consumerSide" hidden>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="{{ url_for("delivery") }}">Restaurants</a>
+                        </li>
+                        {#            <li class="nav-item">#}
+                        {#              <a class="nav-link" href="{{ url_for("dine_in") }}">Dine-In</a>#}
+                        {#            </li>#}
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="{{ url_for("retrieve_transactions") }}">Orders</a>
+                        </li>
+                    </ul>
                 </div>
-              </div>
 
-              <!-- Account Settings modal script -->
-              <script>
-                  function updateAccount() {
-                      document.getElementById("accountSettingsConsumerForm").submit();
-                  }
+                {# <----------------------ADMIN SIDE----------------------> #}
+                <div id="adminSide" hidden>
+                    <ul class="navbar-nav">
+                        {# Force users to create a restaurant if not yet exist #}
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="{{ url_for("admin_myrestaurant") }}">Restaurant</a>
+                        </li>
 
-                  function deleteAccount() {
-                      if (confirm("Are you REALLY SURE you want to delete your account? This cannot be undone!")) {
-                          var form = document.getElementById("accountSettingsConsumerForm");
-                          form.setAttribute("action", "{{ url_for("delete_account") }}");
-                          form.submit();
-                          {#window.location.href = "{{ url_for("delete_account") }}";#}
-                      }
-                  }
-              </script>
-
-            {% endif %}
-          {% else %}
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button"
-                 data-bs-toggle="dropdown">
-                Admin/Consumer</a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item"
-                       href={{ url_for("admin_home") }}>Admin</a></li>
-                <li><a class="dropdown-item"
-                       href={{ url_for("consumer_home") }}>Consumer</a>
-                </li>
-              </ul>
-            </li>
-
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button"
-                 data-bs-toggle="dropdown">
-                My Account</a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{{ url_for("consumer_login") }}">Login</a></li>
-                <li><a class="dropdown-item" href="{{ url_for("consumer_register") }}">Sign Up</a></li>
-              </ul>
-            </li>
-          {% endif %}
-
-        </ul>
-        {# <----------------------ADMIN SIDE----------------------> #}
-        <ul class="navbar-nav" id="adminSideRight" hidden>
-          {# Only show switcher if not logged in #}
-
-          {# Account is logged in and Admin type #}
-          {% if current_user.is_authenticated %}
-            {% if current_user.type == "admin" %}
-              <li class="nav-item dropdown loggedInMenu">
-                <a class="nav-link dropdown-toggle" href="#" role="button"
-                   data-bs-toggle="dropdown">
-                  Hi, {{ current_user.get_name() }}</a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#accountSettingsModal">
-                    Account Settings
-                  </a></li>
-                  <li><a class="dropdown-item" href={{ url_for("admin_logout") }}>Log Out</a></li>
-                </ul>
-              </li>
-
-              <!-- Account Settings modal -->
-              <!-- using BS5 Modal -->
-              <div class="modal fade" id="accountSettingsModal" tabindex="-1"
-                   aria-labelledby="accountSettingsModalLabel"
-                   aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="accountSettingsModalLabel">Account Settings</h5>
-                    </div>
-                    <div class="modal-body">
-                      <form action="{{ url_for("admin_update_account") }}" id="accountSettingsForm" method="post">
-                        <label for="updateSettingsPw">To update any settings, you must enter your current
-                          password.</label>
-                        <label for="updateSettingsPw" style="margin-top: 1.5rem;">Current Password: </label>
-                        <input type="password" name="updateSettingsPw" id="updateSettingsPw"><br>
-                        <hr>
-                        <div class="form-group row">
-                            <img src="{{ current_user.otp_uri_image() }}" style="width: 50%; margin-left: auto; margin-right: auto;" alt="">
-                            <span class="text-secondary">Scan with your favourite OTP app, such as Authy or Google Authenticator.</span>
-                          <label>Your OTP secret: <b>{{ current_user.totp_secret }}</b> <a href="{{ url_for("regenerate_otp") }}">(regenerate)</a></label>
-                        </div>
-                        <hr>
-                        <div class="form-group row">
-                          <label for="changeName">Current Name: <b>{{ current_user.get_name() }}</b></label>
-                          <label for="changeName" class="col-form-label">New Name: </label>
-                          <input type="text" name="changeName" id="changeName"><br>
-                        </div>
-                        <hr>
-                        <div class="form-group row">
-                          <label for="changeEmail">Current Email: <b>{{ current_user.get_email() }}</b></label>
-                          <label for="changeEmail" class="col-form-label">New Email: </label>
-                          <input type="text" name="changeEmail" id="changeEmail"><br>
-                        </div>
-                        <div class="form-group row">
-                          <label for="changePw" class="col-form-label">New Password: </label>
-                          <input type="password" name="changePw" id="changePw"><br>
-                        </div>
-                        <div class="form-group row">
-                          <label for="changePwConfirm" class="col-form-label">Confirm Password: </label>
-                          <input type="password" name="changePwConfirm" id="changePwConfirm"><br>
-                        </div>
-
-                        {# TODO: FOR Deletion only! Hidden! #}
-                        <label hidden for="deleteAccountField"></label>
-                        <input hidden type="text" name="deleteAccountField" id="deleteAccountField">
-                      </form>
-                    </div>
-                    <div class="modal-footer">
-                      <div class="d-flex align-items-start">
-                        <button type="button" class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
-                      </div>
-                      <button type="button" class="btn btn-primary" onclick="updateAccount()">Save changes</button>
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    </div>
-                  </div>
+                        {% if current_user.restaurant_id or not current_user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   href="{{ url_for('admin_coupon_management') }}">Coupons</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   href="{{ url_for("admin_retrieve_food") }}">Menu</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   href="{{ url_for("admin_transaction") }}">Transactions</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   href="{{ url_for("admin_retrieve_reviews") }}">Reviews</a>
+                            </li>
+                        {% endif %}
+                    </ul>
                 </div>
-              </div>
+            </div>
+            <!-------------- Aligned right - Consumer and Admin ------------------->
+            <div id="navbar-right-items" class="ms-auto">
+                <ul class="navbar-nav" id="consumerSideRight" hidden>
+                    {# <----------------------CONSUMER SIDE----------------------> #}
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.type == "consumer" %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#"
+                                   role="button"
+                                   data-bs-toggle="dropdown">
+                                    Reviews</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item"
+                                           href="{{ url_for("consumer_retrieve_reviews") }}">My
+                                        Reviews</a></li>
+                                    <li><a class="dropdown-item"
+                                           href="{{ url_for("consumer_create_review") }}">Write
+                                        Review</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#"
+                                   role="button"
+                                   data-bs-toggle="dropdown">
+                                    Hi, {{ current_user.name }}</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#accountSettingsModalConsumer">Account
+                                        Settings</a></li>
+                                    <li><a class="dropdown-item"
+                                           href="{{ url_for("logout") }}">Log
+                                        Out</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   href="{{ url_for("consumer_cart") }}">Cart</a>
+                            </li>
 
-              <!-- Account Settings modal script -->
-              <script>
-                  function updateAccount() {
-                      document.getElementById("accountSettingsForm").submit();
-                  }
 
-                  function deleteAccount() {
-                      if (confirm("Are you REALLY SURE you want to delete your account? This cannot be undone!"))
-                          window.location.href = "{{ url_for("delete_account") }}";
-                  }
-              </script>
+                            <!-- Account Settings modal for consumer -->
+                            <!-- using BS5 Modal -->
+                            <div class="modal fade"
+                                 id="accountSettingsModalConsumer" tabindex="-1"
+                                 aria-labelledby="accountSettingsModalConsumerLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"
+                                                id="accountSettingsModalConsumerLabel">
+                                                Account Settings</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{{ url_for("consumer_update_account") }}"
+                                                  id="accountSettingsConsumerForm"
+                                                  method="post">
+                                                <label for="updateSettingsPw">To
+                                                    update any settings, you
+                                                    must enter your current
+                                                    password.</label>
+                                                <label for="updateSettingsPw"
+                                                       style="margin-top: 1.5rem;">Current
+                                                    Password: </label>
+                                                <input type="password"
+                                                       name="updateSettingsPw"
+                                                       id="updateSettingsPw"><br>
+                                                <hr>
+                                                <div class="form-group row">
+                                                    <img src="{{ current_user.otp_uri_image() }}"
+                                                         style="width: 50%; margin-left: auto; margin-right: auto;"
+                                                         alt="">
+                                                    <span class="text-secondary">Scan with your favourite OTP app, such as Authy or Google Authenticator.</span>
+                                                    <label>Your OTP secret:
+                                                        <b>{{ current_user.totp_secret }}</b>
+                                                        <a href="{{ url_for("regenerate_otp") }}">(regenerate)</a></label>
+                                                </div>
+                                                <hr>
+                                                <div class="form-group row">
+                                                    <label>First Name:
+                                                        <b>{{ current_user.first_name }}</b></label>
+                                                    <label>Last Name:
+                                                        <b>{{ current_user.last_name }}</b></label>
+                                                    <label for="changeFirstName"
+                                                           class="col-form-label">New
+                                                        First Name: </label>
+                                                    <input type="text"
+                                                           name="changeFirstName"
+                                                           id="changeFirstName"><br>
+                                                    <label for="changeLastName"
+                                                           class="col-form-label">New
+                                                        First Name: </label>
+                                                    <input type="text"
+                                                           name="changeLastName"
+                                                           id="changeLastName"><br>
+                                                </div>
+                                                <hr>
+                                                <div class="form-group row">
+                                                    <label for="changeEmail">Current
+                                                        Email:
+                                                        <b>{{ current_user.get_email() }}</b></label>
+                                                    <label for="changeEmail"
+                                                           class="col-form-label">New
+                                                        Email: </label>
+                                                    <input type="text"
+                                                           name="changeEmail"
+                                                           id="changeEmail"><br>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="changePw"
+                                                           class="col-form-label">New
+                                                        Password: </label>
+                                                    <input type="password"
+                                                           name="changePw"
+                                                           id="changePw"><br>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="changePwConfirm"
+                                                           class="col-form-label">Confirm
+                                                        Password: </label>
+                                                    <input type="password"
+                                                           name="changePwConfirm"
+                                                           id="changePwConfirm"><br>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <div class="d-flex align-items-start">
+                                                <button type="button"
+                                                        class="btn btn-danger"
+                                                        onclick="deleteAccount()">
+                                                    Delete Account
+                                                </button>
+                                            </div>
+                                            <button type="button"
+                                                    class="btn btn-primary"
+                                                    onclick="updateAccount()">
+                                                Save changes
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Account Settings modal script -->
+                            <script>
+                                function updateAccount() {
+                                    document.getElementById("accountSettingsConsumerForm").submit();
+                                }
+
+                                function deleteAccount() {
+                                    if (confirm("Are you REALLY SURE you want to delete your account? This cannot be undone!")) {
+                                        var form = document.getElementById("accountSettingsConsumerForm");
+                                        form.setAttribute("action", "{{ url_for("delete_account") }}");
+                                        form.submit();
+                                        {#window.location.href = "{{ url_for("delete_account") }}";#}
+                                    }
+                                }
+                            </script>
+
+                        {% endif %}
+                    {% else %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#"
+                               role="button"
+                               data-bs-toggle="dropdown">
+                                Admin/Consumer</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item"
+                                       href={{ url_for("admin_home") }}>Admin</a>
+                                </li>
+                                <li><a class="dropdown-item"
+                                       href={{ url_for("consumer_home") }}>Consumer</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#"
+                               role="button"
+                               data-bs-toggle="dropdown">
+                                My Account</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item"
+                                       href="{{ url_for("consumer_login") }}">Login</a>
+                                </li>
+                                <li><a class="dropdown-item"
+                                       href="{{ url_for("consumer_register") }}">Sign
+                                    Up</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
+                </ul>
+                {# <----------------------ADMIN SIDE----------------------> #}
+                <ul class="navbar-nav" id="adminSideRight" hidden>
+                    {# Only show switcher if not logged in #}
+
+                    {# Account is logged in and Admin type #}
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.type == "admin" %}
+                            <li class="nav-item dropdown loggedInMenu">
+                                <a class="nav-link dropdown-toggle" href="#"
+                                   role="button"
+                                   data-bs-toggle="dropdown">
+                                    Hi, {{ current_user.get_name() }}</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#accountSettingsModal">
+                                        Account Settings
+                                    </a></li>
+                                    <li><a class="dropdown-item"
+                                           href={{ url_for("admin_logout") }}>Log
+                                        Out</a></li>
+                                </ul>
+                            </li>
+
+                            <!-- Account Settings modal -->
+                            <!-- using BS5 Modal -->
+                            <div class="modal fade" id="accountSettingsModal"
+                                 tabindex="-1"
+                                 aria-labelledby="accountSettingsModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"
+                                                id="accountSettingsModalLabel">
+                                                Account Settings</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{{ url_for("admin_update_account") }}"
+                                                  id="accountSettingsForm"
+                                                  method="post">
+                                                <label for="updateSettingsPw">To
+                                                    update any settings, you
+                                                    must enter your current
+                                                    password.</label>
+                                                <label for="updateSettingsPw"
+                                                       style="margin-top: 1.5rem;">Current
+                                                    Password: </label>
+                                                <input type="password"
+                                                       name="updateSettingsPw"
+                                                       id="updateSettingsPw"><br>
+                                                <hr>
+                                                <div class="form-group row">
+                                                    <img src="{{ current_user.otp_uri_image() }}"
+                                                         style="width: 50%; margin-left: auto; margin-right: auto;"
+                                                         alt="">
+                                                    <span class="text-secondary">Scan with your favourite OTP app, such as Authy or Google Authenticator.</span>
+                                                    <label>Your OTP secret:
+                                                        <b>{{ current_user.totp_secret }}</b>
+                                                        <a href="{{ url_for("regenerate_otp") }}">(regenerate)</a></label>
+                                                </div>
+                                                <hr>
+                                                <div class="form-group row">
+                                                    <label for="changeName">Current
+                                                        Name:
+                                                        <b>{{ current_user.get_name() }}</b></label>
+                                                    <label for="changeName"
+                                                           class="col-form-label">New
+                                                        Name: </label>
+                                                    <input type="text"
+                                                           name="changeName"
+                                                           id="changeName"><br>
+                                                </div>
+                                                <hr>
+                                                <div class="form-group row">
+                                                    <label for="changeEmail">Current
+                                                        Email:
+                                                        <b>{{ current_user.get_email() }}</b></label>
+                                                    <label for="changeEmail"
+                                                           class="col-form-label">New
+                                                        Email: </label>
+                                                    <input type="text"
+                                                           name="changeEmail"
+                                                           id="changeEmail"><br>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="changePw"
+                                                           class="col-form-label">New
+                                                        Password: </label>
+                                                    <input type="password"
+                                                           name="changePw"
+                                                           id="changePw"><br>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="changePwConfirm"
+                                                           class="col-form-label">Confirm
+                                                        Password: </label>
+                                                    <input type="password"
+                                                           name="changePwConfirm"
+                                                           id="changePwConfirm"><br>
+                                                </div>
+
+                                                {# TODO: FOR Deletion only! Hidden! #}
+                                                <label hidden
+                                                       for="deleteAccountField"></label>
+                                                <input hidden type="text"
+                                                       name="deleteAccountField"
+                                                       id="deleteAccountField">
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <div class="d-flex align-items-start">
+                                                <button type="button"
+                                                        class="btn btn-danger"
+                                                        onclick="deleteAccount()">
+                                                    Delete Account
+                                                </button>
+                                            </div>
+                                            <button type="button"
+                                                    class="btn btn-primary"
+                                                    onclick="updateAccount()">
+                                                Save changes
+                                            </button>
+                                            <button type="button"
+                                                    class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Account Settings modal script -->
+                            <script>
+                                function updateAccount() {
+                                    document.getElementById("accountSettingsForm").submit();
+                                }
+
+                                function deleteAccount() {
+                                    if (confirm("Are you REALLY SURE you want to delete your account? This cannot be undone!")) {
+                                        var form = document.getElementById("accountSettingsConsumerForm");
+                                        form.setAttribute("action", "{{ url_for("delete_account") }}");
+                                        form.submit();
+                                    }
+                                }
+                            </script>
 
 
-            {% endif %}
-          {% else %} {# Account is NOT logged in #}
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button"
-                 data-bs-toggle="dropdown">
-                Admin/Consumer</a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item"
-                       href={{ url_for("admin_home") }}>Admin</a></li>
-                <li><a class="dropdown-item"
-                       href={{ url_for("consumer_home") }}>Consumer</a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-item dropdown notLoggedInMenu">
-              <a class="nav-link dropdown-toggle" href="#" role="button"
-                 data-bs-toggle="dropdown">My Account</a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href={{ url_for("admin_login") }}>Login</a></li>
-                <li><a class="dropdown-item" href={{ url_for("admin_register") }}>Sign Up</a></li>
-              </ul>
-            </li>
-          {% endif %}
+                        {% endif %}
+                    {% else %} {# Account is NOT logged in #}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#"
+                               role="button"
+                               data-bs-toggle="dropdown">
+                                Admin/Consumer</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item"
+                                       href={{ url_for("admin_home") }}>Admin</a>
+                                </li>
+                                <li><a class="dropdown-item"
+                                       href={{ url_for("consumer_home") }}>Consumer</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown notLoggedInMenu">
+                            <a class="nav-link dropdown-toggle" href="#"
+                               role="button"
+                               data-bs-toggle="dropdown">My Account</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item"
+                                       href={{ url_for("admin_login") }}>Login</a>
+                                </li>
+                                <li><a class="dropdown-item"
+                                       href={{ url_for("admin_register") }}>Sign
+                                    Up</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
 
-        </ul>
-      </div>
+                </ul>
+            </div>
+        </div>
     </div>
-  </div>
 </nav>
 
 {# Nowhere else to put this that shares between admin and consumer :( #}
 {# Flashed messages via Flask - Ashlee #}
 {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <div class="container-fluid">
-    <div class="alert alert-dismissible fade show alert-primary d-flex align-items-center" role="alert">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-           class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img"
-           aria-label="Warning:">
-        <path
-            d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-      </svg>
+    {% if messages %}
+        <div class="container-fluid">
+            <div class="alert alert-dismissible fade show alert-primary d-flex align-items-center"
+                 role="alert">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                     fill="currentColor"
+                     class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"
+                     viewBox="0 0 16 16" role="img"
+                     aria-label="Warning:">
+                    <path
+                            d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                </svg>
 
-      <div>
-        {% for msg in messages %}
-          {{ msg }}<br>
-        {% endfor %}
-      </div>
+                <div>
+                    {% for msg in messages %}
+                        {{ msg }}<br>
+                    {% endfor %}
+                </div>
 
-      <button type="button" class="btn-close" data-bs-dismiss="alert"
-              aria-label="Close"></button>
-    </div>
-    </div>
-  {% endif %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    {% endif %}
 {% endwith %}

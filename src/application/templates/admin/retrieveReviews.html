@@ -38,6 +38,9 @@
   <div class="row g-4 ms-1 me-1 row-cols-1 row-cols-lg-3">
   {% for review in list_of_reviews %}
     <div class="feature col review">
+        {% if review.trustworthiness() * 100 < review.TRUSTWORTHINESS_THRESHOLD %}
+            <p><strong style="color: red;">This review is possibly fake.</strong></p>
+        {% endif %}
       <div class="">
         {% for i in range(review.stars) %}
           <img class="review-star"
