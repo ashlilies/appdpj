@@ -17,7 +17,7 @@
         .addressDiv {
             background-color: #ffffff;
             width: 80%;
-            height:40%;
+            height: 40%;
         }
 
         .inputs {
@@ -36,7 +36,7 @@
 
         #map {
             height: 250px;
-            width: 550px;
+            width: 90%;
             margin: auto;
         }
 
@@ -44,12 +44,11 @@
             width: 90%;
         }
 
-
         /* Create two equal columns that floats next to each other */
         .column {
-          float: left;
-          width: 50%;
-          padding: 10px;
+            float: left;
+            width: 50%;
+            padding: 0px;
         }
 
         /* Clear floats after the columns */
@@ -58,6 +57,7 @@
             display: table;
             clear: both;
         }
+
     </style>
 {% endblock %}
 
@@ -81,125 +81,109 @@
 
     <h1 style="margin-top: 70px; margin-bottom: 30px;">Delivery address and order summary</h1>
 
-            <div class="row" style="">
-              <div class="column">
-                  <h3>Your delivery address:</h3>
-                  <form method="POST" action="{{ url_for('consumer_myaddress', restaurant_id=restaurant.id) }}">
-                    <div class="addressDiv" style="padding-top: 20px;">
-                        <div class="header">
-                            <img src="{{ url_for("static", filename="cart/location.png") }}" alt="location Logo"
-                                 style="height: 35px; width: 40px; margin: 15px 0px; display: inline-block">
-                            <h4 style="margin-left: 30px;">Delivery Address</h4>
-                        </div>
-
-                        <div id="map"></div>
-
-                        <div class="inputs">
-                            <div class="form-group">{{ render_field(form.consumer_address, class="form-control", placeholder='Enter Address here') }}</div>
-
-                            <input type="submit" value="Submit" class="btn btn-primary" style="margin: 20px 0;"/>
-                        </div>
-
-                        {# async script executes immediately and msut be after any DOM elements used in callbacl. #}
-                        <script
-                                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCu8EK_J5eGH_o7frDEGfeWEJfWJIY6hbE&callback=initMap&libraries=&v=weekly"
-                                async
-                        ></script>
+    <div class="row" style="">
+        <div class="column">
+            <h3>Your delivery address:</h3>
+            <form method="POST" action="{{ url_for('consumer_myaddress', restaurant_id=restaurant.id) }}">
+                <div class="addressDiv" style="padding-top: 20px;">
+                    <div class="header">
+                        <img src="{{ url_for("static", filename="cart/location.png") }}" alt="location Logo"
+                             style="height: 35px; width: 40px; margin: 15px 0px; display: inline-block">
+                        <h4 style="margin-left: 30px;">Delivery Address</h4>
                     </div>
-                  </form>
-              </div>
+
+                    <div id="map"></div>
+
+                    <div class="inputs">
+                        <div class="form-group">{{ render_field(form.consumer_address, class="form-control", placeholder='Enter Address here') }}</div>
+
+                        <input type="submit" value="Submit" class="btn btn-primary" style="margin: 20px 0;"/>
+                    </div>
+
+                    {# async script executes immediately and msut be after any DOM elements used in callbacl. #}
+                    <script
+                            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCu8EK_J5eGH_o7frDEGfeWEJfWJIY6hbE&callback=initMap&libraries=&v=weekly"
+                            async
+                    ></script>
+                </div>
+            </form>
+        </div>
 
 
-    <div class="column">
-        <div class="orderConfirm">
-            <h3>Order summary</h3>
-            <div class="card rounded-3 mb-4 display-right">
-            <table>
-            <th style="padding-left: 20px;">Item Name</th>
-            <th style="">Quantity</th>
-            <th>Price</th>
-            {% for cart_item in cart_items %}
-                    <div class="card-body p-4">
+        <div class="column">
+            <div class="orderConfirm">
+                <h3>Order summary</h3>
+                <div class="card rounded-3 mb-4 display-right">
+                    <table style="margin: 20px 0px">
                         <tr>
-                        <td style="padding-left: 30px;"><p class="lead fw-normal mb-2">{{ cart_item.food.name }}</p></td>
-                        <td><p class="lead fw-normal mb-2">{{ cart_item.qty }} </p></td>
-                        <td>{% if cart_item.is_discounted() %}
+                            <th style="padding-left: 20px;">Item Name</th>
+                            <th style="">Quantity</th>
+                            <th>Price</th>
+                        </tr>
+                        {% for cart_item in cart_items %}
+                            <tr>
+                                <td style="padding-left: 30px;"><p
+                                        class="lead fw-normal mb-2">{{ cart_item.food.name }}</p></td>
+                                <td><p class="lead fw-normal mb-2">{{ cart_item.qty }} </p></td>
+                                <td>{% if cart_item.is_discounted() %}
                                     <h5 class="mb-0" style="text-decoration: line-through">
                                         ${{ "%.2f" % (cart_item.food.price * cart_item.qty) }}</h5>
                                     <h5 class="mb-0">${{ "%.2f" % cart_item.price }}</h5>
                                 {% else %}
                                     <h5 class="mb-0">${{ "%.2f" % cart_item.price }}</h5>
                                 {% endif %}
-                        </td>
-                            </div>
-                        </div>
-                    </div>
-                </tr>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
                 </div>
-            {% endfor %}
-            </table>
+            </div>
+            <h3>Summary Details</h3>
+            <div class="card rounded-3 mb-4 display-right">
+                <div class="card-body p-4">
+                    <p class="lead fw-normal mb-2">
+                        Address:
+                        <br>
+                        {{ location }}
+                    </p>
+                    {% if del_time %}
+                        <p class="lead fw-normal mb-2">
+                            Delivery Duration:
+                            <br>
+                            {{ "%d" % del_time }} mins
+                        </p>
+                    {% endif %}
+                    {% if del_fee %}
+                        <p class="lead fw-normal mb-2">
+                            Delivery Fee:
+                            <span style="position: absolute; right: 10%;">S$ {{ "%.2f" % del_fee }}</span>
+                        </p>
+                    {% endif %}
 
-        </div>
-                  </div>
+                    <hr>
+                    <p class="lead fw-normal mb-2">
+                        Total
+                        <span style="position: absolute; right: 10%;">S$ {{ "%.2f" % cart.get_subtotal() }}</span>
+                    </p>
 
-    <h3>Summary Details</h3>
-    <div class="card rounded-3 mb-4">
-        <div class="card-body p-4">
-            <p class="lead fw-normal mb-2">
-                Address:
-                <br>
-                {{ location }}
-            </p>
-            {% if del_time %}
-                <p class="lead fw-normal mb-2">
-                    Delivery Duration:
-                    <br>
-                    {{ "%d" % del_time }} mins
-                </p>
-            {% endif %}
-            {% if del_fee %}
-                <p class="lead fw-normal mb-2">
-                    Delivery Fee:
-                    <span style="position: absolute; right: 10%;">S$ {{ "%.2f" % del_fee }}</span>
-                </p>
-            {% endif %}
+                    {% if del_fee > 0.0 %}
+                        <form action="{{ url_for('payment') }}" method="POST">
+                            {#                <input type="hidden" name="amount" value="{{cart.get_subtotal() *100}}">#}
+                            {#                  {%  set amount = (cart.get_subtotal()).replace('.','')%}#}
+                            <script
+                                    src="https://checkout.stripe.com/checkout.js"
+                                    class="stripe-button"
+                                    data-key="pk_test_VrWD12lh918aMAaU4HP11c4e00I9shY8fg"
+                                    data-name="Payment to FoodyPulse"
+                                    data-description="Food on Impulse"
+                                    data-amount="{{ cart.get_subtotal() * 100 }}"
+                                    data-currency="sgd">
+                            </script>
+                        </form>
+                    {% endif %}
 
-            <hr>
-            <p class="lead fw-normal mb-2">
-                Total
-                <span style="position: absolute; right: 10%;">S$ {{ "%.2f" % cart.get_subtotal() }}</span>
-            </p>
-
-            {#            <button type="button"#}
-            {#                    class="btn btn-warning btn-block btn-lg mt-auto mb-auto"#}
-            {#                    style="height: 50%;">#}
-            {#                Proceed to Pay#}
-            {#            </button>#}
-
-            {% if del_fee > 0.0 %}
-            <form action="{{ url_for('payment') }}" method="POST">
-                {#                <input type="hidden" name="amount" value="{{cart.get_subtotal() *100}}">#}
-                {#                  {%  set amount = (cart.get_subtotal()).replace('.','')%}#}
-                <script
-                        src="https://checkout.stripe.com/checkout.js"
-                        class="stripe-button"
-                        data-key="pk_test_VrWD12lh918aMAaU4HP11c4e00I9shY8fg"
-                        data-name="Payment to FoodyPulse"
-                        data-description="Food on Impulse"
-                        data-amount="{{ cart.get_subtotal() * 100 }}"
-                        data-currency="sgd">
-                </script>
-            </form>
-        {% endif %}
-
+                </div>
+            </div>
         </div>
     </div>
-    </div>
-
-
-
-
-
-
-
 {% endblock %}
