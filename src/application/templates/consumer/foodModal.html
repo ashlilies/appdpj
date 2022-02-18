@@ -1,11 +1,6 @@
 <!--Clara-->
 
 <style>
-    {##foodDescription {#}
-    {#    margin-top: 5%;#}
-    {#    margin-right:100%;#}
-    {##}
-    {##}
 
     #foodDescription > p {
         margin: 1%;
@@ -44,7 +39,6 @@
 
 </style>
 
-{#    <div id="whole-homepage" class="d-flex flex-row">#}
 <div class="modal fade" id="foodModal{{ food.id }}" aria-hidden="true"
      aria-labelledby="exampleModalToggleLabel"
      tabindex="-1">
@@ -94,7 +88,7 @@
             <div class="modal-body">
                 <form method="POST" id="toppingEditForm{{ food.id }}"
                       action="{{ url_for("cart_add", food_id=food.id) }}">
-                    <p>Edit Toppings</p>
+                    <p style="font-weight: bold;">Edit Toppings</p>
                     {% if food.toppings %}
                         {% for topping in food.toppings %}
                             <div class="mb-3 form-check">
@@ -109,15 +103,8 @@
                         <p class="text-secondary">No toppings available</p>
                     {% endif %}
 
-                    <p>
-                        {#                            {{ form.roles.label }}<br>#}
-                        {#                            {{ form.roles(size=32) }}<br>#}
-                        {#                            {% for error in form.roles.errors %}#}
-                        {#                                <span style="color: red;">[{{ error }}]</span>#}
-                        {#                            {% endfor %}#}
-                        {#                        </p>#}
                         <br>
-                        <label class="form-label" for="otherRequest">Other Requests</label>
+                        <label style="font-weight: bold;" class="form-label" for="otherRequest">Other Requests</label>
                         <input class="form-text form-control" type="text"
                                placeholder="Have a custom request?"
                                name="otherRequest" id="otherRequest">
