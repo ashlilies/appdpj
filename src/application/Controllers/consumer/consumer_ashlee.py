@@ -192,8 +192,6 @@ def consumer_cart():
     cart = CartDao.get_cart(current_user.cart)
     cart_items = cart.get_cart_items()
 
-    # temporary
-    cart.delivery_fee = 0.0
     return render_template("consumer/cart.html",
                            cart=cart,
                            cart_items=cart_items,
@@ -354,7 +352,7 @@ def apply_coupon():
             flash("Successfully removed coupon code from cart")
         elif cart.get_total_discount() == 0.0:
             flash("Invalid coupon code - either items are not applicable, "
-                  "or code doesn't exist!")
+                  "or code doesn't exist, or expired!")
             cart.apply_coupon("")  # blank it
         else:
             flash("Successfully applied coupon!")

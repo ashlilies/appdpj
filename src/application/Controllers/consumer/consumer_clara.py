@@ -11,20 +11,20 @@ from application.Controllers.admin.admin_ashlee import admin_side
 from application.Controllers.consumer.consumer_ashlee import consumer_side
 from application.Models.Food2 import FoodDao
 
-# # english_bot = ChatBot("Chatterbot", storage_adapter="chatterbot.storage.SQLStorageAdapter")
-# # trainer = ChatterBotCorpusTrainer(english_bot)
-# # trainer.train("chatterbot.corpus.english")
-#
-#
-# @app.route("/chatbot")
-# def bot():
-#     return render_template("consumer/chatbot.html")
-#
-#
-# @app.route("/get")
-# def get_bot_response():
-#     userText = request.args.get("msg")
-#     return str(english_bot.get_response(userText))
+english_bot = ChatBot("Chatterbot", storage_adapter="chatterbot.storage.SQLStorageAdapter")
+trainer = ChatterBotCorpusTrainer(english_bot)
+trainer.train("chatterbot.corpus.english")
+
+
+@app.route("/chatbot")
+def bot():
+    return render_template("consumer/chatbot.html")
+
+
+@app.route("/get")
+def get_bot_response():
+    userText = request.args.get("msg")
+    return str(english_bot.get_response(userText))
 
 
 @app.route("/foodModal/<int:food_id>")

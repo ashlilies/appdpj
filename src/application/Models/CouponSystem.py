@@ -166,6 +166,10 @@ class CouponSystem:
             if food_id not in coupon.food_items:
                 return food.price
 
+            if datetime.date.today() > coupon.expiry:  # expired already
+                coupon.enabled = False  # disable it for convenience's sake
+                return food.price
+
             after_discount = coupon.discount.discounted_price(food.price)
             if after_discount is not None:
                 return after_discount

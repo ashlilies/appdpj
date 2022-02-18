@@ -17,7 +17,7 @@ REVIEWS_DB = "reviews.db"
 
 class Review:
     count_id = 1
-    TRUSTWORTHINESS_THRESHOLD = 60  # % before a review is considered trusted
+    TRUSTWORTHINESS_THRESHOLD = 70  # % before a review is considered trusted
 
     def __init__(self, parent_restaurant_id, reviewer_id, stars: int, title, description,
                  date_time: datetime, media_path: str):
